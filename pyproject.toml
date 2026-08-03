@@ -1,0 +1,79 @@
+[project]
+name = "smart-coaching"
+version = "0.1.0"
+description = "Sistem Smart-Coaching Adaptif berbasis NLP untuk kepala sekolah dasar"
+readme = "AGENTS.md"
+requires-python = ">=3.12,<3.13"
+
+# Ketergantungan langsung disetujui pada Gerbang 2 fitur 001.
+# Penambahan memerlukan persetujuan penanggung jawab teknis (C-12).
+# Pembandingnya: ketergantungan-disetujui.toml, ditegakkan `make check`.
+dependencies = [
+    "pydantic>=2,<3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8,<9",
+    "pytest-cov>=6,<7",
+    "ruff>=0.9,<0.10",
+    "mypy>=1,<2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "perkakas", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+# Uji memang memuat pernyataan panjang yang menjelaskan sebab kegagalan.
+"tests/**" = ["E501"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src", "perkakas"]
+strict = true
+warn_unreachable = true
+# Pemisahan tipe Instruksi dan Data (R-06, ADR-13) hanya bermakna bila
+# penyimpangannya tertangkap saat periksa, bukan saat jalan.
+disallow_any_explicit = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_any_explicit = false
+
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q --strict-markers --strict-config"
+
+# ---------------------------------------------------------------------------
+
+[tool.coverage.run]
+# src/ saja. perkakas/ adalah alat bantu pembangunan, bukan modul inti yang
+# dinilai TKT 3; memasukkannya membuat angka C-11 dan NFR-16 kehilangan makna.
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
