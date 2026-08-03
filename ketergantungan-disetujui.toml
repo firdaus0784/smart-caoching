@@ -1,0 +1,45 @@
+# Titik nol ketergantungan — R-18, C-12
+#
+# Berkas ini adalah rekaman himpunan paket pada saat disetujui manusia,
+# bukan turunan otomatis dari uv.lock. Ia menjadi pembanding: tanpa titik
+# nol tertulis, "ketergantungan baru" tidak dapat didefinisikan dan R-18
+# tidak punya apa-apa untuk dibandingkan.
+#
+# Disetujui  : Gerbang 2 fitur 001, 2026-08-03
+# Pemutus    : pemegang Gerbang 1-4 (KM-001; BT-49 masih terbuka)
+# Rujukan    : specs/001-kerangka-proyek/plan.md bagian Ketergantungan
+#
+# Perubahan pada berkas ini adalah keputusan tim, bukan keputusan agen.
+# Menambah baris di sini untuk meloloskan `make check` membatalkan gunanya.
+
+# Lima ketergantungan langsung yang disetujui secara sadar pada Gerbang 2.
+langsung = [
+    "pydantic",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+# Pohon transitif utuh pada saat penguncian. Selisih apa pun terhadap
+# uv.lock — paket masuk, paket hilang, versi bergeser — menggagalkan
+# `make check`.
+[terkunci]
+"annotated-types" = "0.8.0"
+"colorama" = "0.4.6"
+"coverage" = "7.15.3"
+"iniconfig" = "2.3.0"
+"librt" = "0.13.0"
+"mypy" = "1.20.2"
+"mypy-extensions" = "1.1.0"
+"packaging" = "26.2"
+"pathspec" = "1.1.1"
+"pluggy" = "1.6.0"
+"pydantic" = "2.13.4"
+"pydantic-core" = "2.46.4"
+"pygments" = "2.20.0"
+"pytest" = "8.4.2"
+"pytest-cov" = "6.3.0"
+"ruff" = "0.9.10"
+"typing-extensions" = "4.16.0"
+"typing-inspection" = "0.4.2"
