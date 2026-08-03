@@ -28,10 +28,7 @@ def test_seluruh_dokumen_ada() -> None:
 def test_dokumen_tidak_kosong() -> None:
     # Berkas hilang dihitung sebagai kegagalan, bukan dilewati. Uji yang
     # melewati berkas hilang akan lulus secara hampa sebelum ada apa pun.
-    bermasalah = [
-        n for n in DOKUMEN
-        if not (DOCS / n).is_file() or (DOCS / n).stat().st_size == 0
-    ]
+    bermasalah = [n for n in DOKUMEN if not (DOCS / n).is_file() or (DOCS / n).stat().st_size == 0]
     assert not bermasalah, f"dokumen hilang atau kosong: {bermasalah}"
 
 
