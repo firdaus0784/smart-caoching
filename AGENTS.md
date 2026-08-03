@@ -32,8 +32,6 @@ spec.md  →  [GERBANG 1]  →  plan.md  →  [GERBANG 2]
 
 ## Perintah
 
-<!-- TIM: isi setelah tumpukan terpasang. Jangan biarkan placeholder. -->
-
 ```bash
 make setup        # pasang ketergantungan
 make test         # seluruh uji
