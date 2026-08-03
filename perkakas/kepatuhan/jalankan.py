@@ -74,7 +74,9 @@ def susun_laporan(akar: Path, daftar: tuple[Pasal, ...] = DAFTAR_PASAL) -> list[
             continue
         try:
             temuan = pasal.pemeriksa(akar)
-        except Exception as galat:  # noqa: BLE001 — pemeriksa rusak bukan lulus
+        # Sengaja menangkap seluruh galat: pemeriksa rusak dihitung GAGAL,
+        # bukan dilewati. Melewatkannya adalah bentuk laporan palsu.
+        except Exception as galat:
             hasil.append(
                 Baris(
                     pasal.kode,
