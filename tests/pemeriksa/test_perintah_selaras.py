@@ -69,6 +69,4 @@ def test_repositori_nyata_selaras() -> None:
     """Terhadap AGENTS.md dan Makefile yang sebenarnya."""
     akar = Path(__file__).resolve().parents[2]
     temuan = periksa_perintah_selaras(akar)
-    assert temuan == [], "AGENTS.md dan Makefile menyimpang: " + "; ".join(
-        str(t) for t in temuan
-    )
+    assert temuan == [], "AGENTS.md dan Makefile menyimpang: " + "; ".join(str(t) for t in temuan)
