@@ -75,7 +75,9 @@ Jangan lakukan hal berikut. Bila tampak perlu, berarti spesifikasinya salah — 
 - Membangun fitur pada `docs/D01.md` Bagian 4.2 (gamifikasi, mobile native, personalisasi, peer mentoring, integrasi Dapodik)
 - Menambah ketergantungan tanpa persetujuan
 - Menulis data pribadi ke log
-- Menyentuh `logbook/` selain menambah baris percobaan
+- Menyentuh `logbook/` selain menambah baris — L1, L2, L4, L7 sama terlindunginya.
+  Menyunting atau menghapus baris yang sudah ada dilarang, termasuk untuk memperbaikinya
+- Menulis ulang riwayat git: `rebase`, `commit --amend`, `push --force` pada branch bersama
 
 ## Gaya
 
