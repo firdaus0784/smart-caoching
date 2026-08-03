@@ -1,0 +1,17 @@
+# Lingkungan dan singgahan perkakas
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Berkas sementara sistem
+.DS_Store
+
+# CATATAN PENTING
+# logbook/ TIDAK diabaikan. Ia adalah rekaman penelitian (D-10) dan wajib
+# masuk riwayat git. Lihat AGENTS.md bagian Batas.
