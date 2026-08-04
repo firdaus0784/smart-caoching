@@ -28,6 +28,7 @@ from datetime import datetime
 from pathlib import Path
 
 from src.llm.adaptor.dasar import AdaptorDasar, Permintaan
+from src.llm.galat import GalatLayananModel
 from src.llm.tipe import Data, Instruksi, Konfigurasi, Tanggapan
 from src.logbook.penulis import tambah_percobaan
 from src.logbook.versi import Versi
@@ -83,7 +84,13 @@ class Pembungkus:
             )
 
         permintaan = Permintaan(instruksi=instruksi, data=tuple(data), konfigurasi=konfigurasi)
-        tanggapan = self._adaptor.kirim(permintaan)
+        try:
+            tanggapan = self._adaptor.kirim(permintaan)
+        # Seluruh kegagalan penyedia diseragamkan menjadi satu bentuk yang
+        # aman ditampilkan (R-09). Sebab aslinya tetap tersimpan pada galat
+        # dan hanya menuju log operasional.
+        except Exception as sebab:
+            raise GalatLayananModel(sebab) from sebab
 
         self.riwayat.append(
             CatatanPemanggilan(

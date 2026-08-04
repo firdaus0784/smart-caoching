@@ -134,3 +134,53 @@ def test_muatan_yang_benar_benar_dikirim_memisahkan_posisi(tmp_path: Path) -> No
     assert adaptor.muatan_terakhir is not None
     assert penanda not in adaptor.muatan_terakhir.posisi_instruksi
     assert any(penanda in b.teks for b in adaptor.muatan_terakhir.posisi_konten)
+
+
+def test_kegagalan_penyedia_menjadi_galat_layanan_model(tmp_path: Path) -> None:
+    """R-09 — seluruh kegagalan penyedia diseragamkan menjadi satu bentuk aman."""
+    import pytest
+    from src.llm.adaptor.dasar import AdaptorDasar, Permintaan
+    from src.llm.galat import GalatLayananModel, KodeGalat
+    from src.llm.tipe import Tanggapan
+
+    class AdaptorGagal(AdaptorDasar):
+        def kirim(self, permintaan: Permintaan) -> Tanggapan:
+            raise RuntimeError("HTTP 503 from api.penyedia.example")
+
+    pembungkus = Pembungkus(
+        adaptor=AdaptorGagal(), akar_logbook=tmp_path, versi=versi_fitur_001("abc123")
+    )
+    with pytest.raises(GalatLayananModel) as tertangkap:
+        pembungkus.panggil(
+            instruksi=susun(KunciInstruksi.UJI_ASAP), data=DATA, konfigurasi=KONFIGURASI
+        )
+
+    tanggapan = tertangkap.value.tanggapan()
+    assert tanggapan.galat.kode is KodeGalat.LAYANAN_MODEL_GAGAL
+    assert "503" not in tanggapan.galat.pesan_pengguna
+    assert "503" in tertangkap.value.untuk_log()
+
+
+def test_kegagalan_penyedia_tidak_menulis_baris_l1(tmp_path: Path) -> None:
+    """Percobaan yang tidak menghasilkan apa pun bukan percobaan yang berhasil."""
+    import pytest
+    from src.llm.adaptor.dasar import AdaptorDasar, Permintaan
+    from src.llm.galat import GalatLayananModel
+    from src.llm.tipe import Tanggapan
+
+    class AdaptorGagal(AdaptorDasar):
+        def kirim(self, permintaan: Permintaan) -> Tanggapan:
+            raise RuntimeError("gagal")
+
+    pembungkus = Pembungkus(
+        adaptor=AdaptorGagal(), akar_logbook=tmp_path, versi=versi_fitur_001("abc123")
+    )
+    with pytest.raises(GalatLayananModel):
+        pembungkus.panggil(
+            instruksi=susun(KunciInstruksi.UJI_ASAP),
+            data=DATA,
+            konfigurasi=KONFIGURASI,
+            id_percobaan="EXP-2026-004",
+            tujuan="menguji perilaku saat penyedia gagal",
+        )
+    assert not (tmp_path / "L1-percobaan.jsonl").exists()
