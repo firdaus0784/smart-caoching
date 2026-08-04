@@ -30,6 +30,7 @@ from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
+from perkakas.pemeriksa.tanpa_kemampuan_bertindak import periksa_tanpa_kemampuan_bertindak
 
 Pemeriksa = Callable[[Path], list[Temuan]]
 
@@ -136,7 +137,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-17",
         "sistem tanpa kemampuan bertindak",
-        fitur_pengunci="001 Fase D pembungkus model",
+        pemeriksa=periksa_tanpa_kemampuan_bertindak,
     ),
     Pasal(
         "C-18",
