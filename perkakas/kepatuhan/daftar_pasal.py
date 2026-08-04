@@ -27,6 +27,7 @@ from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
 from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
+from perkakas.pemeriksa.konstruksi_instruksi import periksa_konstruksi_instruksi
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 
@@ -140,7 +141,12 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-18",
         "konten terambil tidak pernah pada posisi instruksi",
-        fitur_pengunci="001 Fase D pembungkus model",
+        # Pembatasan konstruksi Instruksi (ADR-13) sudah berjalan sejak D-2,
+        # tetapi ia syarat perlu, bukan syarat cukup: penempatan sesungguhnya
+        # terjadi pada pembangun permintaan, yang lahir pada D-5. Menandai
+        # LULUS sekarang berarti melaporkan pemeriksaan separuh sebagai
+        # pemeriksaan penuh — persis laporan palsu yang R-15 dirancang cegah.
+        fitur_pengunci="001 tugas D-5 pembangun permintaan terstruktur",
     ),
     Pasal(
         "C-19",
