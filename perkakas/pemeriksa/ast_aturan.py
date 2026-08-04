@@ -114,47 +114,69 @@ def panggilan_nama(berkas: Path, nama: str) -> list[int]:
     return sorted(baris)
 
 
+def _untai(simpul: ast.expr | None) -> str:
+    """Nilai untai bila simpul adalah tetapan untai; selain itu kosong."""
+    if isinstance(simpul, ast.Constant) and isinstance(simpul.value, str):
+        return simpul.value
+    return ""
+
+
+def _jalur_penerima(simpul: ast.expr) -> str:
+    """Jalur harfiah pada penerima metode: `Path("x").open(...)` atau `"x".open(...)`.
+
+    Penerima berupa peubah tidak terbaca — itu batas yang sama dengan RP-01.
+    """
+    if (
+        isinstance(simpul, ast.Call)
+        and isinstance(simpul.func, ast.Name)
+        and simpul.func.id in {"Path", "PurePath", "PosixPath"}
+        and simpul.args
+    ):
+        return _untai(simpul.args[0])
+    return _untai(simpul)
+
+
+def _mode_kata_kunci(simpul: ast.Call) -> str:
+    for kata in simpul.keywords:
+        if kata.arg == "mode":
+            return _untai(kata.value)
+    return ""
+
+
 def pembukaan_berkas(berkas: Path) -> list[tuple[int, str, str]]:
-    """Pemanggilan `open(...)` dengan jalur dan mode yang terbaca harfiah.
+    """Pembukaan berkas dengan jalur dan mode yang terbaca harfiah.
 
     Mengembalikan (baris, jalur, mode). Mode kosong berarti bawaan `r`.
-    Pemanggilan dengan jalur yang dibentuk saat jalan tidak terbaca di sini —
-    batas yang sama dengan RP-01.
+
+    Tiga bentuk dikenali, dan ketiganya menaruh argumennya di tempat berbeda:
+
+    - `open(jalur, mode)` — bawaan; jalur pada argumen pertama
+    - `berkas.open(mode)` — metode `Path`; **mode** pada argumen pertama, dan
+      jalurnya ada pada penerima, bukan pada argumen
+    - `berkas.write_text(isi)` — menimpa tanpa menyebut mode sama sekali
+
+    Bentuk kedua dan ketiga sempat terbaca keliru: mode dibaca sebagai jalur,
+    dan isi dibaca sebagai jalur. Keduanya ditemukan uji C-2, bukan uji B-1.
     """
     hasil: list[tuple[int, str, str]] = []
     for simpul in ast.walk(_pohon(berkas)):
         if not isinstance(simpul, ast.Call):
             continue
         fungsi = simpul.func
-        nama_fungsi = (
-            fungsi.id
-            if isinstance(fungsi, ast.Name)
-            else fungsi.attr
-            if isinstance(fungsi, ast.Attribute)
-            else ""
-        )
-        if nama_fungsi not in {"open", "open_text", "write_text", "write_bytes"}:
+
+        if isinstance(fungsi, ast.Name) and fungsi.id == "open":
+            jalur = _untai(simpul.args[0]) if simpul.args else ""
+            mode = (_untai(simpul.args[1]) if len(simpul.args) > 1 else "") or _mode_kata_kunci(
+                simpul
+            )
+        elif isinstance(fungsi, ast.Attribute) and fungsi.attr == "open":
+            jalur = _jalur_penerima(fungsi.value)
+            mode = (_untai(simpul.args[0]) if simpul.args else "") or _mode_kata_kunci(simpul)
+        elif isinstance(fungsi, ast.Attribute) and fungsi.attr in {"write_text", "write_bytes"}:
+            jalur = _jalur_penerima(fungsi.value)
+            mode = "w"
+        else:
             continue
-
-        jalur = ""
-        if simpul.args and isinstance(simpul.args[0], ast.Constant):
-            nilai = simpul.args[0].value
-            if isinstance(nilai, str):
-                jalur = nilai
-
-        mode = ""
-        if len(simpul.args) > 1 and isinstance(simpul.args[1], ast.Constant):
-            nilai_mode = simpul.args[1].value
-            if isinstance(nilai_mode, str):
-                mode = nilai_mode
-        for kata in simpul.keywords:
-            if kata.arg == "mode" and isinstance(kata.value, ast.Constant):
-                nilai_mode = kata.value.value
-                if isinstance(nilai_mode, str):
-                    mode = nilai_mode
-
-        if nama_fungsi in {"write_text", "write_bytes"}:
-            mode = mode or "w"
 
         hasil.append((simpul.lineno, jalur, mode))
     return sorted(hasil)

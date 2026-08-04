@@ -107,3 +107,32 @@ def test_berkas_rusak_dilaporkan_bukan_dilewati(tmp_path: Path) -> None:
     except SyntaxError:
         return
     raise AssertionError("berkas rusak dilewati diam-diam, seharusnya menyalak")
+
+
+def test_tiga_bentuk_pembukaan_berkas_terbaca(tmp_path: Path) -> None:
+    """Ketiganya menaruh jalur dan mode di tempat berbeda.
+
+    Bentuk kedua dan ketiga sempat terbaca keliru — mode dibaca sebagai jalur,
+    dan isi dibaca sebagai jalur. Ditemukan uji C-2, bukan uji tugas ini.
+    """
+    berkas = _tulis(
+        tmp_path,
+        "m.py",
+        'open("a.txt", "w")\nPath("b.txt").open("a")\nPath("c.txt").write_text("isi")\n',
+    )
+    hasil = {(jalur, mode) for _, jalur, mode in pembukaan_berkas(berkas)}
+    assert ("a.txt", "w") in hasil, "bentuk open(jalur, mode) keliru"
+    assert ("b.txt", "a") in hasil, "bentuk Path(...).open(mode) keliru"
+    assert ("c.txt", "w") in hasil, "bentuk write_text menimpa tanpa menyebut mode"
+
+
+def test_mode_lewat_kata_kunci_terbaca(tmp_path: Path) -> None:
+    berkas = _tulis(tmp_path, "m.py", 'open("a.txt", mode="w")\n')
+    assert ("a.txt", "w") in {(j, m) for _, j, m in pembukaan_berkas(berkas)}
+
+
+def test_penerima_berupa_peubah_tidak_menghasilkan_jalur(tmp_path: Path) -> None:
+    """Batas RP-01 dinyatakan sebagai uji, bukan hanya sebagai catatan."""
+    berkas = _tulis(tmp_path, "m.py", 'berkas.open("w")\n')
+    hasil = pembukaan_berkas(berkas)
+    assert hasil == [(1, "", "w")], f"jalur peubah seharusnya kosong: {hasil}"
