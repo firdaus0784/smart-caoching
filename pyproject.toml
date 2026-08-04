@@ -49,15 +49,21 @@ docstring-code-format = true
 [tool.mypy]
 python_version = "3.12"
 files = ["src", "perkakas"]
+# `strict` inilah yang menegakkan pemisahan tipe Instruksi dan Data (R-06,
+# ADR-13): tanpa tipe yang lengkap, penyimpangan baru terlihat saat jalan.
 strict = true
 warn_unreachable = true
-# Pemisahan tipe Instruksi dan Data (R-06, ADR-13) hanya bermakna bila
-# penyimpangannya tertangkap saat periksa, bukan saat jalan.
-disallow_any_explicit = true
 
-[[tool.mypy.overrides]]
-module = "tests.*"
-disallow_any_explicit = false
+# Catatan atas `disallow_any_explicit`, sempat dipasang pada tugas A-4 lalu
+# dicabut pada C-3. Alasan pemasangannya keliru: setelan itu hanya melarang
+# kata `Any` ditulis pada kode kita sendiri, dan tidak menambah apa pun pada
+# penegakan R-06. Yang ia lakukan adalah menolak `pydantic.BaseModel`, karena
+# tanda tangan pydantic sendiri memuat `Any`.
+#
+# Mempertahankannya menuntut daftar pengecualian per modul yang bertambah
+# setiap kali model baru dibuat — dan daftar pengecualian yang bertambah
+# adalah tempat pekerjaan bersembunyi, persis yang R-15 dirancang untuk
+# mencegah pada `make compliance`. Dicabut, bukan dikecualikan.
 
 # ---------------------------------------------------------------------------
 

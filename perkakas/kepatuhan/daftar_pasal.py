@@ -24,11 +24,23 @@ from pathlib import Path
 
 from perkakas.pemeriksa.ast_aturan import Temuan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
+from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
 from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
+from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 
 Pemeriksa = Callable[[Path], list[Temuan]]
+
+
+def _c09(akar: Path) -> list[Temuan]:
+    """C-09 diperiksa dari dua sisi.
+
+    Kelengkapan jejak versi pada catatan yang sudah ada, dan keutuhan mesin
+    pencatatnya. Catatan yang lengkap di atas penulis yang dapat menimpa bukan
+    jaminan apa pun.
+    """
+    return [*periksa_catatan_versi(akar), *periksa_logbook_tambah_saja(akar)]
 
 
 @dataclass(frozen=True)
@@ -83,7 +95,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-09",
         "setiap keluaran eksperimen mencatat lima bidang versi ke logbook/",
-        fitur_pengunci="001 Fase C penulis logbook",
+        pemeriksa=_c09,
     ),
     Pasal(
         "C-10",

@@ -29,6 +29,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
+from src.logbook.versi import Versi
+
 BENTUK_WAKTU: Final = "dicatat_pada"
 
 
@@ -58,3 +60,33 @@ def tambah_baris(akar_logbook: Path, buku: Buku, catatan: dict[str, object]) -> 
     # Mode "a" saja. Tidak ada cabang yang membuka berkas dengan mode menimpa.
     with berkas.open("a", encoding="utf-8") as arsip:
         arsip.write(baris + "\n")
+
+
+def tambah_percobaan(
+    akar_logbook: Path,
+    *,
+    id_percobaan: str,
+    tujuan: str,
+    versi: Versi,
+    hasil: dict[str, object],
+) -> None:
+    """Satu baris L1 — `docs/D10.md` Bagian 3.
+
+    `versi` bertipe `Versi`, bukan pemetaan bebas, sehingga kelima bidangnya
+    tidak dapat luput karena lupa: kekurangannya tertangkap saat memanggil,
+    bukan saat membaca berkas berbulan kemudian.
+
+    Percobaan yang **gagal** wajib dicatat juga. Rangkaian percobaan gagal
+    adalah bukti bahwa konfigurasi akhir dipilih berdasarkan pengujian, bukan
+    kebetulan, dan ia melindungi tim dari mengulang jalan buntu yang sama.
+    """
+    tambah_baris(
+        akar_logbook,
+        Buku.L1,
+        {
+            "id_percobaan": id_percobaan,
+            "tujuan": tujuan,
+            "hasil": hasil,
+            **versi.model_dump(),
+        },
+    )
