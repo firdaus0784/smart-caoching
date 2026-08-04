@@ -27,7 +27,6 @@ from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
 from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
-from perkakas.pemeriksa.konstruksi_instruksi import periksa_konstruksi_instruksi
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 
