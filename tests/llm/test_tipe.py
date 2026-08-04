@@ -12,7 +12,6 @@ ingin dihindari G1-4.
 
 import pytest
 from pydantic import ValidationError
-
 from src.llm.tipe import Data, IndeksTujuan, Konfigurasi, Peringkat, Tanggapan
 
 
