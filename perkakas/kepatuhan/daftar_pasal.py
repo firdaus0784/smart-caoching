@@ -29,6 +29,7 @@ from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
+from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
 
 Pemeriksa = Callable[[Path], list[Temuan]]
 
@@ -140,12 +141,11 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-18",
         "konten terambil tidak pernah pada posisi instruksi",
-        # Pembatasan konstruksi Instruksi (ADR-13) sudah berjalan sejak D-2,
-        # tetapi ia syarat perlu, bukan syarat cukup: penempatan sesungguhnya
-        # terjadi pada pembangun permintaan, yang lahir pada D-5. Menandai
-        # LULUS sekarang berarti melaporkan pemeriksaan separuh sebagai
-        # pemeriksaan penuh — persis laporan palsu yang R-15 dirancang cegah.
-        fitur_pengunci="001 tugas D-5 pembangun permintaan terstruktur",
+        # Diperiksa dari dua sisi sejak D-5: bentuk kode (konstruksi Instruksi
+        # terkunci satu modul) dan perilaku sebenarnya (penanda dijalankan
+        # melalui pembangun muatan, ambang nol). Sisi kedua diperlukan karena
+        # C-18 dapat dilanggar tanpa mengubah satu pun bentuk yang terbaca AST.
+        pemeriksa=periksa_pemisahan_instruksi,
     ),
     Pasal(
         "C-19",
