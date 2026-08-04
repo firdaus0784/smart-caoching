@@ -24,6 +24,7 @@ terhadap keduanya bersifat prosedural dan tertulis pada `AGENTS.md`.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -32,6 +33,23 @@ from typing import Final
 from src.logbook.versi import Versi
 
 BENTUK_WAKTU: Final = "dicatat_pada"
+
+
+@dataclass(frozen=True)
+class Temuan:
+    """Satu kekurangan pada catatan, dengan tempatnya.
+
+    Sengaja didefinisikan di `src/`, bukan diambil dari `perkakas/`: aturan
+    arah pada `AGENTS.md` melarang modul sistem bergantung pada alat bantu
+    pembangunan.
+    """
+
+    berkas: Path
+    baris: int
+    pesan: str
+
+    def __str__(self) -> str:
+        return f"{self.berkas}:{self.baris} — {self.pesan}"
 
 
 class Buku(Enum):
