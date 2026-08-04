@@ -20,6 +20,7 @@ import hashlib
 from datetime import UTC, datetime
 
 from src.llm.adaptor.dasar import AdaptorDasar, Permintaan
+from src.llm.muatan import MuatanPenyedia, susun_muatan
 from src.llm.tipe import Tanggapan
 
 
@@ -28,19 +29,26 @@ class AdaptorTiruan(AdaptorDasar):
 
     def __init__(self) -> None:
         self.terakhir: Permintaan | None = None
+        self.muatan_terakhir: MuatanPenyedia | None = None
 
     def kirim(self, permintaan: Permintaan) -> Tanggapan:
         mulai = datetime.now(UTC)
         self.terakhir = permintaan
 
+        # Muatan disusun lewat jalur yang sama dengan penyedia nyata kelak,
+        # sehingga uji penanda C-18 memeriksa jalur utuh — bukan hanya
+        # pembangun muatan yang dipanggil terpisah dari alur sebenarnya.
+        muatan = susun_muatan(permintaan)
+        self.muatan_terakhir = muatan
+
         # Sidik dihitung dari instruksi dan data secara terpisah, bukan dari
         # untai gabungan. Merangkai keduanya di sini pun akan menjadi jalur
         # yang bertentangan dengan C-18, meski hanya untuk menghitung sidik.
         pencerna = hashlib.sha256()
-        pencerna.update(permintaan.instruksi.teks.encode("utf-8"))
-        for butir in permintaan.data:
-            pencerna.update(butir.id_segmen.encode("utf-8"))
-            pencerna.update(butir.teks.encode("utf-8"))
+        pencerna.update(muatan.posisi_instruksi.encode("utf-8"))
+        for blok in muatan.posisi_konten:
+            pencerna.update(blok.id_segmen.encode("utf-8"))
+            pencerna.update(blok.teks.encode("utf-8"))
         sidik = pencerna.hexdigest()
 
         return Tanggapan(
