@@ -20,7 +20,7 @@ Bagi pembaca baru, urutan ini paling masuk akal. Bagi pelaksana, langsung ke dok
 
 | Urutan | Berkas | Isi | Untuk siapa |
 |---|---|---|---|
-| 1 | `D00-Kendali-Dokumen-dan-Konsistensi.md` | Aturan yang mengatur seluruh dokumen: kepemilikan fakta, prosedur audit, riwayat 47 temuan | **Baca lebih dulu.** Seluruh tim |
+| 1 | `D00-Kendali-Dokumen-dan-Konsistensi.md` | Aturan yang mengatur seluruh dokumen: kepemilikan fakta, prosedur audit, riwayat temuan konsistensi | **Baca lebih dulu.** Seluruh tim |
 | 2 | `D01-BRD-PRD-Sistem-Smart-Coaching.md` | Kebutuhan bisnis dan produk; 70+ kebutuhan berkode; batas ruang lingkup; risiko | Seluruh tim |
 | 3 | `D02-Persona-dan-Peta-Perjalanan-Pengguna.md` | Enam persona; enam peta perjalanan; titik kritis; kalender manajerial | Substansi, antarmuka, lapangan |
 | 4 | `D11-Landasan-Ilmiah-dan-Rujukan-Praktik.md` | Basis rujukan ilmiah; audit otentisitas; konteks regulasi terverifikasi | **Ketua peneliti dan penulis naskah** |
@@ -77,7 +77,7 @@ Setiap fakta dimiliki tepat satu dokumen. Dokumen lain merujuk, tidak menyalin. 
 
 ## Riwayat Audit
 
-Sepuluh audit menghasilkan 52 temuan sebelum satu baris kode ditulis. Rinciannya pada D-00 Bagian 7.
+Sepuluh audit menghasilkan 52 temuan sebelum satu baris kode ditulis. Audit kesebelas, AK-12, menambah tujuh temuan saat baris pertama ditulis. Rinciannya pada D-00 Bagian 7.
 
 | Audit | Cakupan | Temuan |
 |---|---|---|
@@ -91,6 +91,7 @@ Sepuluh audit menghasilkan 52 temuan sebelum satu baris kode ditulis. Rinciannya
 | AK-08 | Seluruhnya | TK-35 s.d. TK-37 |
 | **AK-09O** | Otentisitas rujukan | TO-01 s.d. TO-10 |
 | **AK-13S** | Keamanan dan kepatuhan | TA-01 s.d. TA-05 |
+| **AK-12** | Prapembangunan | TK-39 s.d. TK-45 |
 
 Tiga temuan yang paling menentukan mutu penelitian:
 
@@ -111,7 +112,6 @@ Tiga temuan yang paling menentukan mutu penelitian:
 | AK-09 | Setelah Fase 1 | Apakah hasil validasi persona (VA-01 s.d. VA-08) mengubah asumsi desain |
 | AK-10 | Sebelum pilot | Apakah prasyarat PS-01 s.d. PS-13 terpenuhi dan terdokumentasi |
 | AK-11 | Sebelum naskah | Apakah setiap klaim punya jejak; apakah keterbatasan dan insiden terwakili jujur |
-| AK-12 | Sebelum pembangunan | Apakah seluruh kebutuhan sudah diterjemahkan ke notasi EARS; apakah berkas OpenAPI awal tersusun |
 | AK-13 | Setelah uji adversarial | Apakah kegagalan diperbaiki pada pengambilan, bukan dengan melonggarkan validator |
 
 ---
