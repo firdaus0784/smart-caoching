@@ -34,6 +34,10 @@ from perkakas.pemeriksa.gerbang_v import (
     periksa_rahasia,
 )
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
+from perkakas.pemeriksa.konsistensi_dokumen import (
+    periksa_kode_menggantung,
+    periksa_konsistensi_dokumen,
+)
 from perkakas.pemeriksa.perintah_selaras import periksa_perintah_selaras
 from perkakas.pemeriksa.placeholder import periksa_placeholder
 
@@ -83,11 +87,19 @@ def _v02(akar: Path) -> HasilGerbang:
 
 
 def _v03(akar: Path) -> HasilGerbang:
-    """Ketertelusuran ke kode kebutuhan dan keselarasan dokumen."""
+    """Ketertelusuran ke kode kebutuhan dan keselarasan dokumen.
+
+    Dua pemeriksa terakhir ditambahkan fitur 014. Sampai saat itu keselarasan
+    antardokumen hanya tertangkap pembacaan manusia, dan TK-45 menunjukkan
+    batasnya: register `docs/D00.md` Bagian 2 tertinggal pada tujuh dokumen
+    tanpa satu pun aturan dilanggar.
+    """
     temuan = [
         *periksa_ketertelusuran(akar),
         *periksa_placeholder(akar / "AGENTS.md"),
         *periksa_perintah_selaras(akar),
+        *periksa_konsistensi_dokumen(akar),
+        *periksa_kode_menggantung(akar),
     ]
     return HasilGerbang("V-03", "ketertelusuran dan keselarasan dokumen", temuan)
 
