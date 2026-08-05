@@ -95,7 +95,7 @@ def versi_riwayat_tertinggi(berkas: Path) -> str:
     bagian = re.split(r"^##\s+\d*\.?\s*Riwayat Revisi", isi, maxsplit=1, flags=re.MULTILINE)
     if len(bagian) < 2:
         raise ValueError(f"{berkas.name} tidak memuat bagian Riwayat Revisi")
-    versi = POLA_RIWAYAT.findall(bagian[1])
+    versi: list[str] = POLA_RIWAYAT.findall(bagian[1])
     if not versi:
         raise ValueError(f"{berkas.name} memuat bagian Riwayat Revisi tanpa satu pun baris")
     return max(versi, key=_angka)
