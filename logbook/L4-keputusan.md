@@ -71,3 +71,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memulai 002 dengan TK-41 terbuka — ditolak; templat `spec.md` menetapkan fitur dengan pertanyaan terbuka tidak diserahkan ke agen, dan merencanakan gerbang yang kapasitasnya tidak diketahui berarti mengulang kekeliruan yang D-06 Bagian 8 hindari untuk kurasi. Menunggu tanpa mengerjakan apa pun — ditolak; pekerjaan ini tidak bergantung pada keputusan tim mana pun. |
 | Dampak | Urutan pembangunan `docs/D12.md` Bagian 7 bertambah satu baris. Audit AK-10 sebelum pilot dan AK-11 sebelum naskah menjadi lebih murah, dan keduanya wajib serta dijalankan ketika waktu paling sempit. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-001) |
+
+## KB-006 · Landasan literatur bagi TK-41, dan batas keterpindahannya
+
+| | |
+|---|---|
+| Tanggal | 2026-08-05 |
+| Konteks | TK-41 menyatakan kapasitas verifikasi anonimisasi tidak pernah dihitung, padahal FR-B05 menjadikannya gerbang atas setiap dokumen. SI-01 pada D-11 mensyaratkan setiap ambang numerik menunjuk sumber atau dinyatakan tegas sebagai penetapan tim tanpa dasar literatur. |
+| Keputusan | Empat rujukan dicari dan **keberadaannya diverifikasi lewat penelusuran**, bukan dikutip dari ingatan. Dua di antaranya memberi angka yang dapat dipindahkan: Dorr dkk. (2006) 87,3 ± 61 detik per catatan klinis, dan Douglass dkk. 20.000 kata per jam. Keduanya dipakai sebagai **kurung** pada D-03 Bagian 12.6, bukan sebagai penetapan. Laju operasional diserahkan pada batch kalibrasi (BT-63). |
+| Alternatif | Mengutip rujukan dari ingatan tanpa verifikasi — ditolak; itu persis kegagalan yang AK-09O temukan pada proposal induk, ketika buku metode campuran disitasi untuk Design Science Research (TO-02). Menetapkan angka tanpa rujukan sama sekali — ditolak; SI-01 mensyaratkan salah satu dari keduanya, dan penetapan diam-diam bukan pilihan yang tersedia. |
+| Dampak | Kekurangan anggaran waktu D-03 Bagian 12 naik dari 47 menjadi ± 105 jam — sekitar dua kali lipat. BT-62 ditambahkan untuk keputusan penutupannya. Satu butir (Douglass dkk.) ditandai belum terverifikasi primer dan wajib ditemukan sumber aslinya atau dicabut sebelum masuk naskah, sesuai SI-03. |
+| Pemutus | Anggota teknis; keputusan penutupan kekurangan tetap pada rapat tim (BT-62) |
