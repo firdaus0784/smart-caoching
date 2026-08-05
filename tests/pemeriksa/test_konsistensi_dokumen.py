@@ -191,3 +191,71 @@ def test_docs_nyata_bersih() -> None:
     akar = Path(__file__).resolve().parents[2]
     temuan = periksa_konsistensi_dokumen(akar)
     assert temuan == [], "; ".join(str(t) for t in temuan)
+
+
+# --- T-6: kode dirujuk tanpa definisi -------------------------------------
+
+from perkakas.pemeriksa.konsistensi_dokumen import periksa_kode_menggantung  # noqa: E402
+
+DENGAN_DEFINISI = """# D-99
+
+| Kode | Temuan | Tindakan |
+|---|---|---|
+| TK-01 | Sesuatu | Selesai |
+| **TK-02** | Sesuatu lain | Selesai |
+
+### ADR-01 · Contoh keputusan
+
+Isi.
+"""
+
+
+def test_kode_terdefinisi_tidak_dianggap_menggantung(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "D99.md").write_text(
+        DENGAN_DEFINISI + "\nMerujuk TK-01, TK-02, dan ADR-01.\n", encoding="utf-8"
+    )
+    assert periksa_kode_menggantung(tmp_path) == []
+
+
+def test_kode_dirujuk_tanpa_definisi_tertangkap(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "D99.md").write_text(DENGAN_DEFINISI + "\nMerujuk TK-99.\n", encoding="utf-8")
+    temuan = periksa_kode_menggantung(tmp_path)
+    assert len(temuan) == 1, f"kode menggantung lolos: {temuan}"
+    assert "TK-99" in temuan[0].pesan
+
+
+def test_definisi_di_dokumen_lain_tetap_dikenali(tmp_path: Path) -> None:
+    """Kutipan sejarah lintas dokumen sah — RQ-02."""
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "D99.md").write_text(DENGAN_DEFINISI, encoding="utf-8")
+    (docs / "D98.md").write_text("# D-98\n\nPelajaran TK-01 berlaku di sini.\n", encoding="utf-8")
+    assert periksa_kode_menggantung(tmp_path) == []
+
+
+def test_rentang_kode_tidak_dianggap_menggantung(tmp_path: Path) -> None:
+    """ "TK-01 s.d. TK-02" merujuk ujungnya, dan keduanya ada."""
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "D99.md").write_text(
+        DENGAN_DEFINISI + "\nTemuan TK-01 s.d. TK-02 sudah selesai.\n", encoding="utf-8"
+    )
+    assert periksa_kode_menggantung(tmp_path) == []
+
+
+def test_nomor_baris_dilaporkan(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "D99.md").write_text("# D-99\n\n\nMerujuk ADR-99.\n", encoding="utf-8")
+    temuan = periksa_kode_menggantung(tmp_path)
+    assert temuan[0].baris == 4
+
+
+def test_docs_nyata_tanpa_kode_menggantung() -> None:
+    akar = Path(__file__).resolve().parents[2]
+    temuan = periksa_kode_menggantung(akar)
+    assert temuan == [], "; ".join(str(t) for t in temuan[:8])

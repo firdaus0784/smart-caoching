@@ -171,3 +171,52 @@ def periksa_konsistensi_dokumen(akar: Path) -> list[Temuan]:
             )
 
     return temuan
+
+
+# Kode yang punya tempat definisi yang jelas dan dapat dikenali bentuknya.
+# TK-xx didefinisikan pada sel pertama tabel temuan; ADR-xx pada judul.
+# Kode lain — BT, FR, NFR — tersebar di banyak tempat dengan bentuk yang
+# beragam, dan memaksakan pengenalannya akan menghasilkan kebisingan.
+POLA_DEFINISI = re.compile(
+    r"^\|\s*\**(TK-\d+|ADR-\d+)\**\s*\||^#{2,4}\s+\**(TK-\d+|ADR-\d+)\**\b",
+    re.MULTILINE,
+)
+POLA_RUJUKAN = re.compile(r"\b(TK-\d+|ADR-\d+)\b")
+
+
+def periksa_kode_menggantung(akar: Path) -> list[Temuan]:
+    """R-05 — kode `TK-xx` atau `ADR-xx` dirujuk tanpa punya definisi.
+
+    Definisi dicari di **seluruh** `docs/`, bukan pada dokumen yang merujuk.
+    Kutipan sejarah lintas dokumen sah dan lazim — D-00 merujuk TK-07 sebagai
+    pelajaran jauh setelah temuannya ditutup (RQ-02).
+
+    Rentang seperti "TK-01 s.d. TK-11" tidak diuraikan: ia merujuk ujungnya,
+    dan ujungnya selalu ada. Menguraikan rentang akan menuntut menebak maksud
+    penulis, dan tebakan yang keliru menghasilkan kebisingan.
+    """
+    docs = akar / "docs"
+    if not docs.is_dir():
+        return []
+
+    berkas_docs = sorted(docs.glob("*.md"))
+    terdefinisi: set[str] = set()
+    for berkas in berkas_docs:
+        for pertama, kedua in POLA_DEFINISI.findall(berkas.read_text(encoding="utf-8")):
+            terdefinisi.add(pertama or kedua)
+
+    temuan: list[Temuan] = []
+    for berkas in berkas_docs:
+        for nomor, baris in enumerate(berkas.read_text(encoding="utf-8").splitlines(), start=1):
+            for kode in POLA_RUJUKAN.findall(baris):
+                if kode not in terdefinisi:
+                    temuan.append(
+                        Temuan(
+                            berkas,
+                            nomor,
+                            f"{kode} dirujuk tetapi tidak memiliki definisi di mana pun "
+                            "pada docs/ — kode yang dirujuk tanpa wujud adalah uji "
+                            "nomor 2 pada D-00 Bagian 5",
+                        )
+                    )
+    return temuan
