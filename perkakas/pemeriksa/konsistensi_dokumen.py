@@ -26,6 +26,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from perkakas.pemeriksa.ast_aturan import Temuan
+
 BERKAS_REGISTER = "D00.md"
 JUDUL_REGISTER = "## 2. Register Dokumen"
 
@@ -71,3 +73,101 @@ def versi_kepala(berkas: Path) -> str:
     if not cocok:
         raise ValueError(f"{berkas.name} tidak memuat baris versi yang terbaca")
     return cocok.group(1)
+
+
+POLA_RIWAYAT = re.compile(r"^\|[^|]*\|\s*\**([0-9]+\.[0-9]+)\**\s*\|", re.MULTILINE)
+POLA_BERKAS_DOKUMEN = re.compile(r"^D(\d{2})\.md$")
+
+
+def _angka(versi: str) -> tuple[int, ...]:
+    return tuple(int(b) for b in versi.split("."))
+
+
+def versi_riwayat_tertinggi(berkas: Path) -> str:
+    """Versi tertinggi pada tabel riwayat revisi.
+
+    Diambil yang **tertinggi**, bukan baris pertama maupun terakhir. Urutan
+    riwayat tidak seragam antardokumen — sebagian menaik, sebagian menurun —
+    dan memaksakan satu urutan berarti menyeragamkan dokumen demi perkakas
+    (RQ-01).
+    """
+    isi = berkas.read_text(encoding="utf-8")
+    bagian = re.split(r"^##\s+\d*\.?\s*Riwayat Revisi", isi, maxsplit=1, flags=re.MULTILINE)
+    if len(bagian) < 2:
+        raise ValueError(f"{berkas.name} tidak memuat bagian Riwayat Revisi")
+    versi = POLA_RIWAYAT.findall(bagian[1])
+    if not versi:
+        raise ValueError(f"{berkas.name} memuat bagian Riwayat Revisi tanpa satu pun baris")
+    return max(versi, key=_angka)
+
+
+def periksa_konsistensi_dokumen(akar: Path) -> list[Temuan]:
+    """R-01 s.d. R-04. Memeriksa bentuk, bukan makna (RQ-03)."""
+    docs = akar / "docs"
+    berkas_register = docs / BERKAS_REGISTER
+
+    try:
+        register = baca_register(docs)
+    except (FileNotFoundError, ValueError) as galat:
+        return [Temuan(berkas_register, 0, str(galat))]
+
+    temuan: list[Temuan] = []
+
+    # R-03 dan R-04 — register dan isi direktori saling mengenal.
+    pada_cakram = {
+        f"D-{cocok.group(1)}": b
+        for b in sorted(docs.glob("D*.md"))
+        if (cocok := POLA_BERKAS_DOKUMEN.match(b.name))
+    }
+    for kode in sorted(set(register) - set(pada_cakram)):
+        temuan.append(
+            Temuan(berkas_register, 0, f"{kode} terdaftar pada register tetapi berkasnya tidak ada")
+        )
+    for kode in sorted(set(pada_cakram) - set(register)):
+        temuan.append(
+            Temuan(
+                pada_cakram[kode],
+                0,
+                f"{kode} ada di docs/ tetapi tidak terdaftar pada register — pembaca "
+                "yang memeriksa register tidak akan mengetahui dokumen ini",
+            )
+        )
+
+    # R-01 dan R-02 — versi kepala, register, dan riwayat saling cocok.
+    for kode, berkas in sorted(pada_cakram.items()):
+        if kode not in register:
+            continue
+        try:
+            kepala = versi_kepala(berkas)
+        except ValueError as galat:
+            temuan.append(Temuan(berkas, 0, str(galat)))
+            continue
+
+        if kepala != register[kode]:
+            temuan.append(
+                Temuan(
+                    berkas,
+                    0,
+                    f"versi kepala {kepala} berbeda dari register {register[kode]} — "
+                    "register adalah tempat pembaca memeriksa dokumen mana yang berlaku",
+                )
+            )
+
+        try:
+            riwayat = versi_riwayat_tertinggi(berkas)
+        except ValueError as galat:
+            temuan.append(Temuan(berkas, 0, str(galat)))
+            continue
+
+        if kepala != riwayat:
+            temuan.append(
+                Temuan(
+                    berkas,
+                    0,
+                    f"versi kepala {kepala} berbeda dari versi tertinggi pada riwayat "
+                    f"revisi {riwayat} — D-00 Bagian 6 mewajibkan setiap kenaikan versi "
+                    "dicatat pada riwayat",
+                )
+            )
+
+    return temuan

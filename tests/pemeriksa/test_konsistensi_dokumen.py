@@ -84,3 +84,110 @@ def test_seluruh_dokumen_nyata_punya_versi_terbaca() -> None:
         except ValueError:
             gagal.append(berkas.name)
     assert not gagal, f"versi tidak terbaca pada: {gagal}"
+
+
+# --- T-3 s.d. T-5: perbandingan -------------------------------------------
+
+from perkakas.pemeriksa.konsistensi_dokumen import (  # noqa: E402
+    periksa_konsistensi_dokumen,
+    versi_riwayat_tertinggi,
+)
+
+DOKUMEN = """# D-99 · Contoh
+
+| Item | Keterangan |
+|---|---|
+| Versi | 0.2 |
+
+## 9. Riwayat Revisi
+
+| Tanggal | Versi | Perubahan | Pemicu |
+|---|---|---|---|
+| 1 Agustus 2026 | 0.1 | Dibuat | — |
+| 2 Agustus 2026 | 0.2 | Diperbarui | — |
+"""
+
+REGISTER_DUA = """# D-00
+
+## 2. Register Dokumen
+
+| Kode | Dokumen | Versi | Status |
+|---|---|---|---|
+| D-00 | Kendali | 1.0 | Aktif |
+| D-99 | Contoh | 0.2 | Aktif |
+
+## 3. Lain
+"""
+
+KEPALA_D00 = (
+    "# D-00\n\n| Item | Keterangan |\n|---|---|\n| Versi | 1.0 |\n\n"
+    "## 9. Riwayat Revisi\n\n| Tanggal | Versi | Perubahan |\n|---|---|---|\n"
+    "| 1 Agustus 2026 | 1.0 | Dibuat |\n\n"
+)
+
+
+def _susun(tmp_path: Path, dokumen: str = DOKUMEN, register: str = REGISTER_DUA) -> Path:
+    docs = tmp_path / "docs"
+    docs.mkdir(exist_ok=True)
+    (docs / "D00.md").write_text(KEPALA_D00 + register.split("# D-00\n", 1)[1], encoding="utf-8")
+    (docs / "D99.md").write_text(dokumen, encoding="utf-8")
+    return tmp_path
+
+
+def test_riwayat_tertinggi_terbaca(tmp_path: Path) -> None:
+    berkas = tmp_path / "D99.md"
+    berkas.write_text(DOKUMEN, encoding="utf-8")
+    assert versi_riwayat_tertinggi(berkas) == "0.2"
+
+
+def test_riwayat_urutan_menurun_tetap_terbaca(tmp_path: Path) -> None:
+    """Urutan riwayat tidak seragam antardokumen. Yang diambil versi
+    tertinggi, bukan baris pertama maupun terakhir — RQ-01."""
+    terbalik = DOKUMEN.replace(
+        "| 1 Agustus 2026 | 0.1 | Dibuat | — |\n| 2 Agustus 2026 | 0.2 | Diperbarui | — |",
+        "| 2 Agustus 2026 | 0.2 | Diperbarui | — |\n| 1 Agustus 2026 | 0.1 | Dibuat | — |",
+    )
+    berkas = tmp_path / "D99.md"
+    berkas.write_text(terbalik, encoding="utf-8")
+    assert versi_riwayat_tertinggi(berkas) == "0.2"
+
+
+def test_keadaan_selaras_bersih(tmp_path: Path) -> None:
+    assert periksa_konsistensi_dokumen(_susun(tmp_path)) == []
+
+
+def test_versi_kepala_menyimpang_dari_register_tertangkap(tmp_path: Path) -> None:
+    """R-01 — inilah TK-45 yang sebenarnya terjadi."""
+    akar = _susun(tmp_path, dokumen=DOKUMEN.replace("| Versi | 0.2 |", "| Versi | 0.3 |"))
+    temuan = periksa_konsistensi_dokumen(akar)
+    assert any("register" in t.pesan for t in temuan), f"penyimpangan register lolos: {temuan}"
+
+
+def test_riwayat_tertinggal_dari_kepala_tertangkap(tmp_path: Path) -> None:
+    """R-02 — versi dinaikkan tanpa riwayat revisinya ditulis."""
+    kurang = DOKUMEN.replace("| 2 Agustus 2026 | 0.2 | Diperbarui | — |\n", "")
+    akar = _susun(tmp_path, dokumen=kurang)
+    temuan = periksa_konsistensi_dokumen(akar)
+    assert any("riwayat" in t.pesan for t in temuan), f"riwayat tertinggal lolos: {temuan}"
+
+
+def test_dokumen_terdaftar_tetapi_hilang_tertangkap(tmp_path: Path) -> None:
+    """R-03 — register menunjuk berkas yang tidak ada."""
+    akar = _susun(tmp_path)
+    (akar / "docs" / "D99.md").unlink()
+    temuan = periksa_konsistensi_dokumen(akar)
+    assert any("tidak ada" in t.pesan for t in temuan)
+
+
+def test_berkas_tidak_terdaftar_tertangkap(tmp_path: Path) -> None:
+    """R-04 — dokumen ada tetapi register tidak mengetahuinya."""
+    akar = _susun(tmp_path)
+    (akar / "docs" / "D98.md").write_text(DOKUMEN.replace("D-99", "D-98"), encoding="utf-8")
+    temuan = periksa_konsistensi_dokumen(akar)
+    assert any("tidak terdaftar" in t.pesan for t in temuan)
+
+
+def test_docs_nyata_bersih() -> None:
+    akar = Path(__file__).resolve().parents[2]
+    temuan = periksa_konsistensi_dokumen(akar)
+    assert temuan == [], "; ".join(str(t) for t in temuan)
