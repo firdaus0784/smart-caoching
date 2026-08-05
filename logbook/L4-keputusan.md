@@ -82,3 +82,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengutip rujukan dari ingatan tanpa verifikasi — ditolak; itu persis kegagalan yang AK-09O temukan pada proposal induk, ketika buku metode campuran disitasi untuk Design Science Research (TO-02). Menetapkan angka tanpa rujukan sama sekali — ditolak; SI-01 mensyaratkan salah satu dari keduanya, dan penetapan diam-diam bukan pilihan yang tersedia. |
 | Dampak | Kekurangan anggaran waktu D-03 Bagian 12 naik dari 47 menjadi ± 105 jam — sekitar dua kali lipat. BT-62 ditambahkan untuk keputusan penutupannya. Satu butir (Douglass dkk.) ditandai belum terverifikasi primer dan wajib ditemukan sumber aslinya atau dicabut sebelum masuk naskah, sesuai SI-03. |
 | Pemutus | Anggota teknis; keputusan penutupan kekurangan tetap pada rapat tim (BT-62) |
+
+## KB-007 · Kewajiban memperbarui register dinyatakan, bukan sekadar diperiksa
+
+| | |
+|---|---|
+| Tanggal | 2026-08-05 |
+| Konteks | Fitur 014 menambahkan pemeriksa yang menjatuhkan `make check` bila versi kepala, register `docs/D00.md` Bagian 2, dan riwayat revisi tidak cocok. Namun D-00 Bagian 6 hanya mewajibkan dua tempat: kepala dan riwayat. Menegakkan aturan yang tidak tertulis berarti orang dijatuhkan gerbang atas kewajiban yang tidak pernah diberitahukan kepadanya. |
+| Keputusan | D-00 Bagian 6 diubah menyatakan tegas bahwa kenaikan versi menyentuh **tiga** tempat, dan D-00 Bagian 5 menyatakan uji nomor 1 dan 2 kini dijalankan mesin sekaligus menegaskan lima sisanya tetap menuntut manusia. D-00 naik ke 2.5. |
+| Alternatif | Menambahkan pemeriksa tanpa menuliskan aturannya — ditolak; itu memindahkan lubang TK-45, tidak menutupnya. Yang gagal pada TK-45 bukan kedisiplinan orangnya melainkan aturan yang tidak pernah dinyatakan, dan pemeriksa yang menegakkan aturan tak tertulis membuat orang belajar dari kegagalan gerbang alih-alih dari dokumen. Menuliskan aturan tanpa pemeriksa — ditolak; itu persis keadaan sebelum TK-45, dan imbauan sudah terbukti tidak cukup. |
+| Dampak | Setiap kenaikan versi dokumen sejak sekarang wajib menyentuh tiga tempat, dan ketiganya dicocokkan pada setiap `make check`. Lima pertanyaan audit sisanya tidak berkurang bobotnya; catatan pada Bagian 5 sengaja menegaskan itu agar pemeriksa mesin tidak menjadi alasan melewatkan AK-10 dan AK-11. |
+| Pemutus | Anggota teknis; D-00 adalah dokumen pengendali, sehingga perubahan ini diajukan untuk konfirmasi rapat tim |
