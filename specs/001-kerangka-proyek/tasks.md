@@ -8,7 +8,7 @@ Tugas atomik: dapat diselesaikan dan diuji sendiri, tidak menggantung.
 |---|---|
 | Spec | `spec.md` (lolos Gerbang 1) |
 | Plan | `plan.md` (lolos Gerbang 2) |
-| Status | **Menunggu Gerbang 4** — seluruh 34 tugas selesai |
+| Status | **SELESAI** — lolos Gerbang 4 pada 5 Agustus 2026 |
 | Jumlah tugas | **34** — melampaui ambang ±30; lihat catatan pada bagian Urutan |
 
 ## Kewajiban dari Gerbang 2
@@ -192,7 +192,7 @@ puluh adalah harga yang lebih murah daripada itu.
 - [x] Seluruh kebutuhan R-01 s.d. R-18 punya uji yang lulus — 212 uji
 - [x] Cakupan tidak turun — penanda 98,9% atas 251 pernyataan
 - [x] Catatan `logbook/` ditambahkan: L2 titik nol ketergantungan, L4 tiga keputusan berjalan, L7 dua entri alat bantu AI, L8 tagihan pasal
-- [ ] **Daftar periksa Gerbang 4 (G4-01 s.d. G4-25) diperiksa manusia** — menunggu pemegang gerbang
+- [x] **Daftar periksa Gerbang 4 (G4-01 s.d. G4-25) diperiksa manusia** — pemegang gerbang (KB-001), 5 Agustus 2026
 
 
 ---
