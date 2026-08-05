@@ -93,3 +93,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menambahkan pemeriksa tanpa menuliskan aturannya — ditolak; itu memindahkan lubang TK-45, tidak menutupnya. Yang gagal pada TK-45 bukan kedisiplinan orangnya melainkan aturan yang tidak pernah dinyatakan, dan pemeriksa yang menegakkan aturan tak tertulis membuat orang belajar dari kegagalan gerbang alih-alih dari dokumen. Menuliskan aturan tanpa pemeriksa — ditolak; itu persis keadaan sebelum TK-45, dan imbauan sudah terbukti tidak cukup. |
 | Dampak | Setiap kenaikan versi dokumen sejak sekarang wajib menyentuh tiga tempat, dan ketiganya dicocokkan pada setiap `make check`. Lima pertanyaan audit sisanya tidak berkurang bobotnya; catatan pada Bagian 5 sengaja menegaskan itu agar pemeriksa mesin tidak menjadi alasan melewatkan AK-10 dan AK-11. |
 | Pemutus | Anggota teknis; D-00 adalah dokumen pengendali, sehingga perubahan ini diajukan untuk konfirmasi rapat tim |
+
+## KB-008 · Pemilik prosedur pembangunan ontologi dan audit graf
+
+| | |
+|---|---|
+| Tanggal | 2026-08-05 |
+| Konteks | TK-42 menyatakan tabel kepemilikan `docs/D00.md` Bagian 3 tidak punya baris bagi prosedur pembangunan ontologi. Tanpa pemilik, tidak ada dokumen yang wajib menuliskannya — dan itu sebabnya prosedur itu tidak pernah ada meski targetnya, penanggung jawabnya, dan butir Definisi Selesainya sudah ditetapkan sejak awal. |
+| Keputusan | Diusulkan prosedur pembangunan ke **D-06** (Bagian 11) dan prosedur audit graf ke **D-08** (Bagian 4.4). Alasan D-06: FR-E03 mengikat setiap konsep ke dokumen sumber, sehingga pembangunan ontologi adalah pekerjaan di atas bahan terkurasi dan tunduk pada aturan lisensi serta gerbang kurasi yang sudah dimiliki D-06. Alasan D-08: ia pemilik tunggal prosedur uji, dan MK-06 sudah menunjuk ke sana meski penunjuknya keliru. |
+| Alternatif | Menempatkan prosedur pada **D-03** — ditolak; D-03 pemilik skema anotasi rentang teks, dan graf konsep bukan anotasi rentang. Menempatkannya pada **D-04** — ditolak; D-04 pemilik keputusan arsitektur dan model data, dan tabel `konsep` serta `relasi` memang sudah ada di sana, tetapi model data bukan prosedur kerja. Menempatkan audit graf bersama prosedurnya di D-06 — ditolak; memisahkan yang mengerjakan dari yang memeriksa adalah pemisahan yang sama yang sudah dipakai D-03 dan D-08 untuk anotasi. |
+| Dampak | Tabel kepemilikan bertambah dua baris. Enam dokumen naik versi. Yang lebih penting: butir Definisi Selesai nomor 3 kini punya cara diverifikasi, dan target MK-06 tidak lagi dapat dipenuhi dengan konsep tanpa definisi atau tanpa sumber. |
+| Pemutus | Anggota teknis; **usulan, bukan penetapan.** D-00 dokumen pengendali, dan kedua baris ditandai menunggu konfirmasi rapat tim |
