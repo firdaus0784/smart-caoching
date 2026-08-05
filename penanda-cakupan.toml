@@ -1,16 +1,13 @@
 # Penanda cakupan uji — C-11, NFR-16
 #
 # `tercatat` adalah nilai terukur terakhir yang disetujui. `make check` gagal
-# bila pengukuran berikutnya lebih rendah (C-11).
-#
-# KEADAAN PADA FITUR 001, FASE B
-# src/ masih nyaris kosong sampai Fase D, sehingga angka di bawah belum
-# bermakna dan lantai NFR-16 (60%) belum berlaku. Penanda diisi dengan nilai
-# terukur sebenarnya sebelum Gerbang 4 — butir G4-16.
+# bila pengukuran berikutnya lebih rendah (C-11). Lantai NFR-16 sebesar 60%
+# berlaku sejak ada pernyataan yang dapat diukur.
 #
 # Menurunkan angka ini untuk meloloskan `make check` membatalkan gunanya.
 # Perubahannya adalah keputusan manusia, dicatat pada logbook/L4.
 
-tercatat = 0.0
-pernyataan = 0
-diukur_pada = "belum-diukur"
+tercatat = 98.9
+pernyataan = 251
+diukur_pada = "2026-08-05"
+diukur_pada_fitur = "001 kerangka proyek"
