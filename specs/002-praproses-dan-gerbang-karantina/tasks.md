@@ -17,13 +17,13 @@ berdiri di atasnya.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | Enum `Area` pada `src/penyimpanan/area.py` — `karantina`, `korpus` | Uji: nilai enum persis mengikuti `dokumen_sumber.area_simpan` pada D-14 Bagian 5.1; nilai di luar itu ditolak | R-03 | [ ] |
-| A-2 | `Kredensial` pada `src/penyimpanan/kredensial.py`, dengan himpunan baca dan himpunan tulis | Uji: `Kredensial` tidak dapat diubah setelah dibentuk. **Uji: himpunan kosong bukan berarti semua** | R-01 | [ ] |
-| A-3 | Tiga kredensial baku: `PENJAWABAN`, `VERIFIKASI`, `PEMANGGIL_LLM` — tetapan, bukan fungsi pembangun | Uji: `PENJAWABAN` dan `PEMANGGIL_LLM` tidak memuat `KARANTINA` pada himpunan baca. **Uji: `PEMANGGIL_LLM` berhimpunan tulis kosong** | R-01, R-01a, R-01b | [ ] |
-| A-4 | `GalatAksesDitolak` pada `src/penyimpanan/galat.py` | Uji: pesan pengguna ≤ 20 kata, Bahasa Indonesia, tanpa istilah teknis, **tanpa nama area** (C-13, D-14 Bagian 4.2) | R-02 | [ ] |
-| A-5 | Antarmuka abstrak `PenyimpanDasar` pada `src/penyimpanan/dasar.py` | Uji: setiap metode menerima `Kredensial` sebagai parameter wajib, bukan opsional | R-01, R-02 | [ ] |
-| A-6 | Pelaksana tiruan dalam memori pada `src/penyimpanan/tiruan.py` | Uji: **kredensial diperiksa sebelum data disentuh** — dokumen yang tidak ada pada area terlarang tetap menghasilkan galat akses, bukan galat tidak ditemukan | R-01a, R-02 | [ ] |
-| A-7 | Pencatatan percobaan akses yang ditolak | Uji: percobaan tercatat; **uji: catatannya tidak memuat id maupun isi dokumen** | R-02, R-12 | [ ] |
+| A-1 | Enum `Area` pada `src/penyimpanan/area.py` — `karantina`, `korpus` | Uji: nilai enum persis mengikuti `dokumen_sumber.area_simpan` pada D-14 Bagian 5.1; nilai di luar itu ditolak | R-03 | [x] |
+| A-2 | `Kredensial` pada `src/penyimpanan/kredensial.py`, dengan himpunan baca dan himpunan tulis | Uji: `Kredensial` tidak dapat diubah setelah dibentuk. **Uji: himpunan kosong bukan berarti semua** | R-01 | [x] |
+| A-3 | Tiga kredensial baku: `PENJAWABAN`, `VERIFIKASI`, `PEMANGGIL_LLM` — tetapan, bukan fungsi pembangun | Uji: `PENJAWABAN` dan `PEMANGGIL_LLM` tidak memuat `KARANTINA` pada himpunan baca. **Uji: `PEMANGGIL_LLM` berhimpunan tulis kosong** | R-01, R-01a, R-01b | [x] |
+| A-4 | `GalatAksesDitolak` pada `src/penyimpanan/galat.py` | Uji: pesan pengguna ≤ 20 kata, Bahasa Indonesia, tanpa istilah teknis, **tanpa nama area** (C-13, D-14 Bagian 4.2) | R-02 | [x] |
+| A-5 | Antarmuka abstrak `PenyimpanDasar` pada `src/penyimpanan/dasar.py` | Uji: setiap metode menerima `Kredensial` sebagai parameter wajib, bukan opsional | R-01, R-02 | [x] |
+| A-6 | Pelaksana tiruan dalam memori pada `src/penyimpanan/tiruan.py` | Uji: **kredensial diperiksa sebelum data disentuh** — dokumen yang tidak ada pada area terlarang tetap menghasilkan galat akses, bukan galat tidak ditemukan | R-01a, R-02 | [x] |
+| A-7 | Pencatatan percobaan akses yang ditolak | Uji: percobaan tercatat; **uji: catatannya tidak memuat id maupun isi dokumen** | R-02, R-12 | [x] |
 
 **A-6 adalah tugas terpenting pada fase ini.** Penyimpan yang memeriksa
 keberadaan lebih dulu membocorkan keberadaan dokumen karantina lewat perbedaan
@@ -34,7 +34,7 @@ galat, dan itu meruntuhkan C-03 tanpa satu pun dokumen terbaca.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | B-1 | Metadata asal dokumen pada `src/ingest/dokumen.py` | Uji: bidang FR-B06 wajib terisi; dokumen tanpa salah satunya ditolak saat dibentuk | R-06 | [ ] |
-| B-2 | Pemetaan jenis sumber ke peringkat T1–T4 pada `src/ingest/peringkat.py` | Uji: seluruh baris D-13 Bagian 6 terpetakan. **Uji: jenis sumber tak dikenal → galat, bukan T4 diam-diam** | R-07 | [ ] |
+| B-2 | Pemetaan jenis sumber ke peringkat T1–T4 pada `src/ingest/peringkat.py` | Uji: seluruh baris D-13 Bagian 6 terpetakan. **Uji: jenis sumber tak dikenal → galat, bukan T4 diam-diam** | R-07 | [x] |
 | B-3 | Masuk selalu ke karantina pada `src/ingest/gerbang.py` | Uji: dokumen baru berada di `karantina`; **uji: tidak ada jalan membuat dokumen langsung di `korpus`** | R-03 | [ ] |
 | B-4 | Perpindahan hanya dengan persetujuan verifikator tercatat | Uji: perpindahan tanpa id verifikator → galat. **Uji: perpindahan dengan kredensial `PENJAWABAN` → galat akses** | R-04 | [ ] |
 | B-5 | Penolakan menahan dokumen beserta alasannya | Uji: dokumen ditolak tetap di `karantina`, `status_anonimisasi` menjadi `ditolak`, alasan tersimpan | R-05 | [ ] |
