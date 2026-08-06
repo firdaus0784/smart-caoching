@@ -137,3 +137,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | **(G2-A)** Verifikasi oleh `kurator` — ditolak; kurator sudah memikul FR-I03 dan D-06 Bagian 8 merancang bebannya di bawah 4 jam per minggu, sehingga menambahkannya menyentuh langsung BT-62 dan BT-66. Verifikasi oleh `admin` — ditolak; `admin` peran teknis, dan menjadikannya pemutus mutu data mencampur dua tanggung jawab berbeda sifat. **(G2-B)** Penyimpanan di dalam `src/ingest/` — ditolak; `src/rag/` perlu membaca korpus, sehingga aturan arah wajib dilonggarkan, dan pelonggaran demi satu fitur membuka jalan bagi pelonggaran berikutnya. Tanpa lapisan bersama — ditolak; C-03 harus ditegakkan di dua tempat, bertentangan dengan AP-01. **(G2-C)** Memperluas `jejak_kurasi` — ditolak; mencampur dua alur berpemilik berbeda. Cukup log operasional — ditolak; D-04 Bagian 11 memberi log operasional masa simpan lebih pendek, sehingga jejaknya hilang saat log dirotasi dan R-11 menjadi tidak dapat diuji. |
 | Dampak | Empat berkas naik versi: D-04, D-14, D-00, dan `AGENTS.md` sebagai lapisan tata kelola. `src/penyimpanan/` menjadi titik sempit kedua sesudah `src/llm/` — keduanya lahir dari alasan yang sama, yaitu aturan penting ditegakkan pada satu tempat. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-001) |
+
+## KB-012 · Putusan Gerbang 3 fitur 002 dan kekerapan pelaporan
+
+| | |
+|---|---|
+| Tanggal | 2026-08-05 |
+| Konteks | `tasks.md` fitur 002 memuat 18 tugas dalam empat fase. Fitur 001 memakai 34 tugas dan mendekati ambang ±30 yang ditetapkan Gerbang 1 fitur 001. |
+| Keputusan | **Gerbang 3 lolos, 18 tugas, implementasi dimulai dari Fase A.** Pelaporan **per fase**, empat kali. Usulan daftar ketergantungan fitur 015 disusun **setelah** fitur 002 selesai. |
+| Alternatif | Menggabungkan A-1 dengan A-2 dan D-1 dengan D-2 menjadi 16 tugas — ditolak; keduanya menguji hal berbeda, dan menggabungkannya membuat satu commit dapat gagal karena dua sebab sehingga bukti "uji gagal sebelum implementasi" menjadi kabur. Pelaporan per tugas — ditolak; sebagian besar tugas berakhir sama sehingga laporannya berulang. Pelaporan sekali di Gerbang 4 — ditolak; arah yang salah pada Fase A baru terlihat setelah tiga fase dibangun di atasnya. Menyusun usulan ketergantungan 015 sekarang — ditolak; memecah perhatian dari 002. |
+| Dampak | Implementasi berjalan. Pemberhentian di luar batas fase tetap berlaku bila sebuah tugas tidak dapat diselesaikan tanpa melanggar `constitution.md` atau `plan.md` — itu aturan `AGENTS.md`, bukan pilihan pelaporan. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-001) |
