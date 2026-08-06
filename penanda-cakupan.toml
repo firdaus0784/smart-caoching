@@ -1,5 +1,10 @@
 # Penanda cakupan uji — C-11, NFR-16
 #
+# `tercatat` dibulatkan **ke bawah** dari nilai terukur, tidak pernah ke atas.
+# Membulatkan ke atas menghasilkan penanda yang lebih tinggi daripada kenyataan,
+# dan `make check` gagal pada commit berikutnya karena angka yang tidak pernah
+# tercapai. Terjadi sekali pada 5 Agustus 2026: 99,435 dicatat sebagai 99,44.
+#
 # `tercatat` adalah nilai terukur terakhir yang disetujui. `make check` gagal
 # bila pengukuran berikutnya lebih rendah (C-11). Lantai NFR-16 sebesar 60%
 # berlaku sejak ada pernyataan yang dapat diukur.
@@ -7,7 +12,7 @@
 # Menurunkan angka ini untuk meloloskan `make check` membatalkan gunanya.
 # Perubahannya adalah keputusan manusia, dicatat pada logbook/L4.
 
-tercatat = 99.44
+tercatat = 99.43
 pernyataan = 483
 diukur_pada = "2026-08-05"
 diukur_pada_fitur = "001 kerangka proyek"
