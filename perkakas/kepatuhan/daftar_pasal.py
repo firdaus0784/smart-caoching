@@ -30,6 +30,7 @@ from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
+from perkakas.pemeriksa.pemisahan_penyimpanan import periksa_pemisahan_penyimpanan
 from perkakas.pemeriksa.tanpa_kemampuan_bertindak import periksa_tanpa_kemampuan_bertindak
 
 Pemeriksa = Callable[[Path], list[Temuan]]
@@ -67,7 +68,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-03",
         "layanan RAG dan pelatihan tanpa akses area karantina",
-        fitur_pengunci="002 gerbang karantina",
+        pemeriksa=periksa_pemisahan_penyimpanan,
     ),
     Pasal(
         "C-04",
