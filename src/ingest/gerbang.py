@@ -30,6 +30,7 @@ from collections.abc import Callable
 
 from src.ingest.adversarial import Temuan, periksa_pola
 from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan
+from src.ingest.jejak import JejakArea
 from src.llm.tipe import Peringkat
 from src.penyimpanan.area import Area
 from src.penyimpanan.dasar import PenyimpanDasar
@@ -54,6 +55,7 @@ class Gerbang:
         pemeriksa: Callable[[str], list[Temuan]] = periksa_pola,
     ) -> None:
         self.penyimpan = penyimpan
+        self.jejak = JejakArea()
         self._pemeriksa = pemeriksa
         self._dokumen: dict[str, Dokumen] = {}
         self._area: dict[str, Area] = {}
@@ -245,6 +247,11 @@ class Gerbang:
 
         Persetujuan tanpa nama verifikator ditolak: yang tidak dapat ditelusuri
         tidak dapat dipertanggungjawabkan.
+
+        **Jejak ditulis sebelum dokumen berpindah** (R-11). Alasan yang memuat
+        data pribadi membatalkan seluruh persetujuannya, bukan hanya jejaknya:
+        memindahkan dokumen lalu gagal menjejakkannya menghasilkan perubahan
+        yang tidak tercatat, persis keadaan yang R-11 larang.
         """
         if not id_verifikator:
             raise GalatGerbang("persetujuan tanpa nama verifikator tidak dapat ditelusuri")
@@ -262,6 +269,13 @@ class Gerbang:
                 "verifikator tidak dapat menggantikannya (ET-04)"
             )
 
+        self.jejak.catat(
+            id_dokumen=id_dokumen,
+            id_pelaku=id_verifikator,
+            dari_area=Area.KARANTINA,
+            ke_area=Area.KORPUS,
+            alasan=alasan,
+        )
         self.penyimpan.pindahkan(kredensial, id_dokumen, Area.KARANTINA, Area.KORPUS, alasan)
         self._area[id_dokumen] = Area.KORPUS
         self._alasan[id_dokumen] = alasan
@@ -289,13 +303,20 @@ class Gerbang:
         if not alasan:
             raise GalatGerbang("penolakan wajib menyertakan alasan")
 
+        self.jejak.catat(
+            id_dokumen=id_dokumen,
+            id_pelaku=id_verifikator,
+            dari_area=self._area[id_dokumen],
+            ke_area=Area.KARANTINA,
+            alasan=alasan,
+        )
         self._area[id_dokumen] = Area.KARANTINA
         self._alasan[id_dokumen] = alasan
         self._dokumen[id_dokumen] = self._dokumen[id_dokumen].model_copy(
             update={"status_anonimisasi": StatusAnonimisasi.DITOLAK}
         )
 
-    def cabut_persetujuan(self, id_dokumen: str, alasan: str) -> None:
+    def cabut_persetujuan(self, id_dokumen: str, id_pemohon: str, alasan: str) -> None:
         """Tarik persetujuan pemilik — dokumen keluar dari korpus (KB-014).
 
         **Tidak menuntut kredensial pemanggil.** Mencabut akses selalu aman:
@@ -312,8 +333,26 @@ class Gerbang:
         Berlaku seketika, tanpa menunggu peninjauan. Dokumen yang sudah di
         karantina tetap di sana; statusnya yang berubah, dan itu yang menutup
         jalan persetujuan ulang tanpa izin baru.
+
+        **`id_pemohon` wajib meski kredensial tidak.** Keduanya menjawab
+        pertanyaan berbeda: kredensial menjawab "bolehkah", `id_pemohon`
+        menjawab "siapa". Penarikan selalu boleh, tetapi korpus yang menyusut
+        tanpa nama di jejaknya tetap korpus yang menyusut tanpa penjelasan
+        (R-11).
+
+        Yang dicatat adalah pihak yang menjalankan penarikan, bukan pemilik
+        dokumen. Identitas pemilik berasal dari formulir persetujuan ET-02,
+        yang belum dibangun pada fitur ini.
         """
         dokumen = self._dokumen[id_dokumen]
+
+        self.jejak.catat(
+            id_dokumen=id_dokumen,
+            id_pelaku=id_pemohon,
+            dari_area=self._area[id_dokumen],
+            ke_area=Area.KARANTINA,
+            alasan=alasan,
+        )
         self._dokumen[id_dokumen] = dokumen.model_copy(
             update={"status_persetujuan_pemilik": StatusPersetujuan.DICABUT}
         )

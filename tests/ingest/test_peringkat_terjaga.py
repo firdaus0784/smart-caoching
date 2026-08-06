@@ -90,7 +90,7 @@ def test_peringkat_setelah_penarikan_tidak_terbaca_lagi() -> None:
     peringkatnya ikut tertutup kembali."""
     gerbang = _gerbang_terisi()
     gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
+    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
     with pytest.raises(GalatAksesDitolak):
         gerbang.peringkat(PENJAWABAN, "dok_001")
 

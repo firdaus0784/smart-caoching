@@ -153,7 +153,7 @@ def test_penarikan_persetujuan_mengeluarkan_dokumen_dari_korpus() -> None:
     gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
     assert gerbang.area(VERIFIKASI, "dok_001") is Area.KORPUS
 
-    gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
+    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
     assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
 
 
@@ -168,7 +168,7 @@ def test_dokumen_yang_ditarik_tidak_terbaca_jalur_penjawaban() -> None:
     gerbang = _gerbang()
     gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
     gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
+    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
     with pytest.raises(GalatDokumenTidakAda):
         gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_001")
 
@@ -182,7 +182,7 @@ def test_dokumen_yang_ditarik_tidak_dapat_disetujui_ulang_tanpa_izin_baru() -> N
     gerbang = _gerbang()
     gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
     gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
+    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
     with pytest.raises(GalatGerbang):
         gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
 
@@ -205,7 +205,7 @@ def test_penarikan_pada_dokumen_yang_masih_di_karantina() -> None:
     """
     gerbang = _gerbang()
     gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
+    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
     assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
     with pytest.raises(GalatGerbang):
         gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
