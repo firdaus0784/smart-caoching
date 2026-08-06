@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| Kebutuhan | FR-B05, FR-B06, FR-B07, FR-B08, FR-B09 · FR-B01 s.d. FR-B04 diusulkan ditunda, lihat Di luar cakupan |
+| Kebutuhan | FR-B05, FR-B06, FR-B07, FR-B08, FR-B09 · FR-B01 s.d. FR-B04 dipindahkan ke fitur 015 |
 | Dokumen terkait | D-01 Modul B · D-04 ADR-06, ADR-12 · D-13 KD-01, KD-02, KD-08, KD-10, Bagian 6 · D-03 Bagian 12.6 |
 | Pasal konstitusi yang menyentuh fitur ini | **C-03**, C-05, C-08, C-09, C-11, C-12, C-19 |
 | Urutan pembangunan | 002 pada `docs/D12.md` Bagian 7 |
-| Status | Menunggu Gerbang 1 |
+| Status | **Lolos Gerbang 1** — 5 Agustus 2026. Menunggu `plan.md` dan Gerbang 2 |
 
 ## Tujuan
 
@@ -47,13 +47,18 @@ menunda pekerjaan yang tidak menunggu apa pun.
 
 Batas ini yang menjaga fitur tetap dapat diselesaikan.
 
-- **FR-B01, FR-B02, FR-B03, FR-B04 diusulkan ditunda ke fitur tersendiri.**
-  Keempatnya — pembacaan PDF/DOCX/XLSX, OCR, praproses Bahasa Indonesia, dan
-  pendeteksi data pribadi — **masing-masing menuntut ketergantungan baru**,
-  sehingga seluruhnya tertahan C-12 sampai penanggung jawab teknis menyetujui
-  daftarnya. Menggabungkannya ke sini membuat fitur yang seluruh intinya dapat
-  dibangun hari ini menunggu persetujuan yang belum diajukan. Ini pertanyaan
-  Gerbang 1 nomor 1.
+- **FR-B01, FR-B02, FR-B03, FR-B04 dibangun pada fitur 015**, diputuskan
+  Gerbang 1. Keempatnya — pembacaan PDF/DOCX/XLSX, OCR, praproses Bahasa
+  Indonesia, dan pendeteksi data pribadi — masing-masing menuntut
+  ketergantungan baru, sehingga seluruhnya tertahan C-12 sampai penanggung
+  jawab teknis menyetujui daftarnya.
+
+  **Akibat yang wajib disadari:** tanpa FR-B04, fitur ini membangun gerbang
+  bagi anonimisasi yang belum ada. Itu disengaja dan bukan cacat urutan —
+  gerbanglah yang menentukan apa yang boleh lewat, dan membangunnya lebih dulu
+  berarti pendeteksi data pribadi lahir ke dalam sistem yang sudah menahannya.
+  Urutan sebaliknya menghasilkan pendeteksi yang keluarannya tidak ada yang
+  memeriksa.
 - **Basis data sungguhan.** Pemisahan kredensial dibangun terhadap antarmuka
   abstrak dengan penyimpan tiruan deterministik, mengikuti ADR-12 yang sudah
   terbukti pada fitur 001. Penyetelan PostgreSQL dan peran basis datanya adalah
@@ -69,14 +74,17 @@ Batas ini yang menjaga fitur tetap dapat diselesaikan.
 
 | ID | Kebutuhan |
 |---|---|
-| R-01 | Layanan yang berperan sebagai jalur penjawaban **TIDAK BOLEH** memiliki kredensial yang dapat membaca area karantina. Pemisahan pada tingkat kredensial, bukan pada penyaringan kueri (C-03, ADR-06) |
+| R-01 | Sistem **HARUS** memiliki tiga peran kredensial terpisah: jalur penjawaban, jalur verifikasi, dan pemanggil LLM. Pemisahan pada tingkat kredensial, bukan pada penanda status (C-03, ADR-06) |
+| R-01a | Peran jalur penjawaban dan peran pemanggil LLM **TIDAK BOLEH** memiliki kredensial yang dapat membaca area karantina (KD-10) |
+| R-01b | Peran pemanggil LLM **TIDAK BOLEH** memiliki akses tulis ke penyimpanan mana pun, dan **TIDAK BOLEH** menjangkau kunci pemetaan pseudonim (KD-10, NFR-21, C-05) |
 | R-02 | **JIKA** layanan jalur penjawaban mencoba membaca area karantina, **MAKA** sistem **HARUS** menolak dan mencatat percobaannya |
 | R-03 | **KETIKA** sebuah dokumen diunggah, sistem **HARUS** menempatkannya di area karantina, dan bukan di korpus |
 | R-04 | Dokumen **TIDAK BOLEH** berpindah dari karantina ke korpus tanpa persetujuan seorang verifikator manusia yang tercatat (FR-B05, KD-02) |
 | R-05 | **KETIKA** verifikator menolak sebuah dokumen, sistem **HARUS** menahannya di karantina beserta alasan penolakannya (FR-B07) |
 | R-06 | Setiap dokumen **HARUS** membawa metadata asal: jenis, tahun, unit penerbit, tingkat kerahasiaan, status persetujuan pemilik (FR-B06) |
-| R-07 | Setiap segmen **HARUS** membawa peringkat kepercayaan asal T1 s.d. T4, ditetapkan dari jenis sumbernya menurut D-13 Bagian 6 (FR-B09, KD-08) |
-| R-08 | Peringkat kepercayaan **TIDAK BOLEH** dapat diubah oleh jalur penjawaban — ia ditetapkan saat masuk dan dibaca saja sesudahnya |
+| R-07 | **KETIKA** sebuah dokumen masuk, sistem **HARUS** menetapkan peringkat kepercayaan asal T1 s.d. T4 dari jenis sumbernya menurut D-13 Bagian 6 (FR-B09, KD-08) |
+| R-07a | **SELAMA** sebuah dokumen berada di karantina, peringkatnya **TIDAK BOLEH** terbaca oleh jalur penjawaban — peringkat T3 baru sah setelah gerbang R-04 dilewati, karena D-13 Bagian 6 mendefinisikan T3 sebagai dokumen sekolah teranonimkan **dan terverifikasi** |
+| R-08 | Peringkat kepercayaan **TIDAK BOLEH** dapat diubah oleh jalur penjawaban maupun pemanggil LLM — ia ditetapkan saat masuk, disahkan oleh verifikasi, dan dibaca saja sesudahnya |
 | R-09 | **KETIKA** sebuah dokumen diperiksa pola instruksi adversarial dan ditemukan pola, sistem **HARUS** menahannya untuk ditinjau manusia, bukan sekadar mencatatnya (FR-B08, KD-01) |
 | R-10 | **JIKA** pemeriksa pola adversarial gagal berjalan, **MAKA** dokumen **HARUS** ditahan, bukan diloloskan |
 | R-11 | Setiap perpindahan dokumen antar-area **HARUS** tercatat: siapa, kapan, dari mana ke mana, dengan alasannya |
@@ -98,38 +106,49 @@ layar verifikator menunggu D-05.
 
 ## Kriteria penerimaan
 
-- [ ] R-01 s.d. R-12 masing-masing punya uji yang gagal sebelum implementasi
+- [ ] R-01 s.d. R-12, termasuk R-01a, R-01b, dan R-07a, masing-masing punya uji yang gagal sebelum implementasi
 - [ ] **C-03 punya uji tersendiri**, dan `make compliance` berpindah dari
       "belum dapat diperiksa" menjadi "lulus" untuk pasal itu
 - [ ] Daftar tagihan `make compliance` menyusut dari 13 menjadi 12
 - [ ] Uji mutasi: pemisahan kredensial dilanggar secara buatan → `make check` gagal
+- [ ] Uji tersendiri bahwa peringkat T3 tidak terbaca jalur penjawaban selama dokumen di karantina (R-07a)
 - [ ] Tidak ada ketergantungan baru (C-12)
 - [ ] Cakupan uji tidak turun (C-11)
 - [ ] Setiap keluaran percobaan mencatat versi ke `logbook/` (C-09)
 
-## Pertanyaan terbuka
+## Keputusan Gerbang 1
 
-Fitur ini **belum dapat diserahkan ke agen** sampai ketiganya dijawab.
+Ketiganya diputus 5 Agustus 2026 oleh pemegang Gerbang 1–4 (KB-001), dicatat
+pada `logbook/L4` KB-010. **Tidak ada pertanyaan terbuka yang tersisa**, sehingga
+fitur ini memenuhi syarat templat untuk diserahkan ke agen.
 
-1. **Apakah FR-B01 s.d. FR-B04 dipisahkan menjadi fitur tersendiri?**
-   Rekomendasi: ya. Keempatnya tertahan C-12, dan menahan inti fitur bersamanya
-   berarti tidak ada yang bergerak. Bila dijawab tidak, daftar ketergantungan
-   wajib diajukan dan disetujui sebelum `plan.md` disusun.
+**1 · FR-B01 s.d. FR-B04 dipisah menjadi fitur 015.** Keempatnya tertahan C-12;
+menahan inti fitur bersamanya berarti tidak ada yang bergerak. `docs/D12.md`
+Bagian 7 bertambah satu baris.
 
-2. **Berapa peran kredensial yang dibangun?** Sekurang-kurangnya dua: jalur
-   penjawaban dan jalur verifikasi. D-13 KD-10 menyiratkan yang ketiga —
-   layanan pemanggil LLM tanpa akses tulis, tanpa akses karantina, tanpa akses
-   kunci pseudonim. Menjadikannya dua atau tiga adalah keputusan rancangan yang
-   tidak boleh diambil diam-diam saat menulis kode, sebagaimana BT-14 pada
-   fitur 001.
+**2 · Tiga peran kredensial**, bukan dua: jalur penjawaban, jalur verifikasi,
+dan pemanggil LLM. D-13 KD-10 sudah menyebut peran ketiga secara tegas —
+tanpa akses tulis, tanpa akses karantina, tanpa akses kunci pseudonim.
+Menambahkannya belakangan berarti mengubah pemisahan yang sudah terpasang,
+dan itu jenis perubahan yang paling mudah keliru. Membangunnya sekarang
+sekaligus menyiapkan C-05 dan NFR-21 bagi fitur 012.
 
-3. **Apakah peringkat T1 s.d. T4 ditetapkan otomatis dari jenis sumber, atau
-   memerlukan penegasan manusia?** D-13 Bagian 6 memetakan peringkat ke asal,
-   sehingga penetapan otomatis mungkin. Tetapi T3 mencakup "dokumen sekolah
-   teranonimkan **dan terverifikasi**", dan kata kedua itu adalah keputusan
-   manusia — sehingga peringkat tidak dapat sepenuhnya ditetapkan sebelum
-   gerbang R-04 dilewati. Urutannya perlu ditegaskan.
+**3 · Peringkat ditetapkan saat masuk; T3 sah hanya setelah verifikasi.**
+Peringkat ditetapkan dari jenis sumber sejak dokumen tiba, sehingga pemeriksa
+pola adversarial punya sinyal asal justru pada tahap dokumen belum dipercaya.
+Tetapi D-13 Bagian 6 mendefinisikan T3 sebagai dokumen sekolah teranonimkan
+**dan terverifikasi**, dan kata kedua itu keputusan manusia — sehingga
+peringkat dokumen di karantina tidak pernah terbaca jalur penjawaban.
 
-Empat temuan AK-12 yang berbahan — TK-40, TK-41, TK-42, TK-47 — tidak
-menghambat fitur ini. TK-41 menyentuhnya hanya pada bagian penjadwalan, yang
-berada di luar cakupan.
+Wujudnya pada R-01, R-01a, R-01b, R-07, R-07a, dan R-08.
+
+## Yang tetap menunggu rapat tim
+
+Tidak satu pun menghambat fitur ini.
+
+- **BT-62 dan BT-66** — kekurangan anggaran waktu yang menyatu. Menyentuh
+  penjadwalan verifikasi, bukan rancangan gerbangnya.
+- **BT-63** — laju verifikasi anonimisasi dari batch kalibrasi.
+- **BT-64** — arti `klaim[].peringkat_kepercayaan` pada tanggapan. Menyentuh
+  fitur 008 dan 009; fitur ini hanya menetapkan peringkat pada segmen, bukan
+  menampilkannya pada klaim.

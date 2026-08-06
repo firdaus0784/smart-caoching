@@ -104,3 +104,25 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menempatkan prosedur pada **D-03** — ditolak; D-03 pemilik skema anotasi rentang teks, dan graf konsep bukan anotasi rentang. Menempatkannya pada **D-04** — ditolak; D-04 pemilik keputusan arsitektur dan model data, dan tabel `konsep` serta `relasi` memang sudah ada di sana, tetapi model data bukan prosedur kerja. Menempatkan audit graf bersama prosedurnya di D-06 — ditolak; memisahkan yang mengerjakan dari yang memeriksa adalah pemisahan yang sama yang sudah dipakai D-03 dan D-08 untuk anotasi. |
 | Dampak | Tabel kepemilikan bertambah dua baris. Enam dokumen naik versi. Yang lebih penting: butir Definisi Selesai nomor 3 kini punya cara diverifikasi, dan target MK-06 tidak lagi dapat dipenuhi dengan konsep tanpa definisi atau tanpa sumber. |
 | Pemutus | Anggota teknis; **usulan, bukan penetapan.** D-00 dokumen pengendali, dan kedua baris ditandai menunggu konfirmasi rapat tim |
+
+## KB-009 · Putusan Gerbang 4 fitur 014, dan pengesahan KB-007 dan KB-008
+
+| | |
+|---|---|
+| Tanggal | 2026-08-05 |
+| Konteks | Fitur 014 menyelesaikan tujuh tugas: pemeriksa konsistensi antardokumen berjalan pada gerbang V-03, dengan uji mutasi terhadap `docs/` yang sebenarnya dilaporkan pada uraian commit. Dua usulan yang menyertainya menyentuh `docs/D00.md` — dokumen pengendali yang bukan milik agen — sehingga keduanya diajukan, tidak diterapkan sebagai keputusan final. |
+| Keputusan | **Fitur 014 lolos Gerbang 4.** KB-007 (kenaikan versi menyentuh tiga tempat, dituliskan pada D-00 Bagian 6) dan KB-008 (prosedur pembangunan ontologi ke D-06, audit graf ke D-08) disahkan sebagai **keputusan berjalan** sampai dikonfirmasi rapat tim, mengikuti pola KB-001. |
+| Alternatif | Meluluskan fitur 014 tetapi mencabut kedua perubahan D-00 sampai rapat tim — ditolak; pemeriksa register akan tetap berjalan sementara kewajibannya tidak tertulis, dan itu persis keadaan yang KB-007 dirancang untuk menghindari. Menahan Gerbang 4 sampai rapat tim — ditolak; fitur 014 tidak menunggu keputusan apa pun. |
+| Dampak | Penandaan "menunggu konfirmasi rapat tim" pada D-00 Bagian 3 dan Bagian 6 **tetap dibiarkan**: status berjalan bukan status final. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-001) |
+
+## KB-010 · Tiga keputusan Gerbang 1 fitur 002
+
+| | |
+|---|---|
+| Tanggal | 2026-08-05 |
+| Konteks | `spec.md` fitur 002 ditulis dengan tiga pertanyaan terbuka. Templat `spec.md` menetapkan fitur dengan pertanyaan terbuka tidak diserahkan ke agen, sehingga ketiganya wajib dijawab sebelum `plan.md` disusun. |
+| Keputusan | **(1) FR-B01 s.d. FR-B04 dipisah menjadi fitur 015.** **(2) Tiga peran kredensial** — jalur penjawaban, jalur verifikasi, pemanggil LLM. **(3) Peringkat kepercayaan ditetapkan saat dokumen masuk, tetapi T3 sah hanya setelah gerbang verifikasi dilewati**, dan peringkat dokumen di karantina tidak pernah terbaca jalur penjawaban. |
+| Alternatif | **(1)** Tetap satu fitur — ditolak; keempat FR tertahan C-12 dan menahan inti fitur bersamanya membuat tidak ada yang bergerak, sementara C-03 tetap menjadi salah satu dari tiga belas pasal yang belum terperiksa. **(2)** Dua peran — ditolak; KD-10 sudah menyebut peran ketiga secara tegas, dan menambahkan peran pada pemisahan yang sudah terpasang adalah jenis perubahan yang paling mudah keliru. **(3)** Peringkat hanya setelah verifikasi — ditolak; pemeriksa pola adversarial kehilangan sinyal asal justru pada tahap ia paling berguna. Peringkat otomatis penuh — ditolak; bertentangan dengan rumusan T3 pada D-13 Bagian 6. |
+| Dampak | `docs/D12.md` Bagian 7 bertambah satu baris (fitur 015). `spec.md` tidak lagi memuat pertanyaan terbuka. Kebutuhan bertambah tiga: R-01a, R-01b, R-07a. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-001) |
