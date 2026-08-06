@@ -51,6 +51,7 @@ src/nlp/        NER, klasifikasi, praproses, anonimisasi
 src/rag/        pengambilan, penyusunan jawaban, validator
 src/ingest/     empat kanal, penyaringan, antrean kurasi
 src/llm/        pembungkus tunggal semua pemanggilan model
+src/penyimpanan/ akses penyimpanan, kredensial per area
 web/            React PWA
 tests/
 logbook/        D-10, diisi tiap percobaan
@@ -58,6 +59,10 @@ logbook/        D-10, diisi tiap percobaan
 
 Aturan arah: `api` boleh memanggil `nlp`, `rag`, `ingest`. Tidak sebaliknya.
 Semua pemanggilan model lewat `src/llm/`. Tanpa pengecualian — ini yang mencatat versi.
+Semua akses penyimpanan lewat `src/penyimpanan/`. Tanpa pengecualian — ini yang
+menegakkan C-03. Ia lapisan di bawah keempatnya, bukan sejajar: `rag` membaca
+korpus dan `ingest` menulis karantina, keduanya melaluinya dengan kredensial
+berbeda.
 
 ## Batas
 
