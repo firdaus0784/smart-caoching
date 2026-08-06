@@ -35,9 +35,9 @@ galat, dan itu meruntuhkan C-03 tanpa satu pun dokumen terbaca.
 |---|---|---|---|---|
 | B-1 | Metadata asal dokumen pada `src/ingest/dokumen.py` | Uji: bidang FR-B06 wajib terisi; dokumen tanpa salah satunya ditolak saat dibentuk | R-06 | [x] |
 | B-2 | Pemetaan jenis sumber ke peringkat T1–T4 pada `src/ingest/peringkat.py` | Uji: seluruh baris D-13 Bagian 6 terpetakan. **Uji: jenis sumber tak dikenal → galat, bukan T4 diam-diam** | R-07 | [x] |
-| B-3 | Masuk selalu ke karantina pada `src/ingest/gerbang.py` | Uji: dokumen baru berada di `karantina`; **uji: tidak ada jalan membuat dokumen langsung di `korpus`** | R-03 | [ ] |
-| B-4 | Perpindahan hanya dengan persetujuan verifikator tercatat | Uji: perpindahan tanpa id verifikator → galat. **Uji: perpindahan dengan kredensial `PENJAWABAN` → galat akses** | R-04 | [ ] |
-| B-5 | Penolakan menahan dokumen beserta alasannya | Uji: dokumen ditolak tetap di `karantina`, `status_anonimisasi` menjadi `ditolak`, alasan tersimpan | R-05 | [ ] |
+| B-3 | Masuk selalu ke karantina pada `src/ingest/gerbang.py` | Uji: dokumen baru berada di `karantina`; **uji: tidak ada jalan membuat dokumen langsung di `korpus`** | R-03 | [x] |
+| B-4 | Perpindahan hanya dengan persetujuan verifikator tercatat | Uji: perpindahan tanpa id verifikator → galat. **Uji: perpindahan dengan kredensial `PENJAWABAN` → galat akses** | R-04 | [x] |
+| B-5 | Penolakan menahan dokumen beserta alasannya | Uji: dokumen ditolak tetap di `karantina`, `status_anonimisasi` menjadi `ditolak`, alasan tersimpan | R-05 | [x] |
 | B-6 | Peringkat T3 tidak terjangkau selama dokumen di karantina | **Uji tersendiri:** kredensial `PENJAWABAN` meminta segmen dokumen karantina berperingkat T3 → galat akses | R-07a | [ ] |
 | B-7 | Peringkat tidak dapat diubah sesudah ditetapkan | Uji: percobaan mengubah peringkat lewat kredensial `PENJAWABAN` maupun `PEMANGGIL_LLM` → galat | R-08 | [ ] |
 
