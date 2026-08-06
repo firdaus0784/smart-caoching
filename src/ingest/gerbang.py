@@ -26,6 +26,9 @@ Tanpa itu, penarikan tampak tuntas padahal segmennya masih terindeks.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
+from src.ingest.adversarial import Temuan, periksa_pola
 from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan
 from src.llm.tipe import Peringkat
 from src.penyimpanan.area import Area
@@ -45,21 +48,60 @@ class GalatGerbang(Exception):
 class Gerbang:
     """Satu-satunya jalan masuk dan keluar korpus."""
 
-    def __init__(self, penyimpan: PenyimpanDasar) -> None:
+    def __init__(
+        self,
+        penyimpan: PenyimpanDasar,
+        pemeriksa: Callable[[str], list[Temuan]] = periksa_pola,
+    ) -> None:
         self.penyimpan = penyimpan
+        self._pemeriksa = pemeriksa
         self._dokumen: dict[str, Dokumen] = {}
         self._area: dict[str, Area] = {}
         self._alasan: dict[str, str] = {}
+        self._temuan: dict[str, list[Temuan]] = {}
+        self._ditinjau: set[str] = set()
 
-    def terima(self, dokumen: Dokumen, isi: object) -> None:
+    def terima(self, dokumen: Dokumen, teks: str) -> None:
         """Terima dokumen baru — selalu ke karantina (R-03).
 
         Tidak menerima parameter area. Jalan yang tidak ada tidak dapat
         ditempuh keliru, dan itu lebih kuat daripada memeriksa nilainya.
+
+        Pemeriksaan pola adversarial berjalan di sini, **sebelum** dokumen
+        tersedia bagi siapa pun (KD-01). Menjalankannya saat persetujuan berarti
+        dokumen yang disusupi sempat menunggu di antrean sebagai dokumen biasa.
+
+        Teksnya wajib, bukan opsional. Pemeriksa yang tidak diberi bahan akan
+        melapor bersih, dan laporan bersih yang tidak memeriksa apa pun adalah
+        laporan palsu.
         """
         self._dokumen[dokumen.id] = dokumen
         self._area[dokumen.id] = Area.KARANTINA
-        self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, isi)
+        self._temuan[dokumen.id] = self._jalankan_pemeriksa(teks)
+        self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, teks)
+
+    def _jalankan_pemeriksa(self, teks: str) -> list[Temuan]:
+        """Jalankan pemeriksa; kegagalannya menahan, bukan meloloskan — R-10.
+
+        Pemeriksa yang gagal lalu diperlakukan sebagai lulus adalah laporan
+        palsu. Di sini akibatnya bukan gerbang yang keliru lulus melainkan
+        dokumen yang disusupi masuk korpus.
+
+        Kegagalannya menjadi temuan biasa, sehingga jalan pulihnya juga biasa:
+        manusia meninjau lalu memutuskan. Tanpa itu, satu pemeriksa rusak
+        menghentikan seluruh ingesti tanpa jalan keluar.
+        """
+        try:
+            return list(self._pemeriksa(teks))
+        except Exception as galat:
+            return [
+                Temuan(
+                    pola=f"pemeriksa gagal berjalan: {type(galat).__name__}",
+                    mulai=0,
+                    akhir=0,
+                    kutipan="",
+                )
+            ]
 
     def _pastikan_terbaca(self, kredensial: Kredensial, id_dokumen: str) -> Area:
         """Satu tempat penjagaan bagi **seluruh** keterangan tentang dokumen.
@@ -102,6 +144,30 @@ class Gerbang:
         self._pastikan_terbaca(kredensial, id_dokumen)
         return self._dokumen[id_dokumen]
 
+    def temuan(self, kredensial: Kredensial, id_dokumen: str) -> list[Temuan]:
+        """Temuan pola adversarial pada dokumen — digerbangi.
+
+        Kutipan temuan memuat potongan isi dokumen, sehingga ia tidak boleh
+        lebih mudah dijangkau daripada dokumennya sendiri.
+        """
+        self._pastikan_terbaca(kredensial, id_dokumen)
+        return list(self._temuan.get(id_dokumen, []))
+
+    def tinjau_temuan(
+        self, kredensial: Kredensial, id_dokumen: str, id_peninjau: str, catatan: str
+    ) -> None:
+        """Tandai temuan sudah ditinjau manusia — FR-B08, KD-01.
+
+        Ini gerbang ketiga, dan ia berdiri sendiri: persetujuan verifikator atas
+        anonimisasi tidak menutupnya. Menggabungkan keduanya membuat satu
+        kelonggaran membuka dua pintu.
+        """
+        self._pastikan_terbaca(kredensial, id_dokumen)
+        if not id_peninjau:
+            raise GalatGerbang("tinjauan tanpa nama peninjau tidak dapat ditelusuri")
+        self._ditinjau.add(id_dokumen)
+        self._alasan[id_dokumen] = catatan
+
     def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
         """Peringkat kepercayaan dokumen — hanya dari area yang dijangkau
         kredensial pemanggil (R-07a).
@@ -135,6 +201,12 @@ class Gerbang:
         """
         if not id_verifikator:
             raise GalatGerbang("persetujuan tanpa nama verifikator tidak dapat ditelusuri")
+
+        if self._temuan.get(id_dokumen) and id_dokumen not in self._ditinjau:
+            raise GalatGerbang(
+                "dokumen memuat pola instruksi adversarial dan belum ditinjau "
+                "manusia — persetujuan anonimisasi tidak menggantikannya (FR-B08)"
+            )
 
         dokumen = self._dokumen[id_dokumen]
         if not dokumen.boleh_masuk_korpus():

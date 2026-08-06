@@ -49,9 +49,9 @@ sebabnya ia perlu uji yang berdiri sendiri.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | Pemeriksa pola pada `src/ingest/adversarial.py` — mengembalikan temuan, tidak memutuskan | Uji: pola penyisipan yang dikenali tertangkap; teks biasa tidak menghasilkan temuan | R-09 | [ ] |
-| C-2 | Temuan menahan dokumen untuk tinjauan manusia | Uji: dokumen bertemuan tidak dapat berpindah ke `korpus` meski verifikator menyetujui, sampai temuan ditinjau | R-09 | [ ] |
-| C-3 | **Pemeriksa yang gagal berarti menahan** | Uji: pemeriksa dibuat melempar galat → dokumen tertahan, bukan lolos | R-10 | [ ] |
+| C-1 | Pemeriksa pola pada `src/ingest/adversarial.py` — mengembalikan temuan, tidak memutuskan | Uji: pola penyisipan yang dikenali tertangkap; teks biasa tidak menghasilkan temuan | R-09 | [x] |
+| C-2 | Temuan menahan dokumen untuk tinjauan manusia | Uji: dokumen bertemuan tidak dapat berpindah ke `korpus` meski verifikator menyetujui, sampai temuan ditinjau | R-09 | [x] |
+| C-3 | **Pemeriksa yang gagal berarti menahan** | Uji: pemeriksa dibuat melempar galat → dokumen tertahan, bukan lolos | R-10 | [x] |
 
 Ambang pemeriksa dinyatakan **nilai awal**, bukan hasil kalibrasi, dan ditulis
 demikian pada uraian modulnya. Kalibrasinya BT-29 (C-16).

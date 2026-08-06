@@ -41,7 +41,7 @@ def _dokumen(**ubah: object) -> Dokumen:
 
 def _gerbang_terisi() -> Gerbang:
     gerbang = Gerbang(PenyimpanTiruan())
-    gerbang.terima(_dokumen(), isi={"teks": "..."})
+    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
     return gerbang
 
 
