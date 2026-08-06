@@ -60,6 +60,7 @@ class Gerbang:
         self._alasan: dict[str, str] = {}
         self._temuan: dict[str, list[Temuan]] = {}
         self._ditinjau: set[str] = set()
+        self._catatan_tinjauan: dict[str, str] = {}
 
     def terima(self, dokumen: Dokumen, teks: str) -> None:
         """Terima dokumen baru — selalu ke karantina (R-03).
@@ -74,10 +75,24 @@ class Gerbang:
         Teksnya wajib, bukan opsional. Pemeriksa yang tidak diberi bahan akan
         melapor bersih, dan laporan bersih yang tidak memeriksa apa pun adalah
         laporan palsu.
+
+        **Unggahan membatalkan tinjauan sebelumnya.** Tinjauan menilai isi
+        tertentu; isi baru adalah isi yang belum dinilai siapa pun. Tanpa
+        pembatalan ini terbuka jalan pintas yang lurus: unggah versi bersih,
+        minta ditinjau, lalu unggah ulang versi yang disusupi — AN-01 tepat
+        pada gerbang yang dibangun menahannya. Cacat ini nyata, lolos 129 uji,
+        dan tertangkap pemeriksaan Fase C.
+
+        Pembatalannya berlaku pada setiap unggahan, **bukan hanya ketika
+        temuan muncul**. Aturan yang bersyarat temuan akan gagal justru pada
+        isi yang tampak bersih bagi pemeriksa — dan cakupan pemeriksa memang
+        tipis (lihat `src.ingest.adversarial`).
         """
         self._dokumen[dokumen.id] = dokumen
         self._area[dokumen.id] = Area.KARANTINA
         self._temuan[dokumen.id] = self._jalankan_pemeriksa(teks)
+        self._ditinjau.discard(dokumen.id)
+        self._catatan_tinjauan.pop(dokumen.id, None)
         self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, teks)
 
     def _jalankan_pemeriksa(self, teks: str) -> list[Temuan]:
@@ -161,12 +176,44 @@ class Gerbang:
         Ini gerbang ketiga, dan ia berdiri sendiri: persetujuan verifikator atas
         anonimisasi tidak menutupnya. Menggabungkan keduanya membuat satu
         kelonggaran membuka dua pintu.
+
+        **Dokumen tanpa temuan tidak dapat ditinjau.** Menandai "sudah
+        ditinjau" pada dokumen bersih tidak tampak aneh sama sekali, dan
+        justru itu yang membuatnya berguna sebagai langkah pertama jalan
+        pintas unggah-ulang. Tanda yang tidak menandai apa pun sebaiknya tidak
+        dapat dibuat.
+
+        Catatan tinjauan disimpan **terpisah** dari alasan putusan verifikator.
+        Versi pertama menimpanya, sehingga catatan "kutipan sah" menghapus
+        "memuat NIK pada halaman 3" — verifikator berikutnya kehilangan justru
+        keterangan yang paling perlu diketahuinya. Dua putusan, dua bidang.
         """
         self._pastikan_terbaca(kredensial, id_dokumen)
         if not id_peninjau:
             raise GalatGerbang("tinjauan tanpa nama peninjau tidak dapat ditelusuri")
+        if not self._temuan.get(id_dokumen):
+            raise GalatGerbang("dokumen tanpa temuan tidak memiliki apa pun untuk ditinjau")
         self._ditinjau.add(id_dokumen)
-        self._alasan[id_dokumen] = catatan
+        self._catatan_tinjauan[id_dokumen] = catatan
+
+    def catatan_tinjauan(self, kredensial: Kredensial, id_dokumen: str) -> str:
+        """Catatan peninjau atas temuan — digerbangi.
+
+        Catatan tinjauan menyebut isi dokumen karantina hampir selalu; ia
+        menjelaskan mengapa sebuah kutipan dianggap sah. Ia tidak boleh lebih
+        mudah dijangkau daripada kutipan yang dibicarakannya.
+        """
+        self._pastikan_terbaca(kredensial, id_dokumen)
+        return self._catatan_tinjauan.get(id_dokumen, "")
+
+    def sudah_ditinjau(self, kredensial: Kredensial, id_dokumen: str) -> bool:
+        """Apakah temuan dokumen sudah ditinjau manusia — digerbangi.
+
+        Jawabannya menyiratkan dokumen itu bertemuan, dan itu keterangan
+        tentang isi karantina.
+        """
+        self._pastikan_terbaca(kredensial, id_dokumen)
+        return id_dokumen in self._ditinjau
 
     def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
         """Peringkat kepercayaan dokumen — hanya dari area yang dijangkau
