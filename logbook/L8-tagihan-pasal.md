@@ -49,3 +49,21 @@ Satu catatan untuk pembaca berikutnya: C-14 tercatat menunggu fitur 010 s.d.
 013, tetapi sebagiannya dapat diperiksa lebih awal — larangan tabel poin dan
 lencana sudah ditegakkan C-15 sejak sekarang. Baris itu ditinjau tiap fitur,
 bukan dibiarkan sampai 013.
+
+## Pemutakhiran fitur 002 — 6 Agustus 2026
+
+C-03 berpindah dari BELUM ke LULUS pada tugas D-3. Tagihan menyusut dari 13
+menjadi 12; `make compliance` melaporkan 8 lulus, 0 gagal, 12 belum.
+
+Ia diuji lewat uji mutasi yang diminta `tasks.md`: `Area.KARANTINA`
+ditambahkan ke himpunan baca `PENJAWABAN`, dan `make check` gagal pada V-01
+dan V-02. Pemeriksa yang tidak pernah dilihat menyala tidak dapat dinyatakan
+menjaga apa pun.
+
+Satu batas yang wajib diketahui pembaca berikutnya: dua dari empat aturan
+pemeriksa C-03 berlaku atas jalur penjawaban, dan dari jalur itu baru
+`src/llm/` yang ada. `src/rag/`, `src/api/`, dan `src/nlp/` belum dibangun,
+sehingga kedua aturan itu hari ini menjaga pohon yang sebagian besar masih
+kosong. Ia menjadi penjagaan penuh ketika ketiga direktori itu ada — bukan
+sesuatu yang perlu dikerjakan ulang, tetapi juga bukan sesuatu yang boleh
+dianggap sudah terbukti.

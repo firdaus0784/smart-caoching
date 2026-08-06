@@ -6,7 +6,7 @@ Ditinjau manusia sebelum kode ditulis. Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 |
 | Plan | `plan.md`, lolos Gerbang 2 |
-| Status | **Lolos Gerbang 3** — 5 Agustus 2026. Implementasi berjalan |
+| Status | **Implementasi selesai** — 6 Agustus 2026. Seluruh 18 tugas dikerjakan. Menunggu Gerbang 4 |
 | Jumlah tugas | **18** — di bawah ambang ±30 |
 | Pelaporan | Per fase: A, B, C, D. Bila sebuah tugas tidak dapat diselesaikan tanpa melanggar konstitusi atau `plan.md`, pekerjaan berhenti saat itu juga |
 
@@ -60,9 +60,9 @@ demikian pada uraian modulnya. Kalibrasinya BT-29 (C-16).
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| D-1 | `jejak_area` pada `src/ingest/jejak.py` — tambah saja, tujuh bidang D-04 Bagian 7.2 | Uji: setiap perpindahan menghasilkan satu baris; **uji: tidak ada jalan menyunting atau menghapus baris** | R-11 | [ ] |
-| D-2 | Alasan pada jejak tidak memuat data pribadi | Uji: alasan yang memuat pola NIK, NIP, atau nomor telepon → ditolak saat ditulis, bukan disaring diam-diam | R-12 | [ ] |
-| D-3 | Pemeriksa C-03 pada `perkakas/pemeriksa/pemisahan_penyimpanan.py`; C-03 berpindah dari `fitur_pengunci` ke `pemeriksa` | Uji: pemeriksa menyala pada pelanggaran buatan. **Uji mutasi:** `KARANTINA` ditambahkan ke himpunan baca `PENJAWABAN` → `make check` gagal | R-01, R-01a | [ ] |
+| D-1 | `jejak_area` pada `src/ingest/jejak.py` — tambah saja, tujuh bidang D-04 Bagian 7.2 | Uji: setiap perpindahan menghasilkan satu baris; **uji: tidak ada jalan menyunting atau menghapus baris** | R-11 | [x] |
+| D-2 | Alasan pada jejak tidak memuat data pribadi | Uji: alasan yang memuat pola NIK, NIP, atau nomor telepon → ditolak saat ditulis, bukan disaring diam-diam | R-12 | [x] |
+| D-3 | Pemeriksa C-03 pada `perkakas/pemeriksa/pemisahan_penyimpanan.py`; C-03 berpindah dari `fitur_pengunci` ke `pemeriksa` | Uji: pemeriksa menyala pada pelanggaran buatan. **Uji mutasi:** `KARANTINA` ditambahkan ke himpunan baca `PENJAWABAN` → `make check` gagal | R-01, R-01a | [x] |
 
 **D-3 terakhir.** Menyambungkan pemeriksa sebelum yang diperiksanya lengkap
 menghasilkan gerbang yang lulus karena tidak memeriksa apa pun — pelajaran T-7
@@ -82,11 +82,11 @@ Fase C dapat berjalan sejajar dengan fase B, tetapi C-2 memerlukan B-4.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` — **C-03 berpindah menjadi lulus; tagihan 13 → 12**
-- [ ] R-01 s.d. R-12, termasuk R-01a, R-01b, R-07a, punya uji yang lulus
-- [ ] Uji mutasi D-3 dijalankan dan hasilnya dilaporkan pada uraian commit
-- [ ] Cakupan uji tidak turun
-- [ ] Nol ketergantungan baru
-- [ ] Nol rute baru; `docs/D14.md` Bagian 3 tidak disentuh
-- [ ] Setiap pesan galat pengguna ≤ 20 kata, tanpa istilah teknis (C-13)
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` — **C-03 berpindah menjadi lulus; tagihan 13 → 12**. Terukur: 8 lulus, 0 gagal, 12 belum
+- [x] R-01 s.d. R-12, termasuk R-01a, R-01b, R-07a, punya uji yang lulus
+- [x] Uji mutasi D-3 dijalankan dan hasilnya dilaporkan pada uraian commit
+- [x] Cakupan uji tidak turun — 99,48% menjadi 99,52% dari 572 pernyataan
+- [x] Nol ketergantungan baru
+- [x] Nol rute baru; `docs/D14.md` Bagian 3 tidak disentuh
+- [x] Setiap pesan galat pengguna ≤ 20 kata, tanpa istilah teknis (C-13)
