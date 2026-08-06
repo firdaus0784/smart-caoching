@@ -27,8 +27,10 @@ Tanpa itu, penarikan tampak tuntas padahal segmennya masih terindeks.
 from __future__ import annotations
 
 from src.ingest.dokumen import Dokumen, StatusPersetujuan
+from src.llm.tipe import Peringkat
 from src.penyimpanan.area import Area
 from src.penyimpanan.dasar import PenyimpanDasar
+from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial import Kredensial
 
 
@@ -64,6 +66,32 @@ class Gerbang:
 
     def alasan_terakhir(self, id_dokumen: str) -> str:
         return self._alasan.get(id_dokumen, "")
+
+    def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
+        """Peringkat kepercayaan dokumen — hanya dari area yang dijangkau
+        kredensial pemanggil (R-07a).
+
+        D-13 Bagian 6 mendefinisikan T3 sebagai dokumen sekolah teranonimkan
+        **dan terverifikasi**. Selama dokumen di karantina, kata kedua belum
+        berlaku, sehingga peringkatnya belum sah bagi jalur penjawaban.
+
+        Peringkat tidak dijaga sebagai rahasia tersendiri: ia dijaga oleh pintu
+        yang sama dengan dokumennya. Kendali kedua yang berdiri sendiri akan
+        menjadi kendali kedua yang dapat lupa diperbarui.
+
+        **Jawabannya seragam** bagi dokumen yang tidak terjangkau dan dokumen
+        yang tidak ada. Jawaban yang berbeda sudah cukup untuk menyusun daftar
+        dokumen karantina — kebocoran yang sama dengan yang A-6 tutup. Ini
+        sengaja berbeda dari `baca_dokumen`: di sana "tidak ditemukan pada area
+        yang boleh Anda baca" adalah keterangan yang memang hak pemanggil,
+        sedangkan di sini pertanyaannya melintasi area.
+        """
+        for area in Area:
+            if not kredensial.boleh_baca(area):
+                continue
+            if self._area.get(id_dokumen) is area:
+                return self._dokumen[id_dokumen].peringkat
+        raise GalatAksesDitolak(kredensial=kredensial, area=Area.KARANTINA, operasi="baca")
 
     def setujui(
         self, kredensial: Kredensial, id_dokumen: str, id_verifikator: str, alasan: str

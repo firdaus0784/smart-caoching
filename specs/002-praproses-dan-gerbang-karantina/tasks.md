@@ -38,8 +38,8 @@ galat, dan itu meruntuhkan C-03 tanpa satu pun dokumen terbaca.
 | B-3 | Masuk selalu ke karantina pada `src/ingest/gerbang.py` | Uji: dokumen baru berada di `karantina`; **uji: tidak ada jalan membuat dokumen langsung di `korpus`** | R-03 | [x] |
 | B-4 | Perpindahan hanya dengan persetujuan verifikator tercatat | Uji: perpindahan tanpa id verifikator → galat. **Uji: perpindahan dengan kredensial `PENJAWABAN` → galat akses** | R-04 | [x] |
 | B-5 | Penolakan menahan dokumen beserta alasannya | Uji: dokumen ditolak tetap di `karantina`, `status_anonimisasi` menjadi `ditolak`, alasan tersimpan | R-05 | [x] |
-| B-6 | Peringkat T3 tidak terjangkau selama dokumen di karantina | **Uji tersendiri:** kredensial `PENJAWABAN` meminta segmen dokumen karantina berperingkat T3 → galat akses | R-07a | [ ] |
-| B-7 | Peringkat tidak dapat diubah sesudah ditetapkan | Uji: percobaan mengubah peringkat lewat kredensial `PENJAWABAN` maupun `PEMANGGIL_LLM` → galat | R-08 | [ ] |
+| B-6 | Peringkat T3 tidak terjangkau selama dokumen di karantina | **Uji tersendiri:** kredensial `PENJAWABAN` meminta segmen dokumen karantina berperingkat T3 → galat akses | R-07a | [x] |
+| B-7 | Peringkat tidak dapat diubah sesudah ditetapkan | Uji: percobaan mengubah peringkat lewat kredensial `PENJAWABAN` maupun `PEMANGGIL_LLM` → galat | R-08 | [x] |
 
 **B-6 diberi tugas tersendiri, tidak digabung ke B-4.** R-07a adalah kebutuhan
 yang paling mudah dianggap sudah dipenuhi oleh kebutuhan lain, dan justru itu
