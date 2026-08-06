@@ -47,7 +47,7 @@ def test_dokumen_baru_masuk_karantina() -> None:
     """R-03."""
     gerbang = _gerbang()
     gerbang.terima(_dokumen(), isi={"teks": "..."})
-    assert gerbang.area(_dokumen().id) is Area.KARANTINA
+    assert gerbang.area(VERIFIKASI, _dokumen().id) is Area.KARANTINA
 
 
 def test_tidak_ada_jalan_menaruh_dokumen_langsung_di_korpus() -> None:
@@ -76,7 +76,7 @@ def test_pindah_dengan_persetujuan_verifikator() -> None:
     gerbang.setujui(
         VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="anonimisasi bersih"
     )
-    assert gerbang.area("dok_001") is Area.KORPUS
+    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KORPUS
 
 
 def test_pindah_tanpa_id_verifikator_ditolak() -> None:
@@ -119,8 +119,8 @@ def test_penolakan_menahan_dokumen_beserta_alasan() -> None:
     gerbang.tolak(
         VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="halaman 3 belum bersih"
     )
-    assert gerbang.area("dok_001") is Area.KARANTINA
-    assert gerbang.alasan_terakhir("dok_001") == "halaman 3 belum bersih"
+    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
+    assert gerbang.alasan_terakhir(VERIFIKASI, "dok_001") == "halaman 3 belum bersih"
 
 
 def test_penolakan_tanpa_alasan_ditolak() -> None:
@@ -150,10 +150,10 @@ def test_penarikan_persetujuan_mengeluarkan_dokumen_dari_korpus() -> None:
     gerbang = _gerbang()
     gerbang.terima(_dokumen(), isi={"teks": "..."})
     gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area("dok_001") is Area.KORPUS
+    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KORPUS
 
     gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
-    assert gerbang.area("dok_001") is Area.KARANTINA
+    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
 
 
 def test_dokumen_yang_ditarik_tidak_terbaca_jalur_penjawaban() -> None:
@@ -205,6 +205,6 @@ def test_penarikan_pada_dokumen_yang_masih_di_karantina() -> None:
     gerbang = _gerbang()
     gerbang.terima(_dokumen(), isi={"teks": "..."})
     gerbang.cabut_persetujuan("dok_001", alasan="pemilik menarik izin")
-    assert gerbang.area("dok_001") is Area.KARANTINA
+    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
     with pytest.raises(GalatGerbang):
         gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")

@@ -51,6 +51,19 @@ class TingkatKerahasiaan(Enum):
     TERBATAS = "terbatas"
 
 
+class StatusAnonimisasi(Enum):
+    """Hasil verifikasi anonimisasi oleh manusia — FR-B05, D-14 Bagian 5.1.
+
+    Hanya `TERVERIFIKASI` yang boleh diindeks. Nilai awalnya `MENUNGGU`, bukan
+    `TERVERIFIKASI`: dokumen yang belum diperiksa siapa pun tidak boleh
+    dianggap bersih hanya karena belum ada yang menolaknya.
+    """
+
+    MENUNGGU = "menunggu"
+    TERVERIFIKASI = "terverifikasi"
+    DITOLAK = "ditolak"
+
+
 class StatusPersetujuan(Enum):
     """Persetujuan pemilik dokumen atas pemakaiannya untuk korpus — ET-04.
 
@@ -80,6 +93,7 @@ class Dokumen(BaseModel):
     tahun: int = Field(ge=TAHUN_PALING_AWAL)
     tingkat_kerahasiaan: TingkatKerahasiaan
     status_persetujuan_pemilik: StatusPersetujuan
+    status_anonimisasi: StatusAnonimisasi = StatusAnonimisasi.MENUNGGU
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -90,6 +104,13 @@ class Dokumen(BaseModel):
         dinaikkan pemanggil (R-08).
         """
         return peringkat_bagi(self.jenis)
+
+    @staticmethod
+    def anonimisasi_mengizinkan_indeks(status: StatusAnonimisasi) -> bool:
+        """Hanya `TERVERIFIKASI`. D-14 Bagian 5.1 menyatakannya sebagai sifat
+        seluruh daftar, sehingga nilai keempat yang ditambahkan kelak tidak
+        diam-diam ikut lolos."""
+        return status is StatusAnonimisasi.TERVERIFIKASI
 
     @staticmethod
     def persetujuan_mengizinkan_korpus(status: StatusPersetujuan) -> bool:

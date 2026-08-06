@@ -26,7 +26,7 @@ Tanpa itu, penarikan tampak tuntas padahal segmennya masih terindeks.
 
 from __future__ import annotations
 
-from src.ingest.dokumen import Dokumen, StatusPersetujuan
+from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan
 from src.llm.tipe import Peringkat
 from src.penyimpanan.area import Area
 from src.penyimpanan.dasar import PenyimpanDasar
@@ -61,11 +61,46 @@ class Gerbang:
         self._area[dokumen.id] = Area.KARANTINA
         self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, isi)
 
-    def area(self, id_dokumen: str) -> Area:
-        return self._area[id_dokumen]
+    def _pastikan_terbaca(self, kredensial: Kredensial, id_dokumen: str) -> Area:
+        """Satu tempat penjagaan bagi **seluruh** keterangan tentang dokumen.
 
-    def alasan_terakhir(self, id_dokumen: str) -> str:
+        Ia benar-benar melewati penyimpan, bukan menyalin aturannya. Aturan
+        akses yang disalin adalah aturan kedua yang dapat lupa diperbarui —
+        dan pemeriksaan Fase B menemukan saya sudah melakukannya sekali.
+
+        Dokumen yang tidak dikenal dijawab sama dengan dokumen yang tidak
+        terjangkau. Jawaban yang berbeda sudah cukup untuk menyusun daftar
+        dokumen karantina.
+        """
+        area = self._area.get(id_dokumen)
+        if area is None:
+            raise GalatAksesDitolak(kredensial=kredensial, area=Area.KARANTINA, operasi="baca")
+        self.penyimpan.baca_dokumen(kredensial, area, id_dokumen)
+        return area
+
+    def area(self, kredensial: Kredensial, id_dokumen: str) -> Area:
+        """Area tempat dokumen berada — R-02.
+
+        Digerbangi karena jawabannya sendiri adalah keterangan: siapa pun yang
+        dapat menanyakan area sembarang id dapat menyusun daftar isi karantina
+        tanpa membaca satu dokumen pun.
+        """
+        return self._pastikan_terbaca(kredensial, id_dokumen)
+
+    def alasan_terakhir(self, kredensial: Kredensial, id_dokumen: str) -> str:
+        """Alasan putusan terakhir — R-12.
+
+        Digerbangi karena alasan penolakan secara alami memuat petunjuk isi
+        dokumen: "memuat NIK pada halaman 3". Dokumennya berada di karantina,
+        dan alasannya tidak boleh lebih mudah dijangkau daripada dokumennya.
+        """
+        self._pastikan_terbaca(kredensial, id_dokumen)
         return self._alasan.get(id_dokumen, "")
+
+    def dokumen(self, kredensial: Kredensial, id_dokumen: str) -> Dokumen:
+        """Metadata dokumen, digerbangi sama dengan yang lain."""
+        self._pastikan_terbaca(kredensial, id_dokumen)
+        return self._dokumen[id_dokumen]
 
     def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
         """Peringkat kepercayaan dokumen — hanya dari area yang dijangkau
@@ -75,9 +110,10 @@ class Gerbang:
         **dan terverifikasi**. Selama dokumen di karantina, kata kedua belum
         berlaku, sehingga peringkatnya belum sah bagi jalur penjawaban.
 
-        Peringkat tidak dijaga sebagai rahasia tersendiri: ia dijaga oleh pintu
-        yang sama dengan dokumennya. Kendali kedua yang berdiri sendiri akan
-        menjadi kendali kedua yang dapat lupa diperbarui.
+        Peringkat tidak dijaga sebagai rahasia tersendiri: ia melewati
+        `_pastikan_terbaca`, yang benar-benar memanggil penyimpan. Versi
+        pertama modul ini menyalin aturan aksesnya alih-alih memakainya, dan
+        uraiannya mengklaim sebaliknya — tertangkap pemeriksaan Fase B.
 
         **Jawabannya seragam** bagi dokumen yang tidak terjangkau dan dokumen
         yang tidak ada. Jawaban yang berbeda sudah cukup untuk menyusun daftar
@@ -86,12 +122,8 @@ class Gerbang:
         yang boleh Anda baca" adalah keterangan yang memang hak pemanggil,
         sedangkan di sini pertanyaannya melintasi area.
         """
-        for area in Area:
-            if not kredensial.boleh_baca(area):
-                continue
-            if self._area.get(id_dokumen) is area:
-                return self._dokumen[id_dokumen].peringkat
-        raise GalatAksesDitolak(kredensial=kredensial, area=Area.KARANTINA, operasi="baca")
+        self._pastikan_terbaca(kredensial, id_dokumen)
+        return self._dokumen[id_dokumen].peringkat
 
     def setujui(
         self, kredensial: Kredensial, id_dokumen: str, id_verifikator: str, alasan: str
@@ -114,6 +146,9 @@ class Gerbang:
         self.penyimpan.pindahkan(kredensial, id_dokumen, Area.KARANTINA, Area.KORPUS, alasan)
         self._area[id_dokumen] = Area.KORPUS
         self._alasan[id_dokumen] = alasan
+        self._dokumen[id_dokumen] = dokumen.model_copy(
+            update={"status_anonimisasi": StatusAnonimisasi.TERVERIFIKASI}
+        )
 
     def tolak(
         self, kredensial: Kredensial, id_dokumen: str, id_verifikator: str, alasan: str
@@ -123,7 +158,13 @@ class Gerbang:
         Alasan wajib: penolakan tanpa alasan tidak dapat ditindaklanjuti
         pengunggahnya, sehingga dokumen yang sama akan diunggah ulang apa
         adanya.
+
+        Kredensial diperiksa lebih dulu — menilai isi karantina menuntut hak
+        membacanya. Versi pertama modul ini menerima parameter kredensial lalu
+        tidak pernah memakainya, sehingga jalur penjawaban dapat menolak
+        dokumen orang. Tertangkap pemeriksaan Fase B, bukan oleh uji.
         """
+        self._pastikan_terbaca(kredensial, id_dokumen)
         if not id_verifikator:
             raise GalatGerbang("penolakan tanpa nama verifikator tidak dapat ditelusuri")
         if not alasan:
@@ -131,6 +172,9 @@ class Gerbang:
 
         self._area[id_dokumen] = Area.KARANTINA
         self._alasan[id_dokumen] = alasan
+        self._dokumen[id_dokumen] = self._dokumen[id_dokumen].model_copy(
+            update={"status_anonimisasi": StatusAnonimisasi.DITOLAK}
+        )
 
     def cabut_persetujuan(self, id_dokumen: str, alasan: str) -> None:
         """Tarik persetujuan pemilik — dokumen keluar dari korpus (KB-014).

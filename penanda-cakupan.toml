@@ -7,7 +7,7 @@
 # Menurunkan angka ini untuk meloloskan `make check` membatalkan gunanya.
 # Perubahannya adalah keputusan manusia, dicatat pada logbook/L4.
 
-tercatat = 99.42
-pernyataan = 466
+tercatat = 99.44
+pernyataan = 483
 diukur_pada = "2026-08-05"
 diukur_pada_fitur = "001 kerangka proyek"
