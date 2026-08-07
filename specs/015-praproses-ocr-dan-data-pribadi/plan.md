@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 — 6 Agustus 2026 |
-| Status | **Menunggu Gerbang 2** |
+| Status | **Lolos Gerbang 2** — 6 Agustus 2026. Kedua pertanyaan diputus (KB-018). Menunggu `tasks.md` dan Gerbang 3 |
 | Ketergantungan baru | Lima, disetujui KB-017 |
-| Pertanyaan yang menuntut putusan Anda | **Dua** — Bagian 1 dan Bagian 6 |
+| Pertanyaan yang menuntut putusan Anda | **Dua, keduanya sudah diputus** — Bagian 1 dan Bagian 6; putusannya pada Bagian 9 |
 
 ---
 
@@ -185,12 +185,32 @@ diperlukan, pekerjaan berhenti dan diajukan — bukan dipasang lalu dilaporkan.
 
 ---
 
-## 9 · Yang saya minta Anda putuskan
+## 9 · Keputusan Gerbang 2
 
-1. **Letak pendeteksi dan arah `ingest → nlp`** — A, B, atau C. Saran: A,
-   dengan satu baris ditambahkan pada aturan arah `AGENTS.md`.
-2. **Apa yang terjadi bila berkas model Bahasa Indonesia tidak dapat
-   diperoleh** — A, B, atau C. Saran: A, diputus sekarang.
+Keduanya diputus pemegang gerbang pada 6 Agustus 2026, tercatat KB-018.
 
-Sesudahnya `tasks.md` disusun dan diajukan ke Gerbang 3. Tidak ada kode
-ditulis sebelum itu.
+**1 · Pilihan A — `ingest` boleh memanggil `nlp`.** `AGENTS.md` bertambah satu
+kalimat pada aturan arah, menyatakan tepi itu ada dan **satu jurusan**: `nlp`
+tidak memanggil `ingest`. Pendeteksi tetap di `src/nlp/` sebagaimana `AGENTS.md`
+menempatkan anonimisasi, dan gerbang di `src/ingest/` menerimanya sebagai
+parameter dengan nilai bawaan — bentuk yang sama dengan pemeriksa pola pada
+fitur 002.
+
+Pilihan B ditolak karena memecah anonimisasi menjadi dua tempat justru pada saat
+fitur 004 membangun sisanya. Pilihan C ditolak karena `src/api/` belum ada,
+sehingga penyambungnya akan menjadi uji dan jalur sesungguhnya tidak pernah
+dijalankan.
+
+**2 · Pilihan A — fase OCR berhenti bila berkas model tidak dapat diperoleh.**
+`pytesseract` dicabut dari daftar ketergantungan, dan FR-B02 menjadi butir
+terbuka bagi rapat tim. Tiga kebutuhan lain tetap selesai.
+
+Pilihan B — memakai model bahasa Inggris sebagai sementara — **ditolak tegas**.
+Dokumen berbahasa Indonesia yang di-OCR dengan model Inggris menghasilkan teks
+yang terbaca seperti teks, dan korpus yang rusak diam-diam lebih buruk daripada
+korpus yang kosong. Keputusan ini diambil sekarang, sebelum keadaannya terjadi,
+justru karena keputusan yang diambil saat tenggat dekat hampir selalu jatuh
+pada B.
+
+Sesudah ini `tasks.md` disusun dan diajukan ke Gerbang 3. Tidak ada kode
+ditulis sebelum Gerbang 3 dilewati.

@@ -58,6 +58,10 @@ logbook/        D-10, diisi tiap percobaan
 ```
 
 Aturan arah: `api` boleh memanggil `nlp`, `rag`, `ingest`. Tidak sebaliknya.
+`ingest` boleh memanggil `nlp`, satu jurusan — `nlp` tidak memanggil `ingest`.
+Tepi itu ada karena pendeteksi data pribadi tinggal di `nlp` sedangkan yang
+menjalankannya gerbang di `ingest`; ia dituliskan agar impornya terbaca sebagai
+rancangan, bukan sebagai kebiasaan yang tidak dijelaskan dokumen mana pun.
 Semua pemanggilan model lewat `src/llm/`. Tanpa pengecualian — ini yang mencatat versi.
 Semua akses penyimpanan lewat `src/penyimpanan/`. Tanpa pengecualian — ini yang
 menegakkan C-03. Ia lapisan di bawah keempatnya, bukan sejajar: `rag` membaca
