@@ -6,7 +6,7 @@
 | Dokumen terkait | D-01 Modul B · D-03 Bagian 12.6, Bagian 15 · D-04 ADR-06 · D-06 kanal K-C · D-08 prosedur uji · D-13 KD-01 |
 | Pasal konstitusi yang menyentuh fitur ini | **C-12**, C-03, C-09, C-10, C-11, C-13 |
 | Urutan pembangunan | 015 pada `docs/D12.md` Bagian 7, sesudah 002, sebelum 003 |
-| Status | **Menunggu Gerbang 1.** Tertahan C-12 sampai `usulan-ketergantungan.md` diputus |
+| Status | **Lolos Gerbang 1** — 6 Agustus 2026. Ketergantungan disetujui (KB-017). Menunggu `plan.md` dan Gerbang 2 |
 
 ## Tujuan
 
@@ -24,16 +24,16 @@ memuat data pribadi, sehingga waktunya habis untuk menilai, bukan mencari.
 Perhitungan D-03 Bagian 12.6 menjadikan ini bukan kenyamanan melainkan syarat
 kapasitas.
 
-## Yang menahannya, dan apa yang tidak tertahan
+## Apa yang sempat menahannya
 
 Keempat kebutuhan menuntut ketergantungan baru, sehingga seluruhnya tertahan
-C-12 (KB-010). `usulan-ketergantungan.md` pada folder ini adalah bahan
-keputusannya.
+C-12 sejak KB-010. `usulan-ketergantungan.md` pada folder ini adalah bahan
+keputusannya, dan keputusannya sudah diambil — KB-017, tercatat pada Bagian
+"Keputusan Gerbang 1" di bawah.
 
-**Yang tidak tertahan:** FR-B04 untuk pengenal berpola tetap. Ia dikerjakan
-dengan `re` pada pustaka baku, dan bentuk awalnya sudah ada pada
-`src/ingest/jejak.py`. Bila persetujuan C-12 tertunda, bagian ini tetap dapat
-dibangun lebih dulu.
+FR-B04 untuk pengenal berpola tetap tidak pernah tertahan: ia dikerjakan dengan
+`re` pada pustaka baku, dan bentuk awalnya sudah ada pada
+`src/ingest/jejak.py`.
 
 ## Di luar cakupan
 
@@ -43,7 +43,8 @@ dibangun lebih dulu.
   wajib tertulis pada D-01 serta pada uraian modulnya — bukan hanya pada
   logbook. Verifikator yang mengira nama sudah tersamarkan otomatis akan
   memeriksa lebih longgar, dan itu lebih buruk daripada tidak ada pendeteksi
-  sama sekali. Keputusannya menunggu Gerbang 1.
+  sama sekali. Diputus pada Gerbang 1 sebagai pilihan A; catatannya sudah masuk
+  `docs/D01.md` beserta BT-70.
 - **Menyetel ambang kepercayaan OCR.** C-16; kalibrasinya BT-29.
 - **Antarmuka unggah.** Layar S-xx menunggu D-05. Fitur ini lapisan layanan.
 - **Perbaikan mutu pindaian.** Deskewing, denoising, dan sejenisnya tidak
@@ -83,8 +84,9 @@ untuk menyiapkan bahan anotasi.
 
 **R-13 lebih luas daripada kelihatannya.** Mesin OCR adalah program sistem,
 bukan paket Python, sehingga pemeriksa R-18 tidak melihatnya. Kebutuhan ini
-yang menutup celah itu — dan bentuk penutupannya adalah pertanyaan 3 pada
-`usulan-ketergantungan.md`.
+yang menutup celah itu, dan bentuk penutupannya diputus pada Gerbang 1:
+`ketergantungan-disetujui.toml` bertambah bagian `[sistem]` yang dibandingkan
+R-18 tiap `make check`.
 
 ## Keadaan yang wajib ditangani
 
@@ -113,18 +115,32 @@ berisi dokumen pindaian tanpa teks yang tak seorang pun sadari.
 - [ ] Setiap keluaran OCR mencatat versi ke `logbook/` (C-09, R-05)
 - [ ] Setiap pesan galat pengguna ≤ 20 kata, tanpa istilah teknis (C-13)
 
-## Pertanyaan Gerbang 1
+## Keputusan Gerbang 1
 
-Tiga, dan ketiganya sudah tersusun sebagai bahan keputusan pada
-`usulan-ketergantungan.md`:
+Ketiganya diputus pemegang gerbang pada 6 Agustus 2026 dan tercatat pada
+KB-017. Rinciannya beserta alternatif yang ditolak ada di sana; yang berikut
+adalah akibatnya bagi spec ini.
 
-1. **Ketergantungan mana yang disetujui** (C-12). Tanpa jawabannya, R-01, R-04,
-   dan R-07 tidak dapat dikerjakan.
-2. **Bagaimana kekurangan FR-B04 ditangani** — nama perorangan dan alamat
-   menunggu fitur 004. Saran: dinyatakan tegas di D-01, bukan ditutupi kamus
-   nama heuristik.
-3. **Bagaimana ketergantungan sistem diawasi** — perluasan R-18 ke bagian
-   `[sistem]`, atau tidak.
+**1 · Kelima ketergantungan disetujui.** `pypdf`, `python-docx`, `openpyxl`,
+`PySastrawi`, `pytesseract`. Seluruh lisensi permisif dan diperiksa langsung ke
+PyPI. R-01, R-04, dan R-07 tidak lagi tertahan.
 
-Pertanyaan 2 dan 3 **bukan pertanyaan ketergantungan** dan tidak hilang bila
-jawaban pertanyaan 1 adalah menolak seluruhnya.
+**2 · FR-B04 dikerjakan untuk enam pola tetap saja** (pilihan A). Nama
+perorangan dan alamat menunggu model NER fitur 004. Kekurangannya **sudah**
+tertulis pada `docs/D01.md` sebagai catatan cakupan dan BT-70 — bukan hanya
+pada logbook, dan itu syarat yang menyertai keputusannya. Kamus nama heuristik
+ditolak: ia menghasilkan laporan yang terbaca lebih tebal daripada kenyataannya,
+cacat yang sama dengan yang KB-013 tolak pada `tingkat_kerahasiaan`.
+
+**3 · R-18 diperluas ke bagian `[sistem]`.** Versi mesin OCR dan sidik berkas
+model bahasa dicatat pada `ketergantungan-disetujui.toml` dan dibandingkan tiap
+`make check`. Ini yang membuat R-13 punya penegak, bukan hanya pernyataan.
+
+### Yang tetap wajib diperiksa sebelum R-04 dikerjakan
+
+Keberadaan berkas model Bahasa Indonesia `ind.traineddata` **belum**
+terverifikasi dari sumbernya — permintaan ke GitHub raw ditolak kebijakan
+jaringan (403) dan tidak diulang. Yang terverifikasi hanya lisensi repositori
+`tessdata` (Apache-2.0). Tugas pertama pada fase OCR adalah memastikannya dan
+mencatat sidiknya; bila berkasnya tidak tersedia, pekerjaan berhenti di situ
+dan keputusan 1 ditinjau ulang untuk `pytesseract` saja.
