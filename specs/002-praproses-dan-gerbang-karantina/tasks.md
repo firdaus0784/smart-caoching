@@ -6,7 +6,7 @@ Ditinjau manusia sebelum kode ditulis. Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 |
 | Plan | `plan.md`, lolos Gerbang 2 |
-| Status | **Implementasi selesai** — 6 Agustus 2026. Seluruh 18 tugas dikerjakan. Menunggu Gerbang 4 |
+| Status | **Lolos Gerbang 4** — 6 Agustus 2026. Seluruh 18 tugas selesai; C-03 berpindah menjadi pasal yang dijaga mesin |
 | Jumlah tugas | **18** — di bawah ambang ±30 |
 | Pelaporan | Per fase: A, B, C, D. Bila sebuah tugas tidak dapat diselesaikan tanpa melanggar konstitusi atau `plan.md`, pekerjaan berhenti saat itu juga |
 
