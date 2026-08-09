@@ -1,0 +1,217 @@
+[
+  {
+    "id": 3,
+    "annotations": [
+      {
+        "id": 4,
+        "completed_by": 1,
+        "result": [
+          {
+            "from_name": "entitas",
+            "to_name": "teks",
+            "type": "labels",
+            "value": {
+              "start": 24,
+              "end": 28,
+              "text": "RKAS",
+              "labels": [
+                "DOKUMEN"
+              ]
+            }
+          },
+          {
+            "from_name": "entitas",
+            "to_name": "teks",
+            "type": "labels",
+            "value": {
+              "start": 0,
+              "end": 14,
+              "text": "Kepala sekolah",
+              "labels": [
+                "JABATAN_PERAN"
+              ]
+            }
+          },
+          {
+            "from_name": "kategori",
+            "to_name": "teks",
+            "type": "choices",
+            "value": {
+              "choices": [
+                "K5"
+              ]
+            }
+          }
+        ],
+        "was_cancelled": false,
+        "ground_truth": false,
+        "created_at": "2026-08-09T21:31:44.759953Z",
+        "updated_at": "2026-08-09T21:31:44.759990Z",
+        "draft_created_at": null,
+        "lead_time": null,
+        "prediction": {},
+        "result_count": 1,
+        "unique_id": "616e6c19-5cbc-4b45-afbf-069a05564e47",
+        "import_id": null,
+        "last_action": null,
+        "bulk_created": false,
+        "task": 3,
+        "project": 2,
+        "updated_by": 1,
+        "parent_prediction": null,
+        "parent_annotation": null,
+        "last_created_by": null
+      },
+      {
+        "id": 6,
+        "completed_by": 2,
+        "result": [
+          {
+            "from_name": "entitas",
+            "to_name": "teks",
+            "type": "labels",
+            "value": {
+              "start": 24,
+              "end": 34,
+              "text": "RKAS tahun",
+              "labels": [
+                "DOKUMEN"
+              ]
+            }
+          },
+          {
+            "from_name": "entitas",
+            "to_name": "teks",
+            "type": "labels",
+            "value": {
+              "start": 0,
+              "end": 14,
+              "text": "Kepala sekolah",
+              "labels": [
+                "JABATAN_PERAN"
+              ]
+            }
+          },
+          {
+            "from_name": "kategori",
+            "to_name": "teks",
+            "type": "choices",
+            "value": {
+              "choices": [
+                "K8"
+              ]
+            }
+          }
+        ],
+        "was_cancelled": false,
+        "ground_truth": false,
+        "created_at": "2026-08-09T21:31:44.926520Z",
+        "updated_at": "2026-08-09T21:31:44.926551Z",
+        "draft_created_at": null,
+        "lead_time": null,
+        "prediction": {},
+        "result_count": 1,
+        "unique_id": "a426a7f7-a110-4c03-8b1f-1110d53e1e4b",
+        "import_id": null,
+        "last_action": null,
+        "bulk_created": false,
+        "task": 3,
+        "project": 2,
+        "updated_by": 2,
+        "parent_prediction": null,
+        "parent_annotation": null,
+        "last_created_by": null
+      }
+    ],
+    "drafts": [],
+    "predictions": [],
+    "data": {
+      "teks": "Kepala sekolah menyusun RKAS tahun anggaran 2026 bersama komite sekolah."
+    },
+    "meta": {},
+    "created_at": "2026-08-09T21:31:44.656917Z",
+    "updated_at": "2026-08-09T21:31:44.964459Z",
+    "allow_skip": true,
+    "inner_id": 1,
+    "total_annotations": 2,
+    "cancelled_annotations": 0,
+    "total_predictions": 0,
+    "comment_count": 0,
+    "unresolved_comment_count": 0,
+    "last_comment_updated_at": null,
+    "project": 2,
+    "updated_by": 2,
+    "comment_authors": []
+  },
+  {
+    "id": 4,
+    "annotations": [
+      {
+        "id": 5,
+        "completed_by": 1,
+        "result": [
+          {
+            "from_name": "entitas",
+            "to_name": "teks",
+            "type": "labels",
+            "value": {
+              "start": 0,
+              "end": 33,
+              "text": "Permendikdasmen Nomor 12 Tahun 2025",
+              "labels": [
+                "REGULASI"
+              ]
+            }
+          },
+          {
+            "from_name": "kategori",
+            "to_name": "teks",
+            "type": "choices",
+            "value": {
+              "choices": [
+                "K1"
+              ]
+            }
+          }
+        ],
+        "was_cancelled": false,
+        "ground_truth": false,
+        "created_at": "2026-08-09T21:31:44.847019Z",
+        "updated_at": "2026-08-09T21:31:44.847047Z",
+        "draft_created_at": null,
+        "lead_time": null,
+        "prediction": {},
+        "result_count": 1,
+        "unique_id": "723ff73f-1c79-4e83-9bbc-69913b46b6cb",
+        "import_id": null,
+        "last_action": null,
+        "bulk_created": false,
+        "task": 4,
+        "project": 2,
+        "updated_by": 1,
+        "parent_prediction": null,
+        "parent_annotation": null,
+        "last_created_by": null
+      }
+    ],
+    "drafts": [],
+    "predictions": [],
+    "data": {
+      "teks": "Permendikdasmen Nomor 12 Tahun 2025 mengatur supervisi akademik di SD."
+    },
+    "meta": {},
+    "created_at": "2026-08-09T21:31:44.656985Z",
+    "updated_at": "2026-08-09T21:31:44.887333Z",
+    "allow_skip": true,
+    "inner_id": 2,
+    "total_annotations": 1,
+    "cancelled_annotations": 0,
+    "total_predictions": 0,
+    "comment_count": 0,
+    "unresolved_comment_count": 0,
+    "last_comment_updated_at": null,
+    "project": 2,
+    "updated_by": 1,
+    "comment_authors": []
+  }
+]
