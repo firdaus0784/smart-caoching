@@ -35,11 +35,11 @@ hasil akan disalin ke naskah sebagai bukti mutu. Bentuk yang sama dengan
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.nlp.anotasi.rentang import PutusanKategori
+from src.nlp.anotasi.rentang import PutusanKategori, RentangEntitas
 from src.nlp.anotasi.skema import KategoriMasalah
 
 
@@ -219,3 +219,116 @@ def _pasangan_bersama(
         )
 
     return [(oleh_a[d].kategori_utama, oleh_b[d].kategori_utama) for d in bersama], ""
+
+
+class HasilF1(BaseModel):
+    """F1 berpasangan pada dua tingkat ketat — D-03 Bagian 11.
+
+    Keduanya dibawa bersama karena D-03 menuntut keduanya dilaporkan, dan
+    karena selisih di antaranya adalah keterangan tersendiri: F1 longgar yang
+    jauh lebih tinggi daripada F1 tepat menandakan anotator sepaham tentang
+    **apa** yang ditandai tetapi berbeda tentang **di mana** batasnya — dan
+    itu ditangani dengan mempertajam pedoman batas rentang, bukan dengan
+    melatih ulang pengenalan entitasnya.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    tepat: HasilKesepakatan
+    longgar: HasilKesepakatan
+
+
+def f1_rentang(anotator_a: list[RentangEntitas], anotator_b: list[RentangEntitas]) -> HasilF1:
+    """F1 berpasangan atas anotasi rentang — R-08.
+
+    Anotasi salah satu anotator diperlakukan sebagai acuan dan lainnya sebagai
+    prediksi (D-03 Bagian 11). F1 simetris terhadap penukaran keduanya,
+    sehingga pilihan mana yang menjadi acuan tidak mengubah angkanya.
+
+    **Tanda tangannya menerima `RentangEntitas` dan tidak akan menerima
+    `PutusanKategori`** — sisi lain dari sifat yang menjaga `kappa_kategori`.
+    F1 atas satuan analisis yang tetap adalah ukuran yang salah dengan cara
+    yang berlawanan dari Kappa atas rentang.
+
+    Dua daftar kosong menghasilkan **belum terhitung**, bukan 1,0: dua anotator
+    yang sama-sama tidak menandai apa pun mungkin sepaham, tetapi tidak ada
+    bukti apa pun untuk itu.
+
+    Satu daftar kosong menghasilkan **0,0**, dan pembedaannya penting — itu
+    ketidaksepakatan yang sesungguhnya, dan bahannya ada. Melaporkannya belum
+    terhitung akan menyembunyikan anotator yang melewatkan seluruh dokumen.
+    """
+    if not anotator_a and not anotator_b:
+        alasan = "kedua anotator tidak menandai satu rentang pun — tidak ada bukti kesepakatan"
+        return HasilF1(
+            tepat=HasilKesepakatan.belum_terhitung(alasan),
+            longgar=HasilKesepakatan.belum_terhitung(alasan),
+        )
+
+    versi = {r.versi_skema for r in [*anotator_a, *anotator_b]}
+    if len(versi) > 1:
+        alasan = (
+            "versi skema berbeda antar-anotator — membandingkan label yang "
+            "artinya sudah berubah akan tampak sebagai ketidaksepakatan (FR-C08)"
+        )
+        return HasilF1(
+            tepat=HasilKesepakatan.belum_terhitung(alasan),
+            longgar=HasilKesepakatan.belum_terhitung(alasan),
+        )
+
+    return HasilF1(
+        tepat=_f1(anotator_a, anotator_b, _cocok_tepat),
+        longgar=_f1(anotator_a, anotator_b, _cocok_longgar),
+    )
+
+
+def _cocok_tepat(x: RentangEntitas, y: RentangEntitas) -> bool:
+    """Batas rentang **dan** label sama persis."""
+    return (x.mulai, x.akhir, x.label) == (y.mulai, y.akhir, y.label)
+
+
+def _cocok_longgar(x: RentangEntitas, y: RentangEntitas) -> bool:
+    """Rentang bertumpang tindih **dan** label sama.
+
+    Longgar melonggarkan **batas**, bukan label. Melonggarkan label akan
+    membuat ukuran ini berhenti menilai skema label sama sekali — dan skema
+    label justru yang sedang dinilai kelayakannya.
+    """
+    return x.label is y.label and x.mulai < y.akhir and y.mulai < x.akhir
+
+
+def _f1(
+    acuan: list[RentangEntitas],
+    prediksi: list[RentangEntitas],
+    cocok: Callable[[RentangEntitas, RentangEntitas], bool],
+) -> HasilKesepakatan:
+    """F1 dengan **pemasangan satu-lawan-satu**.
+
+    Ini bagian yang tidak terlihat dari rumusnya dan paling mudah keliru. Pada
+    pencocokan longgar, satu rentang panjang milik acuan dapat bertumpang
+    tindih dengan beberapa rentang pendek milik prediksi. Menghitung seluruhnya
+    sebagai cocok menghasilkan jumlah kecocokan yang melampaui jumlah rentang,
+    lalu F1 yang melampaui satu — atau, bila dipangkas, angka yang lebih tinggi
+    daripada semestinya tanpa tanda apa pun.
+
+    Pemasangannya rakus dan berurutan, bukan optimal. Pemasangan optimal
+    menuntut algoritme penugasan yang menambah kerumitan tanpa mengubah
+    kesimpulan pada data anotasi sungguhan, dan kerumitan yang tidak mengubah
+    kesimpulan adalah kerumitan yang akan disalahpahami pembacanya.
+    """
+    terpakai: set[int] = set()
+    cocok_jumlah = 0
+    for r in acuan:
+        for i, p in enumerate(prediksi):
+            if i not in terpakai and cocok(r, p):
+                terpakai.add(i)
+                cocok_jumlah += 1
+                break
+
+    presisi = cocok_jumlah / len(prediksi) if prediksi else 0.0
+    recall = cocok_jumlah / len(acuan) if acuan else 0.0
+    if presisi + recall == 0:
+        return HasilKesepakatan(nilai=0.0, jumlah_satuan=len(acuan) + len(prediksi))
+
+    nilai = 2 * presisi * recall / (presisi + recall)
+    return HasilKesepakatan(nilai=nilai, jumlah_satuan=len(acuan) + len(prediksi))

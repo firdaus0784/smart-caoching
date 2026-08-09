@@ -43,7 +43,7 @@ satu galat pun.
 | B-1 | `HasilKesepakatan` — nilai boleh `None`, dengan `terhitung` terpisah | **Uji: batch tanpa anotasi ganda menghasilkan `terhitung=False` dan nilai `None`** — bukan 0,0, bukan 1,0 | R-07, R-08 | [x] |
 | B-2 | Cohen's Kappa bagi klasifikasi | **Uji terhadap tiga contoh yang dihitung tangan**: kesepakatan sempurna, kesepakatan setara kebetulan, tabel 2×2 bernilai tertulis | R-07 | [x] |
 | B-3 | Kappa per kategori, satu lawan sisanya | Uji: kategori yang batasnya kabur menghasilkan Kappa lebih rendah daripada keseluruhan | R-07 | [x] |
-| B-4 | F1 berpasangan, pencocokan tepat dan longgar | Uji: empat keadaan — rentang identik, bertumpang tindih label sama, identik label berbeda, tidak bertemu | R-08 | [ ] |
+| B-4 | F1 berpasangan, pencocokan tepat dan longgar | Uji: empat keadaan — rentang identik, bertumpang tindih label sama, identik label berbeda, tidak bertemu | R-08 | [x] |
 | B-5 | Uraian modul menyatakan mengapa Kappa tidak dipakai bagi rentang | Uji: uraian menyebut alasannya dan merujuk D-03 Bagian 11 serta D-11 Bagian 3.2 | R-09 | [ ] |
 | B-6 | Ambang D-03 sebagai tetapan, bukan angka tertanam | Uji: ambang sama persis dengan D-03 Bagian 11. **Uji: tidak ada angka ambang tertulis di luar satu tempat** | C-16 | [ ] |
 
