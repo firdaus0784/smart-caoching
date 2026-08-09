@@ -80,3 +80,37 @@ def test_repositori_nyata_tidak_menyimpang() -> None:
     akar = Path(__file__).resolve().parents[2]
     temuan = periksa_ketergantungan(akar)
     assert temuan == [], "; ".join(str(t) for t in temuan)
+
+
+def test_langsung_yang_tidak_ada_pada_terkunci_menyalakan_pemeriksa(tmp_path: Path) -> None:
+    """Daftar `langsung` sebelumnya tidak diperiksa sama sekali — R-18, A-1 fitur 015.
+
+    Ia yang dibaca manusia ketika bertanya "apa yang kita setujui", sedangkan
+    `terkunci` adalah rekaman mesin. Nama yang berdiri di `langsung` tanpa ada
+    pada `terkunci` berarti kedua daftar itu bercerita berbeda, dan yang salah
+    justru daftar yang dibaca orang.
+    """
+    disetujui = """langsung = ["pydantic", "pytest", "pypdf"]
+
+[terkunci]
+"pydantic" = "2.10.0"
+"pytest" = "8.3.0"
+"""
+    assert periksa_ketergantungan(_tulis(tmp_path, LOCK, disetujui))
+
+
+def test_langsung_kosong_pada_pohon_berpaket_menyalakan_pemeriksa(tmp_path: Path) -> None:
+    """Mengosongkan `langsung` adalah cara termudah meloloskan pemeriksaan di
+    atas, dan karena itu ia sendiri wajib menjadi temuan."""
+    disetujui = """langsung = []
+
+[terkunci]
+"pydantic" = "2.10.0"
+"pytest" = "8.3.0"
+"""
+    assert periksa_ketergantungan(_tulis(tmp_path, LOCK, disetujui))
+
+
+def test_langsung_selaras_tidak_menghasilkan_temuan(tmp_path: Path) -> None:
+    """Penjagaan yang menyala pada keadaan sah akan dimatikan orang."""
+    assert periksa_ketergantungan(_tulis(tmp_path, LOCK, DISETUJUI)) == []

@@ -5,8 +5,11 @@ Gerbang 2. Lebih maupun kurang sama-sama menggagalkan: penambahan berarti
 ketergantungan masuk tanpa persetujuan, pengurangan berarti daftar disetujui
 tidak lagi menggambarkan keadaan.
 
-Himpunan di bawah adalah rekaman keputusan manusia pada Gerbang 2, bukan
-pilihan agen.
+Himpunan di bawah adalah rekaman keputusan manusia, bukan pilihan agen. Ia
+berubah **hanya** bersama keputusan gerbang yang tercatat pada `logbook/L4`,
+dan tiap perubahannya menyebut keputusan mana yang menyebabkannya.
+
+Menambahkan nama ke sini untuk meloloskan `make check` membatalkan gunanya.
 """
 
 import tomllib
@@ -15,7 +18,16 @@ from pathlib import Path
 AKAR = Path(__file__).resolve().parents[2]
 PYPROJECT = AKAR / "pyproject.toml"
 
-DISETUJUI_RUNTIME = {"pydantic"}
+DISETUJUI_RUNTIME = {
+    # Gerbang 2 fitur 001
+    "pydantic",
+    # Gerbang 1 fitur 015, keputusan KB-017
+    "pypdf",
+    "python-docx",
+    "openpyxl",
+    "pysastrawi",
+    "pytesseract",
+}
 DISETUJUI_PENGEMBANGAN = {"pytest", "pytest-cov", "ruff", "mypy"}
 
 

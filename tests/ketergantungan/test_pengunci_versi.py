@@ -16,7 +16,20 @@ LOCK = AKAR / "uv.lock"
 DISETUJUI = AKAR / "ketergantungan-disetujui.toml"
 
 # Rekaman keputusan manusia pada Gerbang 2.
-LANGSUNG_GERBANG_2 = {"pydantic", "pytest", "pytest-cov", "ruff", "mypy"}
+LANGSUNG_DISETUJUI = {
+    # Gerbang 2 fitur 001
+    "pydantic",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+    # Gerbang 1 fitur 015, keputusan KB-017
+    "pypdf",
+    "python-docx",
+    "openpyxl",
+    "pysastrawi",
+    "pytesseract",
+}
 
 
 def _normal(nama: str) -> str:
@@ -40,10 +53,10 @@ def _disetujui() -> dict:
 
 def test_daftar_langsung_sama_dengan_persetujuan_gerbang_2() -> None:
     langsung = {_normal(n) for n in _disetujui()["langsung"]}
-    assert langsung == LANGSUNG_GERBANG_2, (
-        f"daftar langsung menyimpang dari persetujuan Gerbang 2. "
-        f"berlebih={sorted(langsung - LANGSUNG_GERBANG_2)} "
-        f"kurang={sorted(LANGSUNG_GERBANG_2 - langsung)}"
+    assert langsung == LANGSUNG_DISETUJUI, (
+        f"daftar langsung menyimpang dari yang disetujui gerbang. "
+        f"berlebih={sorted(langsung - LANGSUNG_DISETUJUI)} "
+        f"kurang={sorted(LANGSUNG_DISETUJUI - langsung)}"
     )
 
 

@@ -83,6 +83,27 @@ def periksa_ketergantungan(akar: Path) -> list[Temuan]:
             )
         )
 
+    langsung = {_normal(str(n)) for n in isi_disetujui.get("langsung", [])}
+    for nama in sorted(langsung - set(titik_nol)):
+        temuan.append(
+            Temuan(
+                disetujui,
+                0,
+                f"paket {nama!r} tercatat pada `langsung` tetapi tidak ada pada "
+                "`terkunci` — kedua daftar bercerita berbeda, dan yang salah "
+                "justru daftar yang dibaca orang",
+            )
+        )
+    if titik_nol and not langsung:
+        temuan.append(
+            Temuan(
+                disetujui,
+                0,
+                "daftar `langsung` kosong sementara `terkunci` berisi — "
+                "mengosongkannya adalah cara termudah meloloskan pemeriksaan di atas",
+            )
+        )
+
     for nama in sorted(set(pada_lock) & set(titik_nol)):
         if pada_lock[nama] != titik_nol[nama]:
             temuan.append(

@@ -6,7 +6,7 @@ Ditinjau manusia sebelum kode ditulis. Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md` |
 | Plan | `plan.md` |
-| Status | Selesai — menunggu Gerbang 4 |
+| Status | **Lolos Gerbang 4** — 5 Agustus 2026, keputusan KB-009 |
 | Jumlah tugas | **7** — jauh di bawah ambang ±30 |
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
