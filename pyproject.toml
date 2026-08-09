@@ -94,6 +94,13 @@ testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q --strict-markers --strict-config"
 
+# Uji yang menuntut perkakas di luar pohon Python. Ia **dilewati**, tidak
+# pernah lulus diam-diam, ketika perkakasnya tidak ada — pembedaan itu yang
+# menjaga laporan uji tetap jujur pada lingkungan yang belum lengkap.
+markers = [
+    "perkakas_luar: menuntut program di luar paket Python, misalnya mesin OCR",
+]
+
 # ---------------------------------------------------------------------------
 
 [tool.coverage.run]
