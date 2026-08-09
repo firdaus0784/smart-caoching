@@ -4,7 +4,7 @@ Pemasangan dan penyesuaian perangkat anotasi — FR-C01 s.d. FR-C10.
 
 | | |
 |---|---|
-| Status | **Usulan. Menunggu persetujuan penanggung jawab teknis (C-12)** |
+| Status | **Disetujui** — 6 Agustus 2026, keputusan KB-020. Pilihan A; nol ketergantungan Python baru |
 | Tanggal | 6 Agustus 2026 |
 | Rujukan | `docs/D04.md` ADR-08 · `docs/D03.md` · `ketergantungan-disetujui.toml` |
 
