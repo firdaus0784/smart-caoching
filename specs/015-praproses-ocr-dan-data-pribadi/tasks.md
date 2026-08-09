@@ -58,7 +58,7 @@ sambil lalu adalah pesan yang menyebut nama pustaka.
 | C-1 | `Token` pada `src/nlp/praproses/token.py` — permukaan, stem, `mulai`, `akhir` | Uji: `Token` tidak dapat dibentuk tanpa rentang. **Uji: `Token` beku** | R-08, C-10 | [x] |
 | C-2 | Tokenisasi dan normalisasi | **Uji sifat:** bagi setiap token, `teks_kanonik[t.mulai:t.akhir] == t.permukaan` — atas seluruh bahan uji, bukan satu kalimat | R-07, R-08, C-10 | [x] |
 | C-3 | Stop-word dan stemming lewat PySastrawi | Uji: stemming mengubah `stem`, **tidak** mengubah `permukaan`, `mulai`, maupun `akhir` | R-07, R-08 | [x] |
-| C-4 | Uraian modul menyatakan batas kegunaannya | Uji: uraian menyebut bahwa keluaran praproses untuk pencarian, **bukan** untuk bahan anotasi | R-03, C-10 | [ ] |
+| C-4 | Uraian modul menyatakan batas kegunaannya | Uji: uraian menyebut bahwa keluaran praproses untuk pencarian, **bukan** untuk bahan anotasi | R-03, C-10 | [x] |
 
 **C-2 dinyatakan sebagai sifat, bukan sebagai kasus.** Uji yang memeriksa satu
 kalimat akan lolos pada versi yang benar untuk ASCII dan salah untuk teks
