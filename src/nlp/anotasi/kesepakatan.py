@@ -34,7 +34,12 @@ hasil akan disalin ke naskah sebagai bukti mutu. Bentuk yang sama dengan
 
 from __future__ import annotations
 
+from collections import Counter
+from collections.abc import Sequence
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from src.nlp.anotasi.rentang import PutusanKategori
 
 
 class HasilKesepakatan(BaseModel):
@@ -85,3 +90,79 @@ class HasilKesepakatan(BaseModel):
         Itu jalan pintas yang paling menggoda ketika tenggat mendekat.
         """
         return self.nilai is not None and self.nilai >= ambang
+
+
+def kappa_kategori(
+    anotator_a: list[PutusanKategori], anotator_b: list[PutusanKategori]
+) -> HasilKesepakatan:
+    """Cohen's Kappa atas dokumen yang **keduanya** anotasi — R-07.
+
+    Tanda tangannya menerima `PutusanKategori` dan tidak akan menerima
+    `RentangEntitas`. Itu yang menegakkan D-03 Bagian 11, bukan uraian modul
+    ini: penyeragaman dua ukuran menuntut mengubah tipe di sini, dan tipe yang
+    berubah menuntut penjelasan.
+
+    Dokumen yang hanya dianotasi satu pihak **dilewati**, tidak dihitung
+    sebagai ketidaksepakatan. Anotasi ganda hanya 15% (FR-C02), sehingga
+    memasukkan sisanya akan menurunkan Kappa atas hal yang bukan
+    ketidaksepakatan.
+
+    Empat keadaan menghasilkan hasil yang **belum terhitung**, dan tiap-tiapnya
+    punya sebab yang berbeda — karena itu alasannya disebutkan, bukan
+    diseragamkan:
+
+    - tidak ada putusan sama sekali
+    - tidak ada dokumen yang dianotasi keduanya
+    - versi skema berbeda pada dokumen yang sama
+    - hanya satu kategori dipakai kedua anotator, sehingga pe = 1
+
+    Yang terakhir paling halus. Ketika pe = 1, pembaginya nol; melaporkannya
+    1,0 akan menyatakan kesepakatan sempurna atas tugas yang tidak memiliki
+    pilihan, dan itu bukan bukti apa pun.
+    """
+    if not anotator_a or not anotator_b:
+        return HasilKesepakatan.belum_terhitung("tidak ada putusan kategori untuk dibandingkan")
+
+    oleh_a = {p.id_dokumen: p for p in anotator_a}
+    oleh_b = {p.id_dokumen: p for p in anotator_b}
+    bersama = sorted(set(oleh_a) & set(oleh_b))
+    if not bersama:
+        return HasilKesepakatan.belum_terhitung(
+            "tidak ada dokumen yang dianotasi kedua anotator — "
+            "ketiadaan bahan bukan kesepakatan nol"
+        )
+
+    berbeda_versi = [d for d in bersama if oleh_a[d].versi_skema != oleh_b[d].versi_skema]
+    if berbeda_versi:
+        return HasilKesepakatan.belum_terhitung(
+            f"versi skema berbeda pada {len(berbeda_versi)} dokumen — "
+            "membandingkan label yang artinya sudah berubah akan tampak "
+            "sebagai ketidaksepakatan anotator (FR-C08)"
+        )
+
+    pasangan = [(oleh_a[d].kategori_utama, oleh_b[d].kategori_utama) for d in bersama]
+    return _kappa(pasangan)
+
+
+def _kappa(pasangan: Sequence[tuple[object, object]]) -> HasilKesepakatan:
+    """Rumus Cohen's Kappa atas daftar pasangan putusan.
+
+    Dipisahkan dari pemilihan dokumennya supaya rumusnya dapat diuji terhadap
+    tabel yang dihitung tangan tanpa menyusun objek anotasi lebih dulu.
+    """
+    n = len(pasangan)
+    sepakat = sum(1 for x, y in pasangan if x == y)
+    po = sepakat / n
+
+    sisi_a = Counter(x for x, _ in pasangan)
+    sisi_b = Counter(y for _, y in pasangan)
+    pe = sum((sisi_a[k] / n) * (sisi_b[k] / n) for k in set(sisi_a) | set(sisi_b))
+
+    if pe >= 1.0:
+        return HasilKesepakatan.belum_terhitung(
+            "kedua anotator hanya memakai satu kategori — peluang kesepakatan "
+            "acak menjadi satu, dan kesepakatan sempurna atas tugas tanpa "
+            "pilihan bukan bukti apa pun"
+        )
+
+    return HasilKesepakatan(nilai=(po - pe) / (1 - pe), jumlah_satuan=n)
