@@ -75,10 +75,16 @@ warn_unreachable = true
 # ketergantungan baru, yang C-12 tuntut disetujui lebih dulu. Setelan di
 # bawah menyelesaikannya tanpa menambah paket: ia melonggarkan **satu**
 # pustaka, bukan seluruh berkas, sehingga kode kita sendiri tetap diperiksa
-# penuh. Empat pustaka lain (pydantic, pypdf, python-docx, pytesseract)
-# menyertakan tandanya dan tidak memerlukan ini.
+# penuh. Tiga pustaka lain (pydantic, pypdf, python-docx) menyertakan
+# tandanya dan tidak memerlukan ini.
+#
+# Sastrawi sama keadaannya, dan tidak ada paket stub bagi keduanya sama
+# sekali — bahkan bila C-12 mengizinkannya. Daftar di bawah karena itu
+# bukan kelonggaran sementara melainkan pernyataan bahwa kedua pustaka ini
+# memang tidak bertanda tipe. Ia bertambah hanya bersama ketergantungan
+# baru yang disetujui gerbang, dan setiap barisnya menyebut alasannya.
 [[tool.mypy.overrides]]
-module = ["openpyxl.*"]
+module = ["openpyxl.*", "Sastrawi.*"]
 ignore_missing_imports = true
 
 # ---------------------------------------------------------------------------
