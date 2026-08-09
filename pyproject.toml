@@ -78,13 +78,13 @@ warn_unreachable = true
 # penuh. Tiga pustaka lain (pydantic, pypdf, python-docx) menyertakan
 # tandanya dan tidak memerlukan ini.
 #
-# Sastrawi sama keadaannya, dan tidak ada paket stub bagi keduanya sama
+# Sastrawi dan pytesseract sama keadaannya, dan tidak ada paket stub sama
 # sekali — bahkan bila C-12 mengizinkannya. Daftar di bawah karena itu
 # bukan kelonggaran sementara melainkan pernyataan bahwa kedua pustaka ini
 # memang tidak bertanda tipe. Ia bertambah hanya bersama ketergantungan
 # baru yang disetujui gerbang, dan setiap barisnya menyebut alasannya.
 [[tool.mypy.overrides]]
-module = ["openpyxl.*", "Sastrawi.*"]
+module = ["openpyxl.*", "Sastrawi.*", "pytesseract.*"]
 ignore_missing_imports = true
 
 # ---------------------------------------------------------------------------

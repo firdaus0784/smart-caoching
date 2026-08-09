@@ -35,7 +35,6 @@ kelonggaran itu pemeriksa akan menyala atas riwayat sebelum fitur 015.
 
 from __future__ import annotations
 
-import hashlib
 import shutil
 import subprocess
 import tomllib
@@ -43,7 +42,14 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from src.ingest.ekstraksi.model_ocr import sidik_model as _sidik_model
+
 from perkakas.pemeriksa.ast_aturan import Temuan
+
+# Pencarian berkas model tinggal di `src/`, dan pemeriksa memakainya —
+# bukan sebaliknya. Perkakas boleh bergantung pada kode; kode tidak boleh
+# bergantung pada perkakas. Menyalinnya ke sini akan menghasilkan aturan
+# kedua yang lupa diperbarui ketika tempat pemasangan Tesseract berubah.
 
 PAKET_PENANDA = "pytesseract"
 """Kehadirannya pada `langsung` yang menuntut bagian `[sistem]` ada."""
@@ -78,35 +84,6 @@ def _versi_tesseract() -> str | None:
         return None
     bagian = baris[0].split()
     return bagian[1] if len(bagian) > 1 else None
-
-
-def _sidik_model(nama_berkas: str) -> str | None:
-    """Sidik berkas model, atau `None` bila berkasnya tidak ditemukan.
-
-    Dicari pada tempat baku Tesseract. Jalur yang tidak terbaca diperlakukan
-    sebagai tidak ada — pemeriksa yang menebak isi berkas yang tidak dapat
-    dibacanya bukan pemeriksa.
-    """
-    import os
-
-    calon: list[Path] = []
-    awalan = os.environ.get("TESSDATA_PREFIX")
-    if awalan:
-        calon.append(Path(awalan) / nama_berkas)
-        calon.append(Path(awalan) / "tessdata" / nama_berkas)
-    calon += [
-        Path("/usr/share/tesseract-ocr/5/tessdata") / nama_berkas,
-        Path("/usr/share/tesseract-ocr/4.00/tessdata") / nama_berkas,
-        Path("/usr/share/tessdata") / nama_berkas,
-        Path("/usr/local/share/tessdata") / nama_berkas,
-    ]
-    for jalur in calon:
-        try:
-            if jalur.is_file():
-                return "sha256:" + hashlib.sha256(jalur.read_bytes()).hexdigest()
-        except OSError:
-            continue
-    return None
 
 
 def periksa_ketergantungan_sistem(

@@ -18,17 +18,49 @@ import pytest
 from src.ingest.ekstraksi.dasar import Pengekstrak, TeksKanonik
 from src.ingest.ekstraksi.docx import PengekstrakDocx
 from src.ingest.ekstraksi.galat import GalatEkstraksi
+from src.ingest.ekstraksi.ocr import HasilMesin, PengekstrakOcr
 from src.ingest.ekstraksi.pdf import PengekstrakPdf
 from src.ingest.ekstraksi.xlsx import PengekstrakXlsx
 
 BAHAN = Path(__file__).resolve().parents[1] / "bahan"
 
+
+def _mesin_tiruan(jalur: Path) -> HasilMesin:
+    """Mesin OCR tiruan yang berhasil atas berkas apa pun yang terbaca.
+
+    `PengekstrakOcr` masuk daftar dengan mesin yang disuntikkan, bukan dengan
+    mesin sungguhan. Dengan mesin sungguhan seluruh barisnya akan gagal karena
+    Tesseract tidak terpasang, dan uji yang gagal karena lingkungannya tidak
+    menguji apa pun tentang kodenya.
+    """
+    return HasilMesin(
+        teks="Notulen rapat pleno hasil pindaian.",
+        versi_mesin="uji",
+        sidik_model="sha256:uji",
+    )
+
+
 PENGEKSTRAK: tuple[Pengekstrak, ...] = (
     PengekstrakDocx(),
     PengekstrakXlsx(),
     PengekstrakPdf(),
+    PengekstrakOcr(mesin=_mesin_tiruan),
 )
 """Seluruh pengekstrak yang ada. Yang ditambahkan kelak wajib masuk ke sini."""
+
+MEMBACA_BERKAS_SENDIRI: tuple[Pengekstrak, ...] = PENGEKSTRAK[:3]
+"""Pengekstrak yang menilai sendiri apakah berkasnya bermasalah.
+
+`PengekstrakOcr` **sengaja tidak termasuk**, dan alasannya bukan kelonggaran.
+Ia tidak mengurai berkasnya sama sekali; yang menilai berkas rusak atau bukan
+adalah mesin OCR di luarnya. Memasukkannya ke sapuan di bawah berarti menguji
+mesin tiruan, bukan menguji kode — dan mesin tiruan yang dibuat gagal pada
+berkas yang tepat hanya membuktikan bahwa tiruannya disusun sesuai jawaban.
+
+Kegagalan yang **memang** milik `PengekstrakOcr` — berkas tidak ada, mesin
+gagal, keluaran hampa — diuji pada `test_ekstraksi_ocr.py`, dan ketiganya
+menghasilkan `GalatEkstraksi` di sana.
+"""
 
 BERMASALAH = (
     "rusak.pdf",
@@ -41,7 +73,7 @@ BERMASALAH = (
 )
 
 
-@pytest.mark.parametrize("pengekstrak", PENGEKSTRAK, ids=lambda p: type(p).__name__)
+@pytest.mark.parametrize("pengekstrak", MEMBACA_BERKAS_SENDIRI, ids=lambda p: type(p).__name__)
 @pytest.mark.parametrize("nama", BERMASALAH)
 def test_tidak_ada_berkas_bermasalah_yang_menghasilkan_teks(
     pengekstrak: Pengekstrak, nama: str
