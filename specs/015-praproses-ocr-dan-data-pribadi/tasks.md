@@ -37,7 +37,7 @@ yang tidak menemukan bahannya dan melapor lulus adalah laporan palsu.
 | B-2 | Antarmuka abstrak `Pengekstrak` pada `src/ingest/ekstraksi/dasar.py`; `TeksKanonik` sebagai tipe tersendiri | Uji: setiap pelaksana mengembalikan `TeksKanonik`, bukan `str` telanjang | R-01, R-03 | [x] |
 | B-3 | `PengekstrakDocx` — teks final, bukan perubahan terlacak | Uji: DOCX berperubahan terlacak menghasilkan teks final; **uji: keputusan itu tertulis pada uraian modul** | R-01 | [x] |
 | B-4 | `PengekstrakXlsx` — nilai terhitung, bukan rumus | Uji: sel berumus menghasilkan nilainya | R-01 | [x] |
-| B-5 | `PengekstrakPdf` | Uji: PDF berlapis teks terekstrak; **uji: PDF tanpa lapisan teks → galat khusus yang mengalihkan ke OCR, bukan teks kosong** | R-01, R-02 | [ ] |
+| B-5 | `PengekstrakPdf` | Uji: PDF berlapis teks terekstrak; **uji: PDF tanpa lapisan teks → galat khusus yang mengalihkan ke OCR, bukan teks kosong** | R-01, R-02 | [x] |
 | B-6 | **Berkas rusak, kosong, dan terkunci menghasilkan penolakan** | Uji: ketiganya → galat. **Uji: tidak satu pun menghasilkan `TeksKanonik` berisi untai kosong** | R-02 | [ ] |
 | B-7 | Pesan galat pengguna bagi keenam keadaan Bagian "Keadaan yang wajib ditangani" | Uji: tiap pesan ≤ 20 kata, Bahasa Indonesia, tanpa istilah teknis, tanpa nama pustaka | R-02, C-13 | [ ] |
 
