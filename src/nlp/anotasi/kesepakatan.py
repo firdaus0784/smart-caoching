@@ -40,6 +40,7 @@ from collections.abc import Sequence
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.nlp.anotasi.rentang import PutusanKategori
+from src.nlp.anotasi.skema import KategoriMasalah
 
 
 class HasilKesepakatan(BaseModel):
@@ -120,27 +121,9 @@ def kappa_kategori(
     1,0 akan menyatakan kesepakatan sempurna atas tugas yang tidak memiliki
     pilihan, dan itu bukan bukti apa pun.
     """
-    if not anotator_a or not anotator_b:
-        return HasilKesepakatan.belum_terhitung("tidak ada putusan kategori untuk dibandingkan")
-
-    oleh_a = {p.id_dokumen: p for p in anotator_a}
-    oleh_b = {p.id_dokumen: p for p in anotator_b}
-    bersama = sorted(set(oleh_a) & set(oleh_b))
-    if not bersama:
-        return HasilKesepakatan.belum_terhitung(
-            "tidak ada dokumen yang dianotasi kedua anotator — "
-            "ketiadaan bahan bukan kesepakatan nol"
-        )
-
-    berbeda_versi = [d for d in bersama if oleh_a[d].versi_skema != oleh_b[d].versi_skema]
-    if berbeda_versi:
-        return HasilKesepakatan.belum_terhitung(
-            f"versi skema berbeda pada {len(berbeda_versi)} dokumen — "
-            "membandingkan label yang artinya sudah berubah akan tampak "
-            "sebagai ketidaksepakatan anotator (FR-C08)"
-        )
-
-    pasangan = [(oleh_a[d].kategori_utama, oleh_b[d].kategori_utama) for d in bersama]
+    pasangan, halangan = _pasangan_bersama(anotator_a, anotator_b)
+    if pasangan is None:
+        return HasilKesepakatan.belum_terhitung(halangan)
     return _kappa(pasangan)
 
 
@@ -166,3 +149,73 @@ def _kappa(pasangan: Sequence[tuple[object, object]]) -> HasilKesepakatan:
         )
 
     return HasilKesepakatan(nilai=(po - pe) / (1 - pe), jumlah_satuan=n)
+
+
+def kappa_per_kategori(
+    anotator_a: list[PutusanKategori], anotator_b: list[PutusanKategori]
+) -> dict[KategoriMasalah, HasilKesepakatan]:
+    """Kappa satu lawan sisanya bagi tiap kategori yang muncul — R-07.
+
+    D-03 Bagian 11 menuntutnya "untuk menemukan kategori yang batasnya kabur",
+    dan kalimat berikutnya menentukan bentuk fungsi ini: kategori dengan Kappa
+    rendah berulang menandakan **definisinya perlu dipertajam, bukan
+    anotatornya perlu ditegur** (KM-03).
+
+    Hasilnya karena itu dipetakan per kategori dan dibawa utuh, tidak diringkas
+    menjadi satu angka terburuk. Angka terburuk memberi tahu ada yang salah;
+    petanya memberi tahu di mana — dan hanya yang kedua dapat ditindaklanjuti
+    dengan mempertajam definisi.
+
+    **Hanya kategori yang muncul** yang dilaporkan. Melaporkan kedelapan
+    menghasilkan tujuh baris kosong, dan pembacanya berhenti membaca.
+
+    Peta **kosong** ketika tidak ada bahan — bukan peta berisi delapan hasil
+    yang belum terhitung. Yang kedua terbaca sebagai "sudah diperiksa dan
+    hasilnya nihil", padahal tidak ada yang diperiksa sama sekali.
+    """
+    pasangan, _ = _pasangan_bersama(anotator_a, anotator_b)
+    if pasangan is None:
+        return {}
+
+    muncul = sorted({k for baris in pasangan for k in baris}, key=lambda k: k.value)
+    return {
+        kategori: _kappa([(x is kategori, y is kategori) for x, y in pasangan])
+        for kategori in muncul
+    }
+
+
+def _pasangan_bersama(
+    anotator_a: list[PutusanKategori], anotator_b: list[PutusanKategori]
+) -> tuple[list[tuple[KategoriMasalah, KategoriMasalah]] | None, str]:
+    """Putusan atas dokumen yang keduanya anotasi, beserta halangannya bila tak ada.
+
+    **Satu tempat bagi aturan pemilihan.** `kappa_kategori` dan
+    `kappa_per_kategori` memakainya sama persis; dua aturan pemilihan yang
+    ditulis terpisah akan berbeda pada keadaan tepi, dan angkanya lalu tidak
+    dapat dibandingkan satu sama lain — padahal justru perbandingan keduanya
+    yang gunanya (KM-03).
+
+    Mengembalikan halangan sebagai kalimat, bukan sebagai penanda: tiga
+    sebabnya berbeda, dan yang membacanya perlu tahu yang mana.
+    """
+    if not anotator_a or not anotator_b:
+        return None, "tidak ada putusan kategori untuk dibandingkan"
+
+    oleh_a = {p.id_dokumen: p for p in anotator_a}
+    oleh_b = {p.id_dokumen: p for p in anotator_b}
+    bersama = sorted(set(oleh_a) & set(oleh_b))
+    if not bersama:
+        return None, (
+            "tidak ada dokumen yang dianotasi kedua anotator — "
+            "ketiadaan bahan bukan kesepakatan nol"
+        )
+
+    berbeda_versi = [d for d in bersama if oleh_a[d].versi_skema != oleh_b[d].versi_skema]
+    if berbeda_versi:
+        return None, (
+            f"versi skema berbeda pada {len(berbeda_versi)} dokumen — "
+            "membandingkan label yang artinya sudah berubah akan tampak "
+            "sebagai ketidaksepakatan anotator (FR-C08)"
+        )
+
+    return [(oleh_a[d].kategori_utama, oleh_b[d].kategori_utama) for d in bersama], ""
