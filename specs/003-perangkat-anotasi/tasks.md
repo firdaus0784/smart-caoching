@@ -8,7 +8,7 @@ Ditinjau manusia sebelum kode ditulis. Satu tugas = satu commit.
 | Plan | `plan.md`, lolos Gerbang 2 |
 | Status | **Lolos Gerbang 3** — 6 Agustus 2026. Implementasi berjalan |
 | Cakupan | **Bagian 1 saja** — pembacaan ekspor Label Studio menjadi fitur 016 (KB-022) |
-| Jumlah tugas | **14** — di bawah ambang ±30 |
+| Jumlah tugas | **15** — di bawah ambang ±30. Kepala ini sempat tertulis 14; jumlah barisnya selalu 15 (A: 5, B: 6, C: 4), dan angkanya yang keliru, bukan daftarnya |
 | Ketergantungan baru | **Nol** |
 
 ## Fase A · Skema dan tipe
