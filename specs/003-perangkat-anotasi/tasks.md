@@ -22,8 +22,8 @@ tipenya ditetapkan **dari D-03**, bukan dari bentuk ekspor perangkat mana pun
 | A-1 | `LabelEntitas` — delapan label FR-C04 sebagai enum | Uji: kedelapan ada; **uji: label di luar daftar ditolak** | R-01 | [x] |
 | A-2 | `KategoriMasalah` — K1 s.d. K8 sesuai D-03 Bagian 5 | Uji: kedelapan ada dengan kode persis D-03 | R-02 | [x] |
 | A-3 | `VersiSkema` dan penyertaannya pada setiap anotasi | Uji: anotasi tanpa versi skema tidak dapat dibentuk | R-03 | [x] |
-| A-4 | `RentangEntitas` — indeks karakter, memeriksa potongan teksnya | **Uji: rentang yang tidak cocok ditolak, bukan diperbaiki.** Uji: `teks[mulai:akhir]` sama dengan `teks_rentang` | R-05, R-06 | [ ] |
-| A-5 | `PutusanKategori` sebagai tipe tersendiri dari `RentangEntitas` | **Uji: keduanya tidak dapat saling menggantikan** — dinyatakan pada tanda tangan, bukan pada nilai | R-07, R-08 | [ ] |
+| A-4 | `RentangEntitas` — indeks karakter, memeriksa potongan teksnya | **Uji: rentang yang tidak cocok ditolak, bukan diperbaiki.** Uji: `teks[mulai:akhir]` sama dengan `teks_rentang` | R-05, R-06 | [x] |
+| A-5 | `PutusanKategori` sebagai tipe tersendiri dari `RentangEntitas` | **Uji: keduanya tidak dapat saling menggantikan** — dinyatakan pada tanda tangan, bukan pada nilai | R-07, R-08 | [x] |
 
 **A-5 adalah tugas terpenting fase ini, dan alasannya tidak terlihat dari
 namanya.** Dua tipe terpisah itulah yang membuat Kappa **tidak dapat**
