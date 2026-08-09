@@ -5,7 +5,9 @@ sebagai sintaks PDF mentah, bukan dibangkitkan pustaka: bahan uji yang
 dibangkitkan pustaka yang sama dengan yang diuji berarti menguji pustaka
 terhadap dirinya sendiri.
 """
+
 from pathlib import Path
+
 from pypdf import PdfReader, PdfWriter
 
 BAHAN = Path("tests/bahan")
@@ -26,7 +28,13 @@ def _pdf(isi_aliran: bytes, dengan_font: bool) -> bytes:
         + sumber
         + b" /Contents 4 0 R >>"
     )
-    objek.append(b"<< /Length " + str(len(isi_aliran)).encode() + b" >>\nstream\n" + isi_aliran + b"\nendstream")
+    objek.append(
+        b"<< /Length "
+        + str(len(isi_aliran)).encode()
+        + b" >>\nstream\n"
+        + isi_aliran
+        + b"\nendstream"
+    )
     if dengan_font:
         objek.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
 
@@ -40,8 +48,11 @@ def _pdf(isi_aliran: bytes, dengan_font: bool) -> bytes:
     for t in tempat:
         keluaran += f"{t:010d} 00000 n \n".encode()
     keluaran += (
-        b"trailer\n<< /Size " + str(len(objek) + 1).encode() + b" /Root 1 0 R >>\nstartxref\n"
-        + str(awal_xref).encode() + b"\n%%EOF\n"
+        b"trailer\n<< /Size "
+        + str(len(objek) + 1).encode()
+        + b" /Root 1 0 R >>\nstartxref\n"
+        + str(awal_xref).encode()
+        + b"\n%%EOF\n"
     )
     return bytes(keluaran)
 

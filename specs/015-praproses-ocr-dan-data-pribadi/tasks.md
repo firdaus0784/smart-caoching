@@ -34,7 +34,7 @@ yang tidak menemukan bahannya dan melapor lulus adalah laporan palsu.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | B-1 | Bahan uji pada `tests/bahan/` — DOCX, XLSX, empat PDF | Uji: keenam berkas terbaca dan berukuran wajar. **Uji: tidak ada data pribadi sungguhan pada bahan** | — | [x] — tujuh berkas, bukan enam; `kosong.pdf` ditambahkan |
-| B-2 | Antarmuka abstrak `Pengekstrak` pada `src/ingest/ekstraksi/dasar.py`; `TeksKanonik` sebagai tipe tersendiri | Uji: setiap pelaksana mengembalikan `TeksKanonik`, bukan `str` telanjang | R-01, R-03 | [ ] |
+| B-2 | Antarmuka abstrak `Pengekstrak` pada `src/ingest/ekstraksi/dasar.py`; `TeksKanonik` sebagai tipe tersendiri | Uji: setiap pelaksana mengembalikan `TeksKanonik`, bukan `str` telanjang | R-01, R-03 | [x] |
 | B-3 | `PengekstrakDocx` — teks final, bukan perubahan terlacak | Uji: DOCX berperubahan terlacak menghasilkan teks final; **uji: keputusan itu tertulis pada uraian modul** | R-01 | [ ] |
 | B-4 | `PengekstrakXlsx` — nilai terhitung, bukan rumus | Uji: sel berumus menghasilkan nilainya | R-01 | [ ] |
 | B-5 | `PengekstrakPdf` | Uji: PDF berlapis teks terekstrak; **uji: PDF tanpa lapisan teks → galat khusus yang mengalihkan ke OCR, bukan teks kosong** | R-01, R-02 | [ ] |
