@@ -77,6 +77,17 @@ def test_ambang_kualifikasi_sama_dengan_d03_bagian_13() -> None:
     assert kappa == modul_ambang.AMBANG_KUALIFIKASI_KAPPA
 
 
+def test_jumlah_dokumen_kualifikasi_sama_dengan_d03_bagian_13() -> None:
+    """Bukan ambang, dan tetap di sini.
+
+    Ia angka milik D-03 yang menentukan apakah sebuah penilaian sah, dan
+    menaruhnya di tempat lain berarti ada dua tempat angka D-03 disalin.
+    """
+    baris = _baris_memuat("Uji kualifikasi", "kunci jawaban")
+    jumlah = int(re.search(r"\*\*\s*(\d+) dokumen", baris).group(1))  # type: ignore[union-attr]
+    assert jumlah == modul_ambang.JUMLAH_DOKUMEN_KUALIFIKASI
+
+
 def test_ambang_kualifikasi_lebih_rendah_daripada_ambang_batch() -> None:
     """Bukan kelalaian D-03, dan perlu dinyatakan supaya tidak "dirapikan".
 

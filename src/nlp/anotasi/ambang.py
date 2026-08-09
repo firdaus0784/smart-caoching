@@ -75,3 +75,18 @@ Sama nilainya dengan `AMBANG_KAPPA` dan tetap ditulis terpisah: keduanya
 dimiliki bagian D-03 yang berbeda, dan menyatukannya berarti perubahan pada
 salah satunya diam-diam mengubah yang lain.
 """
+
+JUMLAH_DOKUMEN_KUALIFIKASI = 20
+"""Dokumen berkunci jawaban pada uji kualifikasi — D-03 Bagian 13.
+
+**Bukan ambang, dan tetap di sini.** Ia menentukan apakah sebuah penilaian
+sah, bukan berapa nilai yang dituntut, tetapi ia angka milik D-03 dengan cara
+yang sama — dan menaruhnya di tempat lain berarti ada dua tempat angka D-03
+disalin.
+
+Angka bulat **tidak ikut disapu** oleh uji "satu tempat" pada B-6. Sapuan itu
+mencari nilai pecahan ambang; menyapu bilangan bulat 20 akan menandai setiap
+kemunculan angka itu pada seluruh `src/`, dan pemeriksa yang menyala pada hal
+yang benar akan dimatikan orang. Yang menjaganya di sini adalah uji terhadap
+`docs/D03.md`, bukan sapuan.
+"""

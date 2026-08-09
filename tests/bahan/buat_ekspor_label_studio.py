@@ -65,16 +65,14 @@ DOKUMEN = (
 )
 
 
-def panggil(
-    jalur: str, token: str, data: Any = None, mentah: bool = False
-) -> Any:  # noqa: ANN401 — bentuk tanggapan Label Studio, bukan tipe kita
+def panggil(jalur: str, token: str, data: Any = None, mentah: bool = False) -> Any:
     permintaan = urllib.request.Request(
         f"{DASAR}{jalur}",
         data=json.dumps(data).encode() if data is not None else None,
         headers={"Authorization": f"Token {token}", "Content-Type": "application/json"},
         method="POST" if data is not None else "GET",
     )
-    with urllib.request.urlopen(permintaan) as tanggapan:  # noqa: S310 — alamat lokal
+    with urllib.request.urlopen(permintaan) as tanggapan:
         isi = tanggapan.read()
     if mentah:
         return isi
@@ -86,7 +84,7 @@ def anotasi(
     rentang: tuple[tuple[int, int, str, str], ...],
     kategori: str,
     token: str,
-) -> Any:  # noqa: ANN401
+) -> Any:
     hasil: list[dict[str, Any]] = [
         {
             "from_name": "entitas",
