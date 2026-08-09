@@ -6,7 +6,7 @@
 | Dokumen terkait | D-01 Modul C · **D-03 Bagian 5, 10, 11, 12** · D-04 ADR-08, Bagian 7.2 · D-10 · D-11 Bagian 3.2 |
 | Pasal konstitusi yang menyentuh fitur ini | **C-10**, C-09, C-11, C-12, C-16 |
 | Urutan pembangunan | 003 pada `docs/D12.md` Bagian 7, sesudah 015 |
-| Status | **Menunggu Gerbang 1** |
+| Status | **Lolos Gerbang 1** — 6 Agustus 2026, keputusan KB-021. Menunggu `plan.md` |
 | Ketergantungan | **Nol paket Python baru** — disetujui KB-020 |
 
 ## Tujuan
@@ -121,19 +121,33 @@ fitur 015, dan dengan "belum dapat diperiksa" pada `make compliance`.
 - [ ] Cakupan uji tidak turun (C-11)
 - [ ] `make compliance` tidak berubah — fitur ini tidak memindahkan pasal mana pun
 
-## Pertanyaan Gerbang 1
+## Keputusan Gerbang 1
 
-**Satu, dan ia menuntut bahan sebelum dapat dijawab.**
+Bentuk berkas ekspor Label Studio 1.23 belum diperiksa langsung, dan ADR-08
+menyebut dua kemungkinan tanpa memutuskan: bidang `versi_skema`, `bendera`,
+dan `status_pra_anotasi` dibawa Label Studio sendiri, atau ditambahkan pada
+tahap ekspor.
 
-Bentuk berkas ekspor Label Studio 1.23 belum diperiksa langsung (KB-020).
-Pertanyaannya: **apakah bidang `versi_skema`, `bendera`, dan
-`status_pra_anotasi` dapat dibawa Label Studio sendiri, atau ditambahkan pada
-tahap ekspor** — ADR-08 menyebut kemungkinan keduanya tanpa memutuskan.
+**Keputusan: fitur ini dibangun dalam dua bagian yang dipisahkan tegas**
+(KB-021).
 
-Jawabannya menentukan apakah R-03 dan R-12 dipenuhi dengan membaca atau dengan
-menghitung, dan itu perbedaan yang menyentuh bentuk data. Ia tidak dapat
-dijawab dari dokumentasi; ia dijawab dengan memasang Label Studio sekali,
-mengekspor satu contoh, dan menyimpannya sebagai bahan uji.
+| | Bagian | Menunggu bahan? |
+|---|---|---|
+| **1** | Perhitungan — Kappa, F1 berpasangan, uji kualifikasi, skema berversi | **Tidak.** Aturannya lengkap pada D-03 |
+| **2** | Pembacaan ekspor — pemetaan bidang, penandaan pra-anotasi | **Ya.** Menunggu satu contoh ekspor sungguhan |
 
-Sisanya tidak menunggu apa pun: R-07 s.d. R-09 dan R-14 adalah perhitungan
-yang aturannya sudah lengkap pada D-03, dan dapat dibangun lebih dulu.
+Yang menentukan pemisahan ini: **bagian 1 tidak menyentuh bentuk data Label
+Studio sama sekali.** Ia bekerja atas tipe milik kita sendiri, dan pemetaan
+dari bentuk ekspor ke tipe itu adalah pekerjaan bagian 2. Membangunnya
+terbalik akan membuat tipe kita menyerupai bentuk ekspor — dan bentuk ekspor
+milik perangkat yang versinya dapat berubah tanpa kita.
+
+**Bagian 2 tidak dimulai sebelum satu contoh ekspor sungguhan ada pada
+`tests/bahan/`.** Menebaknya dari dokumentasi sudah dua kali terbukti keliru
+pada fitur 015 — `paragraph.text` python-docx bukan teks final, dan XLSX
+tidak menyimpan hasil hitungan rumusnya. Keduanya baru ketahuan saat bahan
+uji sungguhan dibuat.
+
+Bila contoh ekspornya tidak dapat diperoleh pada siklus ini, bagian 1 tetap
+selesai dan bagian 2 menjadi butir terbuka — sama dengan pola yang KB-018
+tetapkan bagi OCR.
