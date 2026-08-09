@@ -72,7 +72,7 @@ Dibatalkan seluruhnya bila A-3 gagal (KB-018).
 |---|---|---|---|---|
 | D-1 | `PengekstrakOcr` — satu-satunya tempat `pytesseract` diimpor | Uji: pengekstrak tiruan menghasilkan `TeksKanonik`. **Uji: mesin tidak terpasang → galat tegas saat penyalaan, bukan teks kosong** | R-04, R-06 | [x] |
 | D-2 | Pemeriksa impor tunggal `pytesseract`, mengikuti pola `impor_penyedia.py` | Uji: impor pada modul kedua → pemeriksa menyala. **Uji mutasi:** impor disisipkan → `make check` gagal | R-05, C-08 | [x] |
-| D-3 | Pencatatan versi mesin dan berkas model ke `logbook/` tiap keluaran OCR | Uji: satu baris per keluaran, memuat versi mesin dan sidik model | R-05, C-09 | [ ] |
+| D-3 | Pencatatan versi mesin dan berkas model ke `logbook/` tiap keluaran OCR | Uji: satu baris per keluaran, memuat versi mesin dan sidik model | R-05, C-09 | [x] |
 | D-4 | Satu uji terhadap mesin sungguhan, ditandai sehingga dapat dilewati | Uji: berjalan bila mesin ada, dilewati bila tidak — **bukan** lulus diam-diam bila tidak | R-04 | [ ] |
 
 **D-2 mengikuti D-1, bukan mendahuluinya** — kebalikan dari urutan biasa, dan
