@@ -18,7 +18,7 @@ tidak ada, dan menemukannya sesudah tiga fase terbangun berarti membongkar.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | A-1 | Pasang kelima paket; `ketergantungan-disetujui.toml` diperbarui — `langsung` bertambah lima, `terkunci` disusun ulang dari `uv.lock` | Uji: `make check` gagal bila satu nama dihapus dari daftar. **Uji: paket terpasang yang tidak tercatat → gagal** | R-13, C-12 | [x] |
-| A-2 | Bagian `[sistem]` pada `ketergantungan-disetujui.toml`; R-18 diperluas membandingkannya | Uji: sidik berbeda → gagal. **Uji: mesin tidak terpasang → "belum dapat diperiksa", bukan "lulus"** | R-13, C-12, C-09 | [ ] |
+| A-2 | Bagian `[sistem]` pada `ketergantungan-disetujui.toml`; R-18 diperluas membandingkannya | Uji: sidik berbeda → gagal. **Uji: mesin tidak terpasang → "belum dapat diperiksa", bukan "lulus"** | R-13, C-12, C-09 | [x] |
 | A-3 | **Periksa keberadaan `ind.traineddata`; catat versi dan sidiknya** | Bukan tugas berkode — hasilnya dilaporkan pada uraian commit A-2 | R-05 | [x] **Lulus** — berkas ada, 8.279.230 bita, tercatat L2. Fase D dikerjakan |
 
 **A-3 adalah titik henti.** Bila berkas model tidak dapat diperoleh, KB-018

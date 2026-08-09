@@ -34,6 +34,7 @@ from perkakas.pemeriksa.gerbang_v import (
     periksa_rahasia,
 )
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
+from perkakas.pemeriksa.ketergantungan_sistem import periksa_ketergantungan_sistem
 from perkakas.pemeriksa.konsistensi_dokumen import (
     periksa_kode_menggantung,
     periksa_konsistensi_dokumen,
@@ -105,8 +106,19 @@ def _v03(akar: Path) -> HasilGerbang:
 
 
 def _v04(akar: Path) -> HasilGerbang:
+    """Dua pemeriksa, bukan satu — R-13, KB-017.
+
+    `periksa_ketergantungan` menutup pohon paket Python; mesin OCR berada di
+    luarnya karena ia program sistem. Yang kedua membawa catatan, bukan hanya
+    temuan: lingkungan tanpa mesin terpasang bukan pelanggaran, tetapi juga
+    bukan lulus, dan perbedaan itu wajib terbaca pada laporan.
+    """
+    sistem = periksa_ketergantungan_sistem(akar)
     return HasilGerbang(
-        "V-04", "tidak ada ketergantungan baru tanpa persetujuan", periksa_ketergantungan(akar)
+        "V-04",
+        "tidak ada ketergantungan baru tanpa persetujuan",
+        [*periksa_ketergantungan(akar), *sistem.temuan],
+        catatan="" if sistem.terperiksa else sistem.catatan,
     )
 
 

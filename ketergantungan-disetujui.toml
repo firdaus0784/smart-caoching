@@ -58,3 +58,23 @@ langsung = [
 "ruff" = "0.9.10"
 "typing-extensions" = "4.16.0"
 "typing-inspection" = "0.4.2"
+
+# Ketergantungan di luar paket Python — R-13, keputusan KB-017.
+#
+# `uv.lock` tidak melihat program sistem, sehingga versi mesin OCR yang
+# bergeser tidak tertangkap apa pun. Bagian ini yang menutup celah itu.
+#
+# `versi` sengaja kosong: mesin belum pernah dipasang pada lingkungan
+# penelitian, dan menebaknya dari lingkungan lain menghasilkan patokan yang
+# tidak pernah dipakai siapa pun. Selama kosong, pemeriksa melapor "belum
+# dapat diperiksa" — bukan "lulus". Ia dipatok saat pemasangan pertama.
+#
+# `sidik` TIDAK kosong: berkas model diperiksa langsung dari
+# raw.githubusercontent.com pada 6 Agustus 2026, tugas A-3 fitur 015.
+[sistem.tesseract]
+versi = ""
+berkas_model = "ind.traineddata"
+sidik = "sha256:45adaade8715f553c108334f603f24e4bc902fc6763892b5a9245afe230c82b4"
+sumber = "https://raw.githubusercontent.com/tesseract-ocr/tessdata/main/ind.traineddata"
+lisensi = "Apache-2.0"
+ukuran_bita = 8279230
