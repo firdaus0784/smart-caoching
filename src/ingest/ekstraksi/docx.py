@@ -37,7 +37,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.ingest.ekstraksi.dasar import Pengekstrak, TeksKanonik
-from src.ingest.ekstraksi.galat import GalatEkstraksi
+from src.ingest.ekstraksi.galat import PESAN, GalatEkstraksi
 
 NAMA = "docx"
 _W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
@@ -66,7 +66,10 @@ class PengekstrakDocx(Pengekstrak):
         paragraf = [self._teks_paragraf(p) for p in dokumen.element.body.iter(_PARAGRAF)]
         isi = "\n".join(paragraf)
         if not isi.strip():
-            raise GalatEkstraksi("berkas DOCX terbuka tetapi tidak memuat teks")
+            raise GalatEkstraksi(
+                "berkas DOCX terbuka tetapi tidak memuat teks",
+                pesan_pengguna=PESAN["tanpa_isi"],
+            )
 
         return TeksKanonik(isi=isi, asal=jalur.name, pengekstrak=NAMA)
 

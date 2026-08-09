@@ -35,7 +35,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.ingest.ekstraksi.dasar import Pengekstrak, TeksKanonik
-from src.ingest.ekstraksi.galat import GalatEkstraksi
+from src.ingest.ekstraksi.galat import PESAN, GalatEkstraksi
 
 NAMA = "xlsx"
 
@@ -98,7 +98,10 @@ class PengekstrakXlsx(Pengekstrak):
 
         isi = "\n".join(baris_teks)
         if not isi.strip():
-            raise GalatEkstraksi("berkas XLSX terbuka tetapi tidak memuat isi")
+            raise GalatEkstraksi(
+                "berkas XLSX terbuka tetapi tidak memuat isi",
+                pesan_pengguna=PESAN["tanpa_isi"],
+            )
 
         return TeksLembarSebar(
             isi=isi,

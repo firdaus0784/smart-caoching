@@ -39,7 +39,7 @@ yang tidak menemukan bahannya dan melapor lulus adalah laporan palsu.
 | B-4 | `PengekstrakXlsx` — nilai terhitung, bukan rumus | Uji: sel berumus menghasilkan nilainya | R-01 | [x] |
 | B-5 | `PengekstrakPdf` | Uji: PDF berlapis teks terekstrak; **uji: PDF tanpa lapisan teks → galat khusus yang mengalihkan ke OCR, bukan teks kosong** | R-01, R-02 | [x] |
 | B-6 | **Berkas rusak, kosong, dan terkunci menghasilkan penolakan** | Uji: ketiganya → galat. **Uji: tidak satu pun menghasilkan `TeksKanonik` berisi untai kosong** | R-02 | [x] |
-| B-7 | Pesan galat pengguna bagi keenam keadaan Bagian "Keadaan yang wajib ditangani" | Uji: tiap pesan ≤ 20 kata, Bahasa Indonesia, tanpa istilah teknis, tanpa nama pustaka | R-02, C-13 | [ ] |
+| B-7 | Pesan galat pengguna bagi keenam keadaan Bagian "Keadaan yang wajib ditangani" | Uji: tiap pesan ≤ 20 kata, Bahasa Indonesia, tanpa istilah teknis, tanpa nama pustaka | R-02, C-13 | [x] |
 
 **B-6 adalah tugas terpenting fase ini.** Pengekstrak yang mengembalikan untai
 kosong pada berkas rusak menghasilkan dokumen yang lolos seluruh gerbang fitur

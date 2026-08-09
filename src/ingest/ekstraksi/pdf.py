@@ -45,7 +45,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.ingest.ekstraksi.dasar import Pengekstrak, TeksKanonik
-from src.ingest.ekstraksi.galat import GalatEkstraksi
+from src.ingest.ekstraksi.galat import PESAN, GalatEkstraksi
 
 NAMA = "pdf"
 
@@ -79,7 +79,7 @@ class PengekstrakPdf(Pengekstrak):
         if pembaca.is_encrypted:
             raise GalatEkstraksi(
                 "berkas PDF terkunci kata sandi dan tidak dicoba dibuka (ET-04)",
-                pesan_pengguna="Berkas terkunci kata sandi. Mohon unggah versi terbuka.",
+                pesan_pengguna=PESAN["terkunci"],
             )
 
         try:
@@ -90,7 +90,8 @@ class PengekstrakPdf(Pengekstrak):
         isi = "\n".join(halaman)
         if not isi.strip():
             raise GalatTanpaLapisanTeks(
-                "PDF terbaca tanpa lapisan teks — dialihkan ke OCR (FR-B02)"
+                "PDF terbaca tanpa lapisan teks — dialihkan ke OCR (FR-B02)",
+                pesan_pengguna=PESAN["perlu_pindaian"],
             )
 
         return TeksKanonik(isi=isi, asal=jalur.name, pengekstrak=NAMA)
