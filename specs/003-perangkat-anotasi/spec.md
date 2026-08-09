@@ -2,11 +2,11 @@
 
 | | |
 |---|---|
-| Kebutuhan | FR-C01 s.d. FR-C10 |
+| Kebutuhan | FR-C01 s.d. FR-C10 · pembacaan ekspor dipindahkan ke fitur 016 (KB-022) |
 | Dokumen terkait | D-01 Modul C · **D-03 Bagian 5, 10, 11, 12** · D-04 ADR-08, Bagian 7.2 · D-10 · D-11 Bagian 3.2 |
 | Pasal konstitusi yang menyentuh fitur ini | **C-10**, C-09, C-11, C-12, C-16 |
 | Urutan pembangunan | 003 pada `docs/D12.md` Bagian 7, sesudah 015 |
-| Status | **Lolos Gerbang 1** — 6 Agustus 2026, keputusan KB-021. Menunggu `plan.md` |
+| Status | **Lolos Gerbang 2** — 6 Agustus 2026. Cakupan dipersempit ke bagian 1 (KB-022); pembacaan ekspor menjadi fitur 016 |
 | Ketergantungan | **Nol paket Python baru** — disetujui KB-020 |
 
 ## Tujuan

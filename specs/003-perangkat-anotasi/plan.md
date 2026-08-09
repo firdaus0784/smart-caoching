@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 — 6 Agustus 2026 |
-| Status | **Menunggu Gerbang 2** |
+| Status | **Lolos Gerbang 2** — 6 Agustus 2026, keputusan KB-022. Menunggu `tasks.md` |
 | Ketergantungan baru | **Nol paket Python** — KB-020 |
-| Pertanyaan yang menuntut putusan Anda | **Satu** — Bagian 5 |
+| Pertanyaan yang menuntut putusan Anda | **Satu, sudah diputus** — Bagian 5; putusannya Bagian 8 |
 
 ---
 
@@ -166,8 +166,25 @@ patokan yang tidak pernah dipakai, kekeliruan yang sudah dihindari pada
 
 ---
 
-## 8 · Yang saya minta Anda putuskan
+## 8 · Keputusan Gerbang 2
 
-1. **Pemisahan bagian 2** — A, B, atau C. Saran: **B**.
+**Pilihan B** — diputus 6 Agustus 2026, tercatat KB-022.
 
-Sesudahnya `tasks.md` disusun untuk bagian 1 dan diajukan ke Gerbang 3.
+Fitur 003 memuat **bagian 1 saja**: perhitungan, skema berversi, uji
+kualifikasi, ekspor, dan penandaan pra-anotasi. Ia diselesaikan sampai
+Gerbang 4 tanpa menunggu siapa pun.
+
+Pembacaan ekspor Label Studio menjadi **fitur 016**, ditempatkan pada
+`docs/D12.md` Bagian 7 sesudah 003, dengan catatan bahwa ia tertahan sampai
+satu contoh ekspor sungguhan tersedia pada `tests/bahan/`.
+
+Alasannya kejujuran penomoran, bukan kemudahan: bagian 2 menuntut orang di
+luar agen — memasang Label Studio, menganotasi dengan dua akun, mengekspor —
+dan fitur yang setengahnya menunggu orang lain akan tercatat "berjalan"
+selama berminggu-minggu tanpa ada yang berjalan. Memisahkannya membuat keadaan
+itu terbaca dari daftar urutan pembangunan.
+
+Pola yang sama dengan pemisahan fitur 002 dan 015 pada KB-010, dan alasan yang
+sama pula.
+
+Sesudah ini `tasks.md` bagian 1 disusun dan diajukan ke Gerbang 3.
