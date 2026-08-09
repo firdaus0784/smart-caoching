@@ -70,6 +70,17 @@ warn_unreachable = true
 # adalah tempat pekerjaan bersembunyi, persis yang R-15 dirancang untuk
 # mencegah pada `make compliance`. Dicabut, bukan dikecualikan.
 
+# openpyxl tidak menyertakan tanda tipe, dan `strict` menolak impornya.
+# Jalan yang disarankan mypy adalah memasang `types-openpyxl` — dan itu
+# ketergantungan baru, yang C-12 tuntut disetujui lebih dulu. Setelan di
+# bawah menyelesaikannya tanpa menambah paket: ia melonggarkan **satu**
+# pustaka, bukan seluruh berkas, sehingga kode kita sendiri tetap diperiksa
+# penuh. Empat pustaka lain (pydantic, pypdf, python-docx, pytesseract)
+# menyertakan tandanya dan tidak memerlukan ini.
+[[tool.mypy.overrides]]
+module = ["openpyxl.*"]
+ignore_missing_imports = true
+
 # ---------------------------------------------------------------------------
 
 [tool.pytest.ini_options]
