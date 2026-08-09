@@ -25,6 +25,7 @@ from pathlib import Path
 from perkakas.pemeriksa.ast_aturan import Temuan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
+from perkakas.pemeriksa.impor_ocr import periksa_impor_ocr
 from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
@@ -37,13 +38,19 @@ Pemeriksa = Callable[[Path], list[Temuan]]
 
 
 def _c09(akar: Path) -> list[Temuan]:
-    """C-09 diperiksa dari dua sisi.
+    """C-09 diperiksa dari tiga sisi.
 
-    Kelengkapan jejak versi pada catatan yang sudah ada, dan keutuhan mesin
-    pencatatnya. Catatan yang lengkap di atas penulis yang dapat menimpa bukan
-    jaminan apa pun.
+    Kelengkapan jejak versi pada catatan yang sudah ada, keutuhan mesin
+    pencatatnya, dan — sejak fitur 015 — ketunggalan tempat pemanggilan mesin
+    OCR. Catatan yang lengkap di atas penulis yang dapat menimpa bukan jaminan
+    apa pun, dan begitu pula catatan yang lengkap atas keluaran yang sebagian
+    dihasilkan di luar jangkauan pencatatnya.
     """
-    return [*periksa_catatan_versi(akar), *periksa_logbook_tambah_saja(akar)]
+    return [
+        *periksa_catatan_versi(akar),
+        *periksa_logbook_tambah_saja(akar),
+        *periksa_impor_ocr(akar),
+    ]
 
 
 @dataclass(frozen=True)
