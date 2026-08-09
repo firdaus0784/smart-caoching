@@ -40,7 +40,7 @@ satu galat pun.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `HasilKesepakatan` — nilai boleh `None`, dengan `terhitung` terpisah | **Uji: batch tanpa anotasi ganda menghasilkan `terhitung=False` dan nilai `None`** — bukan 0,0, bukan 1,0 | R-07, R-08 | [ ] |
+| B-1 | `HasilKesepakatan` — nilai boleh `None`, dengan `terhitung` terpisah | **Uji: batch tanpa anotasi ganda menghasilkan `terhitung=False` dan nilai `None`** — bukan 0,0, bukan 1,0 | R-07, R-08 | [x] |
 | B-2 | Cohen's Kappa bagi klasifikasi | **Uji terhadap tiga contoh yang dihitung tangan**: kesepakatan sempurna, kesepakatan setara kebetulan, tabel 2×2 bernilai tertulis | R-07 | [ ] |
 | B-3 | Kappa per kategori, satu lawan sisanya | Uji: kategori yang batasnya kabur menghasilkan Kappa lebih rendah daripada keseluruhan | R-07 | [ ] |
 | B-4 | F1 berpasangan, pencocokan tepat dan longgar | Uji: empat keadaan — rentang identik, bertumpang tindih label sama, identik label berbeda, tidak bertemu | R-08 | [ ] |
