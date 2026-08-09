@@ -83,7 +83,7 @@ lulus karena tidak memeriksa apa pun; itu pelajaran T-7 fitur 014 yang sama.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| E-1 | `PendeteksiPola` pada `src/nlp/anonimisasi/pola.py` — enam pengenal, mengembalikan temuan berrentang karakter | Uji: keenam pola tertangkap dengan rentang yang benar; **uji: teks biasa tidak menghasilkan temuan** | R-09, C-10 | [ ] |
+| E-1 | `PendeteksiPola` pada `src/nlp/anonimisasi/pola.py` — enam pengenal, mengembalikan temuan berrentang karakter | Uji: keenam pola tertangkap dengan rentang yang benar; **uji: teks biasa tidak menghasilkan temuan** | R-09, C-10 | [x] |
 | E-2 | **Temuan tidak memutuskan, dan nilainya tidak pernah masuk log** | Uji: `Temuan` tanpa bidang `lolos` maupun `skor`. **Uji: pesan galat dan log tidak memuat nilai yang dideteksi** | R-10, R-11 | [ ] |
 | E-3 | Uraian modul menyatakan apa yang **tidak** dideteksinya | Uji: uraian menyebut nama perorangan dan alamat sebagai yang tidak tertangkap, dengan contoh | R-12 | [ ] |
 
