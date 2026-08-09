@@ -45,7 +45,7 @@ satu galat pun.
 | B-3 | Kappa per kategori, satu lawan sisanya | Uji: kategori yang batasnya kabur menghasilkan Kappa lebih rendah daripada keseluruhan | R-07 | [x] |
 | B-4 | F1 berpasangan, pencocokan tepat dan longgar | Uji: empat keadaan — rentang identik, bertumpang tindih label sama, identik label berbeda, tidak bertemu | R-08 | [x] |
 | B-5 | Uraian modul menyatakan mengapa Kappa tidak dipakai bagi rentang | Uji: uraian menyebut alasannya dan merujuk D-03 Bagian 11 serta D-11 Bagian 3.2 | R-09 | [x] — uraiannya sudah ada sejak B-2; buktinya **uji mutasi**, bukan uji yang gagal lebih dulu |
-| B-6 | Ambang D-03 sebagai tetapan, bukan angka tertanam | Uji: ambang sama persis dengan D-03 Bagian 11. **Uji: tidak ada angka ambang tertulis di luar satu tempat** | C-16 | [ ] |
+| B-6 | Ambang D-03 sebagai tetapan, bukan angka tertanam | Uji: ambang sama persis dengan D-03 Bagian 11. **Uji: tidak ada angka ambang tertulis di luar satu tempat** | C-16 | [x] — ujinya membaca `docs/D03.md` sungguhan, bukan menyalin angkanya |
 
 **B-2 contoh kedua yang terpenting**, dan ia mudah luput: persentase
 kesetujuan tinggi dengan Kappa nol. Itu justru keadaan yang D-03 Bagian 11

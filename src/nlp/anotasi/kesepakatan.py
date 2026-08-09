@@ -4,9 +4,13 @@
 
 | Jenis tugas | Ukuran | Ambang D-03 |
 |---|---|---|
-| Klasifikasi dokumen | Cohen's Kappa | ≥ 0,70 |
-| Anotasi rentang entitas | F1 berpasangan, pencocokan tepat | ≥ 0,75 |
-| Anotasi rentang entitas | F1 berpasangan, pencocokan longgar | ≥ 0,85 |
+| Klasifikasi dokumen | Cohen's Kappa | `ambang.AMBANG_KAPPA` |
+| Anotasi rentang entitas | F1 berpasangan, pencocokan tepat | `ambang.AMBANG_F1_TEPAT` |
+| Anotasi rentang entitas | F1 berpasangan, pencocokan longgar | `ambang.AMBANG_F1_LONGGAR` |
+
+Angkanya sengaja tidak ditulis di sini. Ambang yang tersalin ke uraian akan
+tertinggal ketika D-03 berubah, dan uraian yang tertinggal menyesatkan lebih
+jauh daripada uraian yang menunjuk ke tempat angkanya berada (C-16).
 
 **Cohen's Kappa tidak dipakai bagi anotasi rentang.** D-03 Bagian 11
 menolaknya dengan dua rujukan literatur — Artstein & Poesio (2008) mengenai
