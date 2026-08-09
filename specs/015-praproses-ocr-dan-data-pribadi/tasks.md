@@ -6,7 +6,7 @@ Ditinjau manusia sebelum kode ditulis. Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 |
 | Plan | `plan.md`, lolos Gerbang 2 |
-| Status | **Lolos Gerbang 3** — 6 Agustus 2026. Implementasi berjalan |
+| Status | **Lolos Gerbang 4** — 6 Agustus 2026. Seluruh 17 tugas selesai |
 | Jumlah tugas | **17** — di bawah ambang ±30 |
 | Pelaporan | Per fase: A, B, C, D, E. Bila sebuah tugas tidak dapat diselesaikan tanpa melanggar konstitusi atau `plan.md`, pekerjaan berhenti saat itu juga |
 
@@ -109,11 +109,11 @@ sambil membangun berarti dua fitur bergerak sekaligus pada berkas yang sama.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **tidak berubah** — 8 lulus, 0 gagal, 12 belum. Fitur ini tidak memindahkan pasal mana pun, dan angka yang berubah berarti ada yang keliru
-- [ ] R-01 s.d. R-13 punya uji yang gagal sebelum implementasi
-- [ ] Uji mutasi D-2 dijalankan dan hasilnya dilaporkan pada uraian commit
-- [ ] Cakupan uji tidak turun
-- [ ] Nol ketergantungan di luar lima yang disetujui KB-017
-- [ ] Setiap pesan galat pengguna ≤ 20 kata, tanpa istilah teknis (C-13)
-- [ ] Tidak ada data pribadi sungguhan pada `tests/bahan/`
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **tidak berubah** — 8 lulus, 0 gagal, 12 belum, persis seperti sebelum fitur ini
+- [x] R-01 s.d. R-13 punya uji yang gagal sebelum implementasi
+- [x] Uji mutasi D-2 dijalankan dan hasilnya dilaporkan pada uraian commit
+- [x] Cakupan uji tidak turun — 99,52% menjadi 99,69% atas 869 pernyataan
+- [x] Nol ketergantungan di luar lima yang disetujui KB-017
+- [x] Setiap pesan galat pengguna ≤ 20 kata, tanpa istilah teknis (C-13)
+- [x] Tidak ada data pribadi sungguhan pada `tests/bahan/` — diuji, bukan dijanjikan
