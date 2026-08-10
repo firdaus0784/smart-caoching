@@ -3,6 +3,7 @@
 | | |
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 — 10 Agustus 2026, KB-032 |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026, keputusan KB-033 |
 | Ketergantungan baru | **Nol paket Python** |
 | Pertanyaan terbuka | **Nol** — ditetapkan D-06 Bagian 11.2, FR-E02, D-04 Bagian 7.3 |
 

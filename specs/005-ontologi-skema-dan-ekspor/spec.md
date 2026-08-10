@@ -7,7 +7,7 @@
 | Pasal konstitusi | C-03, C-09, C-11, C-12 |
 | Urutan pembangunan | 005 pada `docs/D12.md` Bagian 7 |
 | Ketergantungan | **Nol paket Python baru** |
-| Status | Menunggu Gerbang 1 |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026 (KB-033) |
 
 ## Mengapa fitur ini dipisah
 
