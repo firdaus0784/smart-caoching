@@ -41,7 +41,9 @@ def test_himpunan_kosong_berarti_tidak_boleh_apa_pun() -> None:
 
 
 def test_menulis_tidak_menyiratkan_membaca() -> None:
-    k = Kredensial(nama="uji", baca=frozenset(), tulis=frozenset({Area.KARANTINA}), indeks=frozenset())
+    k = Kredensial(
+        nama="uji", baca=frozenset(), tulis=frozenset({Area.KARANTINA}), indeks=frozenset()
+    )
     assert k.boleh_tulis(Area.KARANTINA)
     assert not k.boleh_baca(Area.KARANTINA)
 
