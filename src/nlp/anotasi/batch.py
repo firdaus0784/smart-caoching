@@ -71,8 +71,13 @@ tidak lebih.
 from __future__ import annotations
 
 from enum import Enum
+from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from src.logbook.penulis import Buku, tambah_baris
+from src.nlp.anotasi.kesepakatan import HasilF1, HasilKesepakatan
+from src.nlp.anotasi.skema import KategoriMasalah, LabelEntitas, VersiSkema
 
 
 class StatusPraAnotasi(Enum):
@@ -170,3 +175,88 @@ class BatchAnotasi(BaseModel):
         if not self.memakai_pra_anotasi:
             return None
         return self.jumlah_pembanding / len(self.dokumen)
+
+
+def _bentuk_hasil(hasil: HasilKesepakatan) -> dict[str, object]:
+    """Satu angka kesepakatan dalam bentuk yang tidak dapat disalahbaca.
+
+    **`terhitung` selalu ada, pada kedua keadaan.** Penanda yang muncul hanya
+    ketika ada masalah menuntut pembacanya menyimpulkan dari ketiadaan, dan
+    ketiadaan pada berkas JSONL juga berarti versi penulis yang lebih tua.
+
+    `nilai` yang `null` telanjang tidak dapat dibedakan dari cacat pada
+    penulisnya; `0,0` terbaca sebagai kesepakatan yang buruk. Keduanya masuk
+    naskah sebagai hal yang berbeda dari kenyataannya, dan itu yang dicegah
+    dengan membawa ketiga bidang bersama.
+    """
+    return {
+        "terhitung": hasil.terhitung,
+        "nilai": hasil.nilai,
+        "jumlah_satuan": hasil.jumlah_satuan,
+        "alasan": hasil.alasan,
+    }
+
+
+def _bentuk_f1(hasil: HasilF1) -> dict[str, object]:
+    return {"tepat": _bentuk_hasil(hasil.tepat), "longgar": _bentuk_hasil(hasil.longgar)}
+
+
+def catat_batch(
+    akar_logbook: Path,
+    *,
+    batch: BatchAnotasi,
+    versi_skema: VersiSkema,
+    jumlah_dokumen_anotasi_ganda: int,
+    kappa_keseluruhan: HasilKesepakatan,
+    kappa_per_kategori: dict[KategoriMasalah, HasilKesepakatan],
+    f1: HasilF1,
+    f1_per_label: dict[LabelEntitas, HasilF1],
+    jumlah_kasus_adjudikasi: int,
+    kasus_baru_katalog: tuple[str, ...],
+) -> None:
+    """Satu baris L2 bagi satu batch anotasi — R-15, C-09, D-03 Bagian 11.3.
+
+    Ditulis ke **L2, bukan L1.** L1 mencatat percobaan model — hipotesis apa
+    yang diuji dan hasilnya. Catatan batch anotasi menerangkan **bagaimana
+    sepotong korpus terbentuk dan seberapa baik mutunya**, dan itu baris
+    "Korpus" pada D-10 Bagian 4: jumlah dokumen, versi skema, ringkasan
+    pemeriksaan. Bentuk yang sama dengan pencatatan keluaran OCR fitur 015.
+
+    **Seluruh argumen bersifat kata kunci.** Delapan bidang yang enam di
+    antaranya berjenis serupa adalah tempat penukaran posisi tidak menghasilkan
+    galat apa pun — hanya angka Kappa yang tercatat sebagai F1, dan tidak ada
+    yang menyadarinya sampai naskah ditulis.
+
+    **Satu baris per batch.** Bukan ringkasan berkelompok: ringkasan menghapus
+    waktu, dan waktu yang membedakan batch sebelum pedoman disegarkan dari
+    batch sesudahnya — pertanyaan yang baru muncul ketika ada yang keliru, dan
+    pada saat itu ringkasannya sudah tertulis.
+
+    **Isi dokumen tidak pernah masuk catatan**, hanya angka dan pengenal.
+    Dokumen batch anotasi memuat teks sekolah sungguhan.
+    """
+    tambah_baris(
+        akar_logbook,
+        Buku.L2,
+        {
+            "artefak": "batch-anotasi",
+            "peristiwa": "batch anotasi selesai dinilai",
+            "id_batch": batch.id_batch,
+            "versi_skema": str(versi_skema),
+            "porsi_pembanding": batch.porsi_pembanding,
+            "jumlah_dokumen": len(batch.dokumen),
+            "jumlah_dokumen_anotasi_ganda": jumlah_dokumen_anotasi_ganda,
+            "kappa_keseluruhan": _bentuk_hasil(kappa_keseluruhan),
+            "kappa_per_kategori": {
+                kategori.value: _bentuk_hasil(hasil)
+                for kategori, hasil in kappa_per_kategori.items()
+            },
+            "f1_tepat": _bentuk_hasil(f1.tepat),
+            "f1_longgar": _bentuk_hasil(f1.longgar),
+            "f1_per_label": {
+                label.value: _bentuk_f1(hasil) for label, hasil in f1_per_label.items()
+            },
+            "jumlah_kasus_adjudikasi": jumlah_kasus_adjudikasi,
+            "kasus_baru_katalog": list(kasus_baru_katalog),
+        },
+    )

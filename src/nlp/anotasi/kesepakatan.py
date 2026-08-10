@@ -44,7 +44,7 @@ from collections.abc import Callable, Sequence
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.nlp.anotasi.rentang import PutusanKategori, RentangEntitas
-from src.nlp.anotasi.skema import KategoriMasalah
+from src.nlp.anotasi.skema import KategoriMasalah, LabelEntitas
 
 
 class HasilKesepakatan(BaseModel):
@@ -284,6 +284,36 @@ def f1_rentang(anotator_a: list[RentangEntitas], anotator_b: list[RentangEntitas
         tepat=_f1(anotator_a, anotator_b, _cocok_tepat),
         longgar=_f1(anotator_a, anotator_b, _cocok_longgar),
     )
+
+
+def f1_per_label(
+    anotator_a: list[RentangEntitas], anotator_b: list[RentangEntitas]
+) -> dict[LabelEntitas, HasilF1]:
+    """F1 dua tingkat bagi tiap label yang muncul — D-03 Bagian 11.3.
+
+    Sisi rentang dari `kappa_per_kategori`, dan alasannya sama: F1 keseluruhan
+    yang sedang dapat berasal dari dua label yang baik dan satu yang kacau.
+    Hanya pemisahannya yang memberi tahu **label mana** definisinya perlu
+    dipertajam — dan itu yang dapat ditindaklanjuti.
+
+    **Hanya label yang muncul** yang dilaporkan; peta **kosong** ketika tidak
+    ada bahan sama sekali. Peta berisi delapan hasil yang belum terhitung
+    terbaca sebagai "sudah diperiksa dan hasilnya nihil", padahal tidak ada
+    yang diperiksa.
+
+    Penyaringan per label dilakukan sebelum `f1_rentang` dipanggil, bukan
+    sesudah. Menyaring sesudahnya berarti pemasangan satu-lawan-satu sudah
+    terjadi lintas label, dan rentang yang terpakai pada label lain tidak lagi
+    tersedia bagi labelnya sendiri.
+    """
+    muncul = sorted({r.label for r in [*anotator_a, *anotator_b]}, key=lambda label: label.value)
+    return {
+        label: f1_rentang(
+            [r for r in anotator_a if r.label is label],
+            [r for r in anotator_b if r.label is label],
+        )
+        for label in muncul
+    }
 
 
 def _cocok_tepat(x: RentangEntitas, y: RentangEntitas) -> bool:
