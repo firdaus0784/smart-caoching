@@ -116,3 +116,33 @@ def test_galat_menyebut_letak_tugasnya() -> None:
     with pytest.raises(GalatBentukEkspor) as galat:
         urai_ekspor(rusak)
     assert "1" in str(galat.value)
+
+
+def test_tugas_yang_bukan_objek_ditolak() -> None:
+    """Daftar tugas yang isinya bukan objek — bentuk yang muncul ketika
+    seseorang mengekspor daftar id alih-alih daftar tugas."""
+    with pytest.raises(GalatBentukEkspor) as galat:
+        urai_ekspor([1, 2])  # type: ignore[list-item]
+    assert "id" in str(galat.value)
+
+
+def test_teks_kosong_ditolak() -> None:
+    """**Sisi lain dari uji nama kunci yang salah, dan lebih halus.**
+
+    Kuncinya benar, isinya kosong. Dokumen tanpa teks lolos seluruh
+    pemeriksaan rentang karena tidak ada rentang yang dapat diperiksa — bentuk
+    kegagalan diam yang sama dengan pengekstrak yang mengembalikan untai
+    kosong pada fitur 015.
+    """
+    rusak = _muat()
+    rusak[0]["data"] = {"teks": ""}
+    with pytest.raises(GalatBentukEkspor) as galat:
+        urai_ekspor(rusak)
+    assert "teks" in str(galat.value)
+
+
+def test_teks_bukan_untai_ditolak() -> None:
+    rusak = _muat()
+    rusak[0]["data"] = {"teks": ["Kepala sekolah"]}
+    with pytest.raises(GalatBentukEkspor):
+        urai_ekspor(rusak)
