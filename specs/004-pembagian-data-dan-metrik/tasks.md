@@ -30,8 +30,8 @@ Tidak ada satu pun jejak yang menunjukkannya kecuali yang dibangun di sini.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | Presisi, recall, F1 per kelas | **Uji terhadap contoh yang dihitung tangan.** Uji: kelas tanpa contoh → belum terhitung, bukan 0,0 | R-07, R-08 | [ ] |
-| B-2 | Rerata makro dan mikro, keduanya dinamai | **Uji: satu kelas kacau menurunkan makro jauh lebih besar daripada mikro** | R-09 | [ ] |
+| B-1 | Presisi, recall, F1 per kelas | **Uji terhadap contoh yang dihitung tangan.** Uji: kelas tanpa contoh → belum terhitung, bukan 0,0 | R-07, R-08 | [x] |
+| B-2 | Rerata makro dan mikro, keduanya dinamai | **Uji: satu kelas kacau menurunkan makro jauh lebih besar daripada mikro** | R-09 | [x] — mikro 0,90 lawan makro 0,47 pada data yang sama |
 
 ## Fase C · Catatan percobaan
 
