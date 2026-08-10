@@ -16,8 +16,8 @@ KREDENSIAL_BERSIH = """
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial import Kredensial
 
-PENJAWABAN = Kredensial(nama="penjawaban", baca=frozenset({Area.KORPUS}), tulis=frozenset())
-PEMANGGIL_LLM = Kredensial(nama="llm", baca=frozenset({Area.KORPUS}), tulis=frozenset())
+PENJAWABAN = Kredensial(nama="penjawaban", baca=frozenset({Area.KORPUS}), tulis=frozenset(), indeks=frozenset())
+PEMANGGIL_LLM = Kredensial(nama="llm", baca=frozenset({Area.KORPUS}), tulis=frozenset(), indeks=frozenset())
 VERIFIKASI = Kredensial(
     nama="verifikasi",
     baca=frozenset({Area.KARANTINA, Area.KORPUS}),
@@ -147,9 +147,9 @@ def test_pemisahan_penanda_status_bukan_kredensial_ditolak(tmp_path: Path) -> No
     ini tanpa uji.
     """
     rusak = KREDENSIAL_BERSIH.replace(
-        "baca=frozenset({Area.KORPUS}), tulis=frozenset())\nPEMANGGIL_LLM",
+        "baca=frozenset({Area.KORPUS}), tulis=frozenset(), indeks=frozenset())\nPEMANGGIL_LLM",
         "baca=frozenset({Area.KORPUS}) if not MODE_LUAS else frozenset(SELURUH_AREA), "
-        "tulis=frozenset())\nPEMANGGIL_LLM",
+        "tulis=frozenset(), indeks=frozenset())\nPEMANGGIL_LLM",
     )
     assert periksa_pemisahan_penyimpanan(_pohon(tmp_path, rusak))
 

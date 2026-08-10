@@ -23,6 +23,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.penyimpanan.area import Area
+from src.penyimpanan.indeks import IndeksTujuan
 
 
 class Kredensial(BaseModel):
@@ -38,9 +39,25 @@ class Kredensial(BaseModel):
     nama: str = Field(min_length=1)
     baca: frozenset[Area]
     tulis: frozenset[Area]
+    indeks: frozenset[IndeksTujuan]
+    """Indeks yang boleh dibaca — C-02, FR-D06.
+
+    Wajib seperti `baca` dan `tulis`, bukan bernilai bawaan. Bidang berbawaan
+    di sini akan diisi diam-diam oleh kredensial keempat yang ditambahkan
+    kelak, dan yang paling mungkin terjadi adalah ia mewarisi bawaan yang
+    longgar tanpa seorang pun memutuskannya.
+    """
 
     def boleh_baca(self, area: Area) -> bool:
         return area in self.baca
 
     def boleh_tulis(self, area: Area) -> bool:
         return area in self.tulis
+
+    def boleh_baca_indeks(self, indeks: IndeksTujuan) -> bool:
+        """Apakah kredensial ini menjangkau sebuah indeks — C-02.
+
+        Pemisahan pada kredensial, bukan penyaringan saat kueri. Yang tidak
+        dijangkau kredensial tidak dapat dibaca oleh kekeliruan kueri mana pun.
+        """
+        return indeks in self.indeks

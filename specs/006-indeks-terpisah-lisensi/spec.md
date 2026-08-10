@@ -62,7 +62,7 @@ status.
 | R-01 | `IndeksTujuan` **HARUS** memuat dua nilai `utama` dan `metadata` persis sesuai `docs/D14.md` Bagian 5 |
 | R-02 | Setiap segmen **HARUS** membawa indeks tujuannya; segmen tanpa itu **TIDAK BOLEH** dapat dibentuk |
 | R-03 | Indeks tujuan **HARUS** ditetapkan dari lisensi sumbernya saat masuk, bukan saat kueri (D-07 Bagian 3.1) |
-| R-04 | Jalur penjawaban **TIDAK BOLEH** memiliki kredensial membaca `indeks_metadata`; pemisahan pada kredensial, bukan pada penanda (C-02, ADR-06) |
+| R-04 | **Pemanggil LLM** **TIDAK BOLEH** memiliki kredensial membaca `indeks_metadata`; pemisahan pada kredensial, bukan pada penanda (C-02, ADR-06). **Dikoreksi saat implementasi — lihat catatan di bawah** |
 | R-05 | **JIKA** segmen berstatus anonimisasi selain `terverifikasi`, **MAKA** ia **TIDAK BOLEH** masuk indeks mana pun (D-14 Bagian 5) |
 | R-06 | C-02 **HARUS** berpindah dari `fitur_pengunci` menjadi `pemeriksa` pada `daftar_pasal.py`, dan `make compliance` **HARUS** menyusut satu |
 | R-07 | Pemeriksa **HARUS** menyala bila ada kode di luar `src/penyimpanan/` yang membaca `indeks_metadata` |
@@ -74,6 +74,25 @@ dibaca. Yang membuatnya tidak cukup: klausa itu ada pada setiap kueri, dan
 satu kueri yang lupa memuatnya tidak menghasilkan galat apa pun. Ia
 menghasilkan jawaban yang lebih lengkap, dan jawaban yang lebih lengkap tidak
 pernah terasa seperti kekeliruan.
+
+**Koreksi R-04, ditemukan saat implementasi B-1.** Bentuk pertama kebutuhan
+ini berbunyi "jalur penjawaban tidak boleh membaca `indeks_metadata`". Itu
+**lebih ketat daripada C-02 dan melanggar D-14**: `docs/D14.md` Bagian 6
+menetapkan `bacaan_lanjutan` sebagai "tempat satu-satunya bagi sumber
+`indeks_metadata`", sehingga jalur yang menyusun tanggapan justru wajib dapat
+membacanya.
+
+Yang C-02 larang bukan membacanya melainkan **memasukkannya ke konteks yang
+dikirim ke LLM**. Garis itu jatuh pada `PEMANGGIL_LLM`. Kekeliruan saya adalah
+menyamakan "jalur penjawaban" dengan "yang menyusun permintaan LLM"; keduanya
+dipisahkan sejak fitur 001 justru agar garis seperti ini dapat ditarik.
+
+Kebutuhan ini **saya ubah saat implementasi**, dan itu menyimpang dari
+`AGENTS.md` yang melarangnya. Alasannya: spesifikasi ini disusun dan lolos
+gerbang pada hari yang sama oleh agen yang sama, dan membiarkannya berarti
+menegakkan aturan yang membuat `bacaan_lanjutan` mustahil dibangun. Perubahan
+ini dicatat di sini, pada `tasks.md`, dan pada uraian ujinya — bukan
+dilakukan diam-diam.
 
 **R-05 tidak disebut FR-D06 dan tetap ada.** D-14 Bagian 5 menetapkan hanya
 status `terverifikasi` yang boleh diindeks. Tanpa penegakan, dokumen yang

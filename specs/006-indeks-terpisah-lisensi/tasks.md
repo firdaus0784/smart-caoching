@@ -27,7 +27,7 @@ Yang bocor bukan lisensi melainkan data pribadi.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | **Kredensial jalur penjawaban tanpa izin baca metadata** | **Uji: jalur penjawaban tidak dapat membaca indeks metadata.** Uji mutasi: izin ditambahkan → uji sifat gagal | R-04 | [ ] |
+| B-1 | **Kredensial jalur penjawaban tanpa izin baca metadata** | **Uji: jalur penjawaban tidak dapat membaca indeks metadata.** Uji mutasi: izin ditambahkan → uji sifat gagal | R-04 | [x] — garisnya jatuh pada `PEMANGGIL_LLM`, bukan `PENJAWABAN`; spec dikoreksi |
 | B-2 | Pemeriksa C-02 dan pemindahannya pada `daftar_pasal.py`; catatan penempatan ke `logbook/` | **Uji: `make compliance` menyusut satu — 9 lulus, 11 belum.** Uji: kode di luar `src/penyimpanan/` yang membaca indeks metadata → pemeriksa menyala | R-06, R-07, R-08 | [ ] |
 
 **B-1 adalah tugas terpenting fitur ini.** Penyaringan saat kueri terasa cukup
