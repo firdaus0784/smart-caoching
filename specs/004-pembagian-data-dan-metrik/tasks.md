@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 |
 | Plan | `plan.md`, lolos Gerbang 2 |
-| Status | **Lolos Gerbang 3** — 10 Agustus 2026 (KB-028) |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026 (KB-029). Tujuh tugas selesai |
 | Cakupan | **Bagian 1 saja** — model NER dan klasifikasi menjadi fitur 017 |
 | Jumlah tugas | **7** |
 | Ketergantungan baru | **Nol** |
@@ -37,13 +37,33 @@ Tidak ada satu pun jejak yang menunjukkannya kecuali yang dibangun di sini.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | Catatan L1 keempat belas bidang D-10 Bagian 3 | Uji: keempat belas ada; **uji: seed acak dan id pembagian data wajib**. Uji: percobaan gagal tetap tercatat | R-10, R-11, C-09 | [ ] |
+| C-1 | Catatan L1 keempat belas bidang D-10 Bagian 3 | Uji: keempat belas ada; **uji: seed acak dan id pembagian data wajib**. Uji: percobaan gagal tetap tercatat | R-10, R-11, C-09 | [x] |
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` tidak berubah — 8 lulus, 0 gagal, 12 belum
-- [ ] Keenam uji mutasi `plan.md` Bagian 4 dijalankan dan dilaporkan
-- [ ] Angka metrik diuji terhadap contoh yang dihitung tangan
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` tidak berubah — 8 lulus, 0 gagal, 12 belum
+- [x] Keenam uji mutasi `plan.md` Bagian 4 dijalankan; seluruhnya menyala
+- [x] Angka metrik diuji terhadap contoh yang dihitung tangan
+- [x] Cakupan uji tidak turun — 99% atas 1.506 pernyataan
+- [x] **Nol ketergantungan baru** — tetap 10 langsung, 26 terkunci
+
+## Dua uji mutasi yang tidak menyala, dan apa yang ditemukannya
+
+Keduanya menemukan celah pada **uji saya**, bukan pada mutasinya, dan
+keduanya jenis kegagalan yang sama — uji yang memeriksa besaran turunan yang
+terlalu kasar.
+
+| Mutasi | Yang luput |
+|---|---|
+| Sisa pembulatan dibuang ke himpunan uji | Uji memeriksa **jumlah total** dokumen, dan total tetap utuh ke mana pun sisanya jatuh. Padahal ke mana ia jatuh menentukan porsi: melemparkannya ke uji membuat himpunan uji melar melampaui 15% D-08 |
+| Sidik dihitung dari jumlah, bukan isi | Uji memindahkan satu dokumen antar-himpunan, yang **juga mengubah jumlahnya**. Yang tidak tertutup: pertukaran dua dokumen — jumlahnya persis sama, isinya berubah — dan itu justru bentuk yang muncul ketika seseorang membagi ulang dengan seed berbeda |
+
+Dua uji ditambahkan; kedua mutasi kemudian menyala.
+
+## Yang menunggu fitur 017
+
+Model NER dan klasifikasi (FR-D01, FR-D02) beserta prosedur latih ulang
+(FR-D05) menunggu korpus teranotasi. Seluruh perkakas yang mereka butuhkan
+sudah berdiri: pembagian beku, lemari himpunan uji, metrik per kelas, dan
+catatan percobaan.
