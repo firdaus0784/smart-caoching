@@ -63,7 +63,7 @@ ambang yang akan disetel di salah satunya tanpa ada yang tahu.
 |---|---|---|---|---|
 | C-1 | Uji kualifikasi anotator terhadap kunci jawaban | Uji: ambang D-03 Bagian 12 — F1 longgar ≥ 0,80 dan Kappa kategori ≥ 0,70; **uji: lulus salah satu saja tidak cukup** | R-14 | [x] — ambangnya ada pada **Bagian 13**, bukan 12; pembetulan rujukan diajukan terpisah |
 | C-2 | `StatusPraAnotasi` pada setiap dokumen | Uji: dokumen tanpa status pra-anotasi tidak dapat dibentuk | R-12 | [x] — **tiga** status, bukan dua; pembanding dibedakan dari tanpa-pra-anotasi |
-| C-3 | Penyisihan batch pembanding ketika pra-anotasi dipakai | **Uji: batch berpra-anotasi tanpa pembanding ditolak** | R-13 | [ ] |
+| C-3 | Penyisihan batch pembanding ketika pra-anotasi dipakai | **Uji: batch berpra-anotasi tanpa pembanding ditolak** | R-13 | [x] — porsi minimum **tidak** ditetapkan; angkanya tidak ada pada dokumen mana pun (C-16) |
 | C-4 | Catatan batch ke `logbook/`, seluruh bidang D-03 Bagian 11 | Uji: satu baris per batch memuat kedelapan bidang; uji: bidang yang belum terhitung tercatat sebagai belum terhitung | R-15, C-09 | [ ] |
 
 **C-3 membangun pengendalian sebelum yang dikendalikannya ada.** Pra-anotasi
