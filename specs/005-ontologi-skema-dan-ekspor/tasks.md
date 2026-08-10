@@ -15,8 +15,8 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | `JenisRelasi`, `Konsep`, `Relasi` | Uji: tujuh jenis persis FR-E02. **Uji: konsep tanpa dokumen sumber tidak dapat dibentuk.** Uji: relasi tanpa dokumen rujukan sendiri tidak dapat dibentuk | R-01, R-02, R-04 | [ ] |
-| A-2 | `Ontologi` — relasi menunjuk konsep yang ada | **Uji: relasi ke konsep yang tidak ada ditolak** | R-05 | [ ] |
+| A-1 | `JenisRelasi`, `Konsep`, `Relasi` | Uji: tujuh jenis persis FR-E02. **Uji: konsep tanpa dokumen sumber tidak dapat dibentuk.** Uji: relasi tanpa dokumen rujukan sendiri tidak dapat dibentuk | R-01, R-02, R-04 | [x] |
+| A-2 | `Ontologi` — relasi menunjuk konsep yang ada | **Uji: relasi ke konsep yang tidak ada ditolak** | R-05 | [x] — kedua ujung diperiksa, dan konsep berulang ditolak |
 
 ## Fase B · Hitung dan ekspor
 
