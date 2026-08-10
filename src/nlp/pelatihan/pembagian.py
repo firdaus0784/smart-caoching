@@ -23,6 +23,9 @@ membandingkannya, sehingga salinan yang menyimpang menjatuhkan gerbang.
 
 from __future__ import annotations
 
+import hashlib
+import random
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 PORSI: dict[str, float] = {"latih": 0.70, "validasi": 0.15, "uji": 0.15}
@@ -77,3 +80,113 @@ class PembagianData(BaseModel):
     @property
     def jumlah_dokumen(self) -> int:
         return len(self.latih) + len(self.validasi) + len(self.uji)
+
+    @property
+    def sidik(self) -> str:
+        """Sidik susunannya — R-04. Lihat `_sidik`."""
+        return _sidik(self)
+
+
+JUMLAH_DOKUMEN_MINIMUM = 20
+"""Korpus terkecil yang masih menghasilkan ketiga himpunan tidak kosong.
+
+Bukan ambang mutu dan bukan angka D-08 — ia akibat aritmetika porsinya:
+15% dari 20 adalah 3, dan di bawah itu himpunan validasi atau uji jatuh ke
+satu dokumen atau nol. Himpunan uji berisi satu dokumen menghasilkan F1 yang
+hanya dapat bernilai 0 atau 1, dan angka seperti itu tidak menerangkan apa pun.
+
+Ditulis di sini alih-alih dihitung agar galatnya dapat menyebut angkanya.
+"""
+
+
+class GalatPembagian(Exception):
+    """Pembagian tidak dapat dibentuk atau tidak cocok dengan yang beku."""
+
+
+def _sidik(bagi: PembagianData) -> str:
+    """Sidik susunan pembagian — R-04.
+
+    Dihitung dari **isi ketiga himpunan**, bukan dari jumlahnya. Sidik atas
+    jumlah tidak berubah ketika satu dokumen bertukar tempat dengan dokumen
+    lain, dan pertukaran itu persis yang membuat dua laporan tidak dapat
+    dibandingkan.
+
+    Id diurutkan lebih dulu: `frozenset` tidak punya urutan, dan sidik yang
+    bergantung pada urutan penelusuran akan berbeda antar-jalannya program.
+    """
+    bahan = "|".join(
+        ",".join(sorted(himpunan)) for himpunan in (bagi.latih, bagi.validasi, bagi.uji)
+    )
+    return "sha256:" + hashlib.sha256(bahan.encode("utf-8")).hexdigest()
+
+
+def buat_pembagian(
+    id_dokumen: list[str],
+    *,
+    seed: int,
+    versi_korpus: str,
+    id_pembagian: str,
+) -> PembagianData:
+    """Bagi korpus menurut porsi D-08, **deterministik terhadap seed** — R-05.
+
+    Masukan diurutkan sebelum diacak. Korpus yang sama dengan urutan berbeda
+    adalah korpus yang sama, dan tanpa pengurutan ini pembagian bergantung pada
+    urutan berkas pada cakram — urutan yang berubah antar-mesin tanpa seorang
+    pun mengubah apa pun.
+
+    Sisa pembulatan jatuh ke himpunan latih. Korpus anotasi adalah artefak yang
+    paling mahal dihasilkan proyek ini; satu dokumen yang hilang karena
+    pembulatan adalah pekerjaan anotator yang dibuang tanpa jejak.
+    """
+    if len(set(id_dokumen)) != len(id_dokumen):
+        berulang = sorted({d for d in id_dokumen if id_dokumen.count(d) > 1})
+        raise GalatPembagian(
+            f"dokumen tercatat lebih dari sekali pada korpus: {', '.join(berulang)} — "
+            "ia akan masuk dua himpunan sekaligus, kebocoran yang sama dengan "
+            "yang D-08 Bagian 4.2 peringatkan"
+        )
+    if len(id_dokumen) < JUMLAH_DOKUMEN_MINIMUM:
+        raise GalatPembagian(
+            f"korpus memuat {len(id_dokumen)} dokumen, kurang dari "
+            f"{JUMLAH_DOKUMEN_MINIMUM} yang diperlukan agar ketiga himpunan "
+            "tidak kosong — himpunan uji berisi satu dokumen menghasilkan F1 "
+            "yang hanya dapat bernilai 0 atau 1"
+        )
+
+    acak = random.Random(seed)
+    urut = sorted(id_dokumen)
+    acak.shuffle(urut)
+
+    n = len(urut)
+    n_validasi = int(n * PORSI["validasi"])
+    n_uji = int(n * PORSI["uji"])
+    n_latih = n - n_validasi - n_uji
+
+    return PembagianData(
+        id_pembagian=id_pembagian,
+        latih=frozenset(urut[:n_latih]),
+        validasi=frozenset(urut[n_latih : n_latih + n_validasi]),
+        uji=frozenset(urut[n_latih + n_validasi :]),
+        seed=seed,
+        versi_korpus=versi_korpus,
+    )
+
+
+def pastikan_beku(beku: PembagianData, baru: PembagianData) -> None:
+    """Pembagian ulang wajib menghasilkan susunan yang sama — R-04.
+
+    Membagi ulang bukan pelanggaran; membagi ulang **dengan hasil berbeda**
+    yang pelanggaran. Penjagaan yang menolak pemeriksaan ulang yang sah akan
+    dilucuti seseorang, dan yang tersisa sesudahnya bukan penjagaan mana pun.
+
+    D-08 Bagian 4.2: pembagian dibekukan sebelum pelatihan pertama. Sesudah itu
+    susunan yang berubah berarti laporan lama dan laporan baru dihitung atas
+    himpunan uji yang berlainan — dan keduanya tercatat dengan nama yang sama.
+    """
+    if beku.sidik != baru.sidik:
+        raise GalatPembagian(
+            f"pembagian {beku.id_pembagian!r} sudah beku dengan sidik {beku.sidik}, "
+            f"sedangkan pembagian baru bersidik {baru.sidik} — susunan yang berubah "
+            "membuat laporan lama dan laporan baru dihitung atas himpunan uji yang "
+            "berlainan, keduanya tercatat dengan nama yang sama (D-08 Bagian 4.2)"
+        )

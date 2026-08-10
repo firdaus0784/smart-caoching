@@ -17,8 +17,8 @@ Satu tugas = satu commit.
 |---|---|---|---|---|
 | A-1 | `PembagianData` — tipe beku, hanya menerima id dokumen | **Uji: ketiga himpunan tidak beririsan.** Uji: tipe tidak menerima segmen | R-01, R-02 | [x] |
 | A-2 | Porsi D-08 sebagai tetapan tunggal | Uji: porsi sama persis dengan D-08 Bagian 4.2, dibaca dari dokumennya. **Uji: tidak ada angka porsi di luar satu tempat** | R-03, C-16 | [x] — sapuan porsi dan sapuan ambang fitur 003 disatukan; tabrakan nilai 0,70 diakui |
-| A-3 | Pembuatan pembagian deterministik terhadap seed | **Uji: seed sama → susunan sama; seed berbeda → susunan berbeda.** Uji: korpus terlalu kecil ditolak dengan menyebut jumlah minimumnya | R-05 | [ ] |
-| A-4 | **Pembekuan: sidik daftar id, dan pembagian ulang yang berbeda ditolak** | Uji: sidik berubah bila satu dokumen berpindah himpunan | R-04 | [ ] |
+| A-3 | Pembuatan pembagian deterministik terhadap seed | **Uji: seed sama → susunan sama; seed berbeda → susunan berbeda.** Uji: korpus terlalu kecil ditolak dengan menyebut jumlah minimumnya | R-05 | [x] |
+| A-4 | **Pembekuan: sidik daftar id, dan pembagian ulang yang berbeda ditolak** | Uji: sidik berubah bila satu dokumen berpindah himpunan | R-04 | [x] |
 | A-5 | **Himpunan uji di balik metode yang mencatat pembukaannya** | **Uji: uji tidak dapat dibaca tanpa tercatat.** Uji: pembukaan kedua menaikkan hitungan | R-06 | [ ] |
 
 **A-5 adalah tugas terpenting fitur ini.** PU-01 dilanggar tanpa niat:

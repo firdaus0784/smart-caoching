@@ -21,7 +21,14 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-from src.nlp.pelatihan.pembagian import PORSI, PembagianData
+from src.nlp.pelatihan.pembagian import (
+    JUMLAH_DOKUMEN_MINIMUM,
+    PORSI,
+    GalatPembagian,
+    PembagianData,
+    buat_pembagian,
+    pastikan_beku,
+)
 from tests.nlp.test_ambang_kesepakatan import RUMAH_TETAPAN
 
 AKAR = Path(__file__).resolve().parents[2]
@@ -202,3 +209,175 @@ def test_uraian_menyebut_alasan_pembagian_tingkat_dokumen() -> None:
     uraian = modul.__doc__ or ""
     assert "segmen" in uraian
     assert "D-08" in uraian
+
+
+# ------------------------------------------------------------ A-3, R-05
+
+
+def _korpus(jumlah: int) -> list[str]:
+    return [f"dok{i:04d}" for i in range(jumlah)]
+
+
+def test_seed_sama_menghasilkan_susunan_sama() -> None:
+    """**R-05.** Pembagian yang tidak dapat diulang membatalkan klaim
+    reproduktibilitas NFR-15, dan pembatalannya baru ketahuan ketika seseorang
+    mencoba mengulang hasil pada bulan 8."""
+    a = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    b = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert a.latih == b.latih
+    assert a.validasi == b.validasi
+    assert a.uji == b.uji
+
+
+def test_seed_berbeda_menghasilkan_susunan_berbeda() -> None:
+    """Tanpa uji ini, pembagian yang mengabaikan seed sama sekali akan lolos
+    uji sebelumnya — ia deterministik, hanya saja tidak terhadap seed."""
+    a = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    b = buat_pembagian(_korpus(100), seed=8, versi_korpus="1.0", id_pembagian="B1")
+    assert a.latih != b.latih
+
+
+def test_urutan_masukan_tidak_mengubah_hasil() -> None:
+    """Korpus yang sama dengan urutan berbeda adalah korpus yang sama.
+
+    Tanpa ini, pembagian bergantung pada urutan berkas pada cakram — dan
+    urutan itu berubah antar-mesin tanpa seorang pun mengubah apa pun.
+    """
+    maju = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    mundur = buat_pembagian(
+        list(reversed(_korpus(100))), seed=7, versi_korpus="1.0", id_pembagian="B1"
+    )
+    assert maju.latih == mundur.latih
+
+
+def test_porsi_hasil_mendekati_d08() -> None:
+    bagi = buat_pembagian(_korpus(1000), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert len(bagi.latih) == 700
+    assert len(bagi.validasi) == 150
+    assert len(bagi.uji) == 150
+
+
+def test_seluruh_dokumen_terpakai() -> None:
+    """Korpus anotasi adalah artefak yang paling mahal dihasilkan proyek ini.
+    Satu dokumen yang hilang karena pembulatan adalah pekerjaan anotator yang
+    dibuang tanpa jejak."""
+    bagi = buat_pembagian(_korpus(101), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert bagi.jumlah_dokumen == 101
+
+
+def test_korpus_terlalu_kecil_ditolak_dengan_menyebut_jumlah_minimumnya() -> None:
+    """Galat yang hanya berkata "terlalu kecil" memaksa pembacanya menebak
+    berapa yang cukup."""
+    with pytest.raises(GalatPembagian) as galat:
+        buat_pembagian(_korpus(5), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert str(JUMLAH_DOKUMEN_MINIMUM) in str(galat.value)
+
+
+def test_dokumen_berulang_pada_korpus_ditolak() -> None:
+    """Dokumen yang tercatat dua kali akan masuk dua himpunan sekaligus —
+    kebocoran yang sama dengan R-02, tetapi datang dari daftar masukannya."""
+    with pytest.raises(GalatPembagian):
+        buat_pembagian([*_korpus(50), "dok0000"], seed=7, versi_korpus="1.0", id_pembagian="B1")
+
+
+# ------------------------------------------------------------ A-4, R-04
+
+
+def test_pembagian_membawa_sidiknya() -> None:
+    bagi = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert bagi.sidik.startswith("sha256:")
+
+
+def test_sidik_berubah_bila_satu_dokumen_berpindah_himpunan() -> None:
+    """**Uji yang dituntut `tasks.md`, dan inti R-04.**
+
+    Sidik yang tidak berubah ketika susunannya berubah adalah sidik yang tidak
+    menjaga apa pun.
+    """
+    satu = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    pindah = sorted(satu.latih)[0]
+    dua = PembagianData(
+        id_pembagian=satu.id_pembagian,
+        latih=satu.latih - {pindah},
+        validasi=satu.validasi | {pindah},
+        uji=satu.uji,
+        seed=satu.seed,
+        versi_korpus=satu.versi_korpus,
+    )
+    assert satu.sidik != dua.sidik
+
+
+def test_sidik_sama_bagi_pembagian_yang_sama() -> None:
+    a = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    b = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert a.sidik == b.sidik
+
+
+def test_pembagian_ulang_yang_berbeda_ditolak() -> None:
+    """**Pembekuan (R-04).**
+
+    D-08 Bagian 4.2: pembagian dibekukan sebelum pelatihan pertama. Membagi
+    ulang dengan hasil berbeda sesudah itu berarti angka pada laporan lama dan
+    laporan baru dihitung atas himpunan uji yang berlainan — dan keduanya
+    tercatat dengan nama yang sama.
+    """
+    beku = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    lain = buat_pembagian(_korpus(100), seed=8, versi_korpus="1.0", id_pembagian="B1")
+    with pytest.raises(GalatPembagian) as galat:
+        pastikan_beku(beku, lain)
+    assert "beku" in str(galat.value).lower()
+
+
+def test_pembagian_ulang_yang_sama_diterima() -> None:
+    """Membagi ulang bukan pelanggaran; membagi ulang **dengan hasil berbeda**
+    yang pelanggaran. Tanpa uji ini, penjagaannya akan menolak pemeriksaan ulang
+    yang sah dan lalu dilucuti seseorang."""
+    a = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    b = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    pastikan_beku(a, b)
+
+
+def test_sisa_pembulatan_jatuh_ke_latih() -> None:
+    """**Uji ini lahir dari mutasi yang tidak menyala.**
+
+    `test_seluruh_dokumen_terpakai` memeriksa jumlah totalnya, dan total tetap
+    utuh ke mana pun sisanya jatuh — sehingga uji itu lolos pada versi yang
+    melemparkan sisa ke himpunan uji.
+
+    Ke mana sisa jatuh bukan hal sepele: melemparkannya ke uji membuat
+    himpunan uji tumbuh melampaui 15% D-08 pada setiap korpus yang tidak habis
+    dibagi, dan porsi yang melar tanpa dinyatakan adalah porsi yang tidak lagi
+    mengikuti dokumennya.
+    """
+    bagi = buat_pembagian(_korpus(101), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    assert len(bagi.validasi) == 15
+    assert len(bagi.uji) == 15
+    assert len(bagi.latih) == 71
+
+
+def test_sidik_berubah_ketika_dua_dokumen_bertukar_himpunan() -> None:
+    """**Uji kedua yang lahir dari mutasi yang tidak menyala, dan yang ini
+    lebih penting.**
+
+    `test_sidik_berubah_bila_satu_dokumen_berpindah_himpunan` memindahkan satu
+    dokumen, sehingga **jumlah** kedua himpunan ikut berubah. Sidik yang
+    dihitung dari jumlah saja tetap lolos uji itu.
+
+    Pertukaran dua dokumen membiarkan jumlahnya persis sama dan hanya mengubah
+    isinya — dan pertukaran itulah bentuk yang paling mungkin terjadi ketika
+    seseorang membagi ulang dengan seed berbeda.
+    """
+    satu = buat_pembagian(_korpus(100), seed=7, versi_korpus="1.0", id_pembagian="B1")
+    dari_latih = sorted(satu.latih)[0]
+    dari_validasi = sorted(satu.validasi)[0]
+    tukar = PembagianData(
+        id_pembagian=satu.id_pembagian,
+        latih=(satu.latih - {dari_latih}) | {dari_validasi},
+        validasi=(satu.validasi - {dari_validasi}) | {dari_latih},
+        uji=satu.uji,
+        seed=satu.seed,
+        versi_korpus=satu.versi_korpus,
+    )
+    assert len(tukar.latih) == len(satu.latih)
+    assert len(tukar.validasi) == len(satu.validasi)
+    assert tukar.sidik != satu.sidik
