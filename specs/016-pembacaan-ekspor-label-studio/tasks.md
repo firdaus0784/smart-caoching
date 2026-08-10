@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 |
 | Plan | `plan.md`, lolos Gerbang 2 |
-| Status | **Lolos Gerbang 3** — 10 Agustus 2026 (KB-025) |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026 (KB-027). Sembilan tugas selesai |
 | Jumlah tugas | **9** — di bawah ambang ±30 |
 | Ketergantungan baru | **Nol** |
 
@@ -40,9 +40,24 @@ proyeknya tidak dapat mengumpulkannya terbaca persis seperti korpus bersih.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` tidak berubah — 8 lulus, 0 gagal, 12 belum
-- [ ] Seluruh uji impor berjalan atas **berkas sungguhan**, bukan bentuk susunan uji
-- [ ] Kelima uji mutasi `plan.md` Bagian 6 dijalankan dan hasilnya dilaporkan
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` tidak berubah — 8 lulus, 0 gagal, 12 belum
+- [x] Seluruh uji impor berjalan atas **berkas sungguhan** `tests/bahan/ekspor-label-studio-1.23.json`
+- [x] Kelima uji mutasi `plan.md` Bagian 6 dijalankan; seluruhnya menyalakan uji yang dimaksud
+- [x] Cakupan uji tidak turun — 99% atas 1.343 pernyataan
+- [x] **Nol ketergantungan Python baru** — tetap 10 langsung, 26 terkunci; `[sistem]` bertambah `label_studio`
+
+## Yang ditemukan saat mengerjakannya, dan tidak diperkirakan spec
+
+| | Temuan |
+|---|---|
+| **KB-026** | Label Studio **menerima rentang yang tidak cocok dengan `value.text` lewat API tanpa memeriksa**. Pemeriksaannya hanya ada pada antarmuka pelabelannya. Akibatnya pemeriksaan rentang pada `impor_ls` adalah satu-satunya yang ada — dan itu akan menentukan ketika pra-anotasi fitur 004 menyisipkan rentang lewat API |
+| **C-17 pada B-1** | Pemeriksa C-17 menjatuhkan bentuk pertama `ekspor.py` yang menulis berkas sendiri. `src/nlp` ada pada jalur penjawaban. Rancangannya yang diperbaiki, bukan pemeriksanya: modul mengembalikan baris, penulisannya pekerjaan pemanggil di luar `src/` |
+| **Adjudikasi** | D-03 Bagian 15 menetapkan satu baris JSONL mewakili satu dokumen, sedangkan dokumen beranotasi ganda membawa dua putusan. Ekspor **menolak** menuliskannya dan melaporkan namanya; adjudikasi belum ada pada sistem ini |
+
+## Butir terbuka bagi tim
+
+**Konfigurasi label Label Studio wajib memuat kendali `bendera`** dengan
+keempat nilai D-03 — bentuk yang dapat disalin ada pada `plan.md` Bagian 3.
+Tanpa kendali itu, `bendera_terkumpul=False` wajib dinyatakan saat impor, dan
+korpusnya membawa `bendera: null` sepanjang hidupnya.

@@ -7,7 +7,7 @@
 | Pasal konstitusi | **C-10**, C-09, C-11, C-12, C-16 |
 | Urutan pembangunan | 016 pada `docs/D12.md` Bagian 7, sesudah 003 |
 | Bahan | **Sudah ada** — `tests/bahan/ekspor-label-studio-1.23.json` (KB-023) |
-| Status | Menunggu Gerbang 1 |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026 (KB-027) |
 
 ## Tujuan
 
