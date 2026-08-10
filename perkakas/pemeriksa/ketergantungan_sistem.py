@@ -28,6 +28,17 @@ adalah laporan palsu, dan laporan palsu menghentikan kewaspadaan. Itu pelajaran
 TA-01 pada `docs/D00.md` Bagian 7.10, diterapkan pada perkakas alih-alih pada
 sistem — sama dengan yang sudah dilakukan `daftar_pasal.py`.
 
+**Label Studio diperiksa dengan cara yang berbeda, dan sengaja.** Ia bukan
+paket Python dan tidak terpasang pada lingkungan mana pun yang menjalankan
+`make check` — memeriksa versi terpasangnya karena itu akan selalu menghasilkan
+"belum dapat diperiksa", yaitu pemeriksa yang tidak pernah memeriksa apa pun.
+
+Yang diperiksa sebagai gantinya: **sidik berkas contoh ekspornya.** Berkas itu
+satu-satunya bukti tentang bentuk ekspor Label Studio yang dimiliki proyek ini,
+dan seluruh uji `impor_ls` bersandar padanya. Bahan yang berubah tanpa catatan
+membuat uji yang lulus berhenti membuktikan apa pun — dan perubahannya tidak
+akan terlihat dari hasil ujinya, sebab ujinya ikut berubah bersamanya.
+
 Bagian `[sistem]` hanya dituntut bila `pytesseract` ada pada daftar `langsung`.
 Proyek yang tidak memakai OCR tidak perlu mencatat mesin OCR, dan tanpa
 kelonggaran itu pemeriksa akan menyala atas riwayat sebelum fitur 015.
@@ -35,6 +46,7 @@ kelonggaran itu pemeriksa akan menyala atas riwayat sebelum fitur 015.
 
 from __future__ import annotations
 
+import hashlib
 import shutil
 import subprocess
 import tomllib
@@ -111,26 +123,30 @@ def periksa_ketergantungan_sistem(
         )
 
     isi = tomllib.loads(disetujui.read_text(encoding="utf-8"))
+    temuan_ls = _periksa_label_studio(akar, isi)
+
     langsung = {str(n).strip().lower().replace("_", "-") for n in isi.get("langsung", [])}
     if PAKET_PENANDA not in langsung:
-        return HasilSistem()
+        return HasilSistem(temuan=temuan_ls)
 
     tercatat = isi.get("sistem", {}).get("tesseract")
     if not tercatat:
         return HasilSistem(
             temuan=[
+                *temuan_ls,
                 Temuan(
                     disetujui,
                     0,
                     f"{PAKET_PENANDA!r} disetujui tetapi bagian [sistem.tesseract] "
                     "tidak ada — mesin OCR menentukan isi korpus dan tidak boleh "
                     "berada di luar catatan persetujuan (R-13, C-12)",
-                )
+                ),
             ]
         )
 
     if not str(tercatat.get("versi", "")):
         return HasilSistem(
+            temuan=temuan_ls,
             terperiksa=False,
             catatan=(
                 "versi mesin OCR belum ditetapkan pada catatan persetujuan — "
@@ -142,6 +158,7 @@ def periksa_ketergantungan_sistem(
     terpasang = versi_mesin()
     if terpasang is None:
         return HasilSistem(
+            temuan=temuan_ls,
             terperiksa=False,
             catatan=(
                 "ketergantungan sistem belum dapat diperiksa — mesin OCR tidak "
@@ -185,4 +202,48 @@ def periksa_ketergantungan_sistem(
             )
         )
 
-    return HasilSistem(temuan=temuan)
+    return HasilSistem(temuan=[*temuan, *temuan_ls])
+
+
+def _periksa_label_studio(akar: Path, isi: dict[str, object]) -> list[Temuan]:
+    """Sidik berkas contoh ekspor tetap seperti yang tercatat — R-13 fitur 016.
+
+    Bagian ini boleh tidak ada: riwayat sebelum fitur 016 tidak memilikinya,
+    dan pemeriksa yang menyala atas ketiadaannya akan menyala atas seluruh
+    riwayat itu. Yang tidak boleh adalah bagiannya ada sedangkan berkasnya
+    tidak, atau berkasnya berubah tanpa sidiknya diperbarui.
+    """
+    sistem = isi.get("sistem")
+    if not isinstance(sistem, dict):
+        return []
+    tercatat = sistem.get("label_studio")
+    if not isinstance(tercatat, dict):
+        return []
+
+    disetujui = akar / "ketergantungan-disetujui.toml"
+    nama = str(tercatat.get("berkas_contoh", ""))
+    berkas = akar / nama
+    if not nama or not berkas.is_file():
+        return [
+            Temuan(
+                disetujui,
+                0,
+                f"berkas contoh ekspor Label Studio {nama!r} tidak ditemukan — ia "
+                "satu-satunya bukti tentang bentuk ekspor yang dimiliki proyek ini, "
+                "dan seluruh uji impor bersandar padanya",
+            )
+        ]
+
+    sidik = "sha256:" + hashlib.sha256(berkas.read_bytes()).hexdigest()
+    if sidik != str(tercatat.get("sidik", "")):
+        return [
+            Temuan(
+                berkas,
+                0,
+                "sidik berkas contoh ekspor Label Studio berbeda dari yang tercatat — "
+                "bahan uji yang berubah tanpa catatan membuat uji yang lulus berhenti "
+                "membuktikan apa pun, dan perubahannya tidak terlihat dari hasil "
+                "ujinya sebab ujinya ikut berubah bersamanya",
+            )
+        ]
+    return []

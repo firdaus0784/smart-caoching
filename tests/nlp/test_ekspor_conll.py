@@ -33,7 +33,7 @@ def _muat() -> list[dict[str, Any]]:
     return isi
 
 
-def _hasil(isi: list[dict[str, Any]] | None = None) -> Any:  # noqa: ANN401
+def _hasil(isi: list[dict[str, Any]] | None = None) -> Any:
     return impor(
         isi if isi is not None else _muat(),
         versi_skema=VERSI,

@@ -60,7 +60,7 @@ SUMBER = {
 TANGGAL = date(2026, 9, 14)
 
 
-def _hasil(bendera_terkumpul: bool = True) -> Any:  # noqa: ANN401
+def _hasil(bendera_terkumpul: bool = True) -> Any:
     return impor(
         _muat(), versi_skema=VERSI, kode_anotator=KODE, bendera_terkumpul=bendera_terkumpul
     )

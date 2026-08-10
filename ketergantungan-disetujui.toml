@@ -78,3 +78,26 @@ sidik = "sha256:45adaade8715f553c108334f603f24e4bc902fc6763892b5a9245afe230c82b4
 sumber = "https://raw.githubusercontent.com/tesseract-ocr/tessdata/main/ind.traineddata"
 lisensi = "Apache-2.0"
 ukuran_bita = 8279230
+
+# Label Studio — R-13 fitur 016, keputusan KB-020 dan KB-025.
+#
+# **Bukan paket Python.** KB-020 menolaknya sebagai ketergantungan proyek:
+# kode kita tidak mengimpornya, tidak memanggilnya, hanya membaca berkas
+# ekspornya. Yang dicatat di sini karena itu bukan versi yang terpasang pada
+# lingkungan ini — tidak ada yang terpasang — melainkan **versi yang
+# menghasilkan bahan uji acuan**, dan sidik bahan itu.
+#
+# Yang dijaga pemeriksa: bahan uji tidak berubah diam-diam. Ia satu-satunya
+# bukti tentang bentuk ekspor Label Studio yang dimiliki proyek ini, dan
+# seluruh uji `impor_ls` bersandar padanya. Bahan yang berubah tanpa catatan
+# membuat uji yang lulus berhenti membuktikan apa pun.
+#
+# `versi` TIDAK kosong, berbeda dari [sistem.tesseract]: perangkatnya benar-
+# benar dijalankan dan berkasnya benar-benar dihasilkan (KB-023).
+[sistem.label_studio]
+versi = "1.23.0"
+edisi = "Community"
+berkas_contoh = "tests/bahan/ekspor-label-studio-1.23.json"
+sidik = "sha256:0e8ebeeeafb5aa019c0d5f5daee5694cfd6a98d6cb776d89f0b25ca0adac89cb"
+lisensi = "Apache-2.0"
+catatan = "sidik berubah sekali pada KB-026; sidik lama tercatat pada logbook/L2"

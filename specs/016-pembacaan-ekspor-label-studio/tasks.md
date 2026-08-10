@@ -36,7 +36,7 @@ proyeknya tidak dapat mengumpulkannya terbaca persis seperti korpus bersih.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | Catatan impor ke `logbook/` L2; `[sistem.label_studio]` dan perluasan pemeriksa R-18 | Uji: baris memuat versi Label Studio, versi skema, jumlah dokumen, dan keadaan bendera. **Uji: versi tercatat berbeda dari yang dipakai → pemeriksa menyala** | R-13, R-14, C-09 | [ ] |
+| C-1 | Catatan impor ke `logbook/` L2; `[sistem.label_studio]` dan perluasan pemeriksa R-18 | Uji: baris memuat versi Label Studio, versi skema, jumlah dokumen, dan keadaan bendera. **Uji: versi tercatat berbeda dari yang dipakai → pemeriksa menyala** | R-13, R-14, C-09 | [x] — yang dijaga sidik bahan uji, bukan versi terpasang |
 
 ## Verifikasi akhir
 
