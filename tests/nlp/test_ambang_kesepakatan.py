@@ -115,6 +115,24 @@ def test_setiap_ambang_bernilai_pecahan_wajar(nama: str) -> None:
     assert 0.0 < nilai <= 1.0
 
 
+RUMAH_TETAPAN = frozenset(
+    {
+        (AKAR / "src" / "nlp" / "anotasi" / "ambang.py").resolve(),
+        (AKAR / "src" / "nlp" / "pelatihan" / "pembagian.py").resolve(),
+    }
+)
+"""Modul yang **sengaja** menjadi satu-satunya tempat sekelompok angka.
+
+Daftar ini pendek dan wajib tetap pendek. Menambahnya berarti menyatakan ada
+satu kelompok angka lagi yang dimiliki dokumen tertentu, dan pernyataan itu
+keputusan — bukan cara meloloskan berkas yang kebetulan menyalakan sapuan.
+
+`pembagian.py` masuk karena tabrakan yang sungguhan: porsi latih D-08 bernilai
+0,70, sama dengan ambang Kappa D-03. Keduanya besaran yang sama sekali
+berbeda. Sapuan berbasis nilai tidak dapat membedakannya, dan itu batas yang
+diakui — bukan yang disembunyikan."""
+
+
 def _berkas_sumber() -> list[Path]:
     return sorted((AKAR / "src").rglob("*.py"))
 
@@ -131,10 +149,9 @@ def test_tidak_ada_angka_ambang_tertulis_di_luar_satu_tempat() -> None:
     adalah tempat ambang disetel tanpa ada yang menyadarinya.
     """
     nilai_ambang = {getattr(modul_ambang, n) for n in TETAPAN}
-    sah = (AKAR / "src" / "nlp" / "anotasi" / "ambang.py").resolve()
     pelanggaran: list[str] = []
     for berkas in _berkas_sumber():
-        if berkas.resolve() == sah:
+        if berkas.resolve() in RUMAH_TETAPAN:
             continue
         pohon = ast.parse(berkas.read_text(encoding="utf-8"))
         for simpul in ast.walk(pohon):
