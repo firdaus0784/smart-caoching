@@ -30,7 +30,7 @@ proyeknya tidak dapat mengumpulkannya terbaca persis seperti korpus bersih.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | B-1 | Ekspor JSONL sesuai D-03 Bagian 15 | Uji: setiap bidang D-03 ada dengan nama persis; **uji: bendera tak terkumpul ditulis `null`, bukan `[]`**; uji: tanpa versi skema tidak dihasilkan | R-09, R-12 | [x] — modul tidak menulis berkas; C-17 melarangnya dari `src/nlp` |
-| B-2 | Ekspor CoNLL beserta pedoman anotasi | **Uji: rentang tak sejajar batas token dilaporkan, dokumennya dilewati** — bukan digeser. Uji: berkas pedoman ikut dihasilkan | R-10, R-11 | [ ] |
+| B-2 | Ekspor CoNLL beserta pedoman anotasi | **Uji: rentang tak sejajar batas token dilaporkan, dokumennya dilewati** — bukan digeser. Uji: berkas pedoman ikut dihasilkan | R-10, R-11 | [x] |
 
 ## Fase C · Catatan dan patokan
 

@@ -54,6 +54,8 @@ from datetime import date
 from pathlib import Path
 
 from src.nlp.anotasi.impor_ls import DokumenTeranotasi, HasilImpor
+from src.nlp.praproses.token import Token
+from src.nlp.praproses.tokenisasi import tokenkan
 
 
 class GalatEkspor(Exception):
@@ -179,3 +181,91 @@ def _anotator_rentang(dokumen: DokumenTeranotasi) -> str | None:
     sah — D-03 memisahkan kedua tugas — dan bidang `anotator` tetap wajib ada.
     """
     return dokumen.rentang[0].id_anotator if dokumen.rentang else None
+
+
+@dataclass(frozen=True)
+class HasilEksporConll:
+    """Baris CoNLL, pedomannya, dan dokumen yang **tidak** masuk.
+
+    Pedoman dibawa sebagai isi, bukan sebagai jalur. Pedoman yang hanya
+    ditunjuk akan berpisah dari korpusnya pada penyalinan berikutnya, dan
+    korpus yang berpisah dari pedomannya adalah korpus yang ditafsirkan
+    menurut ingatan (FR-C06).
+    """
+
+    baris: tuple[str, ...]
+    pedoman: str
+    tak_sejajar_token: tuple[str, ...]
+
+    def tulis(self, berkas: Path) -> None:
+        """**Sengaja tidak disediakan** — C-17, lihat uraian modul."""
+        raise NotImplementedError(
+            "modul ini tidak menulis berkas: C-17 melarang akses tulis dari "
+            "jalur penjawaban, dan src/nlp berada di sana"
+        )
+
+
+def ekspor_conll(hasil: HasilImpor, *, pedoman: Path) -> HasilEksporConll:
+    """Susun korpus sebagai baris CoNLL berpenanda BIO — R-10, R-11.
+
+    **Di sinilah C-10 diuji sampai ke ujungnya.** Seluruh sistem memakai indeks
+    karakter; CoNLL berbaris per token. Pemetaannya memakai `Token.mulai` dan
+    `Token.akhir` fitur 015 — keduanya sudah berindeks karakter, sehingga
+    pemetaannya **pencocokan tepat, bukan perkiraan**.
+
+    Rentang yang tidak jatuh pada batas token **dilaporkan dan dokumennya
+    dilewati**. Menggesernya ke batas terdekat menghasilkan berkas pelatihan
+    yang benar bentuknya dan salah isinya, dan model yang dilatih atasnya akan
+    belajar batas entitas yang tidak pernah ditandai siapa pun.
+
+    Dilewati **dan** dilaporkan: melaporkannya sambil tetap menuliskannya
+    berarti laporan yang tidak mengubah apa pun.
+    """
+    if not pedoman.is_file():
+        raise GalatEkspor(
+            f"berkas pedoman anotasi {pedoman.name!r} tidak ditemukan — FR-C06 "
+            "menuntut ekspor disertai pedoman yang berlaku, sebab korpus tanpa "
+            "pedoman tidak dapat ditafsirkan orang di luar tim"
+        )
+
+    baris: list[str] = []
+    tak_sejajar: list[str] = []
+
+    for dokumen in hasil.dokumen:
+        token = tokenkan(dokumen.teks)
+        tepi = {t.mulai for t in token} | {t.akhir for t in token}
+        meleset = [r for r in dokumen.rentang if r.mulai not in tepi or r.akhir not in tepi]
+        if meleset:
+            tak_sejajar.append(dokumen.id_dokumen)
+            continue
+        baris.extend(_baris_conll(dokumen, token))
+        baris.append("")
+
+    return HasilEksporConll(
+        baris=tuple(baris),
+        pedoman=pedoman.read_text(encoding="utf-8"),
+        tak_sejajar_token=tuple(tak_sejajar),
+    )
+
+
+def _baris_conll(dokumen: DokumenTeranotasi, token: list[Token]) -> list[str]:
+    """Satu baris per token: permukaan, tab, penanda BIO.
+
+    Penanda dihitung dari rentang karakter, bukan dari urutan token. Menghitung
+    dari urutan token menuntut dua sumber kebenaran tentang di mana entitas
+    dimulai, dan dua sumber kebenaran akan berbeda pada dokumen yang tidak
+    biasa.
+    """
+    hasil: list[str] = []
+    for t in token:
+        hasil.append(f"{t.permukaan}\t{_tag(t, dokumen)}")
+    return hasil
+
+
+def _tag(token: Token, dokumen: DokumenTeranotasi) -> str:
+    for rentang in dokumen.rentang:
+        if token.mulai == rentang.mulai:
+            return f"B-{rentang.label.value}"
+        if rentang.mulai < token.mulai and token.akhir <= rentang.akhir:
+            return f"I-{rentang.label.value}"
+    return "O"
