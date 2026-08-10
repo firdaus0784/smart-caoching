@@ -192,3 +192,43 @@ def test_pilihan_ganda_pada_tempat_tunggal_ditolak() -> None:
     with pytest.raises(GalatImpor) as galat:
         _impor(rusak)
     assert "2 nilai" in str(galat.value)
+
+
+# ---------------------------------------------------------------- A-3, R-04
+
+
+def test_versi_skema_wajib_diberikan_pemanggil() -> None:
+    """**R-04.** Label Studio tidak membawa versi skema dalam bentuk apa pun
+    (KB-023), sehingga menebaknya berarti mengarang.
+
+    Bersifat kata kunci dan tanpa nilai bawaan: nilai bawaan akan menjadi
+    jawaban bagi korpus yang versinya sebenarnya tidak diketahui, dan FR-C08
+    melarang korpus memuat dua versi skema tanpa penandaan.
+    """
+    with pytest.raises(TypeError):
+        impor(_muat(), kode_anotator=KODE, bendera_terkumpul=True)  # type: ignore[call-arg]
+
+
+def test_versi_skema_yang_diberikan_melekat_pada_setiap_anotasi() -> None:
+    lain = VersiSkema(mayor=2, minor=1)
+    hasil = impor(_muat(), versi_skema=lain, kode_anotator=KODE, bendera_terkumpul=True)
+    assert hasil.versi_skema == lain
+    for dokumen in hasil.dokumen:
+        assert all(r.versi_skema == lain for r in dokumen.rentang)
+        assert all(p.versi_skema == lain for p in dokumen.putusan)
+
+
+def test_versi_pada_berkas_ekspor_tidak_dipakai() -> None:
+    """**Uji terpenting A-3, dan ia menguji ketiadaan.**
+
+    Bila kelak Label Studio menambahkan bidang bernama `version` atau
+    `schema_version`, modul ini tidak boleh diam-diam memakainya — bidang itu
+    akan berarti versi perangkatnya, bukan versi skema anotasi kita, dan
+    keduanya tidak pernah sama.
+    """
+    isi = _muat()
+    for tugas in isi:
+        tugas["schema_version"] = "9.9"
+        tugas["version"] = "9.9"
+    hasil = impor(isi, versi_skema=VERSI, kode_anotator=KODE, bendera_terkumpul=True)
+    assert hasil.versi_skema == VERSI
