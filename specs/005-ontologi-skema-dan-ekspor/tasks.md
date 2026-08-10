@@ -22,7 +22,7 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | **Jumlah sah dan mentah, dilaporkan terpisah** | **Uji: konsep tanpa definisi tidak terhitung sah tetapi terhitung mentah.** Uji: konsep dari karantina tidak terhitung sah | R-03, R-06, R-07 | [ ] |
+| B-1 | **Jumlah sah dan mentah, dilaporkan terpisah** | **Uji: konsep tanpa definisi tidak terhitung sah tetapi terhitung mentah.** Uji: konsep dari karantina tidak terhitung sah | R-03, R-06, R-07 | [x] — dua angka selalu bersama; tidak ada bidang bernama `jumlah` saja |
 | B-2 | Ekspor JSON-LD beserta pencatatannya | Uji: hasil dapat diurai dan memuat konteks bernama. **Uji: konsep tak sah tidak masuk ekspor.** Uji: ontologi kosong ditolak | R-08, R-09, R-10 | [ ] |
 
 **B-1 adalah tugas terpenting fitur ini, dan ia tentang cara melapor bukan cara
