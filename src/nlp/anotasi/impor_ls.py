@@ -40,10 +40,12 @@ seluruh pemeriksaan rentang lolos karena tidak ada yang diperiksa.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any
 
 from pydantic import ValidationError
 
+from src.nlp.anotasi.batch import StatusPraAnotasi
 from src.nlp.anotasi.rentang import PutusanKategori, RentangEntitas
 from src.nlp.anotasi.skema import KategoriMasalah, LabelEntitas, VersiSkema
 
@@ -167,6 +169,23 @@ class GalatImpor(Exception):
     """
 
 
+class Bendera(Enum):
+    """Keempat bendera D-03 Bagian 15, dan hanya keempatnya.
+
+    `bocor_pii` adalah alasan seluruh mekanisme ini ada: ia menyatakan data
+    pribadi lolos anonimisasi, dan KM-05 memeriksanya harian.
+    """
+
+    PERLU_ADJUDIKASI = "perlu_adjudikasi"
+    OCR_RUSAK = "ocr_rusak"
+    ANONIMISASI_BERLEBIH = "anonimisasi_berlebih"
+    BOCOR_PII = "bocor_pii"
+
+
+NAMA_KENDALI_BENDERA = "bendera"
+"""Nama kendali `Choices` pada konfigurasi Label Studio — `plan.md` Bagian 3."""
+
+
 @dataclass(frozen=True)
 class DokumenTeranotasi:
     """Satu dokumen beserta seluruh anotasinya, dalam tipe milik kita."""
@@ -175,6 +194,18 @@ class DokumenTeranotasi:
     teks: str
     rentang: tuple[RentangEntitas, ...]
     putusan: tuple[PutusanKategori, ...]
+    status_pra_anotasi: StatusPraAnotasi
+    anotasi_ganda: bool
+    bendera: frozenset[Bendera] | None
+    """`None` berarti **tidak terkumpul**, bukan tidak ada.
+
+    Pembedaan yang menentukan seluruh R-06. Himpunan kosong berarti anotator
+    memeriksa dan tidak menemukan apa pun; `None` berarti proyeknya tidak
+    memiliki kendali bendera sama sekali, sehingga tidak ada yang pernah
+    diperiksa. Korpus yang menyamakan keduanya menyatakan dirinya bersih atas
+    dasar instrumen yang tidak terpasang — dan salah satu bendera menyatakan
+    data pribadi lolos anonimisasi.
+    """
 
 
 @dataclass(frozen=True)
@@ -190,10 +221,7 @@ class HasilImpor:
     dokumen: tuple[DokumenTeranotasi, ...]
     dilewati: tuple[str, ...]
     versi_skema: VersiSkema
-
-
-JENIS_DIKENALI = ("labels", "choices")
-"""Dua jenis hasil yang modul ini tahu artinya — `plan.md` Bagian 3."""
+    bendera_terkumpul: bool
 
 
 def impor(
@@ -225,20 +253,49 @@ def impor(
             continue
         rentang: list[RentangEntitas] = []
         putusan: list[PutusanKategori] = []
+        bendera: set[Bendera] = set()
         for a in hidup:
             kode = _kode_anotator(a.id_pengguna, kode_anotator)
             for hasil in a.hasil:
-                _kumpulkan(hasil, t, kode, versi_skema, rentang, putusan)
+                _kumpulkan(hasil, t, kode, versi_skema, rentang, putusan, bendera)
         dokumen.append(
             DokumenTeranotasi(
                 id_dokumen=str(t.id),
                 teks=t.teks,
                 rentang=tuple(rentang),
                 putusan=tuple(putusan),
+                status_pra_anotasi=_status_pra_anotasi(t),
+                anotasi_ganda=len({a.id_pengguna for a in hidup}) > 1,
+                bendera=frozenset(bendera) if bendera_terkumpul else None,
             )
         )
 
-    return HasilImpor(dokumen=tuple(dokumen), dilewati=tuple(dilewati), versi_skema=versi_skema)
+    return HasilImpor(
+        dokumen=tuple(dokumen),
+        dilewati=tuple(dilewati),
+        versi_skema=versi_skema,
+        bendera_terkumpul=bendera_terkumpul,
+    )
+
+
+def _status_pra_anotasi(tugas: TugasMentah) -> StatusPraAnotasi:
+    """Diturunkan dari `predictions`, **tidak ditulis tangan** — R-05.
+
+    Label Studio tidak membawa bidang status pra-anotasi (KB-023), tetapi ia
+    membawa `predictions` — dan tugas yang membawa prediksi adalah tugas yang
+    anotatornya melihat saran mesin. Menurunkannya lebih dapat dipercaya
+    daripada menuliskannya: bidang yang ditulis tangan dapat berbeda dari
+    keadaan sebenarnya, sedangkan yang diturunkan tidak dapat.
+
+    `PEMBANDING` **tidak pernah dihasilkan di sini.** Ia berarti dokumen
+    sengaja disisihkan di dalam batch berpra-anotasi, dan kesengajaan itu
+    adalah keputusan pengelola batch — bukan sesuatu yang dapat dibaca dari
+    berkas ekspor. Menebaknya berarti menyatakan pengendalian yang mungkin
+    tidak pernah direncanakan siapa pun.
+    """
+    if tugas.prediksi:
+        return StatusPraAnotasi.DENGAN_PRA_ANOTASI
+    return StatusPraAnotasi.TANPA_PRA_ANOTASI
 
 
 def _kode_anotator(id_pengguna: int, tabel: dict[int, str]) -> str:
@@ -259,11 +316,15 @@ def _kumpulkan(
     versi_skema: VersiSkema,
     rentang: list[RentangEntitas],
     putusan: list[PutusanKategori],
+    bendera: set[Bendera],
 ) -> None:
-    jenis = _ambil(hasil, "type", f"tugas {tugas.id}")
-    nilai = _ambil(hasil, "value", f"tugas {tugas.id}")
+    letak = f"tugas {tugas.id}"
+    jenis = _ambil(hasil, "type", letak)
+    nilai = _ambil(hasil, "value", letak)
     if jenis == "labels":
         rentang.append(_rentang(nilai, tugas, kode, versi_skema))
+    elif jenis == "choices" and _ambil(hasil, "from_name", letak) == NAMA_KENDALI_BENDERA:
+        bendera.update(_bendera(nilai, letak))
     elif jenis == "choices":
         putusan.append(_putusan(nilai, tugas, kode, versi_skema))
     else:
@@ -331,3 +392,26 @@ def _satu(nilai: Any, kunci: str, letak: str) -> str:
             "mengambil yang pertama berarti membuang putusan anotator tanpa jejak"
         )
     return str(daftar[0])
+
+
+def _bendera(nilai: dict[str, Any], letak: str) -> set[Bendera]:
+    """Bendera D-03 dari kendali `Choices` bernama `bendera`.
+
+    Berbeda dari kategori, **daftarnya boleh berisi berapa pun** — kendalinya
+    `choice="multiple"`, dan satu dokumen dapat sekaligus perlu adjudikasi dan
+    memuat kerusakan OCR.
+
+    Nilai di luar keempat bendera D-03 menggagalkan impor. Mengabaikannya
+    berarti membuang peringatan anotator, dan salah satu bendera menyatakan
+    data pribadi lolos anonimisasi.
+    """
+    sah = {b.value for b in Bendera}
+    hasil: set[Bendera] = set()
+    for pilihan in _daftar(_ambil(nilai, "choices", letak), "choices", letak):
+        if str(pilihan) not in sah:
+            raise GalatImpor(
+                f"{letak}: bendera {pilihan!r} tidak ada pada D-03 Bagian 15 — "
+                "mengabaikannya berarti membuang peringatan anotator"
+            )
+        hasil.add(Bendera(str(pilihan)))
+    return hasil
