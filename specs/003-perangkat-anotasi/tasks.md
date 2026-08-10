@@ -6,7 +6,7 @@ Ditinjau manusia sebelum kode ditulis. Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 |
 | Plan | `plan.md`, lolos Gerbang 2 |
-| Status | **Lolos Gerbang 3** — 6 Agustus 2026. Implementasi berjalan |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026. Seluruh 15 tugas selesai (KB-024) |
 | Cakupan | **Bagian 1 saja** — pembacaan ekspor Label Studio menjadi fitur 016 (KB-022) |
 | Jumlah tugas | **15** — di bawah ambang ±30. Kepala ini sempat tertulis 14; jumlah barisnya selalu 15 (A: 5, B: 6, C: 4), dan angkanya yang keliru, bukan daftarnya |
 | Ketergantungan baru | **Nol** |
@@ -85,11 +85,20 @@ fitur 016, bukan dikerjakan di sini dari dugaan.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **tidak berubah** — 8 lulus, 0 gagal, 12 belum
-- [ ] R-01 s.d. R-09 dan R-12 s.d. R-15 punya uji yang gagal sebelum implementasi
-- [ ] Uji mutasi: Kappa dipanggil atas anotasi rentang → gagal saat memeriksa tipe
-- [ ] Uji mutasi: `terhitung` dihapus → uji batch tanpa anotasi ganda gagal
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
-- [ ] Angka Kappa dan F1 diuji terhadap contoh yang dihitung tangan
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **tidak berubah** — 8 lulus, 0 gagal, 12 belum, persis seperti sebelum fitur ini
+- [x] R-01 s.d. R-09 dan R-12 s.d. R-15 punya uji yang gagal sebelum implementasi — kecuali R-09, yang uraiannya sudah ditulis pada B-2 sehingga buktinya uji mutasi (B-5)
+- [x] Uji mutasi: Kappa dipanggil atas anotasi rentang → **4 galat mypy pada 2 berkas**, termasuk pada `kualifikasi.py` yang memakainya
+- [x] Uji mutasi: `terhitung` dihapus, `belum_terhitung` mengembalikan 1,0 → **3 uji gagal** pada tiga berkas berbeda
+- [x] Cakupan uji tidak turun — 99% atas 1.126 pernyataan; 798 uji lulus, 1 dilewati
+- [x] **Nol ketergantungan baru** — tetap 10 langsung, 26 terkunci
+- [x] Angka Kappa dan F1 diuji terhadap contoh yang dihitung tangan
+
+## Yang tidak selesai pada fitur ini, dan sebabnya
+
+| | Keadaan |
+|---|---|
+| **R-10, R-11** ekspor JSONL/CoNLL | **Sengaja tidak dikerjakan.** Menuntut bentuk anotasi yang lengkap, dan kelengkapannya baru pasti sesudah fitur 016 memetakan ekspor Label Studio. Diajukan sebagai tugas pada fitur 016 |
+| **R-16** versi Label Studio pada `ketergantungan-disetujui.toml` | Menyusul pada fitur 016 bersama perluasan R-18 yang memeriksanya. Patokan tanpa pemeriksa tidak menjaga apa pun |
+| **Porsi minimum pembanding** | **Butir terbuka bagi tim.** Angkanya tidak ada pada D-01 maupun D-03; C-16 melarang menetapkannya sendiri. C-3 menegakkan batas yang tertulis — nol pembanding ditolak — dan melaporkan porsinya tanpa menilai |
+| **Rujukan D-03 pada R-14** | `spec.md` R-14 dan C-1 menyebut Bagian 12; ambangnya ada pada **Bagian 13**. Nilainya benar, rujukannya keliru. **Menunggu persetujuan manusia** — `spec.md` tidak diubah saat implementasi |

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 — 6 Agustus 2026 |
-| Status | **Lolos Gerbang 2** — 6 Agustus 2026, keputusan KB-022. Menunggu `tasks.md` |
+| Status | **Lolos Gerbang 4** — 10 Agustus 2026, keputusan KB-024. Bagian 1 selesai utuh |
 | Ketergantungan baru | **Nol paket Python** — KB-020 |
 | Pertanyaan yang menuntut putusan Anda | **Satu, sudah diputus** — Bagian 5; putusannya Bagian 8 |
 
