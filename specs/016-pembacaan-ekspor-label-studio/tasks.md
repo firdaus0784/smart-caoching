@@ -15,7 +15,7 @@ Satu tugas = satu commit.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | A-1 | `GalatBentukEkspor` dan penguraian tugas; bentuk yang dirusak gagal tegas | **Uji: salinan bahan sungguhan yang satu kuncinya dihapus → galat menyebut kunci itu.** Uji: penguraian sebagian tidak terjadi | R-02 | [x] |
-| A-2 | Rentang dan putusan menjadi tipe fitur 003 | Uji terhadap `tests/bahan/ekspor-label-studio-1.23.json`; **uji: rentang diperiksa terhadap teks dokumennya** | R-01, R-03 | [ ] |
+| A-2 | Rentang dan putusan menjadi tipe fitur 003 | Uji terhadap `tests/bahan/ekspor-label-studio-1.23.json`; **uji: rentang diperiksa terhadap teks dokumennya** | R-01, R-03 | [x] — dua uji A-6 datang lebih awal; jalurnya sudah dilalui A-2 |
 | A-3 | `versi_skema` dari pemanggil; **uji: tidak ditebak dari berkas** | Uji: impor tanpa versi skema tidak dapat dipanggil | R-04 | [ ] |
 | A-4 | `status_pra_anotasi` diturunkan dari `predictions` | Uji: tugas ber-`predictions` → `DENGAN_PRA_ANOTASI`; tanpa → `TANPA_PRA_ANOTASI` | R-05 | [ ] |
 | A-5 | **`bendera` dan `bendera_terkumpul`** | **Uji: proyek tanpa kendali bendera tidak menghasilkan korpus yang terbaca bersih** | R-06 | [ ] |

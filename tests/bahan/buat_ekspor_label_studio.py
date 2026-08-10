@@ -142,7 +142,7 @@ def main() -> int:
     )
     anotasi(
         tugas[1],
-        ((0, 33, "Permendikdasmen Nomor 12 Tahun 2025", "REGULASI"),),
+        ((0, 35, "Permendikdasmen Nomor 12 Tahun 2025", "REGULASI"),),
         "K1",
         token1,
     )

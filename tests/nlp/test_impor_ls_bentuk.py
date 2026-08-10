@@ -146,3 +146,24 @@ def test_teks_bukan_untai_ditolak() -> None:
     rusak[0]["data"] = {"teks": ["Kepala sekolah"]}
     with pytest.raises(GalatBentukEkspor):
         urai_ekspor(rusak)
+
+
+def test_seluruh_rentang_pada_bahan_cocok_dengan_teksnya() -> None:
+    """**Uji atas bahannya sendiri, dan ia lahir dari kekeliruan sungguhan.**
+
+    Bahan ini semula memuat satu rentang `(0, 33)` bagi teks sepanjang 35
+    karakter. Label Studio **menerimanya lewat API tanpa memeriksa** bahwa
+    `value.text` cocok dengan potongan `start:end` — pemeriksaan itu ada pada
+    antarmukanya, bukan pada API-nya.
+
+    Temuan itu dicatat pada KB-026, dan ujinya diletakkan di sini supaya bahan
+    uji yang dibuat ulang kelak tidak diam-diam membawa rentang yang meleset.
+    Bahan uji yang salah menghasilkan uji yang lulus atas hal yang keliru.
+    """
+    for tugas in _muat():
+        teks = tugas["data"]["teks"]
+        for anotasi in tugas["annotations"]:
+            for hasil in anotasi["result"]:
+                nilai = hasil["value"]
+                if "start" in nilai:
+                    assert teks[nilai["start"] : nilai["end"]] == nilai["text"]
