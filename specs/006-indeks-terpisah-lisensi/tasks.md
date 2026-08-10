@@ -14,9 +14,9 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | `IndeksTujuan` dan `SegmenTerindeks` | Uji: dua nilai persis D-14 Bagian 5. **Uji: segmen tanpa indeks tujuan tidak dapat dibentuk** | R-01, R-02 | [ ] |
-| A-2 | Penempatan dari lisensi sumber, saat masuk | **Uji: lisensi tertutup ke indeks utama ditolak.** Uji: penempatan menolak, tidak menyaring | R-03 | [ ] |
-| A-3 | **Status anonimisasi selain `terverifikasi` ditolak dari indeks mana pun** | Uji: status `menunggu` ditolak; uji: `ditolak` juga | R-05 | [ ] |
+| A-1 | `IndeksTujuan` dan `SegmenTerindeks` | Uji: dua nilai persis D-14 Bagian 5. **Uji: segmen tanpa indeks tujuan tidak dapat dibentuk** | R-01, R-02 | [x] |
+| A-2 | Penempatan dari lisensi sumber, saat masuk | **Uji: lisensi tertutup ke indeks utama ditolak.** Uji: penempatan menolak, tidak menyaring | R-03 | [x] |
+| A-3 | **Status anonimisasi selain `terverifikasi` ditolak dari indeks mana pun** | Uji: status `menunggu` ditolak; uji: `ditolak` juga | R-05 | [x] — ditolak dari **kedua** indeks; metadata bukan tempat pembuangan |
 
 **A-3 menjaga hal yang berbeda dari nama fiturnya.** Penegakan lisensi mudah
 menyita seluruh perhatian, dan sementara itu dokumen yang anonimisasinya masih
