@@ -26,7 +26,7 @@ tidak dapat disitasi gagal pada titik kritis T2 (D-02).
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `Kandidat` dan antarmuka `SumberKandidat`; tiruan deterministik pada `tests/` | Uji: peringkat sama pada masukan sama. **Uji: seri diputus `id_segmen`, bukan urutan sisipan** | R-01, R-02, R-03 | [ ] |
+| B-1 | `Kandidat` dan antarmuka `SumberKandidat`; tiruan deterministik pada `tests/` | Uji: peringkat sama pada masukan sama. **Uji: seri diputus `id_segmen`, bukan urutan sisipan** | R-01, R-02, R-03 | [x] — tiruannya tinggal di `tests/`, dan itu penegakan R-05 bukan kerapian |
 | B-2 | BM25 atas `stem`; `IndeksLeksikal` membawa versinya | **Uji: skor terhadap contoh yang dihitung tangan.** Uji: pasangan sama-stem beda-permukaan tetap ditemukan. Uji: indeks kosong menghasilkan hasil kosong, bukan galat | R-09, R-13 | [ ] |
 | B-3 | *Reciprocal Rank Fusion* | **Uji: skor terhadap contoh hitung tangan yang membalik urutan kedua sumber.** **Uji: satu sumber ditolak.** Uji: setiap hasil membawa penyumbangnya | R-04, R-05, R-06 | [ ] |
 
