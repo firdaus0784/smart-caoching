@@ -28,7 +28,7 @@ tidak dapat disitasi gagal pada titik kritis T2 (D-02).
 |---|---|---|---|---|
 | B-1 | `Kandidat` dan antarmuka `SumberKandidat`; tiruan deterministik pada `tests/` | Uji: peringkat sama pada masukan sama. **Uji: seri diputus `id_segmen`, bukan urutan sisipan** | R-01, R-02, R-03 | [x] — tiruannya tinggal di `tests/`, dan itu penegakan R-05 bukan kerapian |
 | B-2 | BM25 atas `stem`; `IndeksLeksikal` membawa versinya | **Uji: skor terhadap contoh yang dihitung tangan.** Uji: pasangan sama-stem beda-permukaan tetap ditemukan. Uji: indeks kosong menghasilkan hasil kosong, bukan galat | R-09, R-13 | [x] — skor 0,8631 diturunkan tangan; k1 dan b pindah ke rumah tetapan |
-| B-3 | *Reciprocal Rank Fusion* | **Uji: skor terhadap contoh hitung tangan yang membalik urutan kedua sumber.** **Uji: satu sumber ditolak.** Uji: setiap hasil membawa penyumbangnya | R-04, R-05, R-06 | [ ] |
+| B-3 | *Reciprocal Rank Fusion* | **Uji: skor terhadap contoh hitung tangan yang membalik urutan kedua sumber.** **Uji: satu sumber ditolak.** Uji: setiap hasil membawa penyumbangnya | R-04, R-05, R-06 | [x] — SEG-A jatuh dari peringkat 1 ke 3; contoh itu yang membuktikan penggabungannya menggabungkan |
 
 **B-3 adalah tugas terpenting fitur ini.** RRF atas satu daftar mengembalikan
 daftar itu — tanpa galat, dengan nama fungsi yang tetap berbunyi hibrida. Uji
