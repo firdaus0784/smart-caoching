@@ -43,22 +43,23 @@ def _pohon(
     tetapan: str = TETAPAN_BERSIH,
     modul: str = MODUL_BIASA,
 ) -> Path:
-    """Pohon tiruan dengan satu rumah tetapan dan satu modul biasa.
+    """Pohon tiruan dengan satu rumah tetapan berisi dan satu modul biasa.
 
-    Hanya `src/rag/pengambilan/tetapan.py` yang diisi; dua rumah tetapan lain
-    sengaja tidak dibuat, dan aturan 3 karena itu wajib menemukannya hilang —
-    diuji tersendiri di bawah.
+    Rumah tetapan **lain** diisi kosong, dan daftarnya dibaca dari
+    `rumah_tetapan()` alih-alih disalin ke sini. Salinan daftar akan membuat
+    setiap penambahan rumah tetapan menyalakan aturan 3 pada seluruh uji berkas
+    ini — kegagalan yang benar isinya tetapi salah tempatnya, dan yang salah
+    tempatnya diperbaiki dengan melonggarkan pemeriksa.
     """
     akar = tmp_path / "pohon"
     (akar / "src" / "rag" / "pengambilan").mkdir(parents=True)
     (akar / "src" / "rag" / "pengambilan" / "tetapan.py").write_text(tetapan, encoding="utf-8")
     (akar / "src" / "rag" / "pengambilan" / "kecukupan.py").write_text(modul, encoding="utf-8")
-    for nisbi in (
-        Path("src") / "nlp" / "anotasi" / "ambang.py",
-        Path("src") / "nlp" / "pelatihan" / "pembagian.py",
-    ):
-        (akar / nisbi).parent.mkdir(parents=True, exist_ok=True)
-        (akar / nisbi).write_text('"""Kosong."""\n', encoding="utf-8")
+    for jalur in sorted(rumah_tetapan(akar)):
+        if jalur.exists():
+            continue
+        jalur.parent.mkdir(parents=True, exist_ok=True)
+        jalur.write_text('"""Kosong."""\n', encoding="utf-8")
     return akar
 
 

@@ -62,6 +62,7 @@ _RUMAH_TETAPAN_NISBI = (
     Path("src") / "nlp" / "anotasi" / "ambang.py",
     Path("src") / "nlp" / "pelatihan" / "pembagian.py",
     Path("src") / "rag" / "pengambilan" / "tetapan.py",
+    Path("src") / "ingest" / "kurasi" / "tetapan.py",
 )
 """Modul yang **sengaja** menjadi satu-satunya tempat sekelompok angka.
 
@@ -72,6 +73,18 @@ keputusan — bukan cara meloloskan berkas yang kebetulan menyalakan sapuan.
 `pembagian.py` masuk karena tabrakan yang sungguhan: porsi latih D-08 bernilai
 0,70, sama dengan ambang Kappa D-03. `tetapan.py` masuk karena tabrakan sejenis
 sekaligus karena ia rumah bagi angka D-07 Bagian 4.4.
+
+`ingest/kurasi/tetapan.py` masuk dengan alasan yang **berlawanan arah** dari
+ketiganya. Ketiganya masuk agar angka yang ada berkumpul; yang ini masuk agar
+angka yang **belum ada** tetap belum ada. D-06 Bagian 6 menyerahkan ambang
+relevansi L4 ke BT-24 bulan 3, dan rumah tetapan adalah tempat pertama yang
+akan menampungnya bila seseorang menebaknya. Aturan 3 yang menjaganya:
+tetapan tanpa asal tidak lolos, dan angka yang belum dikalibrasi tidak
+memiliki asal untuk disebut.
+
+Kelonggaran aturan 1 yang menyertai pendaftaran tidak berbiaya di sini —
+berkas itu tidak memuat satu pun bilangan pecahan bernama ambang, dan
+kekosongan itu sendiri diuji `tests/ingest/kurasi/test_saring.py`.
 """
 
 _PETUNJUK_SUMBER = ("D-0", "D0", "ADR-", "ADR", "Cormack", "Robertson", "BT-")

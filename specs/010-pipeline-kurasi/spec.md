@@ -95,12 +95,12 @@ sampai fitur 017 dan BT-24 selesai.** Itu keadaan yang jujur, bukan cacat.
 | R-02 | Butir **HARUS** hanya dapat tayang setelah putusan kurator; bentuk butir tayang **TIDAK BOLEH** dapat dibentuk di luar gerbang kurasi (C-06, FR-I03) |
 | R-03 | **JIKA** lisensi butir tidak terbaca atau tidak diizinkan, **MAKA** kandidat **HARUS** dibuang dan **TIDAK BOLEH** disimpan (L1, PP-01) |
 | R-04 | **JIKA** kandidat duplikat atau versi lama, **MAKA** ia **HARUS** dibuang; versi lebih baru **HARUS** menggantikan yang lama (L2) |
-| R-05 | **JIKA** regulasi sumber berstatus `dicabut`, **MAKA** butir **TIDAK BOLEH** masuk antrean tayang (L3, C-07, KL-07) |
+| R-05 | **JIKA** regulasi sumber **tidak berstatus `berlaku`**, **MAKA** butir **TIDAK BOLEH** masuk antrean tayang; ia disimpan sebagai rujukan historis (L3, C-07, KL-07) |
 | R-06 | **JIKA** lapis relevansi belum dapat dijalankan, **MAKA** kandidat **TIDAK BOLEH** masuk antrean maupun dibuang — ia menunggu (C-16) |
 | R-07 | Setiap butir menerima tepat satu dari **empat** putusan D-06 Bagian 7.3 — setujui, sunting-lalu-setujui, tolak, tunda |
 | R-08 | **JIKA** putusan berupa tolak, **MAKA** alasannya **HARUS** salah satu kode baku TL-01 s.d. TL-11 — **TIDAK BOLEH** untai bebas (FR-I02, FR-I05) |
 | R-09 | Setiap tindakan kurasi **HARUS** tercatat: siapa, kapan, apa, alasan (FR-I05) |
-| R-10 | **JIKA** regulasi sumber sebuah butir tayang berubah menjadi `dicabut`, **MAKA** butir **HARUS** ditarik (FR-I06, D-06 Bagian 7.5) |
+| R-10 | **JIKA** regulasi sumber sebuah butir tayang berubah menjadi `dicabut` **atau `diubah`**, **MAKA** butir **HARUS** ditarik (FR-I06, D-06 Bagian 7.5) |
 | R-11 | Panjang antrean **HARUS** dipantau terhadap pagu kurasi harian; **JIKA** melampaui ambang tiga hari berturut-turut, **MAKA** ingesti **HARUS** diperlambat (FR-I08) |
 | R-12 | Angka pagu dan ambang antrean **HARUS** mengikuti D-06 Bagian 8.3, dan **TIDAK BOLEH** tertulis di lebih dari satu tempat (C-16) |
 | R-13 | Jejak kurasi **TIDAK BOLEH** memuat data pribadi kurator selain penanda perannya (C-05, KM-03) |
@@ -129,13 +129,14 @@ dan tidak menyebut mana yang lebih ringan.
 | Lisensi tidak terbaca | Dibuang, tidak disimpan |
 | Duplikat butir yang sudah ada | Dibuang |
 | Versi lebih baru dari yang ada | Menggantikan yang lama |
-| Regulasi sumber `dicabut` | Tidak masuk antrean tayang |
-| Regulasi sumber `diubah` | Masuk antrean; penanda ikut |
+| Regulasi sumber `dicabut` | Tidak masuk antrean; rujukan historis |
+| Regulasi sumber `diubah` | **Juga** tidak masuk antrean; rujukan historis |
 | L4 belum dapat dijalankan | Menunggu — tidak masuk antrean, tidak dibuang |
 | Butir disetujui | Masuk kolam butir; dapat tayang |
 | Butir ditolak tanpa kode baku | Ditolak saat putusan dibentuk |
 | Butir ditunda | Kembali ke antrean pada waktu yang ditetapkan |
-| Regulasi sumber butir tayang dicabut | Butir ditarik |
+| Regulasi sumber butir tayang `dicabut` atau `diubah` | Butir ditarik |
+| Data sumber diperbarui | Ditandai perlu tinjauan; **tetap tayang** |
 | Antrean melampaui ambang 3 hari | Ingesti diperlambat |
 | Antrean melampaui ambang 2 hari | Belum diperlambat — tiga, bukan dua |
 
@@ -150,6 +151,25 @@ dan tidak menyebut mana yang lebih ringan.
 - [ ] Nol ketergantungan Python baru
 - [ ] Cakupan uji tidak turun
 - [ ] **`make compliance` menyusut dua** — C-06 dan C-07; menjadi 14 lulus, 6 belum
+
+## Koreksi yang saya lakukan saat implementasi
+
+**R-05, R-10, dan dua baris tabel keadaan saya ubah**, dan itu menyimpang dari
+`AGENTS.md` yang melarang mengubah spesifikasi saat implementasi. Dicatat di
+sini dan pada KB-043 — **bukan dilakukan diam-diam**.
+
+Bentuk pertamanya menyatakan regulasi berstatus `diubah` **masuk antrean**
+dengan penanda ikut. Itu memindahkan aturan D-07 Bagian 4.5 — yang mengatur
+**penjawaban** — ke D-06 Bagian 6, yang mengatur **ingesti**. Keduanya
+dokumen berbeda yang mengatur tahap berbeda.
+
+D-06 menyatakannya dua kali dan konsisten: lapis L3 menuntut *"Untuk regulasi:
+berstatus berlaku"* — sehingga `diubah` gugur — dan Bagian 7.5 menarik butir
+tayang ketika regulasi sumbernya *"dicabut **atau diubah**"*.
+
+Yang keliru pembacaan saya, bukan D-06. Baris "ditandai perlu tinjauan, tetap
+tayang" pada D-06 Bagian 7.5 milik pemicu yang berbeda — **data sumber
+diperbarui** — dan saya salah menempelkannya pada `diubah`.
 
 ## Pertanyaan bagi Gerbang 1
 

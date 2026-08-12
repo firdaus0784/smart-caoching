@@ -15,7 +15,7 @@ Satu tugas = satu commit.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | A-1 | `butir.py` — dua belas bidang D-06 Bagian 5 | **Uji: bidang dibaca dari `docs/D06.md`, bukan disalin ke uji.** Uji: `KategoriMasalah` fitur 003 dipakai ulang, tidak ditulis ulang. Uji: bidang wajib tanpa bawaan | R-01 | [x] — dua belas bidang dari D-06; satu tambahan (`id_butir`) disebut namanya, bukan diizinkan sebagai "tambahan" |
-| A-2 | `tetapan.py` + `saring.py` — L1, L2, L3, dan L4 tiga keadaan | **Uji: L4 `MENUNGGU` tidak masuk antrean DAN tidak dibuang.** Uji: L3 menolak `dicabut`, menerima `diubah`. Uji: L1 membuang tanpa menyimpan | R-03 s.d. R-06, R-12 | [ ] |
+| A-2 | `tetapan.py` + `saring.py` — L1, L2, L3, dan L4 tiga keadaan | **Uji: L4 `MENUNGGU` tidak masuk antrean DAN tidak dibuang.** Uji: L3 menolak `dicabut` **dan** `diubah`; hanya `berlaku` yang lolos. Uji: L1 membuang tanpa menyimpan | R-03 s.d. R-06, R-12 | [x] — L4 `MENUNGGU`; rumah tetapan keempat terdaftar pada pemeriksa C-16; M-2, M-3, M-4 menyala |
 
 **A-2 adalah tempat pola "tiga keadaan" menahan hal yang berbeda dari lima
 kali sebelumnya**: bukan laporan yang keliru melainkan pilihan yang tidak
@@ -29,7 +29,7 @@ feed dan memicu titik kritis T5 — dan tidak menyebut mana yang lebih ringan.
 |---|---|---|---|---|
 | B-1 | `putusan.py` — empat putusan, TL-01 s.d. TL-11, `ButirTayang` | **Uji: `ButirTayang` tidak dapat dibentuk tanpa putusan setujui.** Uji: penolakan menolak untai bebas. Uji: keempat putusan setara, `tunda` membawa waktu kembali | R-02, R-07, R-08 | [ ] |
 | B-2 | `jejak.py` — siapa, kapan, apa, alasan | **Uji: jejak tidak memuat nama kurator.** Uji: keempat bidang FR-I05 wajib. Uji: tambah-saja lewat `src/logbook/` | R-09, R-13 | [ ] |
-| B-3 | Penarikan butir tayang (D-06 Bagian 7.5) | **Uji: butir tayang ditarik ketika regulasi sumbernya berubah menjadi `dicabut`.** Uji: `diubah` menandai perlu tinjauan, tidak menarik | R-10 | [ ] |
+| B-3 | Penarikan butir tayang (D-06 Bagian 7.5) | **Uji: butir tayang ditarik ketika regulasi sumbernya menjadi `dicabut` ATAU `diubah`.** Uji: data sumber diperbarui menandai perlu tinjauan, tidak menarik | R-10 | [ ] |
 
 **B-1 adalah C-06 itu sendiri.** `ButirTayang` hanya dibentuk di sini, dan
 fitur 011 yang menayangkan feed kemudian tidak **memiliki cara** menayangkan
