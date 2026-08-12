@@ -27,6 +27,7 @@ from perkakas.pemeriksa.ast_aturan import Temuan
 from perkakas.pemeriksa.bentuk_tanggapan import periksa_bentuk_tanggapan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
+from perkakas.pemeriksa.gerbang_kurasi import periksa_gerbang_kurasi
 from perkakas.pemeriksa.impor_ocr import periksa_impor_ocr
 from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
@@ -36,6 +37,7 @@ from perkakas.pemeriksa.pemisahan_indeks import periksa_pemisahan_indeks
 from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
 from perkakas.pemeriksa.pemisahan_penyimpanan import periksa_pemisahan_penyimpanan
 from perkakas.pemeriksa.peringkat_klaim import periksa_peringkat_klaim
+from perkakas.pemeriksa.regulasi_dicabut import periksa_regulasi_dicabut
 from perkakas.pemeriksa.tanpa_kemampuan_bertindak import periksa_tanpa_kemampuan_bertindak
 
 Pemeriksa = Callable[[Path], list[Temuan]]
@@ -100,12 +102,16 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-06",
         "butir pengetahuan tidak tayang tanpa persetujuan kurator",
-        fitur_pengunci="010 pipeline pengetahuan dan gerbang kurasi",
+        pemeriksa=periksa_gerbang_kurasi,
     ),
     Pasal(
         "C-07",
         "sistem tidak menjawab berdasarkan regulasi dicabut",
-        fitur_pengunci="010 pipeline pengetahuan dan gerbang kurasi",
+        # Diperiksa pada ketiga lapis yang menjaganya — penjawaban (VS-06),
+        # penyajian (Sitasi), dan ingesti (L3) — masing-masing terpisah.
+        # Memeriksa lapis yang fitur 010 bangun saja akan membuat pemeriksanya
+        # terbaca lengkap sementara ia menjaga sepertiga.
+        pemeriksa=periksa_regulasi_dicabut,
     ),
     Pasal(
         "C-08",
