@@ -103,7 +103,7 @@ def test_setiap_tetapan_menyebut_sumbernya() -> None:
         # Uji yang hanya mengenali satu ejaan menuntut penulisnya menghafal
         # ejaan mana yang lolos, dan yang dihafal salah adalah yang dipakai.
         teks = uraian.get(nama, "").replace("-", "")
-        if not any(petunjuk in teks for petunjuk in ("D07", "ADR03", "Cormack")):
+        if not any(petunjuk in teks for petunjuk in ("D07", "ADR03", "Cormack", "Robertson")):
             tanpa_sumber.append(nama)
     assert not tanpa_sumber, "tetapan tanpa asal tertulis: " + ", ".join(tanpa_sumber)
 
@@ -146,6 +146,15 @@ def test_tetapan_berupa_bilangan_bulat_positif(nama: str) -> None:
     nilai = getattr(modul, nama)
     assert isinstance(nilai, int)
     assert nilai > 0
+
+
+def test_tetapan_bm25_berupa_pecahan_dalam_rentang_yang_masuk_akal() -> None:
+    """`b` adalah bobot antara 0 dan 1; `k1` positif. Di luar rentang itu,
+    rumusnya tetap berjalan dan hasilnya tetap terurut — hanya salah."""
+    from src.rag.pengambilan.tetapan import BM25_B, BM25_K1
+
+    assert isinstance(BM25_K1, float) and BM25_K1 > 0
+    assert isinstance(BM25_B, float) and 0.0 <= BM25_B <= 1.0
 
 
 def test_rentang_segmen_diteruskan_masuk_akal() -> None:

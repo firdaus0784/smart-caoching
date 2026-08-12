@@ -93,3 +93,23 @@ karena bahaya yang ditutupnya sunyi: penggabungan atas satu daftar
 mengembalikan daftar itu — tanpa galat, dengan nama fungsi yang tetap berbunyi
 hibrida.
 """
+
+BM25_K1 = 1.2
+"""Penjenuhan frekuensi kata pada BM25 — **Robertson & Zaragoza**.
+
+`docs/D07.md` Bagian 4.4 menyebut Robertson & Zaragoza sebagai sumber BM25;
+1,2 adalah nilai baku pada sumber itu. Dikutip, bukan disetel — sama dengan
+konstanta RRF, dan tunduk pada tinjauan BT-29 yang sama.
+
+Yang dilakukannya: kata yang muncul sepuluh kali tidak sepuluh kali lebih
+menentukan daripada kata yang muncul sekali.
+"""
+
+BM25_B = 0.75
+"""Bobot penormalan panjang segmen — **Robertson & Zaragoza**, lewat D-07
+Bagian 4.4.
+
+Nilai 0 mematikan penormalan panjang, dan akibatnya halus: segmen panjang
+menang hanya karena panjang. Pada korpus regulasi itu berarti pasal panjang
+selalu mengungguli pasal pendek yang justru menjawab pertanyaannya.
+"""
