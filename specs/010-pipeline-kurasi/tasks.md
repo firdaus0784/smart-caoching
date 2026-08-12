@@ -47,7 +47,7 @@ kandidat.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | `antrean.py` — rasio dan pengereman | **Uji: dua hari melampaui ambang TIDAK mengerem; tiga hari mengerem.** Uji: K-C diperlambat lebih dulu. Uji: angka dibaca dari D-06 Bagian 8.3 | R-11, R-12 | [ ] |
+| C-1 | `antrean.py` — rasio dan pengereman | **Uji: dua hari melampaui ambang TIDAK mengerem; tiga hari mengerem.** Uji: K-C diperlambat lebih dulu. Uji: angka dibaca dari D-06 Bagian 8.3 | R-11, R-12 | [x] — tiga hari berturut, rentetan terputus oleh hari aman; K-C saja; paruh kedua pengereman dinyatakan tertahan BT-24; M-7 menyala |
 | C-2 | Pemeriksa C-06 dan C-07; pemindahannya pada `daftar_pasal.py` | **Uji: `make compliance` menyusut dua — 14 lulus, 6 belum.** Uji: pemeriksa C-07 menyala pada ketiga lapis, masing-masing terpisah | R-02, R-05 | [ ] |
 
 **C-1 diuji dari kedua arah.** "Melampaui → direm" lulus juga pada
