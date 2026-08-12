@@ -51,8 +51,13 @@ TETAPAN_YANG_DIMILIKI_D06 = {
     "PENGALI_AMBANG_ANTREAN",
     "HARI_BERTURUT_SEBELUM_PENGEREMAN",
     "PAGU_TAYANG_PER_PENGGUNA",
+    "TENGGAT_PENARIKAN_HARI_KERJA",
 }
-"""Keempat angka D-06 Bagian 8.3, disebut namanya satu per satu.
+"""Angka D-06 yang rumah ini miliki, disebut namanya satu per satu.
+
+Empat dari Bagian 8.3; `TENGGAT_PENARIKAN_HARI_KERJA` dari Bagian 7.5, masuk
+pada tugas B-3. Penambahannya menyalakan uji ini lebih dulu — itu memang
+gunanya: sebuah angka tidak masuk rumah tetapan tanpa seseorang menyatakannya.
 
 Bukan "boleh ada tetapan lain". Rumah tetapan yang menerima tambahan tanpa
 disebut namanya adalah tempat ambang relevansi L4 akan mendarat — dan ia

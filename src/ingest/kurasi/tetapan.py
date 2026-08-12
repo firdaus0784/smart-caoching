@@ -1,4 +1,4 @@
-"""Rumah tetapan kurasi — R-12, C-16, D-06 Bagian 8.3.
+"""Rumah tetapan kurasi — R-12, R-10, C-16, D-06 Bagian 8.3 dan Bagian 7.5.
 
 Rumah keempat, sesudah `src/nlp/anotasi/ambang.py` (fitur 003),
 `src/nlp/pelatihan/pembagian.py` (fitur 004), dan
@@ -6,9 +6,14 @@ Rumah keempat, sesudah `src/nlp/anotasi/ambang.py` (fitur 003),
 
 ## Angka yang dikutip, dan angka yang belum ada
 
-Seluruh tetapan di sini berasal dari **D-06 Bagian 8.3**, yang menamainya
-"nilai awal" beserta dasarnya. Menyalinnya bukan menyetel — ia mewujudkan
-keputusan yang sudah diambil dokumen pemiliknya.
+Seluruh tetapan di sini berasal dari **D-06**, yang menamai nilainya beserta
+dasarnya. Menyalinnya bukan menyetel — ia mewujudkan keputusan yang sudah
+diambil dokumen pemiliknya.
+
+Empat angka berasal dari Bagian 8.3 (pagu dan pengereman); satu dari Bagian
+7.5 (tenggat penarikan). Yang terakhir masuk ke sini alih-alih tinggal pada
+`penarikan.py` karena alasan yang sama: angka yang tersebar adalah angka yang
+perubahannya tidak terlihat pada satu tempat mana pun.
 
 **Yang tidak ada di sini: ambang relevansi L4.** D-06 Bagian 6 menyerahkannya
 ke BT-24, uji ingesti percobaan bulan 3, dan menuliskan nilai awal di sini
@@ -57,4 +62,12 @@ PAGU_TAYANG_PER_PENGGUNA = 3
 **Berbeda dari pagu kurasi harian**, dan D-01 FR-I07 menyatakan pembedaannya
 tegas: yang satu membatasi beban kurator, yang lain membatasi beban pembaca.
 Menyatukannya akan membuat penambahan kapasitas kurator membanjiri pengguna.
+"""
+
+TENGGAT_PENARIKAN_HARI_KERJA = 1
+"""Hari kerja untuk menarik butir yang kekeliruan isinya dilaporkan pengguna.
+
+`docs/D06.md` Bagian 7.5 dan FR-I06. **Bukan** tenggat bagi penarikan karena
+regulasi berubah — yang itu berjalan otomatis, dan tenggat padanya akan
+membaca seperti izin menunda sehari.
 """
