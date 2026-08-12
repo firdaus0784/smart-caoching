@@ -46,6 +46,7 @@ Jalankan `make check` sebelum menyatakan tugas selesai. Bukan `make test` saja.
 ## Arsitektur
 
 ```
+src/kamus/      enum kamus data D-14 Bagian 5; tidak mengimpor apa pun
 src/api/        FastAPI, satu-satunya titik masuk, kendali peran di sini
 src/nlp/        NER, klasifikasi, praproses, anonimisasi
 src/rag/        pengambilan, penyusunan jawaban, validator
@@ -67,6 +68,13 @@ Tepi kedua ini ada karena D-07 Bagian 3.3 menuntut BM25 bekerja atas hasil
 praproses Bahasa Indonesia (FR-B03), dan praproses tinggal di `nlp`. Arah
 sebaliknya terlarang dengan alasan yang sejajar: `nlp` yang memanggil `rag`
 membuat praproses bergantung pada indeks yang praproses itu sendiri isi.
+`ingest` boleh memanggil `llm`, satu jurusan. Tepi ini sudah ada sejak fitur
+002 tanpa pernah dituliskan; ia ditemukan pada fitur 008 dan dicatat di sini
+alih-alih dibiarkan menjadi kebiasaan tak berdokumen.
+`src/kamus/` boleh diimpor siapa pun dan **tidak mengimpor apa pun dari `src/`**.
+Ia lapisan di bawah `src/penyimpanan/`. Isinya enum milik `docs/D14.md` Bagian
+5 — bukan milik lapisan mana pun, dan itu sebabnya ia berdiri sendiri:
+`IndeksTujuan` sempat ditulis dua kali karena tidak punya rumah.
 Semua pemanggilan model lewat `src/llm/`. Tanpa pengecualian — ini yang mencatat versi.
 Semua akses penyimpanan lewat `src/penyimpanan/`. Tanpa pengecualian — ini yang
 menegakkan C-03. Ia lapisan di bawah keempatnya, bukan sejajar: `rag` membaca
