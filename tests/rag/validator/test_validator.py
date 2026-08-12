@@ -172,11 +172,13 @@ def test_jalur_tervalidasi_terbuka_ketika_fitur_020_mendarat(
     """
     import src.rag.validator.validator as modul
 
-    def mendarat(keluaran: KeluaranModel, *, segmen: object) -> list[HasilPemeriksaan]:
-        return [
-            HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="fitur 020 mendarat")
+    def mendarat(
+        keluaran: KeluaranModel, *, segmen: object
+    ) -> dict[KodePemeriksaan, HasilPemeriksaan]:
+        return {
+            k: HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="fitur 020 mendarat")
             for k in (KodePemeriksaan.VS_03, KodePemeriksaan.VS_05, KodePemeriksaan.VS_07)
-        ]
+        }
 
     monkeypatch.setattr(modul, "pemeriksaan_menunggu_model", mendarat)
 
@@ -185,6 +187,36 @@ def test_jalur_tervalidasi_terbuka_ketika_fitur_020_mendarat(
     assert jawaban is not None
     assert jawaban.hasil is hasil
     assert jawaban.keluaran.klaim[0].id_klaim == "K1"
+
+
+def test_pemeriksaan_yang_hilang_menghentikan_validasi_dengan_keras(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """**Penjagaan terakhir sebelum diam.**
+
+    Bila sebuah kode kehilangan hasilnya — sambungan yang keliru, kunci yang
+    terhapus — `HasilValidasi` masih dapat dibentuk, dan `tervalidasi` akan
+    mengembalikan `False`. Itu **aman tetapi diam**: sistem berhenti menjawab
+    tanpa ada yang tahu sebabnya, dan sebabnya akan dicari pada tempat yang
+    salah selama berhari-hari.
+
+    `RuntimeError` di sini menyebut kode yang hilang. Ia bukan penjagaan
+    kepatuhan — `tervalidasi` sudah menutup itu — melainkan penjagaan terhadap
+    kegagalan yang tidak terbaca.
+    """
+    import src.rag.validator.validator as modul
+
+    def sebagian(keluaran: KeluaranModel, *, segmen: object) -> dict[object, object]:
+        return {}
+
+    monkeypatch.setattr(modul, "pemeriksaan_menunggu_model", sebagian)
+
+    with pytest.raises(RuntimeError) as galat:
+        modul.validasi(_keluaran(_klaim("K1", "SEG-A")), segmen=(_segmen(),))
+    pesan = str(galat.value)
+    assert "VS-03" in pesan
+    assert "VS-05" in pesan
+    assert "VS-07" in pesan
 
 
 def test_pendaratan_020_tidak_menutupi_kegagalan_keenam_yang_lain(
@@ -199,11 +231,13 @@ def test_pendaratan_020_tidak_menutupi_kegagalan_keenam_yang_lain(
     """
     import src.rag.validator.validator as modul
 
-    def mendarat(keluaran: KeluaranModel, *, segmen: object) -> list[HasilPemeriksaan]:
-        return [
-            HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="fitur 020 mendarat")
+    def mendarat(
+        keluaran: KeluaranModel, *, segmen: object
+    ) -> dict[KodePemeriksaan, HasilPemeriksaan]:
+        return {
+            k: HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="fitur 020 mendarat")
             for k in (KodePemeriksaan.VS_03, KodePemeriksaan.VS_05, KodePemeriksaan.VS_07)
-        ]
+        }
 
     monkeypatch.setattr(modul, "pemeriksaan_menunggu_model", mendarat)
 

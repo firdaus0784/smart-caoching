@@ -26,16 +26,22 @@ sebuah pasal, bukan perawatan terpisah.
 from perkakas.kepatuhan.daftar_pasal import DAFTAR_PASAL
 
 JUMLAH_PASAL = 20
-TERPERIKSA_MESIN = 10
-"""Sepuluh dari dua puluh — **separuh**, sejak C-16 pada fitur 007.
+TERPERIKSA_MESIN = 11
+"""Sebelas dari dua puluh, sejak C-19 pada fitur 008.
 
-Riwayatnya: 7 (fitur 001) → 8 (fitur 002, C-03) → 9 (fitur 006, C-02) →
-10 (fitur 007, C-16). Empat fitur di antara 002 dan 006 tidak menyusutkannya
-sama sekali, dan itu yang mendorong KB-030 mendahulukan fitur 006 atas 005.
+Riwayatnya: 7 (fitur 001) → 8 (002, C-03) → 9 (006, C-02) → 10 (007, C-16) →
+11 (008, C-19). Empat fitur di antara 002 dan 006 tidak menyusutkannya sama
+sekali, dan itu yang mendorong KB-030 mendahulukan fitur 006 atas 005.
+
+**C-01 tidak ikut berpindah pada fitur 008**, meski `daftar_pasal.py` semula
+mencatatnya demikian. Verifikasi yang C-01 tuntut mencakup VS-03, dan VS-03
+menunggu model sematan serta BT-29. Alasan tunggunya dikoreksi menjadi menyebut
+fitur 020 — mengoreksi alasan tunggu bukan menambah utang, ia membuat utang
+yang sudah ada terbaca benar.
 """
 
 
-def test_tagihan_menyusut_menjadi_sepuluh() -> None:
+def test_tagihan_menyusut_menjadi_sebelas() -> None:
     belum = [p for p in DAFTAR_PASAL if p.pemeriksa is None]
     assert len(DAFTAR_PASAL) == JUMLAH_PASAL
     assert JUMLAH_PASAL - len(belum) == TERPERIKSA_MESIN

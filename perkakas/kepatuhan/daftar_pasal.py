@@ -34,6 +34,7 @@ from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 from perkakas.pemeriksa.pemisahan_indeks import periksa_pemisahan_indeks
 from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
 from perkakas.pemeriksa.pemisahan_penyimpanan import periksa_pemisahan_penyimpanan
+from perkakas.pemeriksa.peringkat_klaim import periksa_peringkat_klaim
 from perkakas.pemeriksa.tanpa_kemampuan_bertindak import periksa_tanpa_kemampuan_bertindak
 
 Pemeriksa = Callable[[Path], list[Temuan]]
@@ -67,7 +68,13 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-01",
         "klaim manajerial tidak tayang tanpa sitasi terverifikasi",
-        fitur_pengunci="008 validator sitasi",
+        # Dikoreksi pada fitur 008. Alasan tunggu semula berbunyi "008 validator
+        # sitasi", dan itu keliru: verifikasi yang C-01 tuntut mencakup VS-03 —
+        # dukungan isi klaim, bukan sekadar keberadaan id. Tanpa VS-03, yang
+        # ditegakkan hanyalah bahwa setiap klaim menyebut id segmen yang sungguh
+        # ada, dan MK-07 akan berarti "100% klaim menyebut id yang ada" — persis
+        # angka yang D-07 PR-03a peringatkan.
+        fitur_pengunci="020 VS-03 dukungan isi klaim; menuntut model sematan dan BT-29",
     ),
     Pasal(
         "C-02",
@@ -161,7 +168,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-19",
         "klaim tidak bersandar tunggal pada segmen T3 atau T4",
-        fitur_pengunci="008 validator sitasi",
+        pemeriksa=periksa_peringkat_klaim,
     ),
     Pasal(
         "C-20",

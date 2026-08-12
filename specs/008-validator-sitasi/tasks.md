@@ -42,7 +42,7 @@ menopang, tetapi klaim memerlukan segmen T1 atau T2"*.
 |---|---|---|---|---|
 | C-1 | VS-09 — kontrak keluaran, tautan, bentuk instruksi | **Uji: tautan diperiksa terhadap metadata segmen terambil, bukan daftar ranah.** Uji: keluaran memuat instruksi dibuang tanpa perbaikan | R-07 | [x] — pola menuntut kata kerja **dan** sasaran; pola berkata tunggal menolak kalimat manajerial yang sah |
 | C-2 | `validator.py` — penyusun, tabel tindakan 6.2, `JawabanTervalidasi` | **Uji: satu pemeriksaan belum-dapat-diperiksa → jawaban tidak tervalidasi.** **Uji: `tervalidasi` sifat terhitung, bukan bidang.** Uji: ringkasan kosong membatalkan jawaban. Uji: tidak menulis, tidak memanggil model | R-06, R-09, R-10, R-11, R-12 | [x] — sambungan `pemeriksaan_menunggu_model` diberi nama agar jalur tervalidasi dapat diuji sekarang |
-| C-3 | Pemeriksa C-19; koreksi `fitur_pengunci` C-01 | **Uji: `make compliance` menyusut satu — 11 lulus, 9 belum.** Uji: ketiga aturan menyala pada pohon yang sengaja dirusak. Uji: alasan tunggu C-01 menyebut fitur 020 | R-05, R-09 | [ ] |
+| C-3 | Pemeriksa C-19; koreksi `fitur_pengunci` C-01 | **Uji: `make compliance` menyusut satu — 11 lulus, 9 belum.** Uji: ketiga aturan menyala pada pohon yang sengaja dirusak. Uji: alasan tunggu C-01 menyebut fitur 020 | R-05, R-09 | [x] — pemeriksanya menemukan kelemahan rancangan saya, bukan hanya kelemahan kode |
 
 **C-2 adalah tempat TA-01 diulang atau ditutup.** Tiga dari sembilan
 pemeriksaan tidak dapat dijalankan hari ini. Validator yang mengembalikan

@@ -90,7 +90,7 @@ tidak menyebut apa yang ditunggu adalah alasan yang tidak dapat ditagih.
 
 def pemeriksaan_menunggu_model(
     keluaran: KeluaranModel, *, segmen: Sequence[SegmenRujukan]
-) -> list[HasilPemeriksaan]:
+) -> dict[KodePemeriksaan, HasilPemeriksaan]:
     """VS-03, VS-05, dan VS-07 — **sambungan tempat fitur 020 mendarat**.
 
     Ia berupa fungsi, bukan daftar yang disusun sebaris di dalam `validasi`,
@@ -102,10 +102,34 @@ def pemeriksaan_menunggu_model(
     membuat pendaratan fitur 020 tidak mengubah tanda tangan yang sudah
     dipanggil.
     """
-    return [
-        HasilPemeriksaan(kode=kode, status=Status.BELUM_DAPAT_DIPERIKSA, alasan=alasan)
+    return {
+        kode: HasilPemeriksaan(kode=kode, status=Status.BELUM_DAPAT_DIPERIKSA, alasan=alasan)
         for kode, alasan in _MENUNGGU_FITUR_020.items()
-    ]
+    }
+
+
+def _pemeriksaan_yang_dapat_dijalankan(
+    keluaran: KeluaranModel, *, segmen: Sequence[SegmenRujukan]
+) -> dict[KodePemeriksaan, HasilPemeriksaan]:
+    """Keenam pemeriksaan yang sudah berdiri, **berkunci kodenya**.
+
+    Berkunci kode, bukan berupa daftar berurut. Daftar berurut membuat
+    "kesembilan kode dijalankan" menjadi sifat yang kebetulan benar — ia
+    bergantung pada tidak seorang pun menghapus satu baris. Pemetaan membuatnya
+    dapat diperiksa: kode yang tidak menjadi kunci adalah kode yang tidak
+    dijalankan, dan pemeriksa C-19 membacanya dari sini.
+
+    Menjatuhkan VS-08 dari daftar jalannya adalah cara termudah melanggar C-19
+    tanpa menyentuh satu baris logika pun.
+    """
+    return {
+        KodePemeriksaan.VS_01: periksa_dasar_klaim(keluaran),
+        KodePemeriksaan.VS_02: periksa_rujukan_nyata(keluaran, segmen=segmen),
+        KodePemeriksaan.VS_04: periksa_indeks_metadata(keluaran, segmen=segmen),
+        KodePemeriksaan.VS_06: periksa_keberlakuan(keluaran, segmen=segmen),
+        KodePemeriksaan.VS_08: periksa_peringkat_klaim(keluaran, segmen=segmen),
+        KodePemeriksaan.VS_09: periksa_penyimpangan(keluaran, segmen=segmen),
+    }
 
 
 class HasilValidasi(BaseModel):
@@ -171,16 +195,18 @@ def validasi(
 
     Tidak menulis apa pun dan tidak memanggil model (R-11, C-17, C-08).
     """
-    pemeriksaan = [
-        periksa_dasar_klaim(keluaran),
-        periksa_rujukan_nyata(keluaran, segmen=segmen),
-        periksa_indeks_metadata(keluaran, segmen=segmen),
-        periksa_keberlakuan(keluaran, segmen=segmen),
-        periksa_peringkat_klaim(keluaran, segmen=segmen),
-        periksa_penyimpangan(keluaran, segmen=segmen),
-        *pemeriksaan_menunggu_model(keluaran, segmen=segmen),
-    ]
-    hasil = HasilValidasi(pemeriksaan=tuple(pemeriksaan))
+    berkode = {
+        **_pemeriksaan_yang_dapat_dijalankan(keluaran, segmen=segmen),
+        **pemeriksaan_menunggu_model(keluaran, segmen=segmen),
+    }
+    hilang = set(KodePemeriksaan) - set(berkode)
+    if hilang:
+        raise RuntimeError(
+            "pemeriksaan yang tidak dijalankan: "
+            f"{sorted(k.value for k in hilang)} — kesembilan kode D-07 Bagian 6.1 "
+            "wajib punya hasil, dan yang hilang tidak boleh terbaca sebagai lulus"
+        )
+    hasil = HasilValidasi(pemeriksaan=tuple(berkode[k] for k in KodePemeriksaan))
     if not hasil.tervalidasi:
         return hasil, None
     return hasil, JawabanTervalidasi(keluaran=keluaran, hasil=hasil)
