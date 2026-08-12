@@ -15,7 +15,7 @@ Satu tugas = satu commit.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | A-1 | `penanda_bagian` wajib pada `SegmenTerindeks`; uji fitur 006 disesuaikan | **Uji: segmen tanpa penanda bagian tidak dapat dibentuk.** Uji: penanda kosong atau hanya spasi ditolak | R-10 | [x] — dipangkas saat masuk; `min_length` sendirian meloloskan `" "` |
-| A-2 | `tetapan.py` — angka D-07 Bagian 4.4 dan konstanta RRF, masing-masing menyebut sumbernya; masuk `RUMAH_TETAPAN` | Uji: setiap tetapan punya uraian yang menyebut dokumen atau makalahnya. Uji: tidak ada angka D-07 di berkas lain | R-08 | [ ] |
+| A-2 | `tetapan.py` — angka D-07 Bagian 4.4 dan konstanta RRF, masing-masing menyebut sumbernya; masuk `RUMAH_TETAPAN` | Uji: setiap tetapan punya uraian yang menyebut dokumen atau makalahnya. Uji: tidak ada angka D-07 di berkas lain | R-08 | [x] — kekosongan ambang kecukupan ikut diuji; ia bukan keadaan sementara |
 
 **A-1 memperbaiki kelalaian fitur 006, bukan menambah kemewahan.** D-14
 Bagian 5 menyatakan `segmen_teks.penanda_bagian` wajib — "tanpanya FR-F11

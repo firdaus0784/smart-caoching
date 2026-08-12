@@ -119,6 +119,7 @@ RUMAH_TETAPAN = frozenset(
     {
         (AKAR / "src" / "nlp" / "anotasi" / "ambang.py").resolve(),
         (AKAR / "src" / "nlp" / "pelatihan" / "pembagian.py").resolve(),
+        (AKAR / "src" / "rag" / "pengambilan" / "tetapan.py").resolve(),
     }
 )
 """Modul yang **sengaja** menjadi satu-satunya tempat sekelompok angka.
@@ -130,7 +131,16 @@ keputusan — bukan cara meloloskan berkas yang kebetulan menyalakan sapuan.
 `pembagian.py` masuk karena tabrakan yang sungguhan: porsi latih D-08 bernilai
 0,70, sama dengan ambang Kappa D-03. Keduanya besaran yang sama sekali
 berbeda. Sapuan berbasis nilai tidak dapat membedakannya, dan itu batas yang
-diakui — bukan yang disembunyikan."""
+diakui — bukan yang disembunyikan.
+
+`rag/pengambilan/tetapan.py` masuk pada fitur 007 dengan alasan yang berbeda,
+dan alasan itu perlu dinyatakan sebab daftar ini juga **melonggarkan**: berkas
+di sini dilewati sapuan pecahan. Hari ini ia tidak memuat satu pun pecahan,
+sehingga kelonggarannya tidak menutupi apa pun. Yang menggantikannya adalah
+aturan 3 pemeriksa C-16 — setiap tetapan pada setiap rumah tetapan wajib
+memiliki uraian yang menyebut dokumen atau makalah asalnya. Aturan itu lebih
+ketat daripada sapuan yang dilewatinya, dan ia berlaku pada pecahan yang
+ditambahkan kelak."""
 
 
 def _berkas_sumber() -> list[Path]:
