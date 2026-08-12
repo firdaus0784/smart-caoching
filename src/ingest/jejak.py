@@ -34,25 +34,12 @@ sering, bukan seluruhnya.
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from uuid import uuid4
 
+from src.ingest.data_pribadi import nama_pola_yang_cocok
 from src.penyimpanan.area import Area
-
-_POLA_DATA_PRIBADI: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("nomor induk berdigit panjang", re.compile(r"\b\d{16,18}\b")),
-    ("nomor telepon Indonesia", re.compile(r"(?<!\d)(?:\+62|62|0)8[1-9][\d\s.-]{6,12}\d(?!\d)")),
-)
-"""Bentuk baku data pribadi yang paling sering tersalin ke alasan.
-
-NIK berdigit 16 dan NIP berdigit 18, sehingga keduanya tertangkap satu pola —
-memisahkannya menjadi dua pola dengan panjang persis akan meloloskan salah
-ketik satu digit, dan salah ketik satu digit tetap membocorkan lima belas.
-
-Nilai awal, bukan hasil kalibrasi. Penyetelannya mengikuti BT-29 (C-16).
-"""
 
 
 class GalatJejak(Exception):
@@ -132,11 +119,11 @@ class JejakArea:
         perlu diketahui verifikator adalah jenis apa yang tersalin, bukan
         pengulangan apa yang tersalin.
         """
-        for nama, pola in _POLA_DATA_PRIBADI:
-            if pola.search(alasan):
-                raise GalatJejak(
-                    f"alasan memuat {nama} — sebutkan jenis temuannya, jangan salin nilainya"
-                )
+        nama = nama_pola_yang_cocok(alasan)
+        if nama is not None:
+            raise GalatJejak(
+                f"alasan memuat {nama} — sebutkan jenis temuannya, jangan salin nilainya"
+            )
 
     def baris(self) -> list[Baris]:
         """Salinan, bukan daftar aslinya.

@@ -28,8 +28,16 @@ feed dan memicu titik kritis T5 — dan tidak menyebut mana yang lebih ringan.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | B-1 | `putusan.py` — empat putusan, TL-01 s.d. TL-11, `ButirTayang` | **Uji: `ButirTayang` tidak dapat dibentuk tanpa putusan setujui.** Uji: penolakan menolak untai bebas. Uji: keempat putusan setara, `tunda` membawa waktu kembali | R-02, R-07, R-08 | [x] — `ButirTayang` berpagar bentuk; C-07 lapis kedua pada gerbang putusan; M-1 dan M-6 menyala |
-| B-2 | `jejak.py` — siapa, kapan, apa, alasan | **Uji: jejak tidak memuat nama kurator.** Uji: keempat bidang FR-I05 wajib. Uji: tambah-saja lewat `src/logbook/` | R-09, R-13 | [ ] |
+| B-2 | `jejak.py` — siapa, kapan, apa, alasan | **Uji: jejak tidak memuat nama kurator.** Uji: keempat bidang FR-I05 wajib. Uji: tambah-saja — permukaan tanpa cara menyunting maupun menghapus, mengikuti `JejakArea` fitur 002 | R-09, R-13 | [x] — empat bidang FR-I05, peran bukan nama; pendeteksi data pribadi disatukan ke `src/ingest/data_pribadi.py`; M-9 menyala |
 | B-3 | Penarikan butir tayang (D-06 Bagian 7.5) | **Uji: butir tayang ditarik ketika regulasi sumbernya menjadi `dicabut` ATAU `diubah`.** Uji: data sumber diperbarui menandai perlu tinjauan, tidak menarik | R-10 | [ ] |
+
+**Koreksi B-2 saat implementasi.** Kolom uji semula berbunyi "tambah-saja
+lewat `src/logbook/`". Itu keliru: `src/logbook/` menegakkan C-09 atas
+**catatan percobaan** D-10, dan D-10 tidak memiliki buku bagi jejak kurasi.
+Menulis jejak operasional ke sana akan mencampur rekaman penelitian dengan
+data jalannya sistem. Sifat tambah-saja yang dituju tetap sama; yang berubah
+adalah dari mana ia diwarisi — `JejakArea` fitur 002, yang permukaannya sudah
+sengaja tidak menyediakan cara menyunting maupun menghapus.
 
 **B-1 adalah C-06 itu sendiri.** `ButirTayang` hanya dibentuk di sini, dan
 fitur 011 yang menayangkan feed kemudian tidak **memiliki cara** menayangkan
