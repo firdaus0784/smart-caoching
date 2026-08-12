@@ -26,8 +26,8 @@ pertanyaan sahnya ditolak tidak bertanya kedua kalinya.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `tanggapan.py` — `Tanggapan`, `Sitasi`, `BacaanLanjutan` | **Uji: bidang dibaca dari `docs/D14.md` Bagian 4.1, bukan disalin ke uji.** Uji: bidang tambahan ditolak. Uji: `tidak_ditemukan` menuntut ringkasan dan klaim kosong | R-01, R-04, R-05, R-06 | [ ] |
-| B-2 | Keberlakuan dan bacaan lanjutan | **Uji: sitasi `dicabut` tidak dapat dibentuk.** Uji: sitasi `diubah` menuntut catatan beserta pengubahnya. Uji: segmen `indeks_metadata` tidak pernah pada `sitasi` | R-07, R-08, R-09 | [ ] |
+| B-1 | `tanggapan.py` — `Tanggapan`, `Sitasi`, `BacaanLanjutan` | **Uji: bidang dibaca dari `docs/D14.md` Bagian 4.1, bukan disalin ke uji.** Uji: bidang tambahan ditolak. Uji: `tidak_ditemukan` menuntut ringkasan dan klaim kosong | R-01, R-04, R-05, R-06 | [x] — sepuluh bidang dibaca dari blok JSON D-14 sungguhan |
+| B-2 | Keberlakuan dan bacaan lanjutan | **Uji: sitasi `dicabut` tidak dapat dibentuk.** Uji: sitasi `diubah` menuntut catatan beserta pengubahnya. Uji: segmen `indeks_metadata` tidak pernah pada `sitasi` | R-07, R-08, R-09 | [x] — `BacaanLanjutan` bertipe berbeda, bukan `Sitasi` yang lebih lemah |
 
 **B-1 adalah C-20 itu sendiri.** D-14 menyatakan alasannya: bentuk tanggapan
 "adalah tempat C-02, C-07, dan C-19 diwujudkan". Bidang tambahan yang tampak
