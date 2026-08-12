@@ -36,6 +36,7 @@ from pathlib import Path
 
 import pytest
 import src.nlp.anotasi.ambang as modul_ambang
+from perkakas.pemeriksa.ambang import rumah_tetapan
 
 AKAR = Path(__file__).resolve().parents[2]
 D03 = (AKAR / "docs" / "D03.md").read_text(encoding="utf-8")
@@ -115,14 +116,14 @@ def test_setiap_ambang_bernilai_pecahan_wajar(nama: str) -> None:
     assert 0.0 < nilai <= 1.0
 
 
-RUMAH_TETAPAN = frozenset(
-    {
-        (AKAR / "src" / "nlp" / "anotasi" / "ambang.py").resolve(),
-        (AKAR / "src" / "nlp" / "pelatihan" / "pembagian.py").resolve(),
-        (AKAR / "src" / "rag" / "pengambilan" / "tetapan.py").resolve(),
-    }
-)
+RUMAH_TETAPAN = rumah_tetapan(AKAR)
 """Modul yang **sengaja** menjadi satu-satunya tempat sekelompok angka.
+
+**Diimpor dari `perkakas/pemeriksa/ambang.py`, tidak disalin.** Daftar ini
+lahir di sini sebagai daftar putih uji pada fitur 003; sejak fitur 007 ia
+menjadi aturan yang pemeriksa C-16 tegakkan, dan aturan tidak dimiliki
+`tests/`. Dua salinan akan berbeda ketika satu rumah tetapan ditambahkan, dan
+yang berbeda adalah yang tidak diperbarui.
 
 Daftar ini pendek dan wajib tetap pendek. Menambahnya berarti menyatakan ada
 satu kelompok angka lagi yang dimiliki dokumen tertentu, dan pernyataan itu
@@ -133,14 +134,10 @@ keputusan — bukan cara meloloskan berkas yang kebetulan menyalakan sapuan.
 berbeda. Sapuan berbasis nilai tidak dapat membedakannya, dan itu batas yang
 diakui — bukan yang disembunyikan.
 
-`rag/pengambilan/tetapan.py` masuk pada fitur 007 dengan alasan yang berbeda,
-dan alasan itu perlu dinyatakan sebab daftar ini juga **melonggarkan**: berkas
-di sini dilewati sapuan pecahan. Hari ini ia tidak memuat satu pun pecahan,
-sehingga kelonggarannya tidak menutupi apa pun. Yang menggantikannya adalah
-aturan 3 pemeriksa C-16 — setiap tetapan pada setiap rumah tetapan wajib
-memiliki uraian yang menyebut dokumen atau makalah asalnya. Aturan itu lebih
-ketat daripada sapuan yang dilewatinya, dan ia berlaku pada pecahan yang
-ditambahkan kelak."""
+Daftar ini juga **melonggarkan**: berkas di sini dilewati sapuan pecahan. Yang
+menggantikannya aturan 3 pemeriksa C-16 — setiap tetapan pada setiap rumah
+tetapan wajib menyebut dokumen atau makalah asalnya, dan aturan itu lebih ketat
+daripada sapuan yang dilewatinya."""
 
 
 def _berkas_sumber() -> list[Path]:

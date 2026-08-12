@@ -132,18 +132,10 @@ def test_c02_berpindah_menjadi_terperiksa_mesin() -> None:
     assert not c02.fitur_pengunci
 
 
-def test_tagihan_kepatuhan_menyusut() -> None:
-    """**Uji yang menjaga makna seluruh fitur ini.**
+# Hitungan tagihan kepatuhan dahulu ditegakkan di sini. Ia pindah ke
+# `tests/perkakas/test_tagihan_kepatuhan.py` pada fitur 007, ketika C-16
+# menyusutkannya lagi dan angkanya ternyata tertulis pada dua berkas fitur yang
+# berbeda. Buku besar yang tinggal di berkas satu fitur akan diperbarui oleh
+# fitur berikutnya di berkasnya sendiri, dan sesudah beberapa fitur tidak ada
+# yang tahu berkas mana yang berlaku.
 
-    D-12 menyatakan daftar belum-dapat-diperiksa "wajib menyusut pada setiap
-    fitur berikutnya, tidak pernah bertambah". Ia tidak menyusut selama empat
-    fitur berturut-turut sebelum ini.
-
-    Angka 11 ditulis tegas, bukan dihitung dari daftarnya sendiri. Uji yang
-    menghitung dari daftarnya hanya membuktikan daftar sama dengan dirinya
-    sendiri — dan akan tetap lulus ketika pasal dikembalikan menjadi
-    tertunda.
-    """
-    belum = [p for p in DAFTAR_PASAL if p.pemeriksa is None]
-    assert len(belum) == 11
-    assert len(DAFTAR_PASAL) - len(belum) == 9

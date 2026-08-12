@@ -22,6 +22,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
+from perkakas.pemeriksa.ambang import periksa_ambang
 from perkakas.pemeriksa.ast_aturan import Temuan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
@@ -141,7 +142,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-16",
         "ambang tidak disetel di luar prosedur kalibrasi BT-29",
-        fitur_pengunci="007 pengambilan hibrida dan kalibrasi ambang",
+        pemeriksa=periksa_ambang,
     ),
     Pasal(
         "C-17",
