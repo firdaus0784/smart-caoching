@@ -14,7 +14,7 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | `domain.py` — tahap 1 D-07 Bagian 4.1 | **Uji: pertanyaan manajerial yang memuat kata berdekatan dengan ranah terlarang TETAP DITERIMA.** Uji: keempat ranah FR-F13 ditolak. Uji: penolakan menyebut cakupan sistem, bukan galat | R-02, R-03 | [ ] |
+| A-1 | `domain.py` — tahap 1 D-07 Bagian 4.1 | **Uji: pertanyaan manajerial yang memuat kata berdekatan dengan ranah terlarang TETAP DITERIMA.** Uji: keempat ranah FR-F13 ditolak. Uji: penolakan menyebut cakupan sistem, bukan galat | R-02, R-03 | [x] — pola menuntut kata ranah **dan** penanda subjek pribadi |
 
 **Uji yang paling mudah keliru ada di sini.** "Pertanyaan medis ditolak"
 dipenuhi juga oleh penyaring yang menolak setiap pertanyaan yang menyebut
