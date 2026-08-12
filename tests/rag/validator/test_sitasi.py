@@ -65,6 +65,26 @@ def test_vs01_lulus_ketika_setiap_klaim_membawa_rujukan() -> None:
     assert hasil.kode is KodePemeriksaan.VS_01
 
 
+def test_vs01_menolak_klaim_yang_tiba_tanpa_melewati_tipenya() -> None:
+    """**Jalur yang tidak dapat dicapai lewat `Klaim` biasa, dan justru itu
+    sebabnya VS-01 tetap ada.**
+
+    `Klaim` menolak `id_segmen` kosong saat dibentuk, sehingga pemeriksaan ini
+    tampak tidak akan pernah gagal. Uraian modulnya menyebut mengapa ia tetap
+    ada: keluaran model **tiba sebagai data**, bukan sebagai objek yang sudah
+    tervalidasi — dan yang tidak dapat dibentuk tetap dapat diminta.
+
+    `model_construct` melewati validasi persis seperti penguraian yang lengah
+    akan melakukannya. Menghapus jalur ini karena "tidak dapat dicapai" berarti
+    mengandalkan setiap penguraian di masa depan tetap ketat.
+    """
+    mentah = Klaim.model_construct(id_klaim="K1", teks="Klaim tanpa dasar.", id_segmen=())
+    hasil = periksa_dasar_klaim(KeluaranModel.model_construct(klaim=(mentah,)))
+    assert hasil.status is Status.GAGAL
+    assert hasil.id_klaim_bermasalah == ("K1",)
+    assert hasil.kode is KodePemeriksaan.VS_01
+
+
 def test_vs01_lulus_pada_keluaran_tanpa_klaim() -> None:
     """Jawaban tanpa klaim adalah bentuk sah `tidak_ditemukan` (D-14 Bagian
     4.1). VS-01 tidak boleh menggagalkannya — penolakan yang sah bukan
