@@ -1,5 +1,11 @@
 """Tipe pembungkus model — R-06, C-08, C-17, C-18.
 
+`Peringkat` dan `IndeksTujuan` **tidak lagi didefinisikan di sini**; keduanya
+pindah ke `src/kamus/segmen.py` pada fitur 008. Sebabnya: `IndeksTujuan`
+ternyata ditulis dua kali — di sini dan pada `src/penyimpanan/indeks.py` fitur
+006 — dan enum itu tempat C-02 terbaca. Nilai yang dimiliki D-14 bukan milik
+pembungkus model.
+
 Pemisahan instruksi dan data adalah wujud C-18, dan ia dimulai di sini.
 `Instruksi` dan `Data` bukan dua nama untuk untai yang sama melainkan dua
 tipe yang tidak dapat saling menggantikan — sehingga menempatkan konten
@@ -21,32 +27,9 @@ kemampuan yang tidak dapat dinyatakan tidak dapat dipakai.
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
-
 from pydantic import BaseModel, Field
 
-
-class Peringkat(Enum):
-    """Tingkat kepercayaan asal segmen — `docs/D13.md` Bagian 6.
-
-    T3 dan T4 tidak boleh menjadi dasar tunggal sebuah klaim (C-19, FR-F15).
-    """
-
-    T1 = "T1"
-    T2 = "T2"
-    T3 = "T3"
-    T4 = "T4"
-
-
-class IndeksTujuan(Enum):
-    """Indeks asal segmen — `docs/D14.md` Bagian 5, FR-D06.
-
-    Hanya `utama` yang boleh masuk konteks LLM. `metadata` memuat abstrak
-    terbitan berlisensi tertutup dan hanya muncul sebagai bacaan lanjutan.
-    """
-
-    UTAMA = "utama"
-    METADATA = "metadata"
+from src.kamus.segmen import IndeksTujuan, Peringkat
 
 
 class Instruksi(BaseModel, frozen=True, extra="forbid"):

@@ -15,7 +15,7 @@ dibangun sama sekali.
 """
 
 import pytest
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 from src.penyimpanan.kredensial import Kredensial
 from src.penyimpanan.kredensial_baku import (
     PEMANGGIL_LLM,

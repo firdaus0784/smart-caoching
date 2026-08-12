@@ -16,7 +16,7 @@ yang kredensialnya menjangkau karantina.
 from __future__ import annotations
 
 from src.penyimpanan.area import Area
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 from src.penyimpanan.kredensial import Kredensial
 
 PENJAWABAN = Kredensial(

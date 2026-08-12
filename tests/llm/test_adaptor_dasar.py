@@ -17,7 +17,8 @@ import pytest
 from pydantic import ValidationError
 from src.llm.adaptor.dasar import AdaptorDasar, Permintaan
 from src.llm.instruksi import KunciInstruksi, susun
-from src.llm.tipe import Data, IndeksTujuan, Konfigurasi, Peringkat
+from src.kamus.segmen import IndeksTujuan, Peringkat
+from src.llm.tipe import Data, Konfigurasi
 
 KONFIGURASI = Konfigurasi(nama_model="tiruan", versi_model="0.0.1", suhu=0.0, batas_token=256)
 DATA = Data(

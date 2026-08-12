@@ -27,7 +27,7 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 from src.llm.adaptor.dasar import Permintaan
-from src.llm.tipe import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 
 
 class BlokKonten(BaseModel, frozen=True, extra="forbid"):

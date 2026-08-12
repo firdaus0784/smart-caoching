@@ -12,7 +12,8 @@ ingin dihindari G1-4.
 
 import pytest
 from pydantic import ValidationError
-from src.llm.tipe import Data, IndeksTujuan, Konfigurasi, Peringkat, Tanggapan
+from src.kamus.segmen import IndeksTujuan, Peringkat
+from src.llm.tipe import Data, Konfigurasi, Tanggapan
 
 
 def test_peringkat_hanya_t1_sampai_t4() -> None:

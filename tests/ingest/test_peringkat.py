@@ -12,7 +12,7 @@ tidak menyediakan tempat baginya.
 
 import pytest
 from src.ingest.peringkat import JenisSumber, peringkat_bagi
-from src.llm.tipe import Peringkat
+from src.kamus.segmen import Peringkat
 
 
 @pytest.mark.parametrize(

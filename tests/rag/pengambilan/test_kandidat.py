@@ -20,7 +20,7 @@ satu galat pun.
 
 import pytest
 from pydantic import ValidationError
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, urutkan_kandidat
 from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
 

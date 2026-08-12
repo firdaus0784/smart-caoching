@@ -21,7 +21,7 @@ from perkakas.pemeriksa.pemisahan_indeks import periksa_pemisahan_indeks
 AKAR = Path(__file__).resolve().parents[2]
 
 BERSIH = """
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 from src.penyimpanan.kredensial import Kredensial
 
 PENJAWABAN = Kredensial(

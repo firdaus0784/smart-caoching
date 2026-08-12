@@ -38,7 +38,7 @@ from collections.abc import Iterable
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 
 
 class Kandidat(BaseModel):

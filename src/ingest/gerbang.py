@@ -31,7 +31,7 @@ from collections.abc import Callable
 from src.ingest.adversarial import Temuan, periksa_pola
 from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan
 from src.ingest.jejak import JejakArea
-from src.llm.tipe import Peringkat
+from src.kamus.segmen import Peringkat
 from src.penyimpanan.area import Area
 from src.penyimpanan.dasar import PenyimpanDasar
 from src.penyimpanan.galat import GalatAksesDitolak

@@ -17,7 +17,7 @@ from pydantic import ValidationError
 from src.ingest.dokumen import Dokumen, StatusPersetujuan, TingkatKerahasiaan
 from src.ingest.gerbang import Gerbang
 from src.ingest.peringkat import JenisSumber
-from src.llm.tipe import Peringkat
+from src.kamus.segmen import Peringkat
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan

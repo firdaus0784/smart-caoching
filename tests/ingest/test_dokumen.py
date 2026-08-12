@@ -20,7 +20,7 @@ import pytest
 from pydantic import ValidationError
 from src.ingest.dokumen import Dokumen, StatusPersetujuan, TingkatKerahasiaan
 from src.ingest.peringkat import JenisSumber
-from src.llm.tipe import Peringkat
+from src.kamus.segmen import Peringkat
 
 
 def _dokumen(**ubah: object) -> Dokumen:

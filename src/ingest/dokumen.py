@@ -34,7 +34,7 @@ from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from src.ingest.peringkat import JenisSumber, peringkat_bagi
-from src.llm.tipe import Peringkat
+from src.kamus.segmen import Peringkat
 
 TAHUN_PALING_AWAL = 1945
 

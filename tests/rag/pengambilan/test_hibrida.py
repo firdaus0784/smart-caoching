@@ -17,7 +17,7 @@ dapat dibuat.
 
 import pytest
 from pydantic import ValidationError
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.rag.pengambilan.hibrida import ambil_hibrida
 from src.rag.pengambilan.tetapan import (

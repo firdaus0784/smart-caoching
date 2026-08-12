@@ -31,10 +31,12 @@ ia tidak masuk konteks LLM — padahal ia tetap tersimpan.
 
 ## Nilai enum dimiliki D-14, bukan berkas ini
 
-`IndeksTujuan` mengikuti `segmen_teks.indeks_tujuan` pada `docs/D14.md` Bagian
-5 persis, termasuk ejaannya. AG-04 melarang agen mengubah daftar nilai enum,
-dan berkas ini tempat larangan itu paling mudah dilanggar tanpa disadari —
-sama dengan `area.py` pada fitur 002.
+`IndeksTujuan` **diimpor dari `src/kamus/segmen.py`, tidak didefinisikan di
+sini.** Fitur 006 mendefinisikannya di berkas ini tanpa memeriksa bahwa
+`src/llm/tipe.py` sudah memuatnya sejak fitur 001; kekembaran itu ditemukan
+pada fitur 008 dan diselesaikan dengan memindahkannya ke kamus. Yang membuatnya
+lebih dari kerapian: enum itu tempat C-02 terbaca, dan dua definisi berarti
+perubahan D-14 dapat memperbarui satu dan melewatkan yang lain.
 
 **`IndeksTujuan` sengaja bukan nilai ketiga pada `Area`.** Indeks bukan area
 penyimpanan melainkan tujuan segmen, dan D-14 sudah menamai keduanya terpisah.
@@ -59,16 +61,7 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-
-class IndeksTujuan(Enum):
-    """Indeks tempat sebuah segmen berada — `docs/D14.md` Bagian 5.
-
-    `UTAMA` boleh masuk konteks LLM; `METADATA` tidak pernah, dan hanya muncul
-    sebagai `bacaan_lanjutan` pada tanggapan (D-07 Bagian 3.1).
-    """
-
-    UTAMA = "utama"
-    METADATA = "metadata"
+from src.kamus.segmen import IndeksTujuan
 
 
 class StatusLisensi(Enum):

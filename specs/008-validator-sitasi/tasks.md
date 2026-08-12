@@ -14,7 +14,7 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | `src/kamus/segmen.py` — `IndeksTujuan`, `Peringkat`, `StatusKeberlakuan`; kekembaran dihapus | **Uji: hanya satu definisi `IndeksTujuan` pada seluruh `src/`.** Uji: `src/kamus/` tidak mengimpor lapisan lain. Uji: nilai persis D-14 Bagian 5 | — | [ ] |
+| A-1 | `src/kamus/segmen.py` — `IndeksTujuan`, `Peringkat`, `StatusKeberlakuan`; kekembaran dihapus | **Uji: hanya satu definisi `IndeksTujuan` pada seluruh `src/`.** Uji: `src/kamus/` tidak mengimpor lapisan lain. Uji: nilai persis D-14 Bagian 5 | — | [x] — sapuan AST atas seluruh `src/`, bukan hanya atas modul yang benar |
 | A-2 | `keluaran.py` — `Klaim`, `SegmenRujukan`, `KeluaranModel` sesuai D-14 Bagian 4.1 | **Uji: klaim tanpa `id_segmen` tidak dapat dibentuk** (VS-01 sebagai bentuk). Uji: bidang persis D-14, tanpa tambahan (AG-03) | R-01 | [ ] |
 | A-3 | `pemeriksaan.py` — `KodePemeriksaan` sembilan kode, `Status` tiga nilai, `HasilPemeriksaan` | **Uji: `Status` bertiga nilai, bukan dua.** Uji: kesembilan kode persis D-07 Bagian 6.1. Uji: kode yang gagal ikut terbawa | R-08, R-10 | [ ] |
 

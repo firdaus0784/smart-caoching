@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from src.llm.tipe import Peringkat
+from src.kamus.segmen import Peringkat
 
 
 class JenisSumber(Enum):

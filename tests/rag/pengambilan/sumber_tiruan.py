@@ -23,7 +23,7 @@ sesudah pencarian adalah bentuk yang C-02 tolak.
 
 from __future__ import annotations
 
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, SumberKandidat, urutkan_kandidat
 
 

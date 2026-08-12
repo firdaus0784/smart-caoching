@@ -23,7 +23,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.penyimpanan.area import Area
-from src.penyimpanan.indeks import IndeksTujuan
+from src.kamus.segmen import IndeksTujuan
 
 
 class Kredensial(BaseModel):
