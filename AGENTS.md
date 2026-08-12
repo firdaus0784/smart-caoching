@@ -53,6 +53,7 @@ src/rag/        pengambilan, penyusunan jawaban, validator
 src/ingest/     empat kanal, penyaringan, antrean kurasi
 src/llm/        pembungkus tunggal semua pemanggilan model
 src/penyimpanan/ akses penyimpanan, kredensial per area
+src/logbook/    penulis logbook tambah-saja; jalur tunggal menulis ke `logbook/`
 web/            React PWA
 tests/
 logbook/        D-10, diisi tiap percobaan
@@ -80,6 +81,11 @@ Semua akses penyimpanan lewat `src/penyimpanan/`. Tanpa pengecualian — ini yan
 menegakkan C-03. Ia lapisan di bawah keempatnya, bukan sejajar: `rag` membaca
 korpus dan `ingest` menulis karantina, keduanya melaluinya dengan kredensial
 berbeda.
+Semua penulisan catatan percobaan lewat `src/logbook/`. Tanpa pengecualian —
+ini yang menegakkan C-09 dan sifat tambah-saja; permukaannya sengaja tidak
+menyediakan cara mengubah atau menghapus baris. Ia sudah diimpor lima lapisan
+sejak fitur 002 tanpa pernah tercatat di sini, dan ketiadaannya ditemukan
+pemeriksa arah pada fitur 009 — bukan oleh mata.
 
 ## Batas
 

@@ -26,6 +26,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from perkakas.kepatuhan.jalankan import Keadaan, susun_laporan
+from perkakas.pemeriksa.arah_arsitektur import periksa_arah_arsitektur
 from perkakas.pemeriksa.ast_aturan import Temuan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.gerbang_v import (
@@ -90,7 +91,14 @@ def _v02(akar: Path) -> HasilGerbang:
 def _v03(akar: Path) -> HasilGerbang:
     """Ketertelusuran ke kode kebutuhan dan keselarasan dokumen.
 
-    Dua pemeriksa terakhir ditambahkan fitur 014. Sampai saat itu keselarasan
+    Pemeriksa arah arsitektur ditambahkan fitur 009, sesudah **tiga** tepi
+    tak berdokumen ditemukan pada tiga fitur berturut-turut — `rag → nlp`
+    (007), `ingest → llm` (008), dan `src/logbook/` yang diimpor lima lapisan
+    tanpa pernah tercatat sama sekali. Ketiganya sah setelah ditinjau, dan itu
+    yang membuatnya mengkhawatirkan: yang lolos bukan pelanggaran melainkan
+    keputusan arsitektur yang tidak pernah diambil siapa pun.
+
+    Dua pemeriksa sebelumnya ditambahkan fitur 014. Sampai saat itu keselarasan
     antardokumen hanya tertangkap pembacaan manusia, dan TK-45 menunjukkan
     batasnya: register `docs/D00.md` Bagian 2 tertinggal pada tujuh dokumen
     tanpa satu pun aturan dilanggar.
@@ -101,6 +109,7 @@ def _v03(akar: Path) -> HasilGerbang:
         *periksa_perintah_selaras(akar),
         *periksa_konsistensi_dokumen(akar),
         *periksa_kode_menggantung(akar),
+        *periksa_arah_arsitektur(akar),
     ]
     return HasilGerbang("V-03", "ketertelusuran dan keselarasan dokumen", temuan)
 
