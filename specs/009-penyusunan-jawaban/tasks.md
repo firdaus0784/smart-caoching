@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-039) |
 | Plan | `plan.md`, lolos Gerbang 2 (KB-039) |
-| Status | Menunggu Gerbang 3 |
+| Status | **Lolos Gerbang 4** — 12 Agustus 2026 (KB-040). Lima tugas selesai |
 | Jumlah tugas | **5** |
 | Ketergantungan baru | **Nol** |
 
@@ -38,8 +38,8 @@ terikat konstitusi.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | `susun.py` — dari `JawabanTervalidasi` | **Uji: `susun()` tidak menerima `KeluaranModel`.** Uji: kalimat > 20 kata ditolak. Uji: tidak menulis apa pun | R-10, R-11, R-12 | [ ] |
-| C-2 | Pemeriksa C-20 dan pemindahannya pada `daftar_pasal.py` | **Uji: `make compliance` menyusut satu — 12 lulus, 8 belum.** Uji: kedua aturan menyala pada pohon yang sengaja dirusak. Uji: rute di luar D-14 ditemukan | R-01, R-13 | [ ] |
+| C-1 | `susun.py` — dari `JawabanTervalidasi` | **Uji: `susun()` tidak menerima `KeluaranModel`.** Uji: kalimat > 20 kata ditolak. Uji: tidak menulis apa pun | R-10, R-11, R-12 | [x] — lapisan kedua dari tiga; menghapus satu meninggalkan dua |
+| C-2 | Pemeriksa C-20 dan pemindahannya pada `daftar_pasal.py` | **Uji: `make compliance` menyusut satu — 12 lulus, 8 belum.** Uji: kedua aturan menyala pada pohon yang sengaja dirusak. Uji: rute di luar D-14 ditemukan | R-01, R-13 | [x] — aturan 2 diuji dengan rute yang benar-benar dideklarasikan |
 
 **C-1 adalah lapisan kedua, bukan lapisan pertama.** Yang menjaga jalur dari
 keluaran model ke tanggapan sudah tiga: `JawabanTervalidasi` hanya dibentuk
@@ -48,12 +48,34 @@ Ketiganya bertingkat; menghapus salah satunya meninggalkan dua.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **menyusut satu** — 12 lulus, 0 gagal, **8** belum
-- [ ] Kesembilan uji mutasi `plan.md` Bagian 5 dijalankan; hasilnya dilaporkan apa adanya
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
-- [ ] `src/api/` **tidak** dibuat — kerangka kosong yang menunggu FastAPI
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **menyusut satu** — 12 lulus, 0 gagal, **8** belum
+- [x] Kesembilan uji mutasi `plan.md` Bagian 5 dijalankan; **seluruhnya menyala**
+- [x] Cakupan uji tidak turun — 99,81% atas 2.229 pernyataan; penanda naik ke 99,81
+- [x] **Nol ketergantungan baru**
+- [x] `src/api/` **tidak** dibuat
+
+## Hasil kesembilan uji mutasi
+
+| | Mutasi | Uji yang menyala |
+|---|---|---|
+| M-1 | `Tanggapan` menerima bidang tambahan | 3 |
+| M-2 | Satu bidang D-14 dihapus | 6 |
+| M-3 | `susun()` menerima `KeluaranModel` | 2 |
+| M-4 | `di_luar_domain` tetap memuat klaim | 2 |
+| M-5 | Daftar hitam domain berkata tunggal | 2 |
+| M-6 | Segmen `indeks_metadata` masuk `sitasi` | 1 |
+| M-7 | Sitasi `diubah` tanpa catatan diterima | 1 |
+| M-8 | Sitasi `dicabut` dapat dibentuk | 1 |
+| M-9 | Kalimat 21 kata diterima | 2 |
+
+Seluruh sembilan menyala. **Satu kekeliruan saya pada perkakas mutasinya
+sendiri**: `\n` harfiah masuk ke berkas sumber dan merusaknya, sehingga M-2
+s.d. M-9 sempat melaporkan "0 uji menyala" — bukan karena ujinya lemah
+melainkan karena pengumpulan uji gagal seluruhnya. Angka nol yang terbaca
+seperti kelulusan adalah bentuk TA-01 pada perkakas saya sendiri. Perkakasnya
+ditulis ulang agar membedakan galat pengumpulan dari nol kegagalan, lalu
+kesembilan mutasi dijalankan ulang.
 
 ## Yang tidak dikerjakan di sini
 

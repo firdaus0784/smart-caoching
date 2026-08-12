@@ -24,6 +24,7 @@ from pathlib import Path
 
 from perkakas.pemeriksa.ambang import periksa_ambang
 from perkakas.pemeriksa.ast_aturan import Temuan
+from perkakas.pemeriksa.bentuk_tanggapan import periksa_bentuk_tanggapan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
 from perkakas.pemeriksa.impor_ocr import periksa_impor_ocr
@@ -173,6 +174,6 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-20",
         "bentuk tanggapan dan daftar rute mengikuti D-14",
-        fitur_pengunci="009 penyusunan jawaban dan rute /api/v1/tanya",
+        pemeriksa=periksa_bentuk_tanggapan,
     ),
 )
