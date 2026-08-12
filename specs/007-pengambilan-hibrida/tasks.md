@@ -40,7 +40,7 @@ pun tidak dapat dibedakan dari penggabungan yang salah.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | C-1 | Penyusun hibrida: kredensial diperiksa **sebelum** sumber dijalankan | **Uji: `PEMANGGIL_LLM` tidak pernah menerima segmen metadata.** Uji: indeks yang tak dijangkau tidak dicari sama sekali. Uji: tidak menulis apa pun | R-07, R-14 | [x] — diuji lewat `dipanggil`, bukan lewat "hasilnya kosong" |
-| C-2 | `AmbangKecukupan` yang menuntut `CatatanKalibrasi`; `PenilaianKecukupan` | **Uji: ambang tanpa catatan kalibrasi tidak dapat dibentuk.** Uji: tidak ada nilai bawaan. Uji: catatan wajib menyebut tanggal, *gold set*, pemutus | R-11, R-12 | [ ] |
+| C-2 | `AmbangKecukupan` yang menuntut `CatatanKalibrasi`; `PenilaianKecukupan` | **Uji: ambang tanpa catatan kalibrasi tidak dapat dibentuk.** Uji: tidak ada nilai bawaan. Uji: catatan wajib menyebut tanggal, *gold set*, pemutus | R-11, R-12 | [x] — tidak dapat **disusun** tanpa kalibrasi, bukan gagal saat dijalankan |
 | C-3 | Pemeriksa C-16 dan pemindahannya pada `daftar_pasal.py` | **Uji: `make compliance` menyusut satu — 10 lulus, 10 belum.** Uji: ketiga aturan menyala pada pohon yang sengaja dirusak | R-08, R-11 | [ ] |
 
 **C-2 adalah tempat C-16 dipatuhi atau dilanggar diam-diam.** Ambang bawaan

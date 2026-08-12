@@ -54,6 +54,21 @@ def test_konstanta_rrf_dari_makalah_yang_dikutip_d07() -> None:
     assert TETAPAN_RRF_K == 60
 
 
+def test_dua_angka_bernilai_sama_yang_bukan_satu_angka() -> None:
+    """`JUMLAH_SUMBER_MINIMUM` (dari ADR-03) dan `JUMLAH_SEGMEN_RELEVAN_MINIMUM`
+    (dari D-07 Bagian 4.6) kebetulan sama-sama 2, dan keduanya besaran yang
+    sama sekali berbeda.
+
+    Keduanya tinggal di sini justru karena itu: dari luar, satu angka yang
+    tertulis dua kali dan dua angka yang kebetulan sama terlihat persis sama.
+    Yang membedakannya hanya uraiannya — dan uraian itu wajib ada pada berkas
+    ini, bukan pada kepala penulisnya.
+    """
+    from src.rag.pengambilan.tetapan import JUMLAH_SEGMEN_RELEVAN_MINIMUM
+
+    assert JUMLAH_SUMBER_MINIMUM == JUMLAH_SEGMEN_RELEVAN_MINIMUM == 2
+
+
 def test_dua_sumber_minimum_bukan_angka_yang_dapat_disetel() -> None:
     """**Bukan tetapan kalibrasi, melainkan pembacaan ADR-03.**
 
@@ -140,6 +155,7 @@ def test_ambang_kecukupan_belum_ada_dan_itu_yang_benar() -> None:
         "JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM",
         "TETAPAN_RRF_K",
         "JUMLAH_SUMBER_MINIMUM",
+        "JUMLAH_SEGMEN_RELEVAN_MINIMUM",
     ],
 )
 def test_tetapan_berupa_bilangan_bulat_positif(nama: str) -> None:

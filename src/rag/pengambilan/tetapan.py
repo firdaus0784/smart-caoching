@@ -113,3 +113,20 @@ Nilai 0 mematikan penormalan panjang, dan akibatnya halus: segmen panjang
 menang hanya karena panjang. Pada korpus regulasi itu berarti pasal panjang
 selalu mengungguli pasal pendek yang justru menjawab pertanyaannya.
 """
+
+JUMLAH_SEGMEN_RELEVAN_MINIMUM = 2
+"""Segmen relevan paling sedikit bagi status dasar `kuat`.
+
+`docs/D07.md` Bagian 4.6 baris pertama: skor teratas melampaui ambang tinggi
+**dan** "minimal 2 segmen relevan" **dan** minimal satu dari regulasi atau
+panduan resmi. Angka dari D-07, bukan dari kalibrasi — sama kategorinya dengan
+jumlah kandidat di atas.
+
+**Ia hampir tidak ditulis di sini.** Rancangan pertama menaruhnya pada
+`kecukupan.py` dengan alasan ia bagian kriteria dan bukan ambang yang BT-29
+setel. Sapuan R-08 menolaknya: nilainya sama dengan `JUMLAH_SUMBER_MINIMUM`,
+dan dari luar keduanya tidak dapat dibedakan dari satu angka yang tertulis dua
+kali. Alasan yang membedakan keduanya benar tetapi hanya ada di kepala
+penulisnya — dan sapuan yang dilumpuhkan oleh alasan semacam itu tidak menjaga
+apa pun. Bentuk yang sama dengan tabrakan 0,70 pada fitur 004.
+"""
