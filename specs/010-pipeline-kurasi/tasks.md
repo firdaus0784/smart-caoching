@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-042) |
 | Plan | `plan.md`, lolos Gerbang 2 (KB-042) |
-| Status | Menunggu Gerbang 3 |
+| Status | **Lolos Gerbang 4** (KB-043) |
 | Jumlah tugas | **6** |
 | Ketergantungan baru | **Nol** |
 
@@ -61,12 +61,12 @@ adalah pasal yang lolos ketika lapis itu dipindahkan.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **menyusut dua** — 14 lulus, 0 gagal, **6** belum
-- [ ] Kesembilan uji mutasi `plan.md` Bagian 5 dijalankan; hasilnya dilaporkan apa adanya
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
-- [ ] `KategoriMasalah` dipakai ulang — bukan definisi kedua
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **menyusut dua** — 14 lulus, 0 gagal, **6** belum
+- [x] Kesembilan uji mutasi `plan.md` Bagian 5 dijalankan; hasilnya dilaporkan apa adanya — M-1 s.d. M-9 seluruhnya menyala, beserta sembilan mutasi tambahan
+- [x] Cakupan uji tidak turun — 99,81 → 99,83 atas 2.611 pernyataan
+- [x] **Nol ketergantungan baru**
+- [x] `KategoriMasalah` dipakai ulang — bukan definisi kedua
 
 ## Yang tidak dikerjakan di sini
 
