@@ -14,7 +14,7 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | `butir.py` — dua belas bidang D-06 Bagian 5 | **Uji: bidang dibaca dari `docs/D06.md`, bukan disalin ke uji.** Uji: `KategoriMasalah` fitur 003 dipakai ulang, tidak ditulis ulang. Uji: bidang wajib tanpa bawaan | R-01 | [ ] |
+| A-1 | `butir.py` — dua belas bidang D-06 Bagian 5 | **Uji: bidang dibaca dari `docs/D06.md`, bukan disalin ke uji.** Uji: `KategoriMasalah` fitur 003 dipakai ulang, tidak ditulis ulang. Uji: bidang wajib tanpa bawaan | R-01 | [x] — dua belas bidang dari D-06; satu tambahan (`id_butir`) disebut namanya, bukan diizinkan sebagai "tambahan" |
 | A-2 | `tetapan.py` + `saring.py` — L1, L2, L3, dan L4 tiga keadaan | **Uji: L4 `MENUNGGU` tidak masuk antrean DAN tidak dibuang.** Uji: L3 menolak `dicabut`, menerima `diubah`. Uji: L1 membuang tanpa menyimpan | R-03 s.d. R-06, R-12 | [ ] |
 
 **A-2 adalah tempat pola "tiga keadaan" menahan hal yang berbeda dari lima
