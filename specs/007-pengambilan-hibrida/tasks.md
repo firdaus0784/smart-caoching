@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-034) |
 | Plan | `plan.md`, lolos Gerbang 2 (KB-034) |
-| Status | Menunggu Gerbang 3 |
+| Status | **Lolos Gerbang 4** — 12 Agustus 2026 (KB-035). Tujuh tugas selesai |
 | Jumlah tugas | **7** |
 | Ketergantungan baru | **Nol** |
 
@@ -54,12 +54,34 @@ cara yang persis sama dengan pemeriksa yang benar.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **menyusut satu** — 10 lulus, 0 gagal, **10** belum
-- [ ] Kedelapan uji mutasi `plan.md` Bagian 6 dijalankan; hasilnya dilaporkan apa adanya
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
-- [ ] `AGENTS.md` memuat tepi `rag → nlp` beserta alasannya
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **menyusut satu** — 10 lulus, 0 gagal, **10** belum — separuh dari dua puluh
+- [x] Kedelapan uji mutasi `plan.md` Bagian 6 dijalankan; **seluruhnya menyala** — pertama kalinya sejak fitur 003
+- [x] Cakupan uji tidak turun — 99,78% atas 1.925 pernyataan; penanda dinaikkan ke 99,77
+- [x] **Nol ketergantungan baru** — tetap 10 langsung, 26 terkunci
+- [x] `AGENTS.md` memuat tepi `rag → nlp` beserta alasannya
+
+## Hasil kedelapan uji mutasi
+
+| | Mutasi | Uji yang menyala |
+|---|---|---|
+| M-1 | `gabung_peringkat` menerima satu sumber | 3 uji, termasuk `test_satu_sumber_ditolak` |
+| M-2 | RRF memakai `1/peringkat` | 2 uji — contoh hitung tangan dan uji penyebut |
+| M-3 | BM25 mencocokkan `permukaan` | 2 uji — pasangan sama-stem dan ketiga imbuhan |
+| M-4 | Seri diputus urutan sisipan | 2 uji, pada `kandidat` dan pada `bm25` |
+| M-5 | Kredensial diperiksa sesudah pencarian | 3 uji, seluruhnya lewat pencacah `dipanggil` |
+| M-6 | `penanda_bagian` berbawaan `""` | 2 uji |
+| M-7 | `AmbangKecukupan` berkalibrasi berbawaan | 2 uji |
+| M-8 | `penyumbang` hanya sumber peringkat terbaik | 3 uji |
+
+**Seluruh delapan menyala, dan tidak satu pun menuntut uji tambahan.** Itu
+pertama kalinya sejak fitur 003 — pada 003, 004, dan 016 sebagian mutasi tidak
+menyala dan menyingkap celah pada ujinya, bukan pada mutasinya.
+
+Dua celah tetap ditemukan pada fitur ini, hanya bukan lewat mutasi:
+sapuan R-08 menolak letak `JUMLAH_SEGMEN_RELEVAN_MINIMUM`, dan uji hitungan
+tagihan fitur 006 menolak angka yang sudah usang. Keduanya penjagaan yang
+sudah ada dan menyala tepat waktu.
 
 ## Yang tidak dikerjakan di sini
 
