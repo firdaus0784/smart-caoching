@@ -62,6 +62,11 @@ Aturan arah: `api` boleh memanggil `nlp`, `rag`, `ingest`. Tidak sebaliknya.
 Tepi itu ada karena pendeteksi data pribadi tinggal di `nlp` sedangkan yang
 menjalankannya gerbang di `ingest`; ia dituliskan agar impornya terbaca sebagai
 rancangan, bukan sebagai kebiasaan yang tidak dijelaskan dokumen mana pun.
+`rag` boleh memanggil `nlp`, satu jurusan — `nlp` tidak memanggil `rag`.
+Tepi kedua ini ada karena D-07 Bagian 3.3 menuntut BM25 bekerja atas hasil
+praproses Bahasa Indonesia (FR-B03), dan praproses tinggal di `nlp`. Arah
+sebaliknya terlarang dengan alasan yang sejajar: `nlp` yang memanggil `rag`
+membuat praproses bergantung pada indeks yang praproses itu sendiri isi.
 Semua pemanggilan model lewat `src/llm/`. Tanpa pengecualian — ini yang mencatat versi.
 Semua akses penyimpanan lewat `src/penyimpanan/`. Tanpa pengecualian — ini yang
 menegakkan C-03. Ia lapisan di bawah keempatnya, bukan sejajar: `rag` membaca
