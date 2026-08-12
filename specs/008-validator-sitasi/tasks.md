@@ -26,9 +26,9 @@ dapat memperbarui satu dan melewatkan yang lain tanpa satu uji pun gagal.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | VS-01 dan VS-02 — klaim tanpa dasar dan rujukan mengada-ada | Uji: id yang tidak ada di antara segmen terambil ditolak. **Uji: pemeriksaan dilakukan terhadap segmen terambil, bukan terhadap daftar id pada klaimnya sendiri** | R-01, R-02 | [ ] |
-| B-2 | VS-04 dan VS-06 — segmen metadata dan regulasi dicabut | **Uji: seluruh jawaban dibuang, bukan klaimnya saja.** Uji: dicatat sebagai insiden kepatuhan | R-03, R-04 | [ ] |
-| B-3 | VS-08 — klaim bersandar tunggal T3 atau T4 | **Uji: klaim ditopang T1 dan T3 sekaligus DITERIMA.** Uji: T3 dan T4 saja diturunkan menjadi bacaan lanjutan. Uji: VS-08 tidak menyentuh arti bidang BT-64 | R-05 | [ ] |
+| B-1 | VS-01 dan VS-02 — klaim tanpa dasar dan rujukan mengada-ada | Uji: id yang tidak ada di antara segmen terambil ditolak. **Uji: pemeriksaan dilakukan terhadap segmen terambil, bukan terhadap daftar id pada klaimnya sendiri** | R-01, R-02 | [x] — diperiksa terhadap segmen terambil, bukan kesalingcocokan antarklaim |
+| B-2 | VS-04 dan VS-06 — segmen metadata dan regulasi dicabut | **Uji: seluruh jawaban dibuang, bukan klaimnya saja.** Uji: dicatat sebagai insiden kepatuhan | R-03, R-04 | [x] — keberadaan segmen metadata tidak dilarang; yang dilarang ia menjadi dasar klaim |
+| B-3 | VS-08 — klaim bersandar tunggal T3 atau T4 | **Uji: klaim ditopang T1 dan T3 sekaligus DITERIMA.** Uji: T3 dan T4 saja diturunkan menjadi bacaan lanjutan. Uji: VS-08 tidak menyentuh arti bidang BT-64 | R-05 | [x] — T1+T3 diterima; rujukan tak dikenal tidak menyelamatkan klaim |
 
 **B-3 adalah tugas terpenting bagi C-19, dan ujinya yang paling mudah keliru.**
 Uji "T3 saja ditolak" dipenuhi juga oleh validator yang menolak setiap klaim
