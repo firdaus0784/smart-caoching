@@ -27,7 +27,7 @@ feed dan memicu titik kritis T5 — dan tidak menyebut mana yang lebih ringan.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `putusan.py` — empat putusan, TL-01 s.d. TL-11, `ButirTayang` | **Uji: `ButirTayang` tidak dapat dibentuk tanpa putusan setujui.** Uji: penolakan menolak untai bebas. Uji: keempat putusan setara, `tunda` membawa waktu kembali | R-02, R-07, R-08 | [ ] |
+| B-1 | `putusan.py` — empat putusan, TL-01 s.d. TL-11, `ButirTayang` | **Uji: `ButirTayang` tidak dapat dibentuk tanpa putusan setujui.** Uji: penolakan menolak untai bebas. Uji: keempat putusan setara, `tunda` membawa waktu kembali | R-02, R-07, R-08 | [x] — `ButirTayang` berpagar bentuk; C-07 lapis kedua pada gerbang putusan; M-1 dan M-6 menyala |
 | B-2 | `jejak.py` — siapa, kapan, apa, alasan | **Uji: jejak tidak memuat nama kurator.** Uji: keempat bidang FR-I05 wajib. Uji: tambah-saja lewat `src/logbook/` | R-09, R-13 | [ ] |
 | B-3 | Penarikan butir tayang (D-06 Bagian 7.5) | **Uji: butir tayang ditarik ketika regulasi sumbernya menjadi `dicabut` ATAU `diubah`.** Uji: data sumber diperbarui menandai perlu tinjauan, tidak menarik | R-10 | [ ] |
 
