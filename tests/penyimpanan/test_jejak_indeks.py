@@ -18,6 +18,7 @@ def _catat(tmp: Path, **ganti: Any) -> dict[str, Any]:
         "lisensi": StatusLisensi.TERBUKA,
         "indeks_tujuan": IndeksTujuan.UTAMA,
         "anonimisasi_terverifikasi": True,
+        "penanda_bagian": "Pasal 12 ayat (2)",
     }
     argumen.update(ganti)
     catat_penempatan(tmp, SegmenTerindeks(**argumen), sumber_lisensi="CC-BY-4.0")

@@ -57,7 +57,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class IndeksTujuan(Enum):
@@ -133,6 +133,41 @@ class SegmenTerindeks(BaseModel):
     lisensi: StatusLisensi
     indeks_tujuan: IndeksTujuan
     anonimisasi_terverifikasi: bool
+    penanda_bagian: str = Field(min_length=1)
+    """Pasal, ayat, butir, atau subjudul — `docs/D14.md` Bagian 5, **wajib**.
+
+    D-14 menyatakan alasannya dalam empat kata: *"tanpanya FR-F11 gagal"*.
+    FR-F11 menuntut tautan sitasi mengarah ke bagian spesifik dokumen, bukan
+    ke dokumen utuh, dan dasarnya titik kritis T2 pada D-02.
+
+    Ditambahkan pada fitur 007, bukan 006. Itu kelalaian saya pada fitur 006
+    dan tercatat demikian pada KB-034 — bukan keputusan yang ditinjau ulang.
+    Yang menuntutnya ditutup sekarang: fitur 007 menjadi pemakai pertama
+    segmen, dan segmen yang dapat diambil tetapi tidak dapat disitasi baru
+    ketahuan pada fitur 009, ketika indeksnya mungkin sudah terisi.
+
+    Tanpa nilai bawaan, dan `min_length` saja tidak cukup — ia meloloskan
+    `" "`. Penanda berisi satu spasi tidak menunjuk pasal mana pun.
+    """
+
+    @field_validator("penanda_bagian")
+    @classmethod
+    def _penanda_menunjuk_sesuatu(cls, nilai: str) -> str:
+        """Dipangkas saat masuk, bukan saat ditampilkan.
+
+        Satu tempat, bukan setiap tempat: penanda yang tersimpan dengan spasi
+        di ujung akan muncul begitu pada setiap sitasi yang menampilkannya, dan
+        memangkasnya di tempat penampilan berarti memangkasnya di banyak
+        tempat — salah satunya akan terlewat.
+        """
+        bersih = nilai.strip()
+        if not bersih:
+            raise ValueError(
+                "penanda bagian tidak boleh kosong — D-14 Bagian 5 mewajibkannya "
+                "sebab tautan sitasi harus mengarah ke pasal, bukan ke dokumen "
+                "utuh (FR-F11, titik kritis T2)"
+            )
+        return bersih
 
     @model_validator(mode="after")
     def _penempatan_sah(self) -> SegmenTerindeks:

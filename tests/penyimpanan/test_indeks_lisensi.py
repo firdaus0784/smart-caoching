@@ -37,6 +37,7 @@ def _segmen(**ganti: object) -> SegmenTerindeks:
         "lisensi": StatusLisensi.TERBUKA,
         "indeks_tujuan": IndeksTujuan.UTAMA,
         "anonimisasi_terverifikasi": True,
+        "penanda_bagian": "Pasal 12 ayat (2)",
     }
     argumen.update(ganti)
     return SegmenTerindeks(**argumen)  # type: ignore[arg-type]
@@ -62,6 +63,7 @@ def test_segmen_tanpa_indeks_tujuan_tidak_dapat_dibentuk() -> None:
             teks="isi",
             lisensi=StatusLisensi.TERBUKA,
             anonimisasi_terverifikasi=True,
+            penanda_bagian="Pasal 1",
         )
 
 
@@ -209,3 +211,53 @@ def test_kedua_status_selain_terverifikasi_menghasilkan_penolakan(
 def test_status_terverifikasi_diterima() -> None:
     izin = Dokumen.anonimisasi_mengizinkan_indeks(StatusAnonimisasi.TERVERIFIKASI)
     assert _segmen(anonimisasi_terverifikasi=izin).anonimisasi_terverifikasi
+
+
+# ------------------------------------------------ A-1 fitur 007, R-10, FR-F11
+
+
+def test_segmen_tanpa_penanda_bagian_tidak_dapat_dibentuk() -> None:
+    """**Uji A-1 fitur 007.** `docs/D14.md` Bagian 5: `segmen_teks.penanda_bagian`
+    berisi "Pasal, ayat, atau subjudul. **Wajib**; tanpanya FR-F11 gagal."
+
+    Fitur 006 membangun `SegmenTerindeks` tanpanya. Itu kelalaian, bukan
+    keputusan — dan yang membuatnya perlu ditutup sekarang adalah fitur 007
+    menjadi pemakai pertama segmen. Segmen yang dapat diambil tetapi tidak
+    dapat disitasi gagal pada titik kritis T2 (D-02), dan kegagalan itu baru
+    terlihat pada fitur 009 ketika indeksnya mungkin sudah terisi.
+    """
+    with pytest.raises(ValidationError):
+        SegmenTerindeks(  # type: ignore[call-arg]
+            id_segmen="SEG-001",
+            id_dokumen="DOC-001",
+            teks="isi",
+            lisensi=StatusLisensi.TERBUKA,
+            indeks_tujuan=IndeksTujuan.UTAMA,
+            anonimisasi_terverifikasi=True,
+        )
+
+
+@pytest.mark.parametrize("kosong", ["", " ", "\t", "\n  "])
+def test_penanda_bagian_kosong_atau_hanya_spasi_ditolak(kosong: str) -> None:
+    """Bidang wajib yang menerima untai kosong adalah bidang opsional yang
+    ditulis dengan cara lebih panjang.
+
+    Spasi diperiksa terpisah dari kosong sebab `min_length` meloloskan `" "`,
+    dan penanda berisi satu spasi tidak menunjuk pasal mana pun.
+    """
+    with pytest.raises(ValidationError) as galat:
+        _segmen(penanda_bagian=kosong)
+    assert "penanda" in str(galat.value).lower()
+
+
+def test_penanda_bagian_tidak_punya_nilai_bawaan() -> None:
+    """Sifat, bukan kasus. Nilai bawaan `""` akan membuat setiap segmen yang
+    lupa mengisinya lolos, dan yang lolos tidak dapat disitasi."""
+    assert SegmenTerindeks.model_fields["penanda_bagian"].is_required()
+
+
+def test_penanda_bagian_dipangkas_ujungnya() -> None:
+    """Penanda yang tersimpan dengan spasi di ujung akan ditampilkan begitu
+    pada sitasi. Dipangkas saat masuk, bukan saat ditampilkan — satu tempat,
+    bukan setiap tempat."""
+    assert _segmen(penanda_bagian="  Pasal 3  ").penanda_bagian == "Pasal 3"
