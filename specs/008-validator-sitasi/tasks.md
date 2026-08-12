@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-036) |
 | Plan | `plan.md`, lolos Gerbang 2 (KB-036) |
-| Status | Menunggu Gerbang 3 |
+| Status | **Lolos Gerbang 4** — 12 Agustus 2026 (KB-037). Tujuh tugas selesai |
 | Jumlah tugas | **7** |
 | Ketergantungan baru | **Nol** |
 
@@ -51,13 +51,32 @@ komponen yang D-04 ADR-04 sebut terpenting dalam sistem.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **menyusut satu** — 11 lulus, 0 gagal, **9** belum
-- [ ] Kesembilan uji mutasi `plan.md` Bagian 6 dijalankan; hasilnya dilaporkan apa adanya
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
-- [ ] `AGENTS.md` memuat `src/kamus/` dan tepi `ingest → llm`
-- [ ] `fitur_pengunci` C-01 dikoreksi menyebut fitur 020 dan VS-03
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **menyusut satu** — 11 lulus, 0 gagal, **9** belum
+- [x] Kesembilan uji mutasi `plan.md` Bagian 6 dijalankan; **seluruhnya menyala**
+- [x] Cakupan uji tidak turun — 99,80% atas 2.113 pernyataan; penanda naik ke 99,79
+- [x] **Nol ketergantungan baru** — tetap 10 langsung, 26 terkunci
+- [x] `AGENTS.md` memuat `src/kamus/` dan tepi `ingest → llm`
+- [x] `fitur_pengunci` C-01 dikoreksi menyebut fitur 020 dan VS-03
+
+## Hasil kesembilan uji mutasi
+
+| | Mutasi | Uji yang menyala |
+|---|---|---|
+| M-1 | `tervalidasi` selalu `True` | 4 |
+| M-2 | `BELUM_DAPAT_DIPERIKSA` dianggap lulus | 3 |
+| M-3 | VS-08 menolak klaim yang memuat **satu** T3 | 1 — uji T1+T3 diterima |
+| M-4 | VS-08 dijatuhkan dari pemetaan | 1 — pemeriksa C-19 aturan 2 |
+| M-5 | VS-04 membuang klaimnya saja | 1 |
+| M-6 | Ringkasan kosong tetap ditayangkan | 1 |
+| M-7 | VS-02 memeriksa id pada klaim, bukan segmen terambil | 5 |
+| M-8 | Tautan diperiksa terhadap ranah | 1 |
+| M-9 | Kode gagal tidak membawa klaim bermasalah | 2 |
+
+Seluruh sembilan menyala. **Dua kekeliruan tetap ditemukan pada fitur ini, dan
+keduanya bukan lewat mutasi**: `make check` menolak dua commit karena cakupan
+turun, dan pemeriksa C-19 menolak rancangan `validasi()` yang menyusun daftar
+pemeriksaan secara berurut.
 
 ## Yang tidak dikerjakan di sini
 

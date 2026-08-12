@@ -7,7 +7,7 @@
 | Pasal konstitusi | **C-19**, C-01, C-17, C-18, C-16 |
 | Urutan pembangunan | 008 pada `docs/D12.md` Bagian 7, sesudah 007 |
 | Ketergantungan | **Nol paket Python baru** |
-| Status | Menunggu Gerbang 1 |
+| Status | **Lolos Gerbang 4** — 12 Agustus 2026 (KB-037) |
 
 ## Tujuan
 
