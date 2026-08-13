@@ -38,7 +38,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from src.ingest.data_pribadi import nama_pola_yang_cocok
+from src.nlp.anonimisasi.pola import periksa_data_pribadi
 from src.penyimpanan.area import Area
 
 
@@ -119,10 +119,11 @@ class JejakArea:
         perlu diketahui verifikator adalah jenis apa yang tersalin, bukan
         pengulangan apa yang tersalin.
         """
-        nama = nama_pola_yang_cocok(alasan)
-        if nama is not None:
+        temuan = periksa_data_pribadi(alasan)
+        if temuan:
             raise GalatJejak(
-                f"alasan memuat {nama} — sebutkan jenis temuannya, jangan salin nilainya"
+                f"alasan memuat pengenal berjenis {temuan[0].jenis} — sebutkan jenis "
+                "temuannya, jangan salin nilainya"
             )
 
     def baris(self) -> list[Baris]:

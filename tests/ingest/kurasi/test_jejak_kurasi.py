@@ -175,24 +175,45 @@ def test_galat_tidak_mengulang_muatan_yang_ditolaknya() -> None:
     with pytest.raises(GalatJejakKurasi) as galat:
         JejakKurasi().catat(_putusan(), catatan="Hubungi 081234567890 dahulu.")
     assert "081234567890" not in str(galat.value)
-    assert "nomor telepon" in str(galat.value)
+    assert "telepon" in str(galat.value)
 
 
-def test_pendeteksi_data_pribadi_satu_salinan() -> None:
-    """Pendeteksi yang disalin akan berbeda dari aslinya pada hari salah satunya
-    diperbarui, dan yang tertinggal adalah yang menjaga jejak kurasi.
+def test_kedua_jejak_memakai_pendeteksi_fr_b04() -> None:
+    """Pendeteksi data pribadi tinggal di `src/nlp/`, dan `AGENTS.md`
+    menyatakannya: tepi `ingest → nlp` ada **justru karena itu**.
 
-    Kekeliruan `IndeksTujuan` yang ditulis dua kali dan lolos dua fitur (KB-036)
-    berbentuk persis seperti ini.
+    Jejak yang membawa pendeteksinya sendiri akan tertinggal pada hari yang di
+    `nlp` diperbarui — dan yang tertinggal adalah yang menjaga R-13.
     """
-    berkas = [
+    for jalur in (
         AKAR / "src" / "ingest" / "jejak.py",
         AKAR / "src" / "ingest" / "kurasi" / "jejak.py",
-    ]
-    for jalur in berkas:
+    ):
         isi = jalur.read_text(encoding="utf-8")
-        assert "from src.ingest.data_pribadi import" in isi, jalur
+        assert "from src.nlp.anonimisasi.pola import" in isi, jalur
         assert "re.compile" not in isi, jalur
+
+
+def test_pola_data_pribadi_hanya_satu_definisi_pada_src() -> None:
+    """**Uji yang seharusnya ada kemarin.**
+
+    Fitur 010 B-2 menyatukan pola data pribadi ke `src/ingest/data_pribadi.py`
+    tanpa memeriksa bahwa `src/nlp/anonimisasi/pola.py` sudah memuatnya sejak
+    fitur 015 — salinan **ketiga**, dibuat sehari sesudah uraian modul
+    memperingatkan bentuk kekeliruan yang sama (KB-036).
+
+    Uji ini menyapu `src/` mencari tanda tangan pola nomor telepon Indonesia.
+    Satu definisi, bukan "satu impor": impor dapat benar sementara definisi
+    kedua tetap berdiri di sebelahnya, dan itu persis yang terjadi.
+    """
+    pemilik = [
+        jalur
+        for jalur in (AKAR / "src").rglob("*.py")
+        if r"\+62" in jalur.read_text(encoding="utf-8")
+    ]
+    assert [j.name for j in pemilik] == ["pola.py"], (
+        f"pola data pribadi terdefinisi pada lebih dari satu modul: {pemilik}"
+    )
 
 
 # ------------------------------------------------------------ R-09 · tambah-saja

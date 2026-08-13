@@ -48,7 +48,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from src.ingest.data_pribadi import nama_pola_yang_cocok
+from src.nlp.anonimisasi.pola import periksa_data_pribadi
 from src.ingest.kurasi.putusan import JenisPutusan, PeranKurasi, Putusan
 
 
@@ -153,8 +153,9 @@ class JejakKurasi:
 
         Nama polanya disebutkan pada galat; **nilainya tidak pernah**.
         """
-        nama = nama_pola_yang_cocok(alasan)
-        if nama is not None:
+        temuan = periksa_data_pribadi(alasan)
+        if temuan:
             raise GalatJejakKurasi(
-                f"catatan memuat {nama} — sebutkan jenis temuannya, jangan salin nilainya"
+                f"catatan memuat pengenal berjenis {temuan[0].jenis} — sebutkan jenis "
+                "temuannya, jangan salin nilainya"
             )

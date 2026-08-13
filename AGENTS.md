@@ -53,6 +53,7 @@ src/rag/        pengambilan, penyusunan jawaban, validator
 src/ingest/     empat kanal, penyaringan, antrean kurasi
 src/llm/        pembungkus tunggal semua pemanggilan model
 src/penyimpanan/ akses penyimpanan, kredensial per area
+src/pengguna/    profil, prioritas manajerial, persetujuan penelitian
 src/logbook/    penulis logbook tambah-saja; jalur tunggal menulis ke `logbook/`
 web/            React PWA
 tests/
@@ -72,6 +73,14 @@ membuat praproses bergantung pada indeks yang praproses itu sendiri isi.
 `ingest` boleh memanggil `llm`, satu jurusan. Tepi ini sudah ada sejak fitur
 002 tanpa pernah dituliskan; ia ditemukan pada fitur 008 dan dicatat di sini
 alih-alih dibiarkan menjadi kebiasaan tak berdokumen.
+`pengguna` boleh memanggil `nlp` dan `kamus`, satu jurusan — `nlp` tidak
+memanggil `pengguna`. Tepi itu ada karena dua hal yang `src/pengguna/` butuh
+sudah bertempat tinggal di `nlp`: `KategoriMasalah` bagi prioritas manajerial
+(FR-A03), dan pendeteksi data pribadi FR-B04 bagi bidang teks bebas (KM-03).
+Arah sebaliknya terlarang dengan alasan yang sejajar dengan tepi `rag → nlp`:
+`nlp` yang memanggil `pengguna` membuat praproses bergantung pada profil orang
+yang teksnya sedang diproses.
+
 `src/kamus/` boleh diimpor siapa pun dan **tidak mengimpor apa pun dari `src/`**.
 Ia lapisan di bawah `src/penyimpanan/`. Isinya enum milik `docs/D14.md` Bagian
 5 — bukan milik lapisan mana pun, dan itu sebabnya ia berdiri sendiri:
