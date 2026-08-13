@@ -21,7 +21,7 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `gerbang.py` — perekaman menuntut persetujuan aktif | **Uji: hanya `DIBERIKAN` yang merekam; ketiga keadaan lain tidak.** Uji: pencabutan di tengah rangkaian menghentikan seketika. Uji: `DITOLAK_PROPERTI` bukan `DILEWATI_TANPA_PERSETUJUAN` | R-04, R-05, R-07 | [ ] |
+| B-1 | `gerbang.py` — perekaman menuntut persetujuan aktif | **Uji: hanya `DIBERIKAN` yang merekam; ketiga keadaan lain tidak.** Uji: pencabutan di tengah rangkaian menghentikan seketika. Uji: `DITOLAK_PROPERTI` bukan `DILEWATI_TANPA_PERSETUJUAN` | R-04, R-05, R-07 | [x] — keadaan diterima tiap panggilan dan tidak punya tempat disimpan; urutan pemeriksaan dinyatakan; M-1 s.d. M-4 menyala |
 
 **B-1 adalah C-04 itu sendiri.** Keadaan persetujuan diterima **tiap
 panggilan**, bukan disimpan — salinan yang diambil saat sesi dibuka membuat
