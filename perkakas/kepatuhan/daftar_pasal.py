@@ -36,6 +36,7 @@ from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
 from perkakas.pemeriksa.pemisahan_indeks import periksa_pemisahan_indeks
 from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
 from perkakas.pemeriksa.pemisahan_penyimpanan import periksa_pemisahan_penyimpanan
+from perkakas.pemeriksa.perekaman_telemetri import periksa_perekaman_telemetri
 from perkakas.pemeriksa.peringkat_klaim import periksa_peringkat_klaim
 from perkakas.pemeriksa.peta_pseudonim import periksa_peta_pseudonim
 from perkakas.pemeriksa.regulasi_dicabut import periksa_regulasi_dicabut
@@ -93,7 +94,12 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-04",
         "telemetri tidak merekam tanpa persetujuan aktif",
-        fitur_pengunci="012 telemetri",
+        # Separuh pertama pasal ini terbaca bentuk: Peristiwa hanya dibentuk
+        # gerbang, dan gerbang tidak dapat dipanggil tanpa keadaan persetujuan.
+        # Separuh kedua — "pencabutan menghentikan seketika" — tidak terbaca
+        # AST; yang menutupnya adalah ketiadaan tempat menyimpan keadaan pada
+        # gerbang, ditegakkan uji perilaku dan uji bentuk fitur 012.
+        pemeriksa=periksa_perekaman_telemetri,
     ),
     Pasal(
         "C-05",

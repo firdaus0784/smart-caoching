@@ -188,10 +188,20 @@ def test_c05_terdaftar_dengan_pemeriksa_bukan_fitur_pengunci() -> None:
     assert pasal.fitur_pengunci is None
 
 
-def test_c04_belum_berpindah() -> None:
-    """C-04 menuntut telemetri **tidak merekam** tanpa persetujuan, dan
-    telemetri belum ada. Fitur 022 menyediakan yang diperiksanya, bukan
-    pemeriksanya — pembedaan yang sama dengan C-01 pada fitur 008."""
-    pasal = next(p for p in DAFTAR_PASAL if p.kode == "C-04")
-    assert pasal.pemeriksa is None
-    assert pasal.fitur_pengunci is not None
+def test_c04_dan_c05_berpindah_pada_fitur_yang_berbeda() -> None:
+    """Keduanya semula tertahan fitur 012, dan berpindah satu fitur terpisah.
+
+    **C-05 pernyataan struktural** tentang di mana kunci berada, dan
+    strukturnya dibangun fitur 022 — sehingga ia berpindah di sana, sebelum
+    telemetri ada. **C-04 menuntut sebuah gerbang** yang belum ada sampai
+    telemetri dibangun, sehingga ia menunggu fitur 012.
+
+    Uji ini semula berbunyi "C-04 belum berpindah" dan benar ketika ditulis.
+    Ia diganti — bukan dihapus — sebab pembedaannya tetap berlaku dan tetap
+    menjelaskan mengapa dua pasal yang tertahan bersama tidak berpindah
+    bersama.
+    """
+    for kode in ("C-04", "C-05"):
+        pasal = next(p for p in DAFTAR_PASAL if p.kode == kode)
+        assert pasal.pemeriksa is not None, kode
+        assert pasal.fitur_pengunci is None, kode
