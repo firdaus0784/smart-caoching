@@ -75,7 +75,7 @@ memanggilnya, hanya membaca berkas ekspornya.
 | R-11 | Ekspor **HARUS** membawa versi skema; berkas ekspor tanpa versi **TIDAK BOLEH** dihasilkan |
 | R-12 | Setiap dokumen **HARUS** membawa status pra-anotasinya (FR-C10) |
 | R-13 | **KETIKA** pra-anotasi dipakai pada sebuah batch, sistem **HARUS** menyisihkan sebagian batch tanpa pra-anotasi sebagai pembanding (FR-C10) |
-| R-14 | Uji kualifikasi **HARUS** menilai anotator terhadap kunci jawaban dengan ambang D-03 Bagian 12: F1 longgar ≥ 0,80 dan Kappa kategori ≥ 0,70 (FR-C09) |
+| R-14 | Uji kualifikasi **HARUS** menilai anotator terhadap kunci jawaban dengan ambang D-03 Bagian 13: F1 longgar ≥ 0,80 dan Kappa kategori ≥ 0,70 (FR-C09) |
 | R-15 | Catatan batch **HARUS** memuat seluruh bidang D-03 Bagian 11 dan tercatat ke `logbook/` (C-09) |
 | R-16 | Versi Label Studio yang dipakai **HARUS** tercatat pada `ketergantungan-disetujui.toml` dan diperiksa R-18 (KB-020) |
 
@@ -88,6 +88,16 @@ Bagian 11 tolak dengan dua rujukan literatur.
 **R-06 mengikuti pelajaran fitur 015.** Rentang yang tidak cocok diperbaiki
 diam-diam adalah rentang yang menunjuk kata lain tanpa satu galat pun — bentuk
 kegagalan yang sama dengan stemming yang menimpa permukaan.
+
+**Pembetulan rujukan R-14 (13 Agustus 2026, AK-14, KB-051).** R-14 semula
+menyebut *"D-03 Bagian 12"*. Ambangnya tidak ada di sana: Bagian 12 adalah
+beban kerja dan jadwal; F1 longgar ≥ 0,80 dan Kappa kategori ≥ 0,70 berdiri
+pada **Bagian 13**. Yang keliru rujukannya, bukan nilainya — dan itu sebabnya
+ia lolos sampai audit: kode yang mengambil angkanya membaca Bagian 13 dengan
+benar sementara spesifikasinya menunjuk halaman lain. Butir C-1 `tasks.md`
+sudah menandainya saat implementasi dan tidak mengubah `spec.md` sendiri;
+pembetulan ini menutup penandaan itu. Tercatat sebagai TK-55 pada `docs/D00.md`
+Bagian 7.12.
 
 **R-13 membangun pengendalian sebelum yang dikendalikannya ada.** Pra-anotasi
 menunggu fitur 004, tetapi *automation bias* yang dikendalikannya muncul pada

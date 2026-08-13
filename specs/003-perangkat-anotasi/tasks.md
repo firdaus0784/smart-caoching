@@ -61,7 +61,7 @@ ambang yang akan disetel di salah satunya tanpa ada yang tahu.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | Uji kualifikasi anotator terhadap kunci jawaban | Uji: ambang D-03 Bagian 12 — F1 longgar ≥ 0,80 dan Kappa kategori ≥ 0,70; **uji: lulus salah satu saja tidak cukup** | R-14 | [x] — ambangnya ada pada **Bagian 13**, bukan 12; pembetulan rujukan diajukan terpisah |
+| C-1 | Uji kualifikasi anotator terhadap kunci jawaban | Uji: ambang D-03 Bagian 13 — F1 longgar ≥ 0,80 dan Kappa kategori ≥ 0,70; **uji: lulus salah satu saja tidak cukup** | R-14 | [x] — ambangnya ada pada **Bagian 13**, bukan 12; rujukan `spec.md` dibetulkan 13 Agustus 2026 (KB-051) |
 | C-2 | `StatusPraAnotasi` pada setiap dokumen | Uji: dokumen tanpa status pra-anotasi tidak dapat dibentuk | R-12 | [x] — **tiga** status, bukan dua; pembanding dibedakan dari tanpa-pra-anotasi |
 | C-3 | Penyisihan batch pembanding ketika pra-anotasi dipakai | **Uji: batch berpra-anotasi tanpa pembanding ditolak** | R-13 | [x] — porsi minimum **tidak** ditetapkan; angkanya tidak ada pada dokumen mana pun (C-16) |
 | C-4 | Catatan batch ke `logbook/`, seluruh bidang D-03 Bagian 11 | Uji: satu baris per batch memuat kedelapan bidang; uji: bidang yang belum terhitung tercatat sebagai belum terhitung | R-15, C-09 | [x] — `f1_per_label` dibangun bersamanya; tanpanya bidang D-03 Bagian 11.3 tidak lengkap |
@@ -101,4 +101,4 @@ fitur 016, bukan dikerjakan di sini dari dugaan.
 | **R-10, R-11** ekspor JSONL/CoNLL | **Sengaja tidak dikerjakan.** Menuntut bentuk anotasi yang lengkap, dan kelengkapannya baru pasti sesudah fitur 016 memetakan ekspor Label Studio. Diajukan sebagai tugas pada fitur 016 |
 | **R-16** versi Label Studio pada `ketergantungan-disetujui.toml` | Menyusul pada fitur 016 bersama perluasan R-18 yang memeriksanya. Patokan tanpa pemeriksa tidak menjaga apa pun |
 | **Porsi minimum pembanding** | **Butir terbuka bagi tim.** Angkanya tidak ada pada D-01 maupun D-03; C-16 melarang menetapkannya sendiri. C-3 menegakkan batas yang tertulis — nol pembanding ditolak — dan melaporkan porsinya tanpa menilai |
-| **Rujukan D-03 pada R-14** | `spec.md` R-14 dan C-1 menyebut Bagian 12; ambangnya ada pada **Bagian 13**. Nilainya benar, rujukannya keliru. **Menunggu persetujuan manusia** — `spec.md` tidak diubah saat implementasi |
+| **Rujukan D-03 pada R-14** | ~~Menunggu persetujuan manusia~~ **Selesai 13 Agustus 2026 (AK-14, KB-051).** `spec.md` R-14 dan butir C-1 di bawah kini menyebut **Bagian 13**; nilainya tidak berubah karena nilainya memang tidak pernah keliru. Tercatat sebagai TK-55 pada `docs/D00.md` Bagian 7.12 |
