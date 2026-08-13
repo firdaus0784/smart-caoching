@@ -15,7 +15,7 @@ Satu tugas = satu commit.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | A-1 | `profil.py` — enam bidang D-04 Bagian 7.1 | **Uji: bidang dibaca dari `docs/D04.md`, bukan disalin ke uji.** Uji: bidang ketujuh ditolak. Uji: pembaruan mencatat waktunya | R-02, R-10, R-12 | [x] — enam isian dari D-04; nama bidang mengikuti D-14; pendeteksi FR-B04 dipakai ulang, dan salinan ketiganya dihapus |
-| A-2 | `prioritas.py` — 3–5 kategori K1–K8 berurutan | **Uji: 2 ditolak DAN 6 ditolak — kedua arah.** Uji: kategori kembar ditolak. Uji: `KategoriMasalah` dipakai ulang, tidak ditulis ulang | R-03, R-04 | [ ] |
+| A-2 | `prioritas.py` — 3–5 kategori K1–K8 berurutan | **Uji: 2 ditolak DAN 6 ditolak — kedua arah.** Uji: kategori kembar ditolak. Uji: `KategoriMasalah` dipakai ulang, tidak ditulis ulang | R-03, R-04 | [x] — kedua batas diuji; kembar dijaga tersendiri; urutan dihitung dari posisi; `KategoriMasalah` pemakaian ketiga |
 
 **A-2 diuji dari kedua arah.** "Menerima 3 sampai 5" lulus juga pada
 implementasi yang menerima berapa pun di atas 2, dan prioritas yang boleh
