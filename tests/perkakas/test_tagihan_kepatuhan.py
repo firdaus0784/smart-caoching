@@ -26,11 +26,11 @@ sebuah pasal, bukan perawatan terpisah.
 from perkakas.kepatuhan.daftar_pasal import DAFTAR_PASAL
 
 JUMLAH_PASAL = 20
-TERPERIKSA_MESIN = 16
-"""Enam belas dari dua puluh, sejak C-04 pada fitur 012.
+TERPERIKSA_MESIN = 17
+"""Tujuh belas dari dua puluh, sejak C-10 pada 13 Agustus 2026.
 
 Riwayatnya: 7 (fitur 001) → 8 (002, C-03) → 9 (006, C-02) → 10 (007, C-16) →
-11 (008, C-19) → 12 (009, C-20) → 14 (010, C-06 dan C-07) → 15 (022, C-05) → 16 (012, C-04).
+11 (008, C-19) → 12 (009, C-20) → 14 (010, C-06 dan C-07) → 15 (022, C-05) → 16 (012, C-04) → 17 (C-10).
 Empat fitur di
 antara 002 dan 006 tidak menyusutkannya sama sekali, dan itu yang mendorong
 KB-030 mendahulukan fitur 006 atas 005.
@@ -53,9 +53,14 @@ tertahan bersama; yang memisahkannya adalah bahwa C-05 pernyataan struktural
 tentang di mana kunci berada, sedangkan C-04 menuntut sebuah gerbang yang
 belum ada sampai telemetri dibangun.
 
-**Empat pasal tersisa, dan tiga di antaranya menunggu `web/`** — C-01 (fitur
-020), C-13 (013), C-14 (010 s.d. 013). Yang keempat, C-10, sudah dibangun
-sejak fitur 003.
+**C-10 berpindah tanpa fitur baru.** Kodenya sudah ada sejak fitur 003; yang
+kurang pemeriksanya, dan ketiadaan itu bertahan enam fitur. Ia dikerjakan
+sebagai commit berdiri sendiri, bentuk yang sama dengan pemeriksa arah
+(KB-038).
+
+**Tiga pasal tersisa, dan tidak satu pun dapat berpindah tanpa `web/` atau
+tanpa model yang belum ada** — C-01 (fitur 020), C-13 (013), C-14 (010 s.d.
+013).
 
 **C-01 tidak ikut berpindah pada fitur 008**, meski `daftar_pasal.py` semula
 mencatatnya demikian. Verifikasi yang C-01 tuntut mencakup VS-03, dan VS-03
@@ -65,7 +70,7 @@ yang sudah ada terbaca benar.
 """
 
 
-def test_tagihan_menyusut_menjadi_enam_belas() -> None:
+def test_tagihan_menyusut_menjadi_tujuh_belas() -> None:
     belum = [p for p in DAFTAR_PASAL if p.pemeriksa is None]
     assert len(DAFTAR_PASAL) == JUMLAH_PASAL
     assert JUMLAH_PASAL - len(belum) == TERPERIKSA_MESIN

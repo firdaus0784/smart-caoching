@@ -30,6 +30,7 @@ from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
 from perkakas.pemeriksa.gerbang_kurasi import periksa_gerbang_kurasi
 from perkakas.pemeriksa.impor_ocr import periksa_impor_ocr
 from perkakas.pemeriksa.impor_penyedia import periksa_impor_penyedia
+from perkakas.pemeriksa.indeks_karakter import periksa_indeks_karakter
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
 from perkakas.pemeriksa.logbook_tambah_saja import periksa_logbook_tambah_saja
 from perkakas.pemeriksa.nama_terlarang import periksa_nama_terlarang
@@ -139,7 +140,12 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-10",
         "rentang anotasi memakai indeks karakter, bukan token",
-        fitur_pengunci="003 perangkat anotasi",
+        # Kodenya sudah ada sejak fitur 003; yang kurang pemeriksanya, dan
+        # ketiadaan itu bertahan enam fitur. Indeks token dan indeks karakter
+        # sama-sama bilangan bulat: rentang yang keliru tidak menghasilkan
+        # galat, ia menunjuk kata lain — sehingga pasal ini justru yang paling
+        # sulit dilanggar dengan mencolok.
+        pemeriksa=periksa_indeks_karakter,
     ),
     Pasal(
         "C-11",
