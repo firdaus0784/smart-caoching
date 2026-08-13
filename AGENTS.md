@@ -61,7 +61,14 @@ tests/
 logbook/        D-10, diisi tiap percobaan
 ```
 
-Aturan arah: `api` boleh memanggil `nlp`, `rag`, `ingest`. Tidak sebaliknya.
+Aturan arah: `api` boleh memanggil `nlp`, `rag`, `ingest`, `llm`, `penyimpanan`.
+Tidak sebaliknya. Tepi ke `llm` dan `penyimpanan` dituliskan pada fitur 021,
+ketika jalur penjawaban akhirnya disambungkan: ia menyusun permintaan model dan
+membawa kredensial pengambilan. Alasannya dapat dinyatakan umum, dan itu yang
+membuatnya bukan perkecualian — C-08 menuntut seluruh pemanggilan model lewat
+`src/llm/`, sehingga setiap lapisan yang memanggil model wajib memiliki tepi ke
+sana, dan yang tidak memilikinya adalah lapisan yang tidak boleh memanggil
+model. Hal yang sejajar berlaku bagi `penyimpanan` dan C-03.
 `ingest` boleh memanggil `nlp`, satu jurusan — `nlp` tidak memanggil `ingest`.
 Tepi itu ada karena pendeteksi data pribadi tinggal di `nlp` sedangkan yang
 menjalankannya gerbang di `ingest`; ia dituliskan agar impornya terbaca sebagai

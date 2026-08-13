@@ -61,6 +61,12 @@ def _akar_tiruan(tmp_path: Path, dokumen: str = DOKUMEN) -> Path:
     `AGENTS.md` dan `Makefile` disalin dari repositori sebenarnya agar dua
     pemeriksa V-03 yang lain diam — bila keduanya ikut menyalak, uji ini akan
     lulus karena sebab yang salah.
+
+    `src/api/tanya.py` ikut disalin dengan alasan yang sama, dan alasannya
+    bukan kerapian: pemeriksa `hasil_jalur` fitur 021 **berbunyi ketika modul
+    yang dijaganya hilang**, sebab pemeriksa yang diam pada pohon yang
+    kehilangan seluruh penjagaannya melaporkan bersih pada keadaan terburuk.
+    Akar tiruan yang tidak memuatnya karena itu bukan akar yang selaras.
     """
     docs = tmp_path / "docs"
     docs.mkdir()
@@ -68,6 +74,9 @@ def _akar_tiruan(tmp_path: Path, dokumen: str = DOKUMEN) -> Path:
     (docs / "D99.md").write_text(dokumen, encoding="utf-8")
     for nama in ("AGENTS.md", "Makefile"):
         shutil.copy2(AKAR / nama, tmp_path / nama)
+    api = tmp_path / "src" / "api"
+    api.mkdir(parents=True)
+    shutil.copy2(AKAR / "src" / "api" / "tanya.py", api / "tanya.py")
     return tmp_path
 
 

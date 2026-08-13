@@ -26,7 +26,7 @@ arah saja meninggalkan lubang yang bentuknya persis kebalikan dari yang dijaga.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | B-1 | `src/api/tanya.py` — `HasilTanya`, `AlasanBerhenti`, `jawab()` | **Uji: bukti tidak cukup TIDAK memanggil model** — dihitung adaptor tiruan, bukan disimpulkan dari kembalian. Uji: di luar domain berhenti sebelum pengambilan. Uji: keluaran yang ditahan validator tidak menjadi tanggapan | R-05 s.d. R-09, R-12 | [x] — **lima** alasan berhenti, bukan tiga; M-1, M-3, M-5, M-8, dan mutasi C-02 seluruhnya menyala; M-2 tidak dapat dinyatakan (lihat catatan) |
-| B-2 | Pemeriksa bentuk `HasilTanya` dan tepi `api → llm` pada `AGENTS.md` | **Uji: `HasilTanya` tidak dapat dibentuk di luar modulnya.** Uji: pemeriksa arah menerima tepi baru dan tetap menolak arah sebaliknya | R-06, R-10, R-11 | [ ] |
+| B-2 | Pemeriksa bentuk `HasilTanya` dan tepi `api → llm` pada `AGENTS.md` | **Uji: `HasilTanya` tidak dapat dibentuk di luar modulnya.** Uji: pemeriksa arah menerima tepi baru dan tetap menolak arah sebaliknya | R-06, R-10, R-11 | [x] — dua aturan; M-4 menyala pada kedua bentuknya; tepi `api → llm` dan `api → penyimpanan` dituliskan beserta alasan yang berlaku umum |
 
 **B-1 adalah tempat C-17, C-18, dan C-19 bertemu satu urutan.** Ketiganya
 dijaga lapisannya masing-masing hari ini; yang dibangun di sini adalah tempat

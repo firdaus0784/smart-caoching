@@ -34,6 +34,7 @@ from perkakas.pemeriksa.gerbang_v import (
     periksa_ketertelusuran,
     periksa_rahasia,
 )
+from perkakas.pemeriksa.hasil_jalur import periksa_hasil_jalur
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
 from perkakas.pemeriksa.ketergantungan_sistem import periksa_ketergantungan_sistem
 from perkakas.pemeriksa.konsistensi_dokumen import (
@@ -112,6 +113,7 @@ def _v03(akar: Path) -> HasilGerbang:
         *periksa_kode_menggantung(akar),
         *periksa_arah_arsitektur(akar),
         *periksa_rute_terdaftar(akar),
+        *periksa_hasil_jalur(akar),
     ]
     return HasilGerbang("V-03", "ketertelusuran dan keselarasan dokumen", temuan)
 
