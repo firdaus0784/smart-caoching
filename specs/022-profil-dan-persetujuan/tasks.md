@@ -25,8 +25,8 @@ berjumlah sembilan membuat penyaringan feed FR-G01 tidak menyaring apa pun.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `persetujuan.py` — empat keadaan, sifat terhitung | **Uji: `DICABUT` tidak mengizinkan perekaman.** Uji: `BELUM_DIMINTA` dan `DITOLAK` tidak sama meski keduanya menghentikan. Uji: gabungan mustahil ditolak; `dicabut_pada` mendahului `tanggal` ditolak | R-05, R-06, R-08 | [ ] |
-| B-2 | Ketiadaan pemetaan persetujuan ke akses | **Uji: permukaan modul tidak menyediakan cara menurunkan akses berdasarkan persetujuan** | R-07 | [ ] |
+| B-1 | `persetujuan.py` — empat keadaan, sifat terhitung | **Uji: `DICABUT` tidak mengizinkan perekaman.** Uji: `BELUM_DIMINTA` dan `DITOLAK` tidak sama meski keduanya menghentikan. Uji: gabungan mustahil ditolak; `dicabut_pada` mendahului `tanggal` ditolak | R-05, R-06, R-08 | [x] — empat keadaan, dua pembedaan dijaga uji tersendiri; gabungan mustahil ditolak; M-1, M-2, M-4, M-10 menyala |
+| B-2 | Ketiadaan pemetaan persetujuan ke akses | **Uji: permukaan modul tidak menyediakan cara menurunkan akses berdasarkan persetujuan** | R-07 | [x] — ketiadaan diuji tiga arah: permukaan tipe, daftar sifat, dan naskah modul |
 
 **B-1 adalah prasyarat C-04.** `boleh_merekam` adalah satu-satunya sifat yang
 fitur 012 kelak tanyakan, dan ia terhitung — bukan bidang yang dapat diisi.
