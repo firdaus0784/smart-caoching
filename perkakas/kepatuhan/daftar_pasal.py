@@ -37,6 +37,7 @@ from perkakas.pemeriksa.pemisahan_indeks import periksa_pemisahan_indeks
 from perkakas.pemeriksa.pemisahan_instruksi import periksa_pemisahan_instruksi
 from perkakas.pemeriksa.pemisahan_penyimpanan import periksa_pemisahan_penyimpanan
 from perkakas.pemeriksa.peringkat_klaim import periksa_peringkat_klaim
+from perkakas.pemeriksa.peta_pseudonim import periksa_peta_pseudonim
 from perkakas.pemeriksa.regulasi_dicabut import periksa_regulasi_dicabut
 from perkakas.pemeriksa.tanpa_kemampuan_bertindak import periksa_tanpa_kemampuan_bertindak
 
@@ -97,7 +98,13 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-05",
         "kunci pseudonim terpisah dari data perilaku",
-        fitur_pengunci="012 telemetri",
+        # Separuh pertama pasal ini — basis data terpisah — adalah keputusan
+        # penyebaran D-09 dan tidak terbaca kode. Separuh kedua — tidak
+        # terjangkau layanan aplikasi — terbaca, dan itu yang diperiksa:
+        # kredensialnya bertipe tersendiri dan tidak dibentuk di mana pun pada
+        # src/. Bentuk yang sama dengan C-03 yang berpindah pada fitur 002
+        # sebelum layanan RAG ada.
+        pemeriksa=periksa_peta_pseudonim,
     ),
     Pasal(
         "C-06",

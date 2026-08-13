@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-046) |
 | Plan | `plan.md`, lolos Gerbang 2 (KB-046) |
-| Status | **Lolos Gerbang 1–3** (KB-046) |
+| Status | **Lolos Gerbang 4** (KB-047) |
 | Jumlah tugas | **5** |
 | Ketergantungan baru | **Nol** |
 
@@ -38,7 +38,7 @@ diuji: larangan tidak terlihat dengan menjalankan apa pun.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | `pseudonim.py` + pemeriksa C-05; pemindahannya pada `daftar_pasal.py` | **Uji: `make compliance` menyusut satu — 15 lulus, 5 belum.** Uji: ketiga aturan menyala terpisah pada pohon yang dirusak. Uji: `Area` tetap dua nilai | R-09 | [ ] |
+| C-1 | `pseudonim.py` + pemeriksa C-05; pemindahannya pada `daftar_pasal.py` | **Uji: `make compliance` menyusut satu — 15 lulus, 5 belum.** Uji: ketiga aturan menyala terpisah pada pohon yang dirusak. Uji: `Area` tetap dua nilai | R-09 | [x] — kredensial bertipe tersendiri; ketiga aturan diuji terpisah pada pohon yang dirusak; tagihan 14 → 15 |
 
 **Aturan 3 menutup dua aturan pertama.** Memindahkan peta pseudonim menjadi
 nilai ketiga pada `Area` memuaskan keduanya sambil membatalkan C-05 — bentuk
@@ -46,13 +46,13 @@ yang sama dengan aturan VS-08 pada pemeriksa C-19.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **menyusut satu** — 15 lulus, 0 gagal, **5** belum
-- [ ] Kesepuluh uji mutasi `plan.md` Bagian 4 dijalankan; hasilnya dilaporkan apa adanya
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
-- [ ] `AGENTS.md` bertambah satu baris arah bagi `src/pengguna/`
-- [ ] `KategoriMasalah` dipakai ulang — pemakaian ketiga, bukan definisi kedua
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **menyusut satu** — 15 lulus, 0 gagal, **5** belum
+- [x] Kesepuluh uji mutasi `plan.md` Bagian 4 dijalankan; hasilnya dilaporkan apa adanya — M-1 s.d. M-10 seluruhnya menyala, dua sesudah uji ditambahkan; sembilan mutasi tambahan
+- [x] Cakupan uji tidak turun — 99,83 → 99,84 atas 2.758 pernyataan
+- [x] **Nol ketergantungan baru**
+- [x] `AGENTS.md` bertambah satu baris arah bagi `src/pengguna/`
+- [x] `KategoriMasalah` dipakai ulang — pemakaian ketiga, bukan definisi kedua
 
 ## Yang tidak dikerjakan di sini
 

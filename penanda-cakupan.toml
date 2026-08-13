@@ -12,7 +12,7 @@
 # Menurunkan angka ini untuk meloloskan `make check` membatalkan gunanya.
 # Perubahannya adalah keputusan manusia, dicatat pada logbook/L4.
 
-tercatat = 99.83
-pernyataan = 2611
-diukur_pada = "2026-08-12"
-diukur_pada_fitur = "010 pipeline kurasi, Gerbang 4"
+tercatat = 99.84
+pernyataan = 2758
+diukur_pada = "2026-08-13"
+diukur_pada_fitur = "022 profil dan persetujuan, Gerbang 4"

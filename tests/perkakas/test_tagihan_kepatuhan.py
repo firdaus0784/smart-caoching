@@ -26,11 +26,12 @@ sebuah pasal, bukan perawatan terpisah.
 from perkakas.kepatuhan.daftar_pasal import DAFTAR_PASAL
 
 JUMLAH_PASAL = 20
-TERPERIKSA_MESIN = 14
-"""Empat belas dari dua puluh, sejak C-06 dan C-07 pada fitur 010.
+TERPERIKSA_MESIN = 15
+"""Lima belas dari dua puluh, sejak C-05 pada fitur 022.
 
 Riwayatnya: 7 (fitur 001) → 8 (002, C-03) → 9 (006, C-02) → 10 (007, C-16) →
-11 (008, C-19) → 12 (009, C-20) → 14 (010, C-06 dan C-07). Empat fitur di
+11 (008, C-19) → 12 (009, C-20) → 14 (010, C-06 dan C-07) → 15 (022, C-05).
+Empat fitur di
 antara 002 dan 006 tidak menyusutkannya sama sekali, dan itu yang mendorong
 KB-030 mendahulukan fitur 006 atas 005.
 
@@ -40,6 +41,13 @@ Pemeriksa C-07 tetap memeriksa ketiga lapis, bukan lapis yang fitur ini bangun
 saja — pasal yang dijaga tiga lapis dan diperiksa pada satu di antaranya adalah
 pasal yang lolos ketika lapis itu dipindahkan.
 
+**C-05 berpindah pada fitur 022, C-04 tidak.** Keduanya semula tertahan fitur
+012. Yang membedakan: C-05 pernyataan **struktural** tentang di mana kunci
+berada, dan strukturnya dibangun fitur 022 — bentuk yang sama dengan C-03 yang
+berpindah pada fitur 002 sebelum layanan RAG ada. C-04 menuntut telemetri
+**tidak merekam** tanpa persetujuan, dan telemetri belum ada; fitur 022
+menyediakan yang diperiksanya, bukan pemeriksanya.
+
 **C-01 tidak ikut berpindah pada fitur 008**, meski `daftar_pasal.py` semula
 mencatatnya demikian. Verifikasi yang C-01 tuntut mencakup VS-03, dan VS-03
 menunggu model sematan serta BT-29. Alasan tunggunya dikoreksi menjadi menyebut
@@ -48,7 +56,7 @@ yang sudah ada terbaca benar.
 """
 
 
-def test_tagihan_menyusut_menjadi_empat_belas() -> None:
+def test_tagihan_menyusut_menjadi_lima_belas() -> None:
     belum = [p for p in DAFTAR_PASAL if p.pemeriksa is None]
     assert len(DAFTAR_PASAL) == JUMLAH_PASAL
     assert JUMLAH_PASAL - len(belum) == TERPERIKSA_MESIN
