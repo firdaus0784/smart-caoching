@@ -165,3 +165,91 @@ yang sudah dipakai sejak KB-017:
 
 Perubahan itu **keputusan tim, bukan keputusan agen** — berkas persetujuan
 menyatakannya sendiri.
+
+---
+
+## 9 · Keputusan yang diambil atas pendelegasian — 13 Agustus 2026
+
+Pemegang Gerbang 1–4 menyerahkan keputusan ini kepada agen dengan permintaan
+agar rekomendasinya bersandar pada rujukan ilmiah yang sudah dipakai proyek.
+Bagian ini mencatat hasilnya. Ia **dapat dibatalkan satu kalimat**; yang
+dituliskan di sini adalah alasannya, bukan kewenangannya.
+
+### 9.1 Keputusan A — model sematan
+
+**Calon utama: `multilingual-e5-large-instruct`. Pembanding wajib:
+`SEA-Embedding-E5-Large-600M`. Keduanya diputuskan final pada BT-29, bukan di
+sini.**
+
+Dasarnya **SEA-BED** (ACL 2026), tolok ukur sematan sepuluh bahasa Asia
+Tenggara atas 169 himpunan data, yang menempatkan `multilingual-e5-large-instruct`
+teratas bagi Bahasa Indonesia. Rujukannya masuk D-11 Bagian 3.4.
+
+Yang membuat keputusan ini berbentuk **sepasang calon, bukan satu pilihan**,
+adalah temuan SEA-BED sendiri: tidak ada satu model pun yang unggul merata
+lintas bahasa dan tugas, dan keberhasilan pada satu tugas tidak dapat
+diandalkan merambat ke tugas lain. Memilih satu model dari papan peringkat lalu
+menyatakannya selesai adalah bentuk kekeliruan yang C-16 larang pada ambang.
+Selisih pembandingnya sendiri kecil — 0,800 berbanding 0,789 pada rerata
+SEA-BED — dan selisih sekecil itu justru yang paling wajib diukur pada gold set
+sendiri alih-alih disalin.
+
+**Satu temuan SEA-BED mengubah rancangan, bukan hanya pilihan model.** Model
+teratas bagi Bahasa Indonesia tetap memberi kemiripan 0,75–0,81 pada pasangan
+kalimat yang **tidak berkaitan**. Ambang kemiripan mutlak karena itu tidak
+dapat memisahkan segmen relevan dari yang tidak, sehingga penilaian kecukupan
+bukti D-07 Bagian 4.6 wajib bersandar pada **peringkat**. Penggabungan RRF yang
+sudah dipilih (Cormack dkk. 2009) ternyata benar dengan alasan yang belum
+diketahui saat ia dipilih.
+
+**Kekhawatiran ukuran `torch` pada Bagian 3.1 dicabut sebagian.** Model berjalan
+di sisi peladen, bukan di perangkat kepala sekolah; `web/` adalah PWA yang
+memanggil rute. 527 MB menyentuh waktu pemasangan dan ukuran citra D-09 — dan
+itu saja. Ia **tidak** menyentuh kemampuan bekerja luring pengguna.
+
+### 9.2 Keputusan B — kerangka web
+
+**`fastapi`, `uvicorn`, `httpx` — disetujui.** Ketiganya berlisensi permisif
+(MIT, BSD-3-Clause, BSD-3-Clause), diperiksa ke PyPI pada 12 Agustus 2026.
+
+Keputusan ini tidak menambah pilihan arsitektur melainkan **menyelaraskan
+persetujuan dengan arsitektur yang sudah tertulis**: `AGENTS.md` menyebut
+`src/api/` sebagai "FastAPI, satu-satunya titik masuk" sejak fitur 001.
+KB-039 benar menolak membaca kalimat itu sebagai persetujuan; yang kurang
+memang persetujuannya, bukan pilihannya.
+
+### 9.3 Keputusan C — penggerak PostgreSQL
+
+**`asyncpg` (Apache-2.0). `psycopg` ditolak.**
+
+Alasannya bukan mutu teknis `psycopg`, melainkan **kelas lisensinya**.
+Kesepuluh paket yang sudah disetujui berlisensi MIT, BSD-3-Clause, atau
+Apache-2.0. LGPL-3.0-only akan menjadi kelas lisensi pertama yang tidak
+permisif pada proyek yang menerbitkan artefak penelitian dan mengejar HKI
+(FR-E05). Menerima kelas lisensi baru menuntut telaah yang tidak sebanding
+dengan keuntungan yang diperoleh, sementara dua alternatif permisif tersedia.
+
+`asyncpg` dipilih di atas `pg8000` karena FastAPI bersifat asinkron sejak
+rancangannya, dan Apache-2.0 menyamai lisensi `transformers` serta
+`sentence-transformers` pada tumpukan yang sama.
+
+### 9.4 Yang **tidak** saya setujui, dan mengapa
+
+**Bobot model sematan belum disetujui.** Lisensi paket Python dan lisensi
+bobot model adalah dua artefak berbeda dengan lisensi berbeda, dan proyek ini
+melarang menyimpulkan lisensi alih-alih membacanya — KL-01 menyatakannya bagi
+korpus, dan alasannya berlaku sama di sini. Saya **tidak dapat**
+memverifikasinya: kebijakan jaringan menutup `huggingface.co`. Menyetujuinya
+dari ingatan akan mengulangi persis yang KB-041 tolak.
+
+**Satu tugas untuk manusia, dan ia berlangsung semenit:** buka halaman model,
+baca berkas lisensinya, catat hasilnya di sini. Sampai itu terjadi, fitur 019
+tidak mengunduh bobot apa pun.
+
+**`ketergantungan-disetujui.toml` sengaja belum disentuh.** Berkas itu
+memasangkan daftar `langsung` dengan pohon transitif `[terkunci]`, dan V-04
+menggagalkan `make check` pada selisih apa pun terhadap `uv.lock`. Menambah
+nama tanpa memasang paketnya akan memutus berkas itu dari gunanya sendiri.
+Barisnya ditambahkan **pada saat pemasangan**, oleh fitur yang membutuhkannya
+— 019 bagi tumpukan sematan, 021 bagi kerangka web — dengan menyebut KB-044
+sebagai keputusannya.
