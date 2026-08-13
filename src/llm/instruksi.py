@@ -28,9 +28,30 @@ class KunciInstruksi(Enum):
     """Pengenal instruksi yang tersedia. Bukan teksnya."""
 
     UJI_ASAP = "uji_asap"
+    PENJAWABAN = "penjawaban"
 
 
 _TEKS: Final[dict[KunciInstruksi, str]] = {
+    # IN-01 s.d. IN-07 `docs/D07.md` Bagian 5.2, ditulis apa adanya sebagai
+    # tetapan. Instruksi yang dirakit saat jalan adalah instruksi yang dapat
+    # dirakit dari masukan, dan itu persis pintu yang C-18 tutup.
+    #
+    # D-07 Bagian 5.2 sendiri menyatakan batasnya: "IN-01 sampai IN-03 akan
+    # dilanggar model sesekali; itulah sebabnya validator ada." Teks ini
+    # melengkapi validator, tidak menggantikannya.
+    KunciInstruksi.PENJAWABAN: (
+        "Jawab pertanyaan kepala sekolah dasar hanya dari segmen yang "
+        "disediakan. Jangan memakai pengetahuanmu sendiri. Setiap klaim "
+        "faktual wajib menyertakan id_segmen pendukungnya. Bila segmen tidak "
+        "memuat jawabannya, nyatakan demikian; jangan menyusun jawaban yang "
+        "terdengar masuk akal. Tulis dalam Bahasa Indonesia, kalimat paling "
+        "banyak 20 kata, istilah teknis dijelaskan pada kemunculan pertama. "
+        "Jangan menyalin kalimat utuh dari segmen; parafrasekan. Jangan "
+        "memberi nasihat hukum, medis, atau keuangan pribadi. Jangan menyebut "
+        "nama perorangan meski muncul dalam segmen. Balas sebagai objek JSON "
+        "dengan kunci ringkasan_tindakan, penjelasan, klaim, dan "
+        "catatan_keberlakuan."
+    ),
     KunciInstruksi.UJI_ASAP: (
         "Balas dengan satu kalimat singkat. Instruksi ini hanya untuk menguji "
         "jalur pembungkus dan tidak dipakai menyusun jawaban kepada pengguna."

@@ -25,12 +25,35 @@ arah saja meninggalkan lubang yang bentuknya persis kebalikan dari yang dijaga.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| B-1 | `src/api/tanya.py` — `HasilTanya`, `AlasanBerhenti`, `jawab()` | **Uji: bukti tidak cukup TIDAK memanggil model** — dihitung adaptor tiruan, bukan disimpulkan dari kembalian. Uji: di luar domain berhenti sebelum pengambilan. Uji: keluaran yang ditahan validator tidak menjadi tanggapan | R-05 s.d. R-09, R-12 | [ ] |
+| B-1 | `src/api/tanya.py` — `HasilTanya`, `AlasanBerhenti`, `jawab()` | **Uji: bukti tidak cukup TIDAK memanggil model** — dihitung adaptor tiruan, bukan disimpulkan dari kembalian. Uji: di luar domain berhenti sebelum pengambilan. Uji: keluaran yang ditahan validator tidak menjadi tanggapan | R-05 s.d. R-09, R-12 | [x] — **lima** alasan berhenti, bukan tiga; M-1, M-3, M-5, M-8, dan mutasi C-02 seluruhnya menyala; M-2 tidak dapat dinyatakan (lihat catatan) |
 | B-2 | Pemeriksa bentuk `HasilTanya` dan tepi `api → llm` pada `AGENTS.md` | **Uji: `HasilTanya` tidak dapat dibentuk di luar modulnya.** Uji: pemeriksa arah menerima tepi baru dan tetap menolak arah sebaliknya | R-06, R-10, R-11 | [ ] |
 
 **B-1 adalah tempat C-17, C-18, dan C-19 bertemu satu urutan.** Ketiganya
 dijaga lapisannya masing-masing hari ini; yang dibangun di sini adalah tempat
 yang membuat melewatinya tidak mungkin, bukan sekadar salah.
+
+**Koreksi B-1 saat implementasi — `plan.md` Bagian 4 menyebut tiga alasan
+berhenti; ada lima.** Yang keempat, `KELUARAN_TIDAK_TERBACA`, muncul karena
+model dapat mengembalikan sesuatu yang bukan kontrak D-07 Bagian 5.1.
+
+Yang kelima adalah **temuan sesungguhnya fitur ini**:
+`MENUNGGU_PEMERIKSAAN_MODEL`. VS-03, VS-05, dan VS-07 berstatus
+`BELUM_DAPAT_DIPERIKSA` sampai fitur 020 ada, dan `HasilValidasi.tervalidasi`
+menuntut kesembilan pemeriksaan tidak menghalangi — status itu menghalangi,
+sama seperti gagal. **Hari ini jalur ini karena itu tidak dapat menghasilkan
+satu jawaban pun.** Itu perilaku yang benar dan dipilih sadar pada fitur 008;
+yang keliru adalah membiarkannya terhitung sebagai `DITAHAN_VALIDATOR`, sebab
+laporan yang berbunyi "validator menahan seluruh jawaban" akan membuat
+seseorang melonggarkan validator — dengan angka yang benar. C-16 melarangnya
+justru untuk keadaan seperti ini.
+
+Ia tidak terlihat sampai tahapnya bersebelahan. Fitur 008 benar, fitur 021
+benar, dan sambungannya yang memunculkannya.
+
+**M-2 tidak dapat dinyatakan sebagai mutasi.** "Susun tanggapan dari keluaran
+yang ditahan validator" tidak dapat ditulis: `susun()` hanya menerima
+`JawabanTervalidasi`, dan pada cabang penahanan nilainya `None`. Dilaporkan apa
+adanya — dicegah tipe, bukan diuji.
 
 **Uji "tidak memanggil model" tidak dapat digantikan uji nilai kembalian.**
 Implementasi yang memanggil model lalu membuang hasilnya mengembalikan nilai
