@@ -15,7 +15,7 @@ Satu tugas = satu commit.
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
 | A-1 | `src/api/peran.py` — keenam peran D-14 Bagian 3 dan tabel rute | **Uji: tabel dibaca dari `docs/D14.md`, bukan disalin ke uji.** Uji: setiap rute D-14 punya peran. Uji: rute yang tidak ada di D-14 ditolak (AG-02) | R-01 s.d. R-04 | [x] — 29 rute D-14 Bagian 3 ditulis penuh; tabel dibaca dari dokumen dua arah; M-6 dan M-7 menyala |
-| A-2 | Pemeriksa kendali peran pada `perkakas/` | **Uji: pemeriksa menyala ketika satu rute dihapus dari tabel DAN ketika satu rute dikarang** | R-02, R-03 | [ ] |
+| A-2 | Pemeriksa kendali peran pada `perkakas/` | **Uji: pemeriksa menyala ketika satu rute dihapus dari tabel DAN ketika satu rute dikarang** | R-02, R-03 | [x] — menyapu untai jalur API di seluruh `src/`, bukan mengulang uji `PETA_RUTE`; berjalan pada V-03 bersama pemeriksa arah |
 
 **A-1 diuji dua arah, dan keduanya perlu.** Arah pertama menangkap rute yang
 bertambah pada D-14; arah kedua menangkap rute yang dikarang pada kode. Satu

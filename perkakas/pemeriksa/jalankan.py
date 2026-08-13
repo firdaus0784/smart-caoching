@@ -42,6 +42,7 @@ from perkakas.pemeriksa.konsistensi_dokumen import (
 )
 from perkakas.pemeriksa.perintah_selaras import periksa_perintah_selaras
 from perkakas.pemeriksa.placeholder import periksa_placeholder
+from perkakas.pemeriksa.rute_terdaftar import periksa_rute_terdaftar
 
 
 @dataclass(frozen=True)
@@ -110,6 +111,7 @@ def _v03(akar: Path) -> HasilGerbang:
         *periksa_konsistensi_dokumen(akar),
         *periksa_kode_menggantung(akar),
         *periksa_arah_arsitektur(akar),
+        *periksa_rute_terdaftar(akar),
     ]
     return HasilGerbang("V-03", "ketertelusuran dan keselarasan dokumen", temuan)
 

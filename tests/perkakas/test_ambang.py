@@ -17,6 +17,7 @@ setiap kerusakan dibuat menyerupai kekeliruan yang benar-benar mungkin terjadi
 from pathlib import Path
 
 import pytest
+
 from perkakas.kepatuhan.daftar_pasal import DAFTAR_PASAL
 from perkakas.pemeriksa.ambang import periksa_ambang, rumah_tetapan
 
@@ -223,4 +224,4 @@ def test_rumah_tetapan_dimiliki_perkakas_bukan_uji() -> None:
     dari sana akan berbeda dari pemeriksa yang menyalinnya."""
     from tests.nlp.test_ambang_kesepakatan import RUMAH_TETAPAN
 
-    assert RUMAH_TETAPAN == rumah_tetapan(AKAR)
+    assert rumah_tetapan(AKAR) == RUMAH_TETAPAN
