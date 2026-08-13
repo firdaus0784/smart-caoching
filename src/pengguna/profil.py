@@ -92,7 +92,20 @@ class ProfilSekolah(BaseModel):
     Beku. Pembaruan menghasilkan profil baru lewat `diperbarui()`.
     """
 
-    model_config = ConfigDict(frozen=True, extra="forbid")
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        # Tanpa `hide_input_in_errors`, pydantic menyalin nilai masukan ke
+        # dalam pesan galat — sehingga nomor yang ditolak penjagaan KM-03 pada
+        # `wilayah` tetap muncul lewat jalur yang bukan pesan kita. Galat yang
+        # mengulang muatannya memindahkan kebocoran dari basis data ke log.
+        #
+        # Cacat ini ada pada berkas ini sejak tugas A-1 dan ditemukan beberapa
+        # jam kemudian oleh uji fitur 012 — penjagaannya benar, rendering
+        # galatnya yang membocorkan. Sapuan pada
+        # `tests/tata_kelola/test_galat_tidak_membocorkan.py` menutupnya.
+        hide_input_in_errors=True,
+    )
 
     id_pengguna: str = Field(min_length=1)
     jabatan: str = Field(min_length=1)

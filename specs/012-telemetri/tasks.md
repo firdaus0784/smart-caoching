@@ -14,8 +14,8 @@ Satu tugas = satu commit.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| A-1 | `peristiwa.py` — taksonomi + enam bidang FR-J02 | **Uji: kode peristiwa dibaca dari `docs/D01.md` Bagian 9, bukan disalin.** Uji: tidak ada bidang `id_pengguna`. Uji: kode di luar taksonomi ditolak | R-01, R-02, R-03, R-09 | [ ] |
-| A-2 | Penjagaan `properti` dua arah | **Uji: nilai bermuatan nomor ditolak DAN kunci beridentitas ditolak** — keduanya, sebab kunci beridentitas lolos pendeteksi pola | R-06 | [ ] |
+| A-1 | `peristiwa.py` — taksonomi + enam bidang FR-J02 | **Uji: kode peristiwa dibaca dari `docs/D01.md` Bagian 9, bukan disalin.** Uji: tidak ada bidang `id_pengguna`. Uji: kode di luar taksonomi ditolak | R-01, R-02, R-03, R-09 | [x] — dua puluh kode dibaca dari D-01; tanpa bidang `id_pengguna` |
+| A-2 | Penjagaan `properti` dua arah | **Uji: nilai bermuatan nomor ditolak DAN kunci beridentitas ditolak** — keduanya, sebab kunci beridentitas lolos pendeteksi pola | R-06 | [x] — nilai, kunci, sarang, dan daftar; galat berhenti membocorkan masukan lewat `hide_input_in_errors` |
 
 ## Fase B · Gerbang C-04
 
