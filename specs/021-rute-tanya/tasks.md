@@ -6,7 +6,7 @@ Satu tugas = satu commit.
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-052) |
 | Plan | `plan.md`, lolos Gerbang 2 (KB-052) |
-| Status | Lolos Gerbang 3 (KB-052) |
+| Status | **Lolos Gerbang 4** (KB-053) |
 | Jumlah tugas | **5** |
 | Ketergantungan baru | **Nol** |
 
@@ -64,7 +64,7 @@ biaya, jejak `logbook/`, serta satu kesempatan bagi C-18 untuk dilanggar.
 
 | # | Tugas | Uji lebih dulu | Kebutuhan | Selesai |
 |---|---|---|---|---|
-| C-1 | `src/api/percakapan.py` — FR-F09 | **Uji: riwayat menyimpan `id_pesan`, bukan salinan `Tanggapan`.** Uji: tambah-saja — permukaan tanpa cara menyunting maupun menghapus | R-13, R-14 | [ ] |
+| C-1 | `src/api/percakapan.py` — FR-F09 | **Uji: riwayat menyimpan `id_pesan`, bukan salinan `Tanggapan`.** Uji: tambah-saja — permukaan tanpa cara menyunting maupun menghapus | R-13, R-14 | [x] — `Giliran` tanpa bidang bagi tanggapan, diuji sebagai ketiadaan bidang; M-9 menyala pada dua uji, M-10 menyala lewat sapuan `tests/tata_kelola/` |
 
 **C-1 melarang menyimpan salinan, dan itu bukan penghematan.** Tanggapan yang
 tersimpan menua: status keberlakuan sitasinya berubah ketika regulasinya
@@ -73,13 +73,18 @@ yang tidak dijaga siapa pun.
 
 ## Verifikasi akhir
 
-- [ ] `make check` lulus 6 gerbang
-- [ ] `make compliance` **tetap 17 lulus / 0 gagal / 3 belum** — tidak satu pun
-      pasal berpindah di sini, dan bila ia berpindah berarti ada yang keliru
-- [ ] Kesembilan uji mutasi `plan.md` Bagian 7 dijalankan; hasilnya dilaporkan
-      apa adanya
-- [ ] Cakupan uji tidak turun
-- [ ] **Nol ketergantungan baru**
+- [x] `make check` lulus 6 gerbang
+- [x] `make compliance` **tetap 17 lulus / 0 gagal / 3 belum** — tidak satu pun
+      pasal berpindah di sini, sebagaimana diperkirakan
+- [x] Kesembilan uji mutasi `plan.md` Bagian 7 dijalankan; hasilnya dilaporkan
+      apa adanya — **delapan menyala, satu tidak dapat dinyatakan.** M-2
+      ("susun tanggapan dari keluaran yang ditahan") tidak dapat ditulis:
+      `susun()` hanya menerima `JawabanTervalidasi` dan pada cabang penahanan
+      nilainya `None`. Ia dicegah tipe, bukan diuji. Dua mutasi tambahan
+      dijalankan di luar rencana — penyaringan C-02 dan `hide_input_in_errors`
+      — dan keduanya menyala
+- [x] Cakupan uji **naik**, 99,85 → 99,86 atas 3.058 pernyataan
+- [x] **Nol ketergantungan baru**
 
 ## Yang tidak dikerjakan di sini
 
