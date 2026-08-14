@@ -30,13 +30,13 @@ from __future__ import annotations
 PAGU_KURASI_HARIAN = 15
 """Butir yang dinilai kurator per hari kerja — `docs/D06.md` Bagian 8.3.
 
-Dasarnya ritme 20–30 menit per hari (D-06 Bagian 7.2) dan 2 menit per butir
+Dasarnya ritme 20-30 menit per hari (D-06 Bagian 7.2) dan 2 menit per butir
 (D-05 S-15). Ia **batas kelayakan, bukan target efisiensi**: kurator adalah
 dosen yang juga mengajar.
 """
 
 PENGALI_AMBANG_ANTREAN = 2
-"""Antrean dianggap melampaui ambang bila lebih dari 2× pagu harian.
+"""Antrean dianggap melampaui ambang bila lebih dari 2x pagu harian.
 
 `docs/D06.md` Bagian 8.3 dan PM-01. Dinyatakan sebagai pengali, bukan sebagai
 angka 30, agar ia tetap benar ketika pagu harian berubah — dan pagu harian

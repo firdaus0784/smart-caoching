@@ -18,7 +18,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 from src.telemetri.peristiwa import JenisPeristiwa, Peristiwa
 
 AKAR = Path(__file__).resolve().parents[2]

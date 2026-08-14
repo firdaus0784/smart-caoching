@@ -166,9 +166,7 @@ class CatatanPersetujuan(BaseModel):
         if self.dicabut_pada is None:
             return self
         if not self.disetujui:
-            raise ValueError(
-                "penolakan tidak membawa waktu pencabutan — tidak ada yang dicabut"
-            )
+            raise ValueError("penolakan tidak membawa waktu pencabutan — tidak ada yang dicabut")
         if self.dicabut_pada <= self.tanggal:
             raise ValueError(
                 "pencabutan tidak dapat mendahului atau menyamai waktu persetujuan — "

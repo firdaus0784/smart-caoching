@@ -49,7 +49,7 @@ JUMLAH_KATA_INTI_MAKSIMUM = 120
 """D-06 Bagian 5: `inti_temuan` ≤ 120 kata, parafrase penuh (KL-03)."""
 
 JUMLAH_IMPLIKASI_MAKSIMUM = 3
-"""D-06 Bagian 5: `implikasi_tindakan` 1–3 butir, berbentuk kalimat perintah."""
+"""D-06 Bagian 5: `implikasi_tindakan` 1-3 butir, berbentuk kalimat perintah."""
 
 WAKTU_BACA_MAKSIMUM_MENIT = 7
 """D-06 Bagian 5 dan FR-G03: perkiraan waktu baca ≤ 7 menit."""
@@ -138,8 +138,7 @@ class ButirPengetahuan(BaseModel):
     def _implikasi_terbatas(cls, nilai: tuple[str, ...]) -> tuple[str, ...]:
         if len(nilai) > JUMLAH_IMPLIKASI_MAKSIMUM:
             raise ValueError(
-                f"implikasi tindakan melampaui {JUMLAH_IMPLIKASI_MAKSIMUM} butir "
-                "(D-06 Bagian 5)"
+                f"implikasi tindakan melampaui {JUMLAH_IMPLIKASI_MAKSIMUM} butir (D-06 Bagian 5)"
             )
         return nilai
 

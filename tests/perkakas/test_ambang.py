@@ -172,8 +172,7 @@ def test_tetapan_beruraian_tanpa_sumber_ditemukan(tmp_path: Path) -> None:
     sopan, dan persis menandai angka yang disetel seseorang.
     """
     rusak = (
-        TETAPAN_BERSIH
-        + '\nAMBANG_SUNYI = 0.42\n"""Nilai yang bekerja baik pada uji internal."""\n'
+        TETAPAN_BERSIH + '\nAMBANG_SUNYI = 0.42\n"""Nilai yang bekerja baik pada uji internal."""\n'
     )
     temuan = periksa_ambang(_pohon(tmp_path, tetapan=rusak))
     assert any("AMBANG_SUNYI" in str(t) for t in temuan)
@@ -182,9 +181,7 @@ def test_tetapan_beruraian_tanpa_sumber_ditemukan(tmp_path: Path) -> None:
 def test_tetapan_bersumber_makalah_diterima(tmp_path: Path) -> None:
     """Menyalin nilai dari sumber yang dokumen pengendalinya kutip adalah
     mengutip, bukan menyetel — KB-034 pertanyaan 2."""
-    bersih = (
-        TETAPAN_BERSIH + '\nBM25_K1 = 1.2\n"""Penjenuhan — Robertson & Zaragoza."""\n'
-    )
+    bersih = TETAPAN_BERSIH + '\nBM25_K1 = 1.2\n"""Penjenuhan — Robertson & Zaragoza."""\n'
     assert periksa_ambang(_pohon(tmp_path, tetapan=bersih)) == []
 
 

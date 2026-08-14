@@ -138,9 +138,7 @@ def test_penyebut_memuat_k_bukan_peringkat_saja() -> None:
     disusul segmen yang disetujui kedua sumber. Penggabungannya berjalan dan
     tidak pernah menggabungkan apa pun.
     """
-    hasil = gabung_peringkat(
-        [_daftar("bm25", "SEG-A"), _daftar("vektor", "SEG-B")]
-    )
+    hasil = gabung_peringkat([_daftar("bm25", "SEG-A"), _daftar("vektor", "SEG-B")])
     assert hasil[0].skor == pytest.approx(1 / (TETAPAN_RRF_K + 1))
     assert hasil[0].skor < 0.02
 
@@ -176,42 +174,32 @@ def test_setiap_hasil_membawa_penyumbangnya() -> None:
     peringkat tinggi — padahal perbedaan itulah yang membuat RRF berguna, dan
     ia pula yang akan dibaca saat BT-29 mengalibrasi.
     """
-    hasil = gabung_peringkat(
-        [_daftar("bm25", "SEG-A", "SEG-B"), _daftar("vektor", "SEG-B")]
-    )
+    hasil = gabung_peringkat([_daftar("bm25", "SEG-A", "SEG-B"), _daftar("vektor", "SEG-B")])
     menurut_id = {h.id_segmen: h for h in hasil}
 
     assert [(p.nama_sumber, p.peringkat) for p in menurut_id["SEG-B"].penyumbang] == [
         ("bm25", 2),
         ("vektor", 1),
     ]
-    assert [(p.nama_sumber, p.peringkat) for p in menurut_id["SEG-A"].penyumbang] == [
-        ("bm25", 1)
-    ]
+    assert [(p.nama_sumber, p.peringkat) for p in menurut_id["SEG-A"].penyumbang] == [("bm25", 1)]
 
 
 def test_penyumbang_terurut_nama_sumber() -> None:
     """Urutan tetap, sehingga daftar penyumbang dapat dibandingkan langsung
     pada uji dan pada catatan percobaan D-10."""
-    hasil = gabung_peringkat(
-        [_daftar("vektor", "SEG-A"), _daftar("bm25", "SEG-A")]
-    )
+    hasil = gabung_peringkat([_daftar("vektor", "SEG-A"), _daftar("bm25", "SEG-A")])
     assert [p.nama_sumber for p in hasil[0].penyumbang] == ["bm25", "vektor"]
 
 
 def test_penyumbang_tidak_pernah_kosong() -> None:
     """Hasil gabungan tanpa penyumbang adalah segmen yang tidak ditemukan
     sumber mana pun — ia tidak boleh ada pada keluaran sama sekali."""
-    hasil = gabung_peringkat(
-        [_daftar("bm25", "SEG-A", "SEG-B"), _daftar("vektor", "SEG-C")]
-    )
+    hasil = gabung_peringkat([_daftar("bm25", "SEG-A", "SEG-B"), _daftar("vektor", "SEG-C")])
     assert all(h.penyumbang for h in hasil)
 
 
 def test_jumlah_penyumbang_tidak_melampaui_jumlah_sumber() -> None:
-    hasil = gabung_peringkat(
-        [_daftar("bm25", "SEG-A"), _daftar("vektor", "SEG-A")]
-    )
+    hasil = gabung_peringkat([_daftar("bm25", "SEG-A"), _daftar("vektor", "SEG-A")])
     assert len(hasil[0].penyumbang) == 2
 
 
@@ -223,9 +211,7 @@ def test_seri_diputus_id_segmen() -> None:
     yang **persis** sama. Pada penggabungan, seri jauh lebih sering daripada
     pada BM25 — skornya hanya bergantung pada peringkat, dan peringkat berupa
     bilangan bulat kecil."""
-    hasil = gabung_peringkat(
-        [_daftar("bm25", "SEG-Q"), _daftar("vektor", "SEG-P")]
-    )
+    hasil = gabung_peringkat([_daftar("bm25", "SEG-Q"), _daftar("vektor", "SEG-P")])
     assert [h.id_segmen for h in hasil] == ["SEG-P", "SEG-Q"]
     assert hasil[0].skor == pytest.approx(hasil[1].skor)
 

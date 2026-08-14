@@ -67,9 +67,7 @@ def _pohon(
     (akar / "docs").mkdir(parents=True)
     (akar / "docs" / "D14.md").write_text(d14, encoding="utf-8")
     (akar / "src" / "rag" / "jawaban").mkdir(parents=True)
-    (akar / "src" / "rag" / "jawaban" / "tanggapan.py").write_text(
-        tanggapan, encoding="utf-8"
-    )
+    (akar / "src" / "rag" / "jawaban" / "tanggapan.py").write_text(tanggapan, encoding="utf-8")
     if rute is not None:
         (akar / "src" / "api").mkdir(parents=True)
         (akar / "src" / "api" / "rute.py").write_text(rute, encoding="utf-8")

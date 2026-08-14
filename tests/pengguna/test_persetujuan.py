@@ -26,7 +26,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import BaseModel, ValidationError
-
 from src.pengguna.persetujuan import (
     CatatanPersetujuan,
     JenisPersetujuan,
@@ -103,9 +102,7 @@ def test_ditolak_berbeda_dari_dicabut() -> None:
     sebelum pencabutan kehilangan penjelasannya.
     """
     ditolak = KeadaanPersetujuan.dari(_catatan(disetujui=False))
-    dicabut = KeadaanPersetujuan.dari(
-        _catatan(dicabut_pada=datetime(2026, 9, 1, tzinfo=UTC))
-    )
+    dicabut = KeadaanPersetujuan.dari(_catatan(dicabut_pada=datetime(2026, 9, 1, tzinfo=UTC)))
     assert ditolak is not dicabut
     assert ditolak is KeadaanPersetujuan.DITOLAK
     assert dicabut is KeadaanPersetujuan.DICABUT
@@ -298,9 +295,7 @@ def test_modul_tidak_menyediakan_cara_menurunkan_akses() -> None:
         dari_modul |= {n for n in dir(tipe) if not n.startswith("_")}
     dari_modul -= set(CatatanPersetujuan.model_fields)
 
-    tercurigai = {
-        n for n in dari_modul if any(k in n.lower() for k in _KOSAKATA_AKSES)
-    }
+    tercurigai = {n for n in dari_modul if any(k in n.lower() for k in _KOSAKATA_AKSES)}
     assert tercurigai == set(), (
         f"permukaan modul memuat nama yang menyiratkan pemetaan ke akses: "
         f"{sorted(tercurigai)} — FR-A05 menjamin menolak tidak mengurangi akses"
@@ -314,6 +309,7 @@ def test_satu_satunya_sifat_yang_bergantung_pada_persetujuan_adalah_perekaman() 
     dan seseorang wajib menyatakan mengapa — alih-alih menambahkannya diam-diam
     di sebelah `boleh_merekam`.
     """
+
     def _sifat(tipe: type) -> set[str]:
         return {
             n
@@ -336,14 +332,8 @@ def test_berkas_tidak_menyebut_penurunan_akses() -> None:
     ditambahkan seseorang yang terburu-buru.
     """
     isi = (AKAR / "src" / "pengguna" / "persetujuan.py").read_text(encoding="utf-8")
-    baris_kode = [
-        b
-        for b in isi.splitlines()
-        if b.startswith("def ") or b.startswith("    def ")
-    ]
-    tercurigai = [
-        b for b in baris_kode if any(k in b.lower() for k in _KOSAKATA_AKSES)
-    ]
+    baris_kode = [b for b in isi.splitlines() if b.startswith("def ") or b.startswith("    def ")]
+    tercurigai = [b for b in baris_kode if any(k in b.lower() for k in _KOSAKATA_AKSES)]
     assert tercurigai == [], tercurigai
 
 

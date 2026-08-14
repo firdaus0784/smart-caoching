@@ -85,7 +85,6 @@ def test_galat_sungguhan_tidak_memuat_nomornya() -> None:
 
     import pytest
     from pydantic import ValidationError
-
     from src.pengguna.profil import JalurAkreditasi, ProfilSekolah
     from src.telemetri.peristiwa import JenisPeristiwa, Peristiwa
 

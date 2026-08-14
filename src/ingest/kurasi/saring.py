@@ -8,11 +8,11 @@ lapis berikutnya."*
 | L1 · Lisensi | Terbaca dan diizinkan | Dibuang, **tidak disimpan** (PP-01) |
 | L2 · Kebaruan | Bukan duplikat, bukan versi lama | Dibuang; versi lebih baru menggantikan |
 | L3 · Keberlakuan | Regulasi berstatus berlaku | Disimpan sebagai rujukan historis (KL-07) |
-| L4 · Relevansi | Skor K1–K8 melampaui ambang | Kolam cadangan |
+| L4 · Relevansi | Skor K1-K8 melampaui ambang | Kolam cadangan |
 
 ## L4 belum dapat dijalankan, dan itu menahan — bukan meloloskan, bukan membuang
 
-Skor relevansi menuntut klasifikasi K1–K8 (fitur 017) **dan** ambang yang D-06
+Skor relevansi menuntut klasifikasi K1-K8 (fitur 017) **dan** ambang yang D-06
 serahkan ke BT-24, uji ingesti percobaan bulan 3.
 
 `HasilSaring` karena itu bernilai **tiga**: `LOLOS`, `GUGUR`, `MENUNGGU`.
@@ -63,7 +63,7 @@ from src.kamus.segmen import StatusKeberlakuan
 from src.penyimpanan.indeks import StatusLisensi, lisensi_dari_metadata
 
 _MENUNGGU_L4 = (
-    "skor relevansi menuntut klasifikasi K1–K8 (fitur 017) dan ambang BT-24, "
+    "skor relevansi menuntut klasifikasi K1-K8 (fitur 017) dan ambang BT-24, "
     "uji ingesti percobaan bulan 3 (C-16)"
 )
 """Alasan L4 belum dapat dijalankan, menyebut **apa** yang ditunggunya.
@@ -168,10 +168,7 @@ def saring(
             alasan="duplikat dokumen yang sudah ada pada kolam butir",
         )
 
-    if (
-        butir.bersumber_regulasi
-        and butir.status_keberlakuan is not StatusKeberlakuan.BERLAKU
-    ):
+    if butir.bersumber_regulasi and butir.status_keberlakuan is not StatusKeberlakuan.BERLAKU:
         return HasilSaring(
             lapis_terakhir=Lapis.L3_KEBERLAKUAN,
             keadaan=Keadaan.GUGUR,

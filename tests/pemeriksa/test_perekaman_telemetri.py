@@ -127,7 +127,9 @@ def test_parameter_keadaan_berbawaan_ditemukan(tmp_path: Path) -> None:
 
 def test_parameter_keadaan_yang_hilang_ditemukan(tmp_path: Path) -> None:
     """Gerbang yang tidak menanyakan persetujuan bukan gerbang."""
-    rusak = GERBANG_BERSIH.replace("*, keadaan: KeadaanPersetujuan, pseudonim: str", "*, pseudonim: str")
+    rusak = GERBANG_BERSIH.replace(
+        "*, keadaan: KeadaanPersetujuan, pseudonim: str", "*, pseudonim: str"
+    )
     rusak = rusak.replace("    if not keadaan.boleh_merekam:\n        return None\n", "")
     temuan = periksa_perekaman_telemetri(_pohon(tmp_path, gerbang=rusak))
     assert temuan

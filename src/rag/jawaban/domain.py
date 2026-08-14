@@ -18,7 +18,7 @@ melainkan arah kerugian yang berlawanan:
 | | Kekeliruan ke arah longgar | Kekeliruan ke arah ketat |
 |---|---|---|
 | Lisensi (006) | **Menggugurkan publikasi** | Mengurangi jumlah butir |
-| Cakupan domain | Satu panggilan yang berakhir tidak-ditemukan | **Menolak kepala sekolah yang bertanya wajar** |
+| Cakupan domain | Satu panggilan berakhir tidak-ditemukan | **Menolak penanya yang wajar** |
 
 D-02 titik kritis T1: jawaban pertama menentukan retensi. Kepala sekolah yang
 pertanyaan sahnya ditolak tidak bertanya kedua kalinya.
@@ -80,8 +80,14 @@ _POLA: dict[str, tuple[re.Pattern[str], ...]] = {
         re.compile(r"\b(pengadilan|pidana)\b[^.?]*\b(saya|tetangga|pribadi)\b", re.I),
     ),
     "keuangan_pribadi": (
-        re.compile(rf"\b(investasi|saham|kartu kredit|pinjaman|bunga)\b[^.?]*\b{_PENANDA_PRIBADI}\b", re.I),
-        re.compile(rf"\b{_PENANDA_PRIBADI}\b[^.?]*\b(investasi|saham|kartu kredit|pinjaman)\b", re.I),
+        re.compile(
+            rf"\b(investasi|saham|kartu kredit|pinjaman|bunga)\b[^.?]*\b{_PENANDA_PRIBADI}\b",
+            re.I,
+        ),
+        re.compile(
+            rf"\b{_PENANDA_PRIBADI}\b[^.?]*\b(investasi|saham|kartu kredit|pinjaman)\b",
+            re.I,
+        ),
     ),
 }
 """Pola per ranah, masing-masing menuntut **dua** bagian.

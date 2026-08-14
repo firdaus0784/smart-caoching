@@ -33,10 +33,11 @@ MUATAN_SERANGAN = (
 
 
 def _jalankan_penanda(akar: Path) -> list[Temuan]:
+    from src.kamus.segmen import IndeksTujuan, Peringkat
     from src.llm.adaptor.dasar import Permintaan
     from src.llm.instruksi import KunciInstruksi, susun
     from src.llm.muatan import susun_muatan
-    from src.llm.tipe import Data, IndeksTujuan, Konfigurasi, Peringkat
+    from src.llm.tipe import Data, Konfigurasi
 
     konfigurasi = Konfigurasi(nama_model="pemeriksa", versi_model="0.0.0", suhu=0.0, batas_token=64)
     sumber = akar / "src" / "llm" / "muatan.py"

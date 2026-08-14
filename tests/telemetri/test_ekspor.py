@@ -10,9 +10,9 @@ import json
 from datetime import UTC, datetime
 from io import StringIO
 
+from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.telemetri.ekspor import KOLOM, ke_csv, parquet_tertahan
 from src.telemetri.gerbang import rekam
-from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.telemetri.peristiwa import JenisPeristiwa, Peristiwa
 
 WAKTU = datetime(2026, 8, 13, 4, 0, tzinfo=UTC)
@@ -51,7 +51,7 @@ def test_kolom_diturunkan_dari_model_bukan_ditulis_ulang() -> None:
     """Daftar yang ditulis ulang dapat menambah kolom yang modelnya tidak
     punya — dan kolom yang paling mungkin ditambahkan seseorang adalah
     `id_pengguna`, sebab analisis terasa lebih mudah dengannya."""
-    assert KOLOM == tuple(Peristiwa.model_fields)
+    assert tuple(Peristiwa.model_fields) == KOLOM
 
 
 def test_kepala_csv_sama_dengan_kolom() -> None:
@@ -104,9 +104,7 @@ def test_ekspor_kosong_tetap_berkepala() -> None:
 
 
 def test_beberapa_peristiwa_berurutan() -> None:
-    baris = _baca(
-        ke_csv([_peristiwa(), _peristiwa(jenis=JenisPeristiwa.ANSWER_SERVED)])
-    )
+    baris = _baca(ke_csv([_peristiwa(), _peristiwa(jenis=JenisPeristiwa.ANSWER_SERVED)]))
     assert [b["jenis"] for b in baris] == ["question_asked", "answer_served"]
 
 

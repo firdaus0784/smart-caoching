@@ -46,9 +46,7 @@ def test_pemanggil_llm_tidak_pernah_menerima_segmen_metadata() -> None:
     indeks metadata.
     """
     leksikal = SumberTiruan("bm25", {"SEG-A": 3.0})
-    metadata = SumberTiruan(
-        "vektor", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA
-    )
+    metadata = SumberTiruan("vektor", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError):
         ambil_hibrida("kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[leksikal, metadata])
     assert metadata.dipanggil == 0
@@ -129,7 +127,7 @@ def test_satu_sumber_terjangkau_ditolak() -> None:
 
 
 def test_paling_banyak_delapan_segmen_diteruskan() -> None:
-    """D-07 Bagian 4.4 dan Bagian 9: 5–8 segmen. "Batas konteks — 5–8 segmen;
+    """D-07 Bagian 4.4 dan Bagian 9: 5-8 segmen. "Batas konteks — 5-8 segmen;
     segmen dipangkas bila melampaui batas" (RT-03)."""
     banyak = {f"SEG-{i:02d}": float(30 - i) for i in range(30)}
     lain = {f"SEG-{i:02d}": float(i) for i in range(30)}

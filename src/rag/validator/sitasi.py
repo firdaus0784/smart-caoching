@@ -201,9 +201,7 @@ def periksa_peringkat_klaim(
     bersandar_lemah = tuple(
         klaim.id_klaim
         for klaim in keluaran.klaim
-        if not any(
-            i in peta and not peta[i].peringkat_kepercayaan.lemah for i in klaim.id_segmen
-        )
+        if not any(i in peta and not peta[i].peringkat_kepercayaan.lemah for i in klaim.id_segmen)
     )
     if bersandar_lemah:
         return HasilPemeriksaan(

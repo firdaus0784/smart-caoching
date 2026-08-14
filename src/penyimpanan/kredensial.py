@@ -22,8 +22,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.penyimpanan.area import Area
 from src.kamus.segmen import IndeksTujuan
+from src.penyimpanan.area import Area
 
 
 class Kredensial(BaseModel):

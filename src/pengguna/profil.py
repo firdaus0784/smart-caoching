@@ -141,8 +141,7 @@ class ProfilSekolah(BaseModel):
         temuan = periksa_data_pribadi(nilai)
         if temuan:
             raise ValueError(
-                f"wilayah memuat pengenal berjenis {temuan[0].jenis} — isikan nama "
-                "wilayah saja"
+                f"wilayah memuat pengenal berjenis {temuan[0].jenis} — isikan nama wilayah saja"
             )
         return nilai
 

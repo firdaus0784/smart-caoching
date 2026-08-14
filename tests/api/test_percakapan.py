@@ -14,7 +14,7 @@ melanggar C-07 lewat pintu yang tidak dijaga siapa pun.
 from datetime import UTC, datetime
 
 import pytest
-
+from pydantic import ValidationError
 from src.api.percakapan import GalatPercakapan, Giliran, Percakapan
 
 SAAT = datetime(2026, 8, 13, 3, 0, tzinfo=UTC)
@@ -55,7 +55,7 @@ def test_giliran_menyimpan_rujukan_pesan() -> None:
 def test_bidang_tambahan_ditolak() -> None:
     """`extra="forbid"`. Bidang `tanggapan` yang ditambahkan seseorang kelak
     akan lolos diam-diam tanpa ini, dan tidak satu uji perilaku pun gagal."""
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         Giliran(
             pertanyaan="Bagaimana menyusun jadwal supervisi?",
             id_pesan="PSN-1",
@@ -65,7 +65,7 @@ def test_bidang_tambahan_ditolak() -> None:
 
 
 def test_urutan_giliran_terjaga() -> None:
-    """"Melanjutkan sesi sebelumnya" (FR-F09) menuntut urutannya, dan urutan
+    """ "Melanjutkan sesi sebelumnya" (FR-F09) menuntut urutannya, dan urutan
     yang tidak diuji adalah urutan yang berubah ketika penyimpanannya diganti."""
     percakapan = _percakapan()
     percakapan.catat(pertanyaan="Berapa lama supervisi berlangsung?", id_pesan="PSN-2", waktu=SAAT)
@@ -95,7 +95,7 @@ def test_giliran_yang_dikembalikan_tidak_dapat_diubah_pemanggil() -> None:
 
 def test_giliran_beku() -> None:
     (giliran,) = _percakapan().giliran
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         giliran.id_pesan = "PSN-9"  # type: ignore[misc]
 
 

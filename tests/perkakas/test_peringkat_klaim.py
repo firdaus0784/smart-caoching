@@ -123,9 +123,7 @@ def test_vs08_yang_dipindahkan_ke_daftar_menunggu_ditemukan(tmp_path: Path) -> N
     dijalankan. Bagi delapan kode lain itu keadaan yang jujur; bagi VS-08 itu
     pembatalan C-19 yang **terbaca seperti kejujuran**.
     """
-    rusak = VALIDATOR_BERSIH.replace(
-        "        KodePemeriksaan.VS_08: None,\n", ""
-    ).replace(
+    rusak = VALIDATOR_BERSIH.replace("        KodePemeriksaan.VS_08: None,\n", "").replace(
         '    KodePemeriksaan.VS_07: "menunggu 017",',
         '    KodePemeriksaan.VS_07: "menunggu 017",\n    KodePemeriksaan.VS_08: "menunggu 019",',
     )
@@ -150,9 +148,7 @@ def test_kode_yang_dihapus_dari_enum_ditemukan(tmp_path: Path) -> None:
     """
     rusak_enum = PEMERIKSAAN_BERSIH.replace('    VS_08 = "VS-08"\n', "")
     rusak_val = VALIDATOR_BERSIH.replace("        KodePemeriksaan.VS_08: None,\n", "")
-    temuan = periksa_peringkat_klaim(
-        _pohon(tmp_path, validator=rusak_val, pemeriksaan=rusak_enum)
-    )
+    temuan = periksa_peringkat_klaim(_pohon(tmp_path, validator=rusak_val, pemeriksaan=rusak_enum))
     assert any("VS-08" in str(t) for t in temuan)
 
 

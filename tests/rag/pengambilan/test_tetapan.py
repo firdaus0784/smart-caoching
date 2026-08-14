@@ -33,7 +33,7 @@ AKAR = Path(__file__).resolve().parents[3]
 
 def test_angka_persis_d07_bagian_4_4() -> None:
     """D-07 Bagian 4.4: kandidat BM25 20 teratas, kandidat vektor 20 teratas,
-    segmen diteruskan 5–8.
+    segmen diteruskan 5-8.
 
     Fitur ini **mewujudkan** angka itu, tidak menciptakannya. Uji ini gagal
     bila seseorang menyetelnya tanpa melewati BT-29.
@@ -133,7 +133,7 @@ def test_ambang_kecukupan_belum_ada_dan_itu_yang_benar() -> None:
     """**R-11 pada tingkat tetapan.**
 
     D-07 Bagian 4.6 menyerahkan ambang tinggi dan menengah ke BT-29, kalibrasi
-    terhadap *gold set* yang baru ada bulan 4–5. Menuliskan nilai awal
+    terhadap *gold set* yang baru ada bulan 4-5. Menuliskan nilai awal
     "sementara" di sini akan berjalan pada hari pertama, memberi hasil masuk
     akal, dan tidak seorang pun kembali kepadanya.
 

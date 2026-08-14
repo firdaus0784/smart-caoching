@@ -95,8 +95,7 @@ def _aturan_1_rentang_membawa_saksinya(akar: Path) -> list[Temuan]:
             Temuan(
                 berkas,
                 0,
-                f"{NAMA_RENTANG} tidak ditemukan — tipe yang hilang bukan tipe yang "
-                "aman (C-10)",
+                f"{NAMA_RENTANG} tidak ditemukan — tipe yang hilang bukan tipe yang aman (C-10)",
             )
         ]
 

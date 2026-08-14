@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial_baku import PENJAWABAN, VERIFIKASI
 from src.penyimpanan.pseudonim import (
@@ -76,9 +75,7 @@ def test_kredensial_tanpa_nama_ditolak() -> None:
     with pytest.raises(ValidationError):
         KredensialPseudonim(nama="")
     with pytest.raises(GalatPseudonim):
-        _peta().pseudonim_bagi(
-            "PGN-001", kredensial=KredensialPseudonim.model_construct(nama="  ")
-        )
+        _peta().pseudonim_bagi("PGN-001", kredensial=KredensialPseudonim.model_construct(nama="  "))
 
 
 def test_kredensial_beku() -> None:

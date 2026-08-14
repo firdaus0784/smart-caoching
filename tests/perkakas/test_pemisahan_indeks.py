@@ -138,4 +138,3 @@ def test_c02_berpindah_menjadi_terperiksa_mesin() -> None:
 # berbeda. Buku besar yang tinggal di berkas satu fitur akan diperbarui oleh
 # fitur berikutnya di berkasnya sendiri, dan sesudah beberapa fitur tidak ada
 # yang tahu berkas mana yang berlaku.
-

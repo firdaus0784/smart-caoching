@@ -19,13 +19,11 @@ yang D-04 Bagian 7.1 daftarkan, sehingga kode dan model data sepakat meski
 angkanya belum bersandar.
 """
 
-import re
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 from src.pengguna.profil import BIDANG_ONBOARDING_MAKSIMUM, JalurAkreditasi, ProfilSekolah
 
 AKAR = Path(__file__).resolve().parents[2]
@@ -59,9 +57,7 @@ def _bidang_d04() -> list[str]:
     teks = (AKAR / "docs" / "D04.md").read_text(encoding="utf-8")
     awal = teks.index("### 7.1 Kelompok Pengguna dan Persetujuan")
     akhir = teks.index("### 7.2")
-    baris = next(
-        g for g in teks[awal:akhir].splitlines() if g.startswith("| `profil_sekolah`")
-    )
+    baris = next(g for g in teks[awal:akhir].splitlines() if g.startswith("| `profil_sekolah`"))
     mentah = [n.strip() for n in baris.split("|")[2].split(",")]
     return [NAMA_MENURUT_D14.get(n, n) for n in mentah]
 

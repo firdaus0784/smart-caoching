@@ -72,17 +72,14 @@ LAPIS_C07: tuple[Lapis, ...] = (
         nama="penjawaban (VS-06)",
         berkas=Path("src") / "rag" / "validator" / "sitasi.py",
         anggota=frozenset({"DICABUT"}),
-        akibat_bila_hilang=(
-            "jawaban yang bersitasi regulasi dicabut lolos validator dan tayang"
-        ),
+        akibat_bila_hilang=("jawaban yang bersitasi regulasi dicabut lolos validator dan tayang"),
     ),
     Lapis(
         nama="penyajian (Sitasi)",
         berkas=Path("src") / "rag" / "jawaban" / "tanggapan.py",
         anggota=frozenset({"DICABUT"}),
         akibat_bila_hilang=(
-            "tanggapan dapat menyusun sitasi atas regulasi dicabut meskipun "
-            "validator menahannya"
+            "tanggapan dapat menyusun sitasi atas regulasi dicabut meskipun validator menahannya"
         ),
     ),
     Lapis(
@@ -90,8 +87,7 @@ LAPIS_C07: tuple[Lapis, ...] = (
         berkas=Path("src") / "ingest" / "kurasi" / "saring.py",
         anggota=frozenset({"BERLAKU"}),
         akibat_bila_hilang=(
-            "butir bersumber regulasi dicabut masuk antrean kurasi dan dapat "
-            "disetujui"
+            "butir bersumber regulasi dicabut masuk antrean kurasi dan dapat disetujui"
         ),
     ),
 )

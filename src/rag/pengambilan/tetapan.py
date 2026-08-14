@@ -10,7 +10,7 @@ BT-29."* Yang membuat pasal itu mudah dilanggar tanpa disadari adalah bahwa
 tidak semua angka pada sistem ini adalah ambang.
 
 **Angka yang dikutip.** D-07 Bagian 4.4 sudah menetapkan nilai awal: kandidat
-20 teratas per sumber, 5–8 segmen diteruskan. Menyalinnya ke sini bukan
+20 teratas per sumber, 5-8 segmen diteruskan. Menyalinnya ke sini bukan
 menyetel — ia mewujudkan keputusan yang sudah diambil dokumen pemiliknya.
 Syaratnya satu: asalnya tertulis, sehingga pembaca berikutnya dapat
 membedakannya dari angka yang dipilih seseorang karena bekerja baik.
@@ -18,7 +18,7 @@ membedakannya dari angka yang dipilih seseorang karena bekerja baik.
 **Angka yang disetel.** Ambang tinggi dan menengah pada penilaian kecukupan
 bukti (D-07 Bagian 4.6) **tidak** memiliki nilai pada dokumen mana pun. D-07
 menyerahkannya ke BT-29, kalibrasi terhadap *gold set* BT-35 yang baru ada
-bulan 4–5. Menuliskan nilai awal di sini adalah menyetel, dan cara paling
+bulan 4-5. Menuliskan nilai awal di sini adalah menyetel, dan cara paling
 sunyi melanggar C-16 bukan mengubah angka melainkan menuliskan angka awal
 yang tak pernah ditinjau: ia berjalan pada hari pertama, memberi hasil masuk
 akal, dan tidak seorang pun kembali kepadanya.
@@ -47,7 +47,7 @@ Dua tetapan bernilai sama adalah dua tetapan yang kelak berbeda.
 JUMLAH_SEGMEN_DITERUSKAN_MINIMUM = 5
 """Batas bawah segmen yang diteruskan ke penyusunan jawaban.
 
-`docs/D07.md` Bagian 4.4: "Segmen diteruskan — 5–8", dengan catatan "cukup
+`docs/D07.md` Bagian 4.4: "Segmen diteruskan — 5-8", dengan catatan "cukup
 untuk menjawab; tidak membanjiri konteks". Batas bawah, bukan sasaran:
 kandidat yang lebih sedikit diteruskan seluruhnya, tidak diisi sampai penuh.
 """
@@ -55,7 +55,7 @@ kandidat yang lebih sedikit diteruskan seluruhnya, tidak diisi sampai penuh.
 JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM = 8
 """Batas atas segmen yang diteruskan.
 
-`docs/D07.md` Bagian 4.4, dan diulang pada Bagian 9: "Batas konteks — 5–8
+`docs/D07.md` Bagian 4.4, dan diulang pada Bagian 9: "Batas konteks — 5-8
 segmen; segmen dipangkas bila melampaui batas" (RT-03).
 """
 

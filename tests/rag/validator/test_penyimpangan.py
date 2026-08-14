@@ -17,7 +17,7 @@ lagi, dan sesudah itu daftarnya tidak menjaga apa pun.
 
 import pytest
 from src.kamus.segmen import IndeksTujuan, Peringkat, StatusKeberlakuan
-from src.rag.validator.keluaran import Klaim, KeluaranModel, SegmenRujukan
+from src.rag.validator.keluaran import KeluaranModel, Klaim, SegmenRujukan
 from src.rag.validator.pemeriksaan import KodePemeriksaan, Status
 from src.rag.validator.penyimpangan import periksa_penyimpangan
 
@@ -54,9 +54,7 @@ def test_keluaran_wajar_lulus() -> None:
 
 
 def test_tautan_dari_metadata_segmen_diterima() -> None:
-    hasil = periksa_penyimpangan(
-        _keluaran(tautan_disebut=(TAUTAN_SUMBER,)), segmen=(_segmen(),)
-    )
+    hasil = periksa_penyimpangan(_keluaran(tautan_disebut=(TAUTAN_SUMBER,)), segmen=(_segmen(),))
     assert hasil.status is Status.LULUS
 
 
@@ -80,9 +78,7 @@ def test_tautan_diperiksa_terhadap_metadata_bukan_daftar_ranah() -> None:
     tepercaya kemudian dapat mengarahkan pembaca ke mana saja.
     """
     seranah = "https://peraturan.contoh.id/halaman-lain"
-    hasil = periksa_penyimpangan(
-        _keluaran(tautan_disebut=(seranah,)), segmen=(_segmen(),)
-    )
+    hasil = periksa_penyimpangan(_keluaran(tautan_disebut=(seranah,)), segmen=(_segmen(),))
     assert hasil.status is Status.GAGAL
 
 

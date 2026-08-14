@@ -9,7 +9,7 @@ itu masuk naskah sebagai ambang yang "dikalibrasi".
 
 D-07 Bagian 4.6 tidak memberi nilai bagi ambang tinggi maupun menengah; ia
 menyerahkannya ke BT-29, kalibrasi terhadap *gold set* BT-35 yang baru ada
-bulan 4–5.
+bulan 4-5.
 
 Karena itu bentuk yang diuji di sini bukan "ambang bawaan bernilai wajar"
 melainkan **ambang tidak dapat disusun tanpa catatan kalibrasi**. Bukan gagal
@@ -41,7 +41,7 @@ KALIBRASI = CatatanKalibrasi(
 """Catatan kalibrasi **contoh**, dipakai uji saja.
 
 Ia tidak menjadikan angka di bawah ambang yang sah — kalibrasi sungguhan
-berlangsung bulan 4–5 dan hasilnya keputusan tim, bukan keputusan berkas uji.
+berlangsung bulan 4-5 dan hasilnya keputusan tim, bukan keputusan berkas uji.
 """
 
 
@@ -148,8 +148,8 @@ def test_ambang_tinggi_wajib_di_atas_menengah() -> None:
 def test_ambang_tidak_dibatasi_atas_pada_satu() -> None:
     """**Batas atas 1,0 akan menjadi asumsi diam.**
 
-    Skor RRF tidak berada pada rentang 0–1: dengan dua sumber dan k = 60,
-    nilai tertingginya 2/61 ≈ 0,0328. Membatasi ambang pada 0–1 tidak salah
+    Skor RRF tidak berada pada rentang 0-1: dengan dua sumber dan k = 60,
+    nilai tertingginya 2/61 ≈ 0,0328. Membatasi ambang pada 0-1 tidak salah
     hari ini, tetapi ia menyandera BT-29 pada skala yang belum diputuskan —
     kalibrasi boleh saja menormalkan skornya lebih dulu.
     """
@@ -256,7 +256,7 @@ def test_di_antara_kedua_ambang_terbatas() -> None:
 
 
 def test_tepat_pada_ambang_menengah_belum_cukup() -> None:
-    """"Melampaui", bukan "mencapai". Perbandingan `>=` menggeser garis satu
+    """ "Melampaui", bukan "mencapai". Perbandingan `>=` menggeser garis satu
     langkah ke arah menjawab, dan D-07 Bagian 1 menetapkan arah sebaliknya."""
     penilaian = PenilaianKecukupan(_ambang(tinggi=0.03, menengah=0.02))
     hasil = _hasil(("SEG-A", 0.02), ("SEG-B", 0.02))

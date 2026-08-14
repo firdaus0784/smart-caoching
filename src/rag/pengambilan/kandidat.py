@@ -8,7 +8,7 @@ digabungnya.
 ## Kandidat membawa `id_segmen`, bukan dokumen
 
 D-07 Bagian 3.2 menetapkan pengambilan atas segmen. Dokumen yang dikembalikan
-utuh membanjiri konteks — D-07 Bagian 9 membatasi 5–8 segmen — dan
+utuh membanjiri konteks — D-07 Bagian 9 membatasi 5-8 segmen — dan
 menghilangkan penanda bagian yang FR-F11 tuntut untuk menautkan sitasi ke
 pasal, bukan ke dokumen.
 

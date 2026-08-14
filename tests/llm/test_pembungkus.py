@@ -15,11 +15,11 @@ riwayat percobaan — satu baris per percobaan, bukan per permintaan.
 import json
 from pathlib import Path
 
+from src.kamus.segmen import IndeksTujuan, Peringkat
 from src.llm.adaptor.tiruan import AdaptorTiruan
 from src.llm.instruksi import KunciInstruksi, susun
 from src.llm.logbook_versi import versi_fitur_001
 from src.llm.pembungkus import Pembungkus
-from src.kamus.segmen import IndeksTujuan, Peringkat
 from src.llm.tipe import Data, Konfigurasi
 
 KONFIGURASI = Konfigurasi(nama_model="tiruan", versi_model="0.0.1", suhu=0.0, batas_token=256)

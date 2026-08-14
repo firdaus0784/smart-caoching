@@ -119,9 +119,7 @@ def test_impor_peta_di_luar_modulnya_ditemukan(tmp_path: Path) -> None:
     """**Aturan 2** menutup lubang aturan 1: modul yang mengimpor `PetaPseudonim`
     sudah cukup dekat untuk memanggilnya dengan kredensial yang diteruskan dari
     tempat lain."""
-    rusak = (
-        "from src.penyimpanan.pseudonim import PetaPseudonim\n\n" + MODUL_BIASA
-    )
+    rusak = "from src.penyimpanan.pseudonim import PetaPseudonim\n\n" + MODUL_BIASA
     temuan = periksa_peta_pseudonim(_pohon(tmp_path, modul=rusak))
     assert temuan
     assert "diimpor di luar modulnya" in str(temuan[0])
@@ -172,9 +170,7 @@ def test_nilai_area_ditulis_pada_pemeriksa_bukan_dibaca_dari_enumnya() -> None:
     """Pemeriksa yang membaca daftar dari hal yang diperiksanya hanya
     membuktikan daftar sama dengan dirinya sendiri — dan akan tetap lulus
     ketika nilai ketiga ditambahkan ke keduanya."""
-    isi = (AKAR / "perkakas" / "pemeriksa" / "peta_pseudonim.py").read_text(
-        encoding="utf-8"
-    )
+    isi = (AKAR / "perkakas" / "pemeriksa" / "peta_pseudonim.py").read_text(encoding="utf-8")
     assert 'frozenset({"karantina", "korpus"})' in isi
 
 

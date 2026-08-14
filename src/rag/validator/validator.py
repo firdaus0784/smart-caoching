@@ -52,7 +52,7 @@ from collections.abc import Sequence
 
 from pydantic import BaseModel, ConfigDict
 
-from src.rag.validator.keluaran import Klaim, KeluaranModel, SegmenRujukan
+from src.rag.validator.keluaran import KeluaranModel, Klaim, SegmenRujukan
 from src.rag.validator.pemeriksaan import HasilPemeriksaan, KodePemeriksaan, Status
 from src.rag.validator.penyimpangan import periksa_penyimpangan
 from src.rag.validator.sitasi import (
@@ -162,9 +162,7 @@ class HasilValidasi(BaseModel):
     def insiden_kepatuhan(self) -> tuple[KodePemeriksaan, ...]:
         """Kegagalan yang membuang jawaban tanpa perbaikan — D-07 Bagian 6.2."""
         return tuple(
-            h.kode
-            for h in self.pemeriksaan
-            if h.status is Status.GAGAL and h.kode in KODE_INSIDEN
+            h.kode for h in self.pemeriksaan if h.status is Status.GAGAL and h.kode in KODE_INSIDEN
         )
 
 
@@ -237,9 +235,7 @@ def keluaran_setelah_tindakan(
         if h.status is Status.GAGAL
         for id_klaim in h.id_klaim_bermasalah
     }
-    tersisa: tuple[Klaim, ...] = tuple(
-        k for k in keluaran.klaim if k.id_klaim not in bermasalah
-    )
+    tersisa: tuple[Klaim, ...] = tuple(k for k in keluaran.klaim if k.id_klaim not in bermasalah)
     if keluaran.klaim and not tersisa:
         return None
     if keluaran.klaim and not keluaran.ringkasan_tindakan:

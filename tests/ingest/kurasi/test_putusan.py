@@ -21,7 +21,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.ingest.kurasi.putusan import (
     Akibat,
@@ -222,9 +221,7 @@ def test_setujui_menghasilkan_butir_tayang() -> None:
     assert tayang.butir.id_butir == "BTR-001"
 
 
-@pytest.mark.parametrize(
-    "jenis", [JenisPutusan.TOLAK, JenisPutusan.TUNDA]
-)
+@pytest.mark.parametrize("jenis", [JenisPutusan.TOLAK, JenisPutusan.TUNDA])
 def test_putusan_bukan_persetujuan_tidak_menghasilkan_butir_tayang(
     jenis: JenisPutusan,
 ) -> None:
@@ -257,9 +254,7 @@ def test_suntingan_yang_ditayangkan_adalah_hasil_suntingan() -> None:
     disunting = _butir(inti_temuan="Rencana kegiatan disusun bersama komite sekolah.")
     akibat, tayang = terapkan(
         _butir(),
-        _putusan(
-            jenis=JenisPutusan.SUNTING_LALU_SETUJUI, butir_suntingan=disunting
-        ),
+        _putusan(jenis=JenisPutusan.SUNTING_LALU_SETUJUI, butir_suntingan=disunting),
     )
     assert akibat is Akibat.MASUK_KOLAM
     assert tayang is not None
@@ -293,9 +288,7 @@ def test_suntingan_tidak_boleh_berganti_identitas_butir() -> None:
 # ------------------------------------- C-07 lapis kedua · persetujuan tidak cukup
 
 
-@pytest.mark.parametrize(
-    "status", [StatusKeberlakuan.DICABUT, StatusKeberlakuan.DIUBAH]
-)
+@pytest.mark.parametrize("status", [StatusKeberlakuan.DICABUT, StatusKeberlakuan.DIUBAH])
 def test_persetujuan_tidak_dapat_menayangkan_regulasi_tak_berlaku(
     status: StatusKeberlakuan,
 ) -> None:
@@ -332,9 +325,7 @@ def test_butir_tayang_menolak_putusan_bukan_persetujuan() -> None:
     with pytest.raises(ValidationError):
         ButirTayang(
             butir=_butir(),
-            putusan=_putusan(
-                jenis=JenisPutusan.TOLAK, alasan_tolak=AlasanTolak.TL_01
-            ),
+            putusan=_putusan(jenis=JenisPutusan.TOLAK, alasan_tolak=AlasanTolak.TL_01),
         )
 
 

@@ -152,8 +152,7 @@ def _aturan_1_bidang_tanggapan(akar: Path, teks_d14: str) -> list[Temuan]:
         Temuan(
             berkas,
             0,
-            f"kelas {NAMA_MODEL_TANGGAPAN} tidak ditemukan — aturan 1 menjadi tidak "
-            "berarti (C-20)",
+            f"kelas {NAMA_MODEL_TANGGAPAN} tidak ditemukan — aturan 1 menjadi tidak berarti (C-20)",
         )
     ]
 

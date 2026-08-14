@@ -15,7 +15,7 @@ di komponen yang D-04 ADR-04 sebut terpenting dalam sistem.
 import pytest
 from pydantic import ValidationError
 from src.kamus.segmen import IndeksTujuan, Peringkat, StatusKeberlakuan
-from src.rag.validator.keluaran import Klaim, KeluaranModel, SegmenRujukan
+from src.rag.validator.keluaran import KeluaranModel, Klaim, SegmenRujukan
 from src.rag.validator.pemeriksaan import (
     HasilPemeriksaan,
     KodePemeriksaan,
@@ -209,8 +209,6 @@ def test_belum_dapat_diperiksa_menghalangi_sama_seperti_gagal(
 
 
 def test_hasil_pemeriksaan_beku() -> None:
-    hasil = HasilPemeriksaan(
-        kode=KodePemeriksaan.VS_01, status=Status.LULUS, alasan="lulus"
-    )
+    hasil = HasilPemeriksaan(kode=KodePemeriksaan.VS_01, status=Status.LULUS, alasan="lulus")
     with pytest.raises(ValidationError):
         hasil.status = Status.GAGAL  # type: ignore[misc]

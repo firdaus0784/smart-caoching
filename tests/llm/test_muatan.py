@@ -14,10 +14,10 @@ Uji ini yang menjadikan `docs/D13.md` UK-10 dapat dijalankan sejak sekarang,
 bukan menunggu fitur 009.
 """
 
+from src.kamus.segmen import IndeksTujuan, Peringkat
 from src.llm.adaptor.dasar import Permintaan
 from src.llm.instruksi import KunciInstruksi, susun
 from src.llm.muatan import susun_muatan
-from src.kamus.segmen import IndeksTujuan, Peringkat
 from src.llm.tipe import Data, Konfigurasi
 
 KONFIGURASI = Konfigurasi(nama_model="tiruan", versi_model="0.0.1", suhu=0.0, batas_token=256)

@@ -15,7 +15,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-
 from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.telemetri.gerbang import HasilPerekaman, Telemetri, rekam
 from src.telemetri.peristiwa import JenisPeristiwa, Peristiwa
@@ -201,9 +200,7 @@ def test_properti_cacat_pada_pengguna_tanpa_persetujuan_dilaporkan_sebagai_apa()
     boleh membuat isi peristiwanya diperiksa sama sekali, sebab pemeriksaan
     itu sendiri menyentuh muatan yang seharusnya tidak diproses.
     """
-    hasil, peristiwa = _rekam(
-        KeadaanPersetujuan.DITOLAK, properti={"nama": "apa pun"}
-    )
+    hasil, peristiwa = _rekam(KeadaanPersetujuan.DITOLAK, properti={"nama": "apa pun"})
     assert hasil is HasilPerekaman.DILEWATI_TANPA_PERSETUJUAN
     assert peristiwa is None
 

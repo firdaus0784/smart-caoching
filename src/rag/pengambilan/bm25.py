@@ -43,11 +43,13 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable, Mapping, Sequence
 
+from src.kamus.segmen import IndeksTujuan
 from src.nlp.praproses.stemming import stemkan, tanpa_stop_word
 from src.nlp.praproses.tokenisasi import tokenkan
-from src.penyimpanan.indeks import IndeksTujuan, SegmenTerindeks
+from src.penyimpanan.indeks import SegmenTerindeks
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, SumberKandidat, urutkan_kandidat
 from src.rag.pengambilan.tetapan import BM25_B, BM25_K1
+
 
 def _stem_dari(teks: str) -> list[str]:
     """Teks → daftar stem, lewat jalur praproses fitur 015.
@@ -93,7 +95,7 @@ class IndeksLeksikal:
     def _idf(self, kata: str) -> float:
         """IDF ragam Lucene — selalu positif.
 
-        `ln(1 + (N − n + 0,5) / (n + 0,5))`. Bentuk klasik tanpa `1 +` menjadi
+        `ln(1 + (N - n + 0,5) / (n + 0,5))`. Bentuk klasik tanpa `1 +` menjadi
         **negatif** untuk kata yang muncul pada lebih dari separuh segmen, dan
         skor negatif membuat segmen yang memuat kata kueri terurut di bawah
         segmen yang tidak memuatnya sama sekali.
@@ -143,9 +145,7 @@ def bangun_indeks(
         if satu.id_segmen in stem_per_segmen:
             raise ValueError(f"id_segmen kembar pada indeks: {satu.id_segmen}")
         stem_per_segmen[satu.id_segmen] = _stem_dari(satu.teks)
-    return IndeksLeksikal(
-        versi=versi, indeks_tujuan=indeks_tujuan, stem_per_segmen=stem_per_segmen
-    )
+    return IndeksLeksikal(versi=versi, indeks_tujuan=indeks_tujuan, stem_per_segmen=stem_per_segmen)
 
 
 class SumberBM25(SumberKandidat):

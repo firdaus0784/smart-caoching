@@ -32,7 +32,7 @@ diam-diam akan mengubah prioritas pertama seseorang tanpa ia tahu.
 
 ## `KategoriMasalah` dipakai ulang — pemakaian ketiga
 
-D-04 Bagian 7.1 menulis `kategori (K1–K8)`, dan enum itu sudah mewujudkannya
+D-04 Bagian 7.1 menulis `kategori (K1-K8)`, dan enum itu sudah mewujudkannya
 sejak fitur 003. Impornya lewat tepi `pengguna → nlp` yang tertulis pada
 `AGENTS.md`. Enum keempat akan mengulangi kekeliruan `IndeksTujuan` (KB-036) —
 yang sudah terulang sekali lagi pada pendeteksi data pribadi, dan diperbaiki
@@ -76,9 +76,7 @@ class PrioritasManajerial(BaseModel):
         cls, nilai: tuple[KategoriMasalah, ...]
     ) -> tuple[KategoriMasalah, ...]:
         """Kedua batas, dan keduanya menjaga hal yang berbeda — lihat uraian modul."""
-        if not (
-            JUMLAH_PRIORITAS_MINIMUM <= len(nilai) <= JUMLAH_PRIORITAS_MAKSIMUM
-        ):
+        if not (JUMLAH_PRIORITAS_MINIMUM <= len(nilai) <= JUMLAH_PRIORITAS_MAKSIMUM):
             raise ValueError(
                 f"prioritas manajerial berjumlah {JUMLAH_PRIORITAS_MINIMUM} sampai "
                 f"{JUMLAH_PRIORITAS_MAKSIMUM} (FR-A03)"
@@ -87,9 +85,7 @@ class PrioritasManajerial(BaseModel):
 
     @field_validator("kategori")
     @classmethod
-    def _tanpa_kembar(
-        cls, nilai: tuple[KategoriMasalah, ...]
-    ) -> tuple[KategoriMasalah, ...]:
+    def _tanpa_kembar(cls, nilai: tuple[KategoriMasalah, ...]) -> tuple[KategoriMasalah, ...]:
         """Penjagaan tersendiri, bukan akibat penjagaan panjang.
 
         Tiga pilihan yang dua di antaranya sama tetap berjumlah tiga menurut

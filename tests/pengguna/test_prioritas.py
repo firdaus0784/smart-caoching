@@ -12,7 +12,7 @@ atas 2. Prioritas yang boleh berjumlah sembilan membuat penyaringan feed tidak
 menyaring apa pun — seluruh delapan kategori terpilih, dan "prioritas" berhenti
 berarti. Karena itu **batas atas diuji sama tegasnya dengan batas bawah**.
 
-Rentang 3–5 **dibaca dari `docs/D01.md`**, bukan disalin ke berkas ini.
+Rentang 3-5 **dibaca dari `docs/D01.md`**, bukan disalin ke berkas ini.
 """
 
 import re
@@ -20,7 +20,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 from src.nlp.anotasi.skema import KategoriMasalah
 from src.pengguna.prioritas import (
     JUMLAH_PRIORITAS_MAKSIMUM,
@@ -45,7 +44,12 @@ def _rentang_d01() -> tuple[int, int]:
     """Rentang FR-A03 pada D-01 — sumbernya, bukan salinannya."""
     teks = (AKAR / "docs" / "D01.md").read_text(encoding="utf-8")
     baris = next(g for g in teks.splitlines() if g.startswith("| FR-A03"))
-    cocok = re.search(r"(\d+)\s*[–-]\s*(\d+)", baris)
+    # Kedua tanda pisah sengaja dicocokkan. D-01 menulis rentangnya dengan
+    # tanda pisah en; menuntut satu ejaan membuat uji ini gagal pada hari
+    # seseorang menyuntingnya dengan tanda hubung biasa — dan yang gagal
+    # bukan dokumennya melainkan pembacanya. RUF001 dikecualikan di sini
+    # justru karena karakternya **dicocokkan**, bukan dibaca orang.
+    cocok = re.search(r"(\d+)\s*[–-]\s*(\d+)", baris)  # noqa: RUF001
     assert cocok is not None, baris
     return int(cocok.group(1)), int(cocok.group(2))
 
@@ -121,7 +125,7 @@ def test_kembar_ditolak_meski_jumlahnya_sah() -> None:
 def test_kategori_dipakai_ulang_bukan_ditulis_ulang() -> None:
     """**Pemakaian ketiga** `KategoriMasalah` sesudah fitur 003 dan 010.
 
-    D-04 Bagian 7.1 menulis `prioritas_manajerial.kategori (K1–K8)`, dan enum
+    D-04 Bagian 7.1 menulis `prioritas_manajerial.kategori (K1-K8)`, dan enum
     itu sudah mewujudkannya sejak fitur 003. Enum keempat akan mengulangi
     kekeliruan `IndeksTujuan` (KB-036) — yang sudah terulang sekali lagi pada
     pendeteksi data pribadi kemarin.

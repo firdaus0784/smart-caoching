@@ -8,7 +8,7 @@ dan penanda keyakinan PK-04 pada layar (D-05).
 
 D-07 Bagian 4.6 memberi **kriteria**, bukan **nilai**: *"Ambang tinggi dan
 menengah ditetapkan pada BT-29 melalui kalibrasi terhadap gold set."* Gold set
-itu BT-35, bulan 4–5.
+itu BT-35, bulan 4-5.
 
 Cara paling sunyi melanggar C-16 bukan mengubah angka melainkan menuliskan
 angka awal yang tak pernah ditinjau. Ia berjalan pada hari pertama, memberi
@@ -39,8 +39,8 @@ Penafsirannya tetap wajib dikukuhkan pada BT-29 dan tercatat pada KB-035.
 
 `tinggi` dan `menengah` wajib positif dan `tinggi` wajib di atas `menengah`.
 Batas atas **tidak** ditetapkan, dan itu disengaja: skor RRF tidak berada pada
-rentang 0–1 — dengan dua sumber dan k = 60, nilai tertingginya 2/61 ≈ 0,0328.
-Membatasi ambang pada 0–1 tidak salah hari ini tetapi menyandera BT-29 pada
+rentang 0-1 — dengan dua sumber dan k = 60, nilai tertingginya 2/61 ≈ 0,0328.
+Membatasi ambang pada 0-1 tidak salah hari ini tetapi menyandera BT-29 pada
 skala yang belum diputuskan; kalibrasi boleh saja menormalkan skornya lebih
 dulu.
 """

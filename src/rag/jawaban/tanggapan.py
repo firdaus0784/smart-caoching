@@ -208,12 +208,9 @@ class Tanggapan(BaseModel):
         for butir in self.ringkasan_tindakan:
             if len(butir.split()) > JUMLAH_KATA_MAKSIMUM:
                 raise ValueError(
-                    f"butir ringkasan melampaui {JUMLAH_KATA_MAKSIMUM} kata "
-                    "(NFR-19, C-13)"
+                    f"butir ringkasan melampaui {JUMLAH_KATA_MAKSIMUM} kata (NFR-19, C-13)"
                 )
-        ada_diubah = any(
-            s.status_keberlakuan is StatusKeberlakuan.DIUBAH for s in self.sitasi
-        )
+        ada_diubah = any(s.status_keberlakuan is StatusKeberlakuan.DIUBAH for s in self.sitasi)
         if ada_diubah and not self.catatan_keberlakuan.strip():
             raise ValueError(
                 "ada sitasi berstatus diubah tetapi catatan keberlakuan kosong — "

@@ -57,9 +57,7 @@ NAMA_FUNGSI_REKAM = "rekam"
 NAMA_TIPE_KEADAAN = "KeadaanPersetujuan"
 NAMA_PARAMETER = "keadaan"
 
-BIDANG_BERIDENTITAS: frozenset[str] = frozenset(
-    {"id_pengguna", "nama", "surel", "email", "alamat"}
-)
+BIDANG_BERIDENTITAS: frozenset[str] = frozenset({"id_pengguna", "nama", "surel", "email", "alamat"})
 """Nama bidang yang membatalkan pseudonimisasi FR-J02 bila ada pada `Peristiwa`."""
 
 

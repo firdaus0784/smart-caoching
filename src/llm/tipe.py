@@ -27,6 +27,7 @@ kemampuan yang tidak dapat dinyatakan tidak dapat dipakai.
 from __future__ import annotations
 
 from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 from src.kamus.segmen import IndeksTujuan, Peringkat

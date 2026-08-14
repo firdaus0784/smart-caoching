@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 import pytest
-
+from pydantic import ValidationError
 from src.ingest.kanal import Kanal
 from src.ingest.kurasi.antrean import GalatAntrean, HasilPantauan, pantau
 from src.ingest.kurasi.tetapan import (
@@ -54,7 +54,7 @@ def test_satu_hari_melampaui_tidak_mengerem() -> None:
 
 
 def test_hitungan_berturut_terputus_oleh_hari_yang_aman() -> None:
-    """"Berturut-turut", bukan "tiga kali".
+    """ "Berturut-turut", bukan "tiga kali".
 
     Antrean yang melampaui pada Senin, turun Selasa, lalu melampaui Rabu dan
     Kamis belum menumpuk — ia berayun. Mengeremnya akan menurunkan frekuensi
@@ -77,7 +77,7 @@ def test_hitungan_dibaca_dari_hari_terakhir_bukan_terpanjang() -> None:
 
 
 def test_antrean_tepat_pada_ambang_tidak_melampaui() -> None:
-    """D-06 menulis *"Antrean > 2× pagu kurasi harian"* — lebih besar, bukan
+    """D-06 menulis *"Antrean > 2x pagu kurasi harian"* — lebih besar, bukan
     sama dengan. Uji satu arah membiarkan penjagaannya digeser satu butir."""
     hasil = pantau([AMBANG] * HARI_BERTURUT_SEBELUM_PENGEREMAN)
     assert hasil.hari_berturut_melampaui == 0
@@ -149,9 +149,7 @@ def test_paruh_kedua_pengereman_dinyatakan_tertahan() -> None:
 def test_tidak_ada_ambang_l4_yang_disetel_modul_ini() -> None:
     """C-16. Modul yang menaikkan ambang menyimpan nilai ambang, dan nilai
     ambang yang belum dikalibrasi tidak boleh ada di mana pun."""
-    isi = (AKAR / "src" / "ingest" / "kurasi" / "antrean.py").read_text(
-        encoding="utf-8"
-    )
+    isi = (AKAR / "src" / "ingest" / "kurasi" / "antrean.py").read_text(encoding="utf-8")
     for terlarang in ("AMBANG_RELEVANSI", "ambang_relevansi", "AMBANG_L4"):
         assert terlarang not in isi
 
@@ -170,9 +168,7 @@ def test_ambang_dihitung_dari_pagu_bukan_ditulis_ulang() -> None:
 def test_angka_pengereman_dibaca_dari_d06() -> None:
     """Sumbernya, bukan salinannya — sama dengan uji tetapan pada A-2."""
     teks = (AKAR / "docs" / "D06.md").read_text(encoding="utf-8")
-    baris = next(
-        g for g in teks.splitlines() if g.startswith("| Tindakan bila melampaui")
-    )
+    baris = next(g for g in teks.splitlines() if g.startswith("| Tindakan bila melampaui"))
     cocok = re.search(r"(\d+) hari berturut-turut", baris)
     assert cocok is not None
     assert int(cocok.group(1)) == HARI_BERTURUT_SEBELUM_PENGEREMAN
@@ -188,7 +184,7 @@ def test_hasil_pantauan_membawa_pagu_yang_dipakainya() -> None:
 
 
 def test_hasil_pantauan_beku() -> None:
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         pantau([MELAMPAUI]).mengerem = True  # type: ignore[misc]
 
 

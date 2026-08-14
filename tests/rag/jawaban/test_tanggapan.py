@@ -95,9 +95,7 @@ def test_tanggapan_beku() -> None:
 # ------------------------------------------------------------------------ R-04
 
 
-@pytest.mark.parametrize(
-    "status", [StatusDasar.TIDAK_DITEMUKAN, StatusDasar.DI_LUAR_DOMAIN]
-)
+@pytest.mark.parametrize("status", [StatusDasar.TIDAK_DITEMUKAN, StatusDasar.DI_LUAR_DOMAIN])
 def test_penolakan_menuntut_ringkasan_dan_klaim_kosong(status: StatusDasar) -> None:
     """D-14 Bagian 4.1: kedua keadaan memakai **bentuk yang sama** dengan
     ringkasan dan klaim kosong.

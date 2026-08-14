@@ -90,8 +90,7 @@ def test_tambahan_di_luar_d06_disebut_satu_per_satu() -> None:
     """
     tambahan = set(ButirPengetahuan.model_fields) - _bidang_d06()
     assert tambahan == TAMBAHAN_SAH, (
-        f"bidang di luar D-06 Bagian 5 yang belum dinyatakan: "
-        f"{sorted(tambahan - TAMBAHAN_SAH)}"
+        f"bidang di luar D-06 Bagian 5 yang belum dinyatakan: {sorted(tambahan - TAMBAHAN_SAH)}"
     )
 
 
@@ -167,7 +166,7 @@ def test_inti_temuan_melampaui_seratus_dua_puluh_kata_ditolak() -> None:
 
 
 def test_implikasi_tindakan_satu_sampai_tiga_butir() -> None:
-    """D-06 Bagian 5: 1–3 butir. Nol berarti butir tanpa jalan keluar, dan
+    """D-06 Bagian 5: 1-3 butir. Nol berarti butir tanpa jalan keluar, dan
     TL-09 menolak butir semacam itu — "memberi kesan berpengetahuan tanpa
     memberi jalan keluar"."""
     with pytest.raises(ValidationError):

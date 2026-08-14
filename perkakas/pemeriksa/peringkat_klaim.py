@@ -176,9 +176,7 @@ def _kunci_kode_pada(pohon: ast.Module, nama: str) -> set[str]:
     for simpul in ast.walk(pohon):
         if not isinstance(simpul, ast.AnnAssign | ast.Assign):
             continue
-        sasaran = (
-            [simpul.target] if isinstance(simpul, ast.AnnAssign) else list(simpul.targets)
-        )
+        sasaran = [simpul.target] if isinstance(simpul, ast.AnnAssign) else list(simpul.targets)
         if not any(isinstance(t, ast.Name) and t.id == nama for t in sasaran):
             continue
         if simpul.value is None:

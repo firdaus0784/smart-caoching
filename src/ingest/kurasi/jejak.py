@@ -48,8 +48,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from src.nlp.anonimisasi.pola import periksa_data_pribadi
 from src.ingest.kurasi.putusan import JenisPutusan, PeranKurasi, Putusan
+from src.nlp.anonimisasi.pola import periksa_data_pribadi
 
 
 class GalatJejakKurasi(Exception):

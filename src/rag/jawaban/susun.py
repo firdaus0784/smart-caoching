@@ -102,9 +102,7 @@ def susun(
         status_dasar=status_tanggapan(status),
         ringkasan_tindakan=keluaran.ringkasan_tindakan,
         penjelasan=keluaran.penjelasan,
-        klaim=tuple(
-            KlaimTampil(teks=k.teks, id_segmen=k.id_segmen) for k in keluaran.klaim
-        ),
+        klaim=tuple(KlaimTampil(teks=k.teks, id_segmen=k.id_segmen) for k in keluaran.klaim),
         sitasi=tuple(sitasi),
         bacaan_lanjutan=tuple(bacaan_lanjutan),
         catatan_keberlakuan=catatan_keberlakuan,

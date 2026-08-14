@@ -38,9 +38,7 @@ def tayangkan() -> None:
 '''
 
 
-def _pohon(
-    tmp_path: Path, *, putusan: str = PUTUSAN_BERSIH, modul: str = MODUL_BIASA
-) -> Path:
+def _pohon(tmp_path: Path, *, putusan: str = PUTUSAN_BERSIH, modul: str = MODUL_BIASA) -> Path:
     akar = tmp_path / "pohon"
     (akar / BERKAS_PUTUSAN).parent.mkdir(parents=True)
     (akar / BERKAS_PUTUSAN).write_text(putusan, encoding="utf-8")

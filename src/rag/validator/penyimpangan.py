@@ -100,9 +100,7 @@ def periksa_penyimpangan(
 
     for butir in keluaran.ringkasan_tindakan:
         if len(butir.split()) > JUMLAH_KATA_MAKSIMUM:
-            return _gagal(
-                f"butir ringkasan melampaui {JUMLAH_KATA_MAKSIMUM} kata (NFR-19, C-13)"
-            )
+            return _gagal(f"butir ringkasan melampaui {JUMLAH_KATA_MAKSIMUM} kata (NFR-19, C-13)")
 
     sah = _tautan_sah(segmen)
     asing = tuple(t for t in keluaran.tautan_disebut if t not in sah)

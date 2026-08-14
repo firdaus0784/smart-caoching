@@ -26,7 +26,7 @@ from src.rag.jawaban.tanggapan import (
     Versi,
 )
 from src.rag.pengambilan.kecukupan import StatusDasar as StatusKecukupan
-from src.rag.validator.keluaran import Klaim, KeluaranModel
+from src.rag.validator.keluaran import KeluaranModel, Klaim
 from src.rag.validator.pemeriksaan import HasilPemeriksaan, KodePemeriksaan, Status
 from src.rag.validator.validator import HasilValidasi, JawabanTervalidasi
 
@@ -46,8 +46,7 @@ def _jawaban(**ganti: object) -> JawabanTervalidasi:
     argumen.update(ganti)
     hasil = HasilValidasi(
         pemeriksaan=tuple(
-            HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="lulus")
-            for k in KodePemeriksaan
+            HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="lulus") for k in KodePemeriksaan
         )
     )
     return JawabanTervalidasi(keluaran=KeluaranModel(**argumen), hasil=hasil)  # type: ignore[arg-type]
@@ -121,9 +120,7 @@ def test_tanggapan_membawa_isi_keluaran_yang_tervalidasi() -> None:
         (StatusKecukupan.DI_LUAR_DOMAIN, StatusDasar.DI_LUAR_DOMAIN),
     ],
 )
-def test_keempat_status_terpetakan(
-    kecukupan: StatusKecukupan, tampil: StatusDasar
-) -> None:
+def test_keempat_status_terpetakan(kecukupan: StatusKecukupan, tampil: StatusDasar) -> None:
     assert status_tanggapan(kecukupan) is tampil
 
 

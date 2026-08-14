@@ -63,13 +63,11 @@ def test_ketiga_lapis_terdaftar() -> None:
     """Tiga, bukan satu. Lapis yang jatuh dari daftar berhenti diperiksa tanpa
     satu uji pun gagal."""
     assert len(LAPIS_C07) == 3
-    assert {l.berkas.parts[1] for l in LAPIS_C07} == {"rag", "ingest"}
+    assert {satu.berkas.parts[1] for satu in LAPIS_C07} == {"rag", "ingest"}
 
 
-@pytest.mark.parametrize("lapis", LAPIS_C07, ids=lambda l: l.nama)
-def test_lapis_yang_berhenti_membaca_status_ditemukan(
-    tmp_path: Path, lapis: Lapis
-) -> None:
+@pytest.mark.parametrize("lapis", LAPIS_C07, ids=lambda satu: satu.nama)
+def test_lapis_yang_berhenti_membaca_status_ditemukan(tmp_path: Path, lapis: Lapis) -> None:
     """**Uji terpenting berkas ini**, dan ia dijalankan tiga kali.
 
     Masing-masing lapis dirusak sendirian sementara dua lainnya utuh. Pemeriksa
@@ -80,7 +78,7 @@ def test_lapis_yang_berhenti_membaca_status_ditemukan(
     assert lapis.nama in str(temuan[0])
 
 
-@pytest.mark.parametrize("lapis", LAPIS_C07, ids=lambda l: l.nama)
+@pytest.mark.parametrize("lapis", LAPIS_C07, ids=lambda satu: satu.nama)
 def test_lapis_yang_dihapus_ditemukan(tmp_path: Path, lapis: Lapis) -> None:
     """Menghapus berkasnya bukan cara sah meloloskan pemeriksa ini."""
     temuan = periksa_regulasi_dicabut(_pohon(tmp_path, rusak=lapis, hapus=True))
@@ -88,10 +86,8 @@ def test_lapis_yang_dihapus_ditemukan(tmp_path: Path, lapis: Lapis) -> None:
     assert "tidak ditemukan" in str(temuan[0])
 
 
-@pytest.mark.parametrize("lapis", LAPIS_C07, ids=lambda l: l.nama)
-def test_temuan_menyebut_akibat_bila_lapisnya_hilang(
-    tmp_path: Path, lapis: Lapis
-) -> None:
+@pytest.mark.parametrize("lapis", LAPIS_C07, ids=lambda satu: satu.nama)
+def test_temuan_menyebut_akibat_bila_lapisnya_hilang(tmp_path: Path, lapis: Lapis) -> None:
     """Temuan yang hanya menyebut "lapis hilang" tidak memberi tahu pembacanya
     seberapa jauh regulasi yang dicabut dapat berjalan sebelum tertahan — dan
     itu yang menentukan seberapa mendesak perbaikannya."""
@@ -115,10 +111,10 @@ def test_lapis_ingesti_membaca_berlaku_bukan_dicabut() -> None:
     lapis hilir menolak persis `dicabut`. Menuntut ejaan yang sama akan memaksa
     L3 ditulis dengan cara yang lebih lemah.
     """
-    ingesti = next(l for l in LAPIS_C07 if "ingesti" in l.nama)
+    ingesti = next(satu for satu in LAPIS_C07 if "ingesti" in satu.nama)
     assert ingesti.anggota == frozenset({"BERLAKU"})
-    hilir = [l for l in LAPIS_C07 if "ingesti" not in l.nama]
-    assert all(l.anggota == frozenset({"DICABUT"}) for l in hilir)
+    hilir = [satu for satu in LAPIS_C07 if "ingesti" not in satu.nama]
+    assert all(satu.anggota == frozenset({"DICABUT"}) for satu in hilir)
 
 
 # ---------------------------------------------------------------- pendaftaran

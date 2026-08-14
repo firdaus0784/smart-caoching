@@ -12,11 +12,11 @@ yang dapat disunting tidak membuktikan apa pun tentang saat ia ditulis, dan
 justru itu yang ditanyakan seseorang yang menelusuri sebuah putusan.
 """
 
+from dataclasses import FrozenInstanceError
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
-
 from src.ingest.kurasi.jejak import BarisKurasi, GalatJejakKurasi, JejakKurasi
 from src.ingest.kurasi.putusan import (
     AlasanTolak,
@@ -122,7 +122,7 @@ def test_catatan_bebas_pada_penolakan_ditolak() -> None:
 
 
 def test_putusan_bukan_penolakan_wajib_membawa_catatan() -> None:
-    """"Alasan" adalah salah satu dari empat bidang FR-I05, dan persetujuan
+    """ "Alasan" adalah salah satu dari empat bidang FR-I05, dan persetujuan
     tanpa alasan adalah baris jejak yang tidak menjelaskan apa pun."""
     with pytest.raises(GalatJejakKurasi):
         JejakKurasi().catat(_putusan())
@@ -244,7 +244,7 @@ def test_baris_yang_dikembalikan_tidak_dapat_diubah_pemanggil() -> None:
 def test_baris_beku() -> None:
     jejak = JejakKurasi()
     jejak.catat(_putusan(), catatan="Layak tayang.")
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         jejak.baris[0].alasan = "lain"  # type: ignore[misc]
 
 

@@ -104,16 +104,12 @@ class PetaPseudonim:
             raise GalatPseudonim("pseudonim sudah dipakai pengguna lain")
         self._peta[id_pengguna] = pseudonim
 
-    def pseudonim_bagi(
-        self, id_pengguna: str, *, kredensial: KredensialPseudonim
-    ) -> str | None:
+    def pseudonim_bagi(self, id_pengguna: str, *, kredensial: KredensialPseudonim) -> str | None:
         """Pseudonim seorang pengguna, atau `None` bila belum terdaftar."""
         self._pastikan_berwenang(kredensial)
         return self._peta.get(id_pengguna)
 
-    def id_pengguna_bagi(
-        self, pseudonim: str, *, kredensial: KredensialPseudonim
-    ) -> str | None:
+    def id_pengguna_bagi(self, pseudonim: str, *, kredensial: KredensialPseudonim) -> str | None:
         """**Arah balik — inilah yang C-05 lindungi.**
 
         Telemetri menyimpan pseudonim; yang mengubahnya kembali menjadi

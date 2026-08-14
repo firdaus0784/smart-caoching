@@ -113,7 +113,7 @@ def test_peringkat_lemah_dinamai_pada_kamus() -> None:
     Dinamai di sini, bukan disusun ulang di validator: himpunan yang disusun
     di tempat pemakainya akan berbeda ketika D-13 menambah peringkat kelima.
     """
-    assert PERINGKAT_LEMAH == frozenset({Peringkat.T3, Peringkat.T4})
+    assert frozenset({Peringkat.T3, Peringkat.T4}) == PERINGKAT_LEMAH
     assert Peringkat.T1 not in PERINGKAT_LEMAH
     assert Peringkat.T2 not in PERINGKAT_LEMAH
 

@@ -134,8 +134,7 @@ def pantau(
     """
     if not panjang_harian:
         raise GalatAntrean(
-            "riwayat antrean kosong — pemantauan tanpa data tidak dapat menyatakan "
-            "antrean aman"
+            "riwayat antrean kosong — pemantauan tanpa data tidak dapat menyatakan antrean aman"
         )
     if any(panjang < 0 for panjang in panjang_harian):
         raise GalatAntrean("panjang antrean tidak dapat bernilai negatif")

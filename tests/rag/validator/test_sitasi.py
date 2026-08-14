@@ -20,7 +20,7 @@ orang. D-13 Bagian 6 mewajibkan klaim campuran.
 
 import pytest
 from src.kamus.segmen import IndeksTujuan, Peringkat, StatusKeberlakuan
-from src.rag.validator.keluaran import Klaim, KeluaranModel, SegmenRujukan
+from src.rag.validator.keluaran import KeluaranModel, Klaim, SegmenRujukan
 from src.rag.validator.pemeriksaan import KodePemeriksaan, Status
 from src.rag.validator.sitasi import (
     periksa_dasar_klaim,
@@ -168,9 +168,7 @@ def test_vs04_tidak_menunjuk_klaim_tertentu() -> None:
 
 
 def test_vs04_lulus_ketika_seluruh_dasar_dari_indeks_utama() -> None:
-    hasil = periksa_indeks_metadata(
-        _keluaran(_klaim("K1", "SEG-A")), segmen=(_segmen("SEG-A"),)
-    )
+    hasil = periksa_indeks_metadata(_keluaran(_klaim("K1", "SEG-A")), segmen=(_segmen("SEG-A"),))
     assert hasil.status is Status.LULUS
 
 

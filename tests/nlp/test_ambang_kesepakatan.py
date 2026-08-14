@@ -36,6 +36,7 @@ from pathlib import Path
 
 import pytest
 import src.nlp.anotasi.ambang as modul_ambang
+
 from perkakas.pemeriksa.ambang import rumah_tetapan
 
 AKAR = Path(__file__).resolve().parents[2]

@@ -1,7 +1,7 @@
 """Penyusun pengambilan hibrida — R-07, R-13, R-14, C-02, C-17, ADR-03.
 
-Tahap 4–5 pada alur D-07 Bagian 4: dua sumber mencari terpisah, hasilnya
-digabung, lalu dipangkas ke 5–8 segmen.
+Tahap 4-5 pada alur D-07 Bagian 4: dua sumber mencari terpisah, hasilnya
+digabung, lalu dipangkas ke 5-8 segmen.
 
 ## Kredensial diperiksa sebelum sumber dijalankan
 
@@ -105,7 +105,7 @@ def ambil_hibrida(
     kredensial: Kredensial,
     sumber: Sequence[SumberKandidat],
 ) -> HasilPengambilan:
-    """Jalankan tahap 4–5 D-07 Bagian 4.
+    """Jalankan tahap 4-5 D-07 Bagian 4.
 
     `kredensial` tepat sesudah kueri dan wajib — mengikuti `PenyimpanDasar`
     fitur 002: *"Menempatkannya di akhir daftar parameter membuatnya terbaca

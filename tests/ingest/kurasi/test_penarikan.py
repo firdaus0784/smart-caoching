@@ -13,11 +13,11 @@ kehilangan isi setiap kali sebuah angka pada dokumen sumber diperbarui.
 """
 
 import re
+from dataclasses import FrozenInstanceError
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
-
 from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.ingest.kurasi.penarikan import (
     GalatPenarikan,
@@ -71,9 +71,7 @@ def _tayang(**ganti: object) -> ButirTayang:
 # ------------------------------------------------ R-10 · regulasi dicabut/diubah
 
 
-@pytest.mark.parametrize(
-    "status", [StatusKeberlakuan.DICABUT, StatusKeberlakuan.DIUBAH]
-)
+@pytest.mark.parametrize("status", [StatusKeberlakuan.DICABUT, StatusKeberlakuan.DIUBAH])
 def test_butir_ditarik_saat_regulasi_dicabut_atau_diubah(
     status: StatusKeberlakuan,
 ) -> None:
@@ -84,9 +82,7 @@ def test_butir_ditarik_saat_regulasi_dicabut_atau_diubah(
     C-07 larang: sistem mengarahkan kepala sekolah dengan ketentuan yang tidak
     lagi berlaku sebagaimana tertulis.
     """
-    hasil = tinjau(
-        _tayang(), pemicu=Pemicu.REGULASI_SUMBER_BERUBAH, status_terkini=status
-    )
+    hasil = tinjau(_tayang(), pemicu=Pemicu.REGULASI_SUMBER_BERUBAH, status_terkini=status)
     assert hasil.tindakan is TindakanPenarikan.DITARIK
 
 
@@ -252,9 +248,7 @@ def test_butir_yang_hanya_ditandai_tidak_membawa_penanda_koleksi() -> None:
 def test_modul_tidak_menyediakan_cara_menghapus() -> None:
     """Yang tidak disediakan tidak dapat dipanggil karena lupa. Bentuk yang sama
     dengan `src/logbook/penulis.py` dan `JejakKurasi`."""
-    isi = (AKAR / "src" / "ingest" / "kurasi" / "penarikan.py").read_text(
-        encoding="utf-8"
-    )
+    isi = (AKAR / "src" / "ingest" / "kurasi" / "penarikan.py").read_text(encoding="utf-8")
     for terlarang in ("def hapus", "def buang", "def kosongkan"):
         assert terlarang not in isi
 
@@ -267,9 +261,7 @@ def _pemicu_d06() -> int:
     awal = teks.index("### 7.5 Penarikan Butir yang Sudah Tayang")
     akhir = teks.index("## 8. Kapasitas Antrean")
     baris = [
-        g
-        for g in teks[awal:akhir].splitlines()
-        if g.startswith("|") and not set(g) <= set("|-: ")
+        g for g in teks[awal:akhir].splitlines() if g.startswith("|") and not set(g) <= set("|-: ")
     ]
     return len(baris) - 1  # kurangi baris kepala
 
@@ -291,9 +283,7 @@ def test_tenggat_dibaca_dari_d06_bagian_7_5() -> None:
     """Angkanya milik dokumen, bukan modul — R-12."""
     teks = (AKAR / "docs" / "D06.md").read_text(encoding="utf-8")
     awal = teks.index("### 7.5 Penarikan Butir yang Sudah Tayang")
-    baris = next(
-        g for g in teks[awal:].splitlines() if "Kekeliruan isi dilaporkan" in g
-    )
+    baris = next(g for g in teks[awal:].splitlines() if "Kekeliruan isi dilaporkan" in g)
     cocok = re.search(r"(\d+) hari kerja", baris)
     assert cocok is not None
     assert int(cocok.group(1)) == TENGGAT_PENARIKAN_HARI_KERJA
@@ -301,5 +291,5 @@ def test_tenggat_dibaca_dari_d06_bagian_7_5() -> None:
 
 def test_hasil_penarikan_beku() -> None:
     hasil = tinjau(_tayang(), pemicu=Pemicu.KEKELIRUAN_ISI_DILAPORKAN)
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         hasil.tindakan = TindakanPenarikan.DITANDAI_PERLU_TINJAUAN  # type: ignore[misc]

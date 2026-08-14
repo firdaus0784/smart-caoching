@@ -24,8 +24,6 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
-from perkakas.pemeriksa.ambang import rumah_tetapan
 from src.ingest.kurasi import tetapan
 from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.ingest.kurasi.saring import (
@@ -43,6 +41,8 @@ from src.ingest.kurasi.tetapan import (
 )
 from src.kamus.segmen import StatusKeberlakuan
 from src.nlp.anotasi.skema import KategoriMasalah
+
+from perkakas.pemeriksa.ambang import rumah_tetapan
 
 AKAR = Path(__file__).resolve().parents[3]
 
@@ -106,7 +106,7 @@ def test_l4_menunggu_tidak_masuk_antrean_dan_tidak_dibuang() -> None:
     """**Uji terpenting berkas ini** — R-06, dan ia menegakkan dua penyangkalan.
 
     Kandidat yang lolos L1 s.d. L3 tidak berhak masuk antrean: skor relevansi
-    menuntut klasifikasi K1–K8 (fitur 017) dan ambang BT-24 yang belum ada.
+    menuntut klasifikasi K1-K8 (fitur 017) dan ambang BT-24 yang belum ada.
     Ia juga tidak berhak dibuang: tidak ada dasar untuk menyatakannya tidak
     relevan.
 
@@ -154,9 +154,7 @@ def test_belum_ada_kandidat_yang_dapat_masuk_antrean() -> None:
     adalah seluruh jalur sesudahnya.
     """
     for jenis in JenisSumberButir:
-        status = (
-            StatusKeberlakuan.BERLAKU if jenis is JenisSumberButir.REGULASI else None
-        )
+        status = StatusKeberlakuan.BERLAKU if jenis is JenisSumberButir.REGULASI else None
         hasil = _saring(_butir(jenis_sumber=jenis, status_keberlakuan=status))
         assert not hasil.boleh_masuk_antrean, jenis
 
@@ -236,18 +234,13 @@ def test_l2_versi_lebih_baru_menggantikan_yang_lama() -> None:
     Tanpa uji ini, penyaringan yang membuang setiap dokumen yang id-nya sudah
     dikenal tetap lulus — dan pembaruan regulasi tidak akan pernah masuk.
     """
-    hasil = _saring(
-        _butir(), id_dokumen_dikenal={"DOC-001"}, versi_lebih_baru_dari="2025-01-01"
-    )
+    hasil = _saring(_butir(), id_dokumen_dikenal={"DOC-001"}, versi_lebih_baru_dari="2025-01-01")
     assert hasil.lapis_terakhir is Lapis.L4_RELEVANSI
     assert hasil.keadaan is not Keadaan.GUGUR
 
 
 def test_l2_dokumen_belum_dikenal_lolos() -> None:
-    assert (
-        _saring(_butir(), id_dokumen_dikenal={"DOC-999"}).lapis_terakhir
-        is Lapis.L4_RELEVANSI
-    )
+    assert _saring(_butir(), id_dokumen_dikenal={"DOC-999"}).lapis_terakhir is Lapis.L4_RELEVANSI
 
 
 # --------------------------------------------------------- R-05 · L3 keberlakuan
@@ -298,9 +291,7 @@ def test_l3_dilewati_bagi_sumber_bukan_regulasi() -> None:
     Memeriksanya akan menuntut setiap butir riset mengaku `berlaku`, dan L3
     kemudian memeriksa hal yang tidak berarti apa-apa.
     """
-    hasil = _saring(
-        _butir(jenis_sumber=JenisSumberButir.RISET, status_keberlakuan=None)
-    )
+    hasil = _saring(_butir(jenis_sumber=JenisSumberButir.RISET, status_keberlakuan=None))
     assert hasil.lapis_terakhir is Lapis.L4_RELEVANSI
 
 
@@ -311,9 +302,7 @@ def test_l3_regulasi_tanpa_status_gugur() -> None:
     ini hanya mengurangi jumlah butir; kekeliruan ke arah sebaliknya membuat
     sistem menjawab berdasarkan regulasi yang mungkin sudah dicabut (C-07).
     """
-    hasil = _saring(
-        _butir(jenis_sumber=JenisSumberButir.REGULASI, status_keberlakuan=None)
-    )
+    hasil = _saring(_butir(jenis_sumber=JenisSumberButir.REGULASI, status_keberlakuan=None))
     assert hasil.lapis_terakhir is Lapis.L3_KEBERLAKUAN
     assert hasil.tindakan is Tindakan.RUJUKAN_HISTORIS
 
@@ -385,7 +374,7 @@ def test_pagu_kurasi_harian_dari_d06() -> None:
 
 
 def test_pengali_ambang_antrean_dari_d06() -> None:
-    """D-06 menuliskannya sebagai "Antrean > 2× pagu kurasi harian".
+    """D-06 menuliskannya sebagai "Antrean > 2x pagu kurasi harian".
 
     Kode menyimpannya sebagai pengali, bukan sebagai angka 30, agar ia tetap
     benar ketika pagu harian berubah — dan pagu harian akan berubah bila

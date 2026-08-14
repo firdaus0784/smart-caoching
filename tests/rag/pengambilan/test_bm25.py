@@ -25,9 +25,9 @@ from src.rag.pengambilan.bm25 import SumberBM25, bangun_indeks
 from src.rag.pengambilan.tetapan import BM25_B, BM25_K1
 
 
-def _segmen(id_segmen: str, teks: str, *, tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> (
-    SegmenTerindeks
-):
+def _segmen(
+    id_segmen: str, teks: str, *, tujuan: IndeksTujuan = IndeksTujuan.UTAMA
+) -> SegmenTerindeks:
     return SegmenTerindeks(
         id_segmen=id_segmen,
         id_dokumen="DOC-" + id_segmen,
@@ -65,12 +65,12 @@ def test_skor_terhadap_contoh_yang_dihitung_tangan() -> None:
     Kueri `RKAS` → satu stem `rkas`, muncul pada satu segmen dari tiga.
 
     ```
-    IDF  = ln(1 + (N − n + 0,5) / (n + 0,5))
-         = ln(1 + (3 − 1 + 0,5) / (1 + 0,5))
+    IDF  = ln(1 + (N - n + 0,5) / (n + 0,5))
+         = ln(1 + (3 - 1 + 0,5) / (1 + 0,5))
          = ln(1 + 2,5 / 1,5)
          = ln(2,666…)
 
-    tf   = f · (k1 + 1) / ( f + k1 · (1 − b + b · |D| / avgdl) )
+    tf   = f · (k1 + 1) / ( f + k1 · (1 - b + b · |D| / avgdl) )
          = 1 · 2,2      / ( 1  + 1,2 · (0,25 + 0,75 · 4 / 3)   )
          = 2,2          / ( 1  + 1,2 · 1,25 )
          = 2,2 / 2,5
@@ -141,9 +141,9 @@ def test_pencocokan_atas_stem_bukan_permukaan() -> None:
     sebagai korpus yang tidak memuat jawabannya, bukan sebagai cacat.
     """
     korpus = (_segmen("SEG-T", "Guru ditugaskan kepala sekolah"),)
-    hasil = SumberBM25(
-        bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)
-    ).cari("penugasan", batas=10)
+    hasil = SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
+        "penugasan", batas=10
+    )
     assert [k.id_segmen for k in hasil.peringkat] == ["SEG-T"]
 
 
@@ -165,9 +165,9 @@ def test_seri_diputus_id_segmen() -> None:
         _segmen("SEG-D", "Kepala sekolah menyusun RAPBS"),
         _segmen("SEG-A", "Kepala sekolah menyusun RKAS"),
     )
-    hasil = SumberBM25(
-        bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)
-    ).cari("menyusun", batas=10)
+    hasil = SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
+        "menyusun", batas=10
+    )
     assert [k.id_segmen for k in hasil.peringkat] == ["SEG-A", "SEG-D"]
     assert hasil.peringkat[0].skor == pytest.approx(hasil.peringkat[1].skor)
 
@@ -252,8 +252,6 @@ def test_indeks_menolak_id_segmen_kembar() -> None:
 
 
 def test_sumber_menyatakan_indeks_tujuan_indeksnya() -> None:
-    sumber = SumberBM25(
-        bangun_indeks((), versi="v", indeks_tujuan=IndeksTujuan.METADATA)
-    )
+    sumber = SumberBM25(bangun_indeks((), versi="v", indeks_tujuan=IndeksTujuan.METADATA))
     assert sumber.indeks_tujuan is IndeksTujuan.METADATA
     assert sumber.nama == "bm25"

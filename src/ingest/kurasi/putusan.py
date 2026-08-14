@@ -211,9 +211,7 @@ class Putusan(BaseModel):
             if self.jenis is jenis and not terisi:
                 raise ValueError(f"putusan {jenis.value} wajib membawa {sebutan}")
             if self.jenis is not jenis and terisi:
-                raise ValueError(
-                    f"putusan {self.jenis.value} tidak boleh membawa {sebutan}"
-                )
+                raise ValueError(f"putusan {self.jenis.value} tidak boleh membawa {sebutan}")
         return self
 
     @model_validator(mode="after")
@@ -275,9 +273,7 @@ class ButirTayang(BaseModel):
         return self
 
 
-def terapkan(
-    butir: ButirPengetahuan, putusan: Putusan
-) -> tuple[Akibat, ButirTayang | None]:
+def terapkan(butir: ButirPengetahuan, putusan: Putusan) -> tuple[Akibat, ButirTayang | None]:
     """Terapkan putusan pada butir — R-02, R-07.
 
     Mengembalikan akibatnya selalu, dan butir tayangnya **hanya bila putusan
@@ -290,8 +286,7 @@ def terapkan(
     """
     if putusan.id_butir != butir.id_butir:
         raise GalatPutusan(
-            f"putusan menunjuk butir {putusan.id_butir}, "
-            f"sedangkan yang dinilai {butir.id_butir}"
+            f"putusan menunjuk butir {putusan.id_butir}, sedangkan yang dinilai {butir.id_butir}"
         )
 
     akibat = Akibat.bagi(putusan.jenis)
@@ -307,9 +302,7 @@ def terapkan(
     return akibat, ButirTayang(butir=tayang, putusan=putusan)
 
 
-def _naskah_yang_tayang(
-    butir: ButirPengetahuan, putusan: Putusan
-) -> ButirPengetahuan:
+def _naskah_yang_tayang(butir: ButirPengetahuan, putusan: Putusan) -> ButirPengetahuan:
     """Naskah hasil suntingan bila ada; naskah asli bila tidak.
 
     Menayangkan naskah sebelum suntingan akan menayangkan justru parafrase yang
@@ -327,5 +320,3 @@ def _naskah_yang_tayang(
             "(PP-02); penarikan FR-I06 akan menelusuri dokumen yang keliru"
         )
     return suntingan
-
-

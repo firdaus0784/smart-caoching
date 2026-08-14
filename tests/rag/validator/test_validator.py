@@ -15,7 +15,7 @@ tidak ada".
 
 import pytest
 from src.kamus.segmen import IndeksTujuan, Peringkat, StatusKeberlakuan
-from src.rag.validator.keluaran import Klaim, KeluaranModel, SegmenRujukan
+from src.rag.validator.keluaran import KeluaranModel, Klaim, SegmenRujukan
 from src.rag.validator.pemeriksaan import HasilPemeriksaan, KodePemeriksaan, Status
 from src.rag.validator.validator import (
     HasilValidasi,
@@ -51,8 +51,7 @@ def _klaim(id_klaim: str, *id_segmen: str) -> Klaim:
 def _lulus_semua() -> HasilValidasi:
     return HasilValidasi(
         pemeriksaan=tuple(
-            HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="lulus")
-            for k in KodePemeriksaan
+            HasilPemeriksaan(kode=k, status=Status.LULUS, alasan="lulus") for k in KodePemeriksaan
         )
     )
 
@@ -241,9 +240,7 @@ def test_pendaratan_020_tidak_menutupi_kegagalan_keenam_yang_lain(
 
     monkeypatch.setattr(modul, "pemeriksaan_menunggu_model", mendarat)
 
-    hasil, jawaban = modul.validasi(
-        _keluaran(_klaim("K1", "SEG-KARANGAN")), segmen=(_segmen(),)
-    )
+    hasil, jawaban = modul.validasi(_keluaran(_klaim("K1", "SEG-KARANGAN")), segmen=(_segmen(),))
     assert not hasil.tervalidasi
     assert jawaban is None
     assert KodePemeriksaan.VS_02 in {h.kode for h in hasil.menghalangi}
@@ -265,9 +262,7 @@ def test_seluruh_lulus_menghasilkan_jawaban_tervalidasi() -> None:
 def test_pemeriksaan_yang_menghalangi_dilaporkan_beserta_kodenya() -> None:
     """D-07 Bagian 6.2: setiap kegagalan memicu `answer_rejected_validator`
     beserta kode pemeriksaan yang gagal, dan itu yang membuat RT-02 terukur."""
-    hasil, _ = validasi(
-        _keluaran(_klaim("K1", "SEG-KARANGAN")), segmen=(_segmen(),)
-    )
+    hasil, _ = validasi(_keluaran(_klaim("K1", "SEG-KARANGAN")), segmen=(_segmen(),))
     kode = {h.kode for h in hasil.menghalangi}
     assert KodePemeriksaan.VS_02 in kode
 
@@ -287,9 +282,7 @@ def test_insiden_kepatuhan_membuang_seluruh_jawaban() -> None:
 
 def test_segmen_dicabut_juga_insiden() -> None:
     keluaran = _keluaran(_klaim("K1", "SEG-C"))
-    hasil, _ = validasi(
-        keluaran, segmen=(_segmen("SEG-C", keberlakuan=StatusKeberlakuan.DICABUT),)
-    )
+    hasil, _ = validasi(keluaran, segmen=(_segmen("SEG-C", keberlakuan=StatusKeberlakuan.DICABUT),))
     assert KodePemeriksaan.VS_06 in hasil.insiden_kepatuhan
 
 
@@ -373,7 +366,9 @@ def test_validator_tidak_menulis_dan_tidak_memanggil_model() -> None:
 
     pohon = ast.parse(inspect.getsource(modul))
     dipanggil = {
-        s.func.attr for s in ast.walk(pohon) if isinstance(s, ast.Call) and isinstance(s.func, ast.Attribute)
+        s.func.attr
+        for s in ast.walk(pohon)
+        if isinstance(s, ast.Call) and isinstance(s.func, ast.Attribute)
     }
     assert not (dipanggil & {"write_text", "write_bytes", "mkdir", "unlink", "open"})
     assert "src.llm" not in inspect.getsource(modul)
