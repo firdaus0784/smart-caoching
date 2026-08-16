@@ -81,6 +81,14 @@ Fitur 001 diverifikasi manusia terhadap daftar ini karena `make check` dan
 | A-4 | `pyproject.toml`: Python 3.12, lima ketergantungan disetujui, konfigurasi ruff/mypy/pytest | Uji: ketergantungan langsung **tepat sama** dengan daftar disetujui — lebih maupun kurang menggagalkan | R-18 | [x] |
 | A-5 | Kunci versi: `uv.lock` + `ketergantungan-disetujui.toml` sebagai titik nol | Uji: himpunan paket pada lock dan daftar disetujui identik | R-18 | [x] |
 | A-6 | `Makefile`: enam sasaran `setup`, `test`, `test-unit`, `lint`, `check`, `compliance` — kerangka, isi diisi Fase B | Uji: keenam sasaran ada dan dapat dipanggil | R-14 | [x] |
+
+**Koreksi A-6 (13 Agustus 2026, KB-056).** Sasaran `test-unit` **dihapus**;
+Makefile kini memuat **lima**. Ia menyaring penanda `lambat` yang tidak pernah
+terdaftar pada `pyproject.toml`, sehingga `make test-unit` menjalankan seluruh
+1.761 uji sambil menamai dirinya cepat — dan `--strict-markers` membuat siapa
+pun yang mencoba memperbaikinya dengan `@pytest.mark.lambat` menerima galat
+keras, bukan uji yang lambat. Baris A-6 di atas benar ketika ditulis dan
+dibiarkan apa adanya; yang berubah keputusannya, bukan sejarahnya.
 | A-7 | Tambahkan larangan RP-05 ke bagian Batas `AGENTS.md`: penyuntingan `logbook/` selain menambah baris, dan penulisan ulang riwayat git | Uji: kedua larangan ada pada bagian Batas | G2-6 | [x] |
 
 ## Fase B · Gerbang mutu — dibangun sebelum yang dijaganya

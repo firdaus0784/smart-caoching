@@ -12,7 +12,10 @@ from pathlib import Path
 AKAR = Path(__file__).resolve().parents[2]
 MAKEFILE = AKAR / "Makefile"
 
-SASARAN_WAJIB = ("setup", "test", "test-unit", "lint", "check", "compliance")
+SASARAN_WAJIB = ("setup", "test", "lint", "check", "compliance")
+"""Lima, bukan enam. `test-unit` dihapus pada KB-056: ia menyaring penanda
+`lambat` yang tidak pernah terdaftar, sehingga ia menjalankan **seluruh** 1.761
+uji sambil menamai dirinya cepat."""
 
 POLA_SASARAN = re.compile(r"^([a-zA-Z][\w-]*)\s*:(?!=)", re.MULTILINE)
 
@@ -21,7 +24,7 @@ def test_makefile_ada() -> None:
     assert MAKEFILE.is_file(), "Makefile belum ada"
 
 
-def test_enam_sasaran_wajib_ada() -> None:
+def test_kelima_sasaran_wajib_ada() -> None:
     isi = MAKEFILE.read_text(encoding="utf-8")
     ada = set(POLA_SASARAN.findall(isi))
     hilang = [s for s in SASARAN_WAJIB if s not in ada]

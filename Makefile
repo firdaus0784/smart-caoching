@@ -5,19 +5,19 @@
 
 UV := uv
 
-.PHONY: setup test test-unit lint check compliance
+.PHONY: setup test lint check compliance
 
 ## setup — pasang ketergantungan sesuai uv.lock
 setup:
 	$(UV) sync
 
 ## test — seluruh uji
+#
+# Tidak ada sasaran "cepat" di sampingnya, dan itu keputusan: rangkaian penuh
+# berjalan 12,5 detik, sedangkan uji yang paling lambat justru sapuan lintas
+# modul yang paling sering menemukan sesuatu. Lihat KB-056.
 test:
 	$(UV) run pytest
-
-## test-unit — cepat, jalankan sebelum tiap commit
-test-unit:
-	$(UV) run pytest -m "not lambat"
 
 ## lint — linter, pemformat, pemeriksa tipe
 lint:

@@ -34,8 +34,7 @@ spec.md  →  [GERBANG 1]  →  plan.md  →  [GERBANG 2]
 
 ```bash
 make setup        # pasang ketergantungan
-make test         # seluruh uji
-make test-unit    # cepat, jalankan sebelum tiap commit
+make test         # seluruh uji, 12 detik
 make lint         # linter + format
 make check        # V-01 s.d. V-06, wajib lulus sebelum commit
 make compliance   # periksa pasal C-01 s.d. C-20
