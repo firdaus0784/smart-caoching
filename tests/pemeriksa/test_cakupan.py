@@ -16,6 +16,7 @@ import pytest
 from perkakas.pemeriksa.cakupan import (
     LANTAI_NFR16,
     baca_penanda,
+    periksa_cakupan,
     periksa_lantai,
     periksa_penurunan,
 )
@@ -63,3 +64,43 @@ def test_lantai_nfr16_ditegakkan_bila_sudah_ada_pernyataan() -> None:
 
 def test_lantai_nfr16_lolos_di_atas_ambang() -> None:
     assert periksa_lantai(sekarang=60.0, pernyataan=200, berkas=BERKAS) == []
+
+
+# ----------------------------------- `periksa_cakupan` · gabungan kedua aturan
+
+
+def test_penanda_hilang_menjadi_temuan_bukan_pengecualian(tmp_path: Path) -> None:
+    """**Uji yang seharusnya ada sejak fitur 001.**
+
+    `periksa_cakupan` adalah yang V-01 dan pasal C-11 sungguh panggil; kedua
+    aturan di atas hanya bagiannya. Sampai hari ini ia tidak memiliki satu uji
+    pun — ditemukan lewat sapuan atas seluruh pemeriksa (KB-057).
+
+    Yang diuji cabang paling awalnya: penanda yang hilang wajib menjadi
+    **temuan**, bukan pengecualian. `baca_penanda` melempar `FileNotFoundError`,
+    dan pengecualian yang lolos ke atas menghentikan `make check` dengan jejak
+    tumpukan alih-alih laporan gerbang — pembacanya kemudian melihat perkakas
+    yang rusak, bukan penanda yang hilang, dan yang paling mungkin ia lakukan
+    adalah melewati gerbangnya.
+    """
+    temuan = periksa_cakupan(tmp_path)
+    assert len(temuan) == 1
+    assert "penanda-cakupan.toml" in str(temuan[0].berkas)
+
+
+def test_jalur_bahagia_sengaja_tidak_diuji_di_sini() -> None:
+    """**Batas yang dinyatakan, bukan yang dilewatkan.**
+
+    `periksa_cakupan` memanggil `ukur_cakupan`, yang menjalankan seluruh
+    rangkaian uji lewat subproses. Memanggilnya dari dalam rangkaian uji berarti
+    rangkaian menjalankan dirinya sendiri — dan uji yang berbiaya demikian akan
+    dimatikan orang.
+
+    Yang menjaga jalur itu tetap benar adalah `make check` sendiri, yang
+    memanggilnya tiap kali. Dinyatakan di sini agar ketiadaannya terbaca sebagai
+    keputusan, bukan sebagai kelalaian yang berikutnya.
+    """
+    naskah = (
+        Path(__file__).resolve().parents[2] / "perkakas" / "pemeriksa" / "cakupan.py"
+    ).read_text(encoding="utf-8")
+    assert "subprocess.run" in naskah, "bila pengukurannya tidak lagi subproses, uji ini usang"
