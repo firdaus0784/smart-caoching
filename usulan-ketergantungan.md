@@ -207,6 +207,62 @@ di sisi peladen, bukan di perangkat kepala sekolah; `web/` adalah PWA yang
 memanggil rute. 527 MB menyentuh waktu pemasangan dan ukuran citra D-09 — dan
 itu saja. Ia **tidak** menyentuh kemampuan bekerja luring pengguna.
 
+#### 9.1a Status verifikasi lisensi bobot — **belum terpenuhi**, dan bentuk keputusannya disesuaikan
+
+Lisensi **bobot** kedua model belum diverifikasi ke sumbernya. Ia berbeda dari
+lisensi pustaka: `transformers` dan `sentence-transformers` sudah jelas
+Apache-2.0, sedangkan berkas hasil pelatihan kerap berlisensi lain.
+
+**Mengapa belum:** kebijakan jaringan lingkungan agen menutup `huggingface.co`,
+sama seperti ia menutup `arxiv.org` dan `aclanthology.org` (lihat riwayat
+revisi D-11 versi 0.4). Nilai yang diterima lewat percakapan pada 16 Agustus
+2026 tidak dapat dicatat: satu baris menyebut nama model yang berbeda dari
+tautannya, dan kolom lisensinya memuat dua nilai berpisah garis miring —
+bentuk daftar pilihan, bukan bentuk yang tertera pada kartu model. SI-03
+menolak rujukan yang tidak terverifikasi, dan nilai bertanggal yang tidak
+pernah dibuka justru **lebih berbahaya** daripada nilai yang kosong: ia
+terbaca sebagai hasil pemeriksaan.
+
+**Penyesuaian yang diambil.** Keputusan A tidak ditunda menunggu satu halaman
+web. Ia dinyatakan ulang sebagai **persetujuan bersyarat**, mengikuti pola yang
+sudah dipakai proyek ini bagi versi mesin OCR (V-04): nilai yang hanya dapat
+dipastikan saat pemasangan **dipatok saat pemasangan**, dan sampai itu terjadi
+ia dilaporkan *belum terperiksa* alih-alih ditebak.
+
+| | |
+|---|---|
+| Yang disetujui | Sepasang calon `multilingual-e5-large-instruct` dan `SEA-Embedding-E5-Large-600M`, beserta `torch`, `transformers`, `sentence-transformers` |
+| **Syarat** | Lisensi bobot masing-masing berada pada kelas permisif — MIT, BSD-3-Clause, atau Apache-2.0 (Bagian 9.3) |
+| Kapan syarat diperiksa | **Saat pemasangan pertama pada lingkungan penelitian**, oleh yang memasang, dan dicatat pada `ketergantungan-disetujui.toml` bersama tanggal pemeriksaannya |
+| Bila syarat tidak terpenuhi | Pemasangan **ditolak**, bukan dilanjutkan dengan catatan. Keputusan A dibuka ulang dan calon lain dicari dari SEA-BED dengan dasar yang sama |
+
+Perbedaan dari versi mesin OCR diakui dan penting: versi hanya perlu dicatat,
+sedangkan lisensi menentukan **boleh atau tidaknya dipasang sama sekali**.
+Karena itu syaratnya berupa gerbang keras pada pemasangan, bukan bidang yang
+menyusul.
+
+**Keterangan pemegang gerbang, 16 Agustus 2026.** Ditanya ulang, pemegang
+gerbang menyebut lisensi `intfloat/multilingual-e5-large-instruct` adalah
+**MIT**. Dicatat sebagai *keterangan*, bukan sebagai verifikasi primer, dan
+pembedaan itu bukan formalitas: nilai ini adalah yang **ketiga** disebutkan
+dalam satu percakapan — dua sebelumnya `apache-2.0 / cc-by-nc-4.0` — dan yang
+ketiga muncul tepat sesudah agen menyatakan ingatannya sendiri menyebut MIT
+bagi keluarga model itu. Kesesuaian antara keduanya menaikkan keyakinan, tetapi
+**dua sumber yang sama-sama belum diverifikasi tidak saling menguatkan**; ia
+hanya membuat keduanya keliru bersama-sama bila keliru.
+
+Akibat praktisnya: nilai ini **tidak** dipakai sebagai dasar keputusan mana
+pun. Ia dicatat agar selisih terlihat bila pemeriksaan saat pemasangan
+menemukan hal lain. Lisensi `SEA-Embedding-E5-Large-600M` tetap tidak
+diketahui.
+
+**Yang tidak dibangun sekarang.** Pemeriksa mesin bagi syarat ini sengaja
+belum dibuat: tidak satu pun dari ketiga paket ada pada
+`ketergantungan-disetujui.toml`, sehingga pemeriksanya akan memeriksa himpunan
+kosong dan melaporkan bersih setiap kali — TA-01 yang justru hendak
+dihindarinya, dan alasan yang sama yang menolak pemeriksa penanda pytest pada
+KB-056. Ia dibangun **bersamaan** dengan baris persetujuannya, bukan sebelum.
+
 ### 9.2 Keputusan B — kerangka web
 
 **`fastapi`, `uvicorn`, `httpx` — disetujui.** Ketiganya berlisensi permisif
