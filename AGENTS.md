@@ -68,6 +68,14 @@ membuatnya bukan perkecualian — C-08 menuntut seluruh pemanggilan model lewat
 `src/llm/`, sehingga setiap lapisan yang memanggil model wajib memiliki tepi ke
 sana, dan yang tidak memilikinya adalah lapisan yang tidak boleh memanggil
 model. Hal yang sejajar berlaku bagi `penyimpanan` dan C-03.
+`pengguna` boleh memanggil `ingest`, satu jurusan — `ingest` tidak memanggil
+`pengguna`. Tepi ini dituliskan pada fitur 011, ketika feed penemuan menyaring
+`ButirTayang`. Alasannya dapat dinyatakan umum, dan itu yang membuatnya bukan
+perkecualian — C-06 menuntut butir tayang hanya lahir dari gerbang kurasi,
+sehingga setiap lapisan yang **menayangkan** butir wajib memiliki tepi ke
+tempat butir itu disahkan. Arah sebaliknya terlarang dengan alasan yang
+sejajar: `ingest` yang memanggil `pengguna` membuat kurasi bergantung pada
+profil orang yang akan membacanya, dan itu membalik arah C-06.
 `ingest` boleh memanggil `nlp`, satu jurusan — `nlp` tidak memanggil `ingest`.
 Tepi itu ada karena pendeteksi data pribadi tinggal di `nlp` sedangkan yang
 menjalankannya gerbang di `ingest`; ia dituliskan agar impornya terbaca sebagai
