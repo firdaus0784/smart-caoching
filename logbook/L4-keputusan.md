@@ -876,3 +876,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membiarkan status lama sambil mempercayakan pembaca menelusuri logbook sendiri — ditolak; register Bagian 7.12 dibuat justru agar tujuh temuan dapat dibaca sekali duduk tanpa menelusuri puluhan entri KB. Menutup TK-51 sebagai "Selesai" mutlak — ditolak; kalimat D-01 belum diratifikasi rapat, dan menyamakan "kode sudah dibangun" dengan "naskah sudah disahkan" menyembunyikan satu langkah yang masih milik tim. |
 | Dampak | Tidak ada baris kode berubah dan tidak ada pasal berpindah — `make compliance` tetap 17 lulus / 0 gagal / 3 belum. Yang berubah murni keterbacaan register: pembaca berikutnya tidak lagi menemukan TK-51 seolah masih menunggu keputusan yang sesungguhnya sudah diambil. `docs/D00.md` ke 2.42. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-001), lewat pendelegasian yang sama dengan KB-044 |
+
+## KB-063 · TK-52 diputus — FR-A02 dan FR-A04 dinyatakan penetapan tim
+
+| | |
+|---|---|
+| Tanggal | 2026-08-17 |
+| Konteks | TK-52 (AK-14, 13 Agustus) menemukan FR-A02 ("maksimal 6 isian") dan FR-A04 ("maksimal 4 layar") tidak memiliki rujukan terverifikasi — penelusuran hanya menemukan tulisan pemasaran, yang SI-03 tolak. Usul menyatakannya penetapan tim sudah tercatat D-11 Bagian 5 sejak KB-044 (13 Agustus), dan fitur 022 sudah dibangun menegakkan kedua angka apa adanya sejak saat itu. Sesudah KB-060, tidak ada lagi pekerjaan pemrograman yang tidak menunggu orang — butir administratif seperti ini yang tersisa untuk menutup kesenjangan antara bahan yang sudah siap dan keputusan yang benar-benar diambil. |
+| Keputusan | **TK-52 diputus: FR-A02 dan FR-A04 dinyatakan tegas sebagai penetapan tim tanpa dasar literatur**, pilihan kedua yang SI-01 sediakan. Prinsip pengungkapan bertahap yang menopang FR-A02 — menanyakan sisanya kemudian saat relevan — dipertahankan apa adanya; hanya sumber sahnya angka yang dinyatakan ulang, bukan angkanya. Tidak ada kode berubah: fitur 022 sudah menegakkan kedua angka ini tanpa mengklaim dasar literatur sejak dibangun (KB-047). |
+| Alternatif | Mencarikan rujukan pendekatan dari tulisan pemasaran atau blog industri — ditolak; SI-03 menuntut verifikasi, dan daftar D-11 memuat Peffers, Hevner, Landis & Koch — menambah rujukan lemah menurunkan mutu daftar itu, bukan menaikkannya. Menunda keputusan sampai rapat tim berikutnya — dipertimbangkan, tetapi materinya sudah lengkap sejak KB-044 dan menahannya tanpa alasan baru hanya membuat register tetap tidak akurat; keputusan ini tetap dapat ditinjau ulang rapat, persis seperti TK-51. |
+| Dampak | Tidak ada baris kode berubah, tidak ada pasal berpindah. `make compliance` tetap 17 lulus / 0 gagal / 3 belum. Perubahan kalimat FR-A02/FR-A04 pada D-01 sendiri tetap menunggu berita acara rapat — yang diputus di sini adalah sumber sahnya angka, bukan angkanya sendiri. `docs/D00.md` ke 2.43. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-001), lewat pendelegasian yang sama dengan KB-044 |
