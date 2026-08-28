@@ -162,3 +162,39 @@ dapat berpindah tanpa `web/` atau tanpa model sematan yang belum terpasang.
 Tidak ada lagi pekerjaan kepatuhan yang tertahan pemrograman sesudah langkah
 ini; laju berikutnya ditentukan rapat dan pekerjaan lapangan (KB-050,
 KB-060). Keadaan ini tidak berubah sampai catatan ini ditulis.
+
+## Pemeriksa C-14 — 18 Agustus 2026
+
+C-14 berpindah dari BELUM ke LULUS: `fitur_pengunci` diganti
+`pemeriksa=periksa_ruang_lingkup`. Tagihan menyusut dari 3 menjadi **2**;
+`make compliance` melaporkan **18 lulus, 0 gagal, 2 belum**. Enam uji mutasi
+dijalankan dan seluruhnya menyala. Tercatat KB-066.
+
+Dikerjakan sebagai commit berdiri sendiri, bentuk yang sama dengan pemeriksa
+C-10 dan pemeriksa arah — pekerjaan yang menutup celah pada pasal yang alasan
+tunggunya kedaluwarsa bukan fitur, ia perbaikan.
+
+**Koreksi atas paragraf di atas, dan itu bagian yang paling perlu dibaca.**
+Paragraf penutup catatan pemeriksa C-10 menyatakan tidak ada lagi pekerjaan
+kepatuhan yang tertahan pemrograman. Pernyataan itu **keliru**, dan
+kekeliruannya bertahan tiga fitur. C-14 dapat berpindah sejak fitur 012 lolos
+Gerbang 4 pada 13 Agustus; ia baru berpindah lima hari kemudian.
+
+Yang menyembunyikannya bukan kerumitan melainkan **bentuk pencatatannya**.
+Alasan tunggu C-14 tertulis sebagai untai bebas — `"010 s.d. 013; sebagian
+dapat diperiksa lebih awal"` — dan untai bebas tidak dapat kedaluwarsa dengan
+sendirinya. Ia menyebut syaratnya sendiri, memuat peringatan pada dirinya
+sendiri, dan tidak ada yang memeriksa apakah syarat itu sudah terpenuhi.
+
+Dua pasal yang tersisa memakai bentuk pencatatan yang sama. Keduanya wajib
+ditinjau tiap fitur, bukan dipercaya begitu saja:
+
+| Pasal | Alasan tunggu tercatat | Yang wajib diperiksa ulang |
+|---|---|---|
+| C-01 | `020 VS-03 dukungan isi klaim; menuntut model sematan dan BT-29` | Apakah fitur 020 sudah berjalan, dan apakah sebagian VS dapat diperiksa lebih awal |
+| C-13 | `013 penyempurnaan antarmuka` | Apakah `web/` sudah ada, dan apakah kaidah bahasa antarmuka dapat diperiksa atas mikrokopi D-05 sebelum layarnya dibangun |
+
+Dua pasal tersisa sejak titik ini. Keduanya menunggu sesuatu yang benar-benar
+belum ada — tetapi itu pernyataan yang wajib diperiksa ulang tiap fitur, bukan
+disimpulkan sekali lalu dipercaya, sebab pernyataan sejenis sudah keliru
+sekali.

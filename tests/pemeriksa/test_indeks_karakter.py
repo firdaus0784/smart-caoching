@@ -326,8 +326,22 @@ def test_c10_terdaftar_dengan_pemeriksa_bukan_fitur_pengunci() -> None:
     assert pasal.fitur_pengunci is None
 
 
-def test_tiga_pasal_tersisa_dan_seluruhnya_menunggu_layar() -> None:
-    """Sesudah C-10, **tidak ada lagi pasal yang dapat berpindah tanpa `web/`**
-    atau tanpa model yang belum ada."""
+def test_dua_pasal_tersisa_dan_keduanya_menunggu_layar() -> None:
+    """Uji ini semula berbunyi "tiga pasal tersisa" dan menyatakan bahwa
+    sesudah C-10 **tidak ada lagi pasal yang dapat berpindah** tanpa `web/`
+    atau tanpa model yang belum ada. Pernyataan itu **keliru**, dan
+    kekeliruannya bertahan tiga fitur.
+
+    C-14 dapat berpindah, dan alasan tunggunya sudah kedaluwarsa sejak fitur
+    012 lolos Gerbang 4 — ketiadaan personalisasi baru bermakna sesudah fitur
+    010, 011, dan 012 ada. Yang menyembunyikannya bukan kerumitan melainkan
+    bentuk pencatatannya: alasan tunggu C-14 tertulis sebagai untai bebas
+    ``"010 s.d. 013; sebagian dapat diperiksa lebih awal"``, dan untai bebas
+    tidak dapat kedaluwarsa dengan sendirinya. Ia menyebut syaratnya sendiri
+    dan tidak ada yang memeriksa apakah syarat itu sudah terpenuhi.
+
+    Diganti, bukan dihapus. Yang tetap berlaku: kedua pasal yang **memang**
+    tersisa sungguh menunggu sesuatu yang belum ada.
+    """
     belum = {p.kode for p in DAFTAR_PASAL if p.pemeriksa is None}
-    assert belum == {"C-01", "C-13", "C-14"}
+    assert belum == {"C-01", "C-13"}

@@ -26,7 +26,7 @@ sebuah pasal, bukan perawatan terpisah.
 from perkakas.kepatuhan.daftar_pasal import DAFTAR_PASAL
 
 JUMLAH_PASAL = 20
-TERPERIKSA_MESIN = 17
+TERPERIKSA_MESIN = 18
 """Tujuh belas dari dua puluh, sejak C-10 pada 13 Agustus 2026.
 
 Riwayatnya: 7 (fitur 001) → 8 (002, C-03) → 9 (006, C-02) → 10 (007, C-16) →
@@ -67,10 +67,30 @@ mencatatnya demikian. Verifikasi yang C-01 tuntut mencakup VS-03, dan VS-03
 menunggu model sematan serta BT-29. Alasan tunggunya dikoreksi menjadi menyebut
 fitur 020 — mengoreksi alasan tunggu bukan menambah utang, ia membuat utang
 yang sudah ada terbaca benar.
+
+**C-14 berpindah tanpa fitur baru, dan tanpa menunggu fitur 013.** Ia terdaftar
+menunggu "010 s.d. 013" sejak fitur 001, dengan catatan pada dirinya sendiri —
+"sebagian dapat diperiksa lebih awal" — dan perintah L8 fitur 001 agar baris
+itu **ditinjau tiap fitur**. Peninjauan itu tidak pernah dilakukan sesudahnya,
+dan alasan tunggunya sudah kedaluwarsa sejak fitur 012 lolos Gerbang 4.
+
+Yang berubah bukan kodenya melainkan **maknanya**: sebelum fitur 010, 011, dan
+012 ada, ketiadaan personalisasi dan analitik prediktif dapat berarti "belum
+dibangun" alih-alih "sengaja tidak dibangun". Sesudah ketiganya ada,
+ketiadaannya menjadi pernyataan yang dapat ditagih.
+
+Fitur 013 tidak ditunggu, dan itu disengaja: pemeriksanya berdiri lebih dulu
+agar `web/` lahir di bawah aturan yang sudah ada — bentuk yang sama dengan
+C-17 dan C-18 yang dibangun fitur 001 sebelum ada pemanggil yang perlu
+dijaganya. Dikerjakan sebagai commit berdiri sendiri, bentuk yang sama dengan
+C-10 (KB-050) dan pemeriksa arah (KB-038).
+
+**Dua pasal tersisa** — C-01 (fitur 020, menunggu model sematan) dan C-13
+(fitur 013, menunggu `web/`).
 """
 
 
-def test_tagihan_menyusut_menjadi_tujuh_belas() -> None:
+def test_tagihan_menyusut_menjadi_delapan_belas() -> None:
     belum = [p for p in DAFTAR_PASAL if p.pemeriksa is None]
     assert len(DAFTAR_PASAL) == JUMLAH_PASAL
     assert JUMLAH_PASAL - len(belum) == TERPERIKSA_MESIN

@@ -172,13 +172,17 @@ def test_c04_terdaftar_dengan_pemeriksa_bukan_fitur_pengunci() -> None:
 
 def test_c04_pasal_terakhir_yang_berpindah_bersama_fiturnya() -> None:
     """C-04 adalah pasal terakhir yang berpindah **karena sebuah fitur
-    dibangun**. Sesudahnya tinggal C-10, yang berpindah tanpa fitur baru —
-    kodenya sudah ada sejak fitur 003, hanya pemeriksanya yang belum.
+    dibangun**. Sesudahnya dua pasal berpindah tanpa fitur baru — C-10, yang
+    kodenya sudah ada sejak fitur 003 dan hanya pemeriksanya yang belum; lalu
+    C-14, yang alasan tunggunya kedaluwarsa ketika fitur 012 lolos Gerbang 4.
 
-    Uji ini semula berbunyi "empat pasal tersisa" dan benar ketika ditulis.
-    Ia diganti, bukan dihapus: yang tetap berlaku adalah pembedaan antara
-    pasal yang menunggu kode dan pasal yang hanya menunggu pemeriksanya.
+    Uji ini semula berbunyi "empat pasal tersisa", lalu "tiga". Ia diganti
+    dua kali dan tidak pernah dihapus: yang tetap berlaku adalah pembedaan
+    antara pasal yang menunggu kode dan pasal yang hanya menunggu
+    pemeriksanya — dan kedua kali penggantian, yang bertambah adalah pasal
+    jenis kedua.
     """
     belum = {p.kode for p in DAFTAR_PASAL if p.pemeriksa is None}
-    assert belum == {"C-01", "C-13", "C-14"}
-    assert next(p for p in DAFTAR_PASAL if p.kode == "C-10").pemeriksa is not None
+    assert belum == {"C-01", "C-13"}
+    for kode in ("C-10", "C-14"):
+        assert next(p for p in DAFTAR_PASAL if p.kode == kode).pemeriksa is not None

@@ -41,6 +41,7 @@ from perkakas.pemeriksa.perekaman_telemetri import periksa_perekaman_telemetri
 from perkakas.pemeriksa.peringkat_klaim import periksa_peringkat_klaim
 from perkakas.pemeriksa.peta_pseudonim import periksa_peta_pseudonim
 from perkakas.pemeriksa.regulasi_dicabut import periksa_regulasi_dicabut
+from perkakas.pemeriksa.ruang_lingkup import periksa_ruang_lingkup
 from perkakas.pemeriksa.tanpa_kemampuan_bertindak import periksa_tanpa_kemampuan_bertindak
 
 Pemeriksa = Callable[[Path], list[Temuan]]
@@ -165,7 +166,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-14",
         "fitur D-01 Bagian 4.2 tidak dibangun, termasuk kerangka kosong",
-        fitur_pengunci="010 s.d. 013; sebagian dapat diperiksa lebih awal",
+        pemeriksa=periksa_ruang_lingkup,
     ),
     Pasal(
         "C-15",
