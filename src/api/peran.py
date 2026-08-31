@@ -237,6 +237,23 @@ sebagian."""
 
 _INDEKS: dict[tuple[str, str], Rute] = {(r.metode, r.jalur): r for r in PETA_RUTE}
 
+POLA_TANYA = _INDEKS["POST", "/api/v1/tanya"].jalur
+POLA_DAFTAR_PERCAKAPAN = _INDEKS["GET", "/api/v1/percakapan"].jalur
+POLA_SATU_PERCAKAPAN = _INDEKS["GET", "/api/v1/percakapan/{id}"].jalur
+"""Pola jalur yang sudah memiliki penangan HTTP — fitur 023.
+
+Berada di sini, bukan pada `src/api/aplikasi.py`, karena pemeriksa
+`periksa_rute_terdaftar` melarang untai jalur API berada di luar berkas ini —
+dan larangan itu ditulis fitur 021 justru dengan meramalkan adaptor HTTP yang
+akan menuliskan jalurnya sendiri pada dekoratornya. Ia menangkapnya pada
+percobaan pertama.
+
+Diambil lewat **pencarian pada `_INDEKS`**, bukan disalin. Kunci yang tidak ada
+menggagalkan impor dengan `KeyError`, sehingga tetapan yang berselisih dari
+`PETA_RUTE` tidak dapat berdiri: bukan tertangkap uji, melainkan tidak dapat
+dimuat.
+"""
+
 
 def boleh(peran: Peran, metode: str, pola_jalur: str) -> bool:
     """Bolehkah `peran` memanggil rute ini? — R-02.
