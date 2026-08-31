@@ -29,6 +29,13 @@ LANGSUNG_DISETUJUI = {
     "openpyxl",
     "pysastrawi",
     "pytesseract",
+    # Keputusan KB-044 (13 Agustus 2026), dituliskan pada berkas persetujuan
+    # atas perintah tertulis pemegang gerbang pada 18 Agustus 2026 — KB-067.
+    "fastapi",
+    "uvicorn",
+    "httpx",
+    "asyncpg",
+    "pgvector",
 }
 
 

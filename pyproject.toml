@@ -9,12 +9,17 @@ requires-python = ">=3.12,<3.13"
 # Penambahan memerlukan persetujuan penanggung jawab teknis (C-12).
 # Pembandingnya: ketergantungan-disetujui.toml, ditegakkan `make check`.
 dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
     "openpyxl>=3.1.5",
+    "pgvector>=0.5.0",
     "pydantic>=2,<3",
     "pypdf>=6.15.0",
     "pysastrawi>=1.2.1",
     "pytesseract>=0.3.13",
     "python-docx>=1.2.0",
+    "uvicorn>=0.52.4",
 ]
 
 [dependency-groups]

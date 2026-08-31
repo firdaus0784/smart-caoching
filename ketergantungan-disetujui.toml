@@ -26,16 +26,33 @@ langsung = [
     "openpyxl",     # MIT
     "PySastrawi",   # MIT
     "pytesseract",  # Apache-2.0
+    # Ditambahkan atas keputusan KB-044 (13 Agustus 2026). Lisensi diperiksa
+    # langsung ke PyPI pada 12 Agustus 2026, bukan dikutip dari ingatan.
+    "fastapi",      # MIT
+    "uvicorn",      # BSD-3-Clause
+    "httpx",        # BSD-3-Clause
+    "asyncpg",      # Apache-2.0
+    "pgvector",     # MIT
 ]
 
 # Pohon transitif utuh pada saat penguncian. Selisih apa pun terhadap
 # uv.lock — paket masuk, paket hilang, versi bergeser — menggagalkan
 # `make check`.
 [terkunci]
+"annotated-doc" = "0.0.5"
 "annotated-types" = "0.8.0"
+"anyio" = "4.14.2"
+"asyncpg" = "0.31.0"
+"certifi" = "2026.7.22"
+"click" = "8.5.0"
 "colorama" = "0.4.6"
 "coverage" = "7.15.3"
 "et-xmlfile" = "2.0.0"
+"fastapi" = "0.141.1"
+"h11" = "0.16.0"
+"httpcore" = "1.0.9"
+"httpx" = "0.28.1"
+"idna" = "3.19"
 "iniconfig" = "2.3.0"
 "librt" = "0.13.0"
 "lxml" = "6.1.1"
@@ -44,6 +61,7 @@ langsung = [
 "openpyxl" = "3.1.5"
 "packaging" = "26.2"
 "pathspec" = "1.1.1"
+"pgvector" = "0.5.0"
 "pillow" = "12.3.0"
 "pluggy" = "1.6.0"
 "pydantic" = "2.13.4"
@@ -56,21 +74,11 @@ langsung = [
 "pytest-cov" = "6.3.0"
 "python-docx" = "1.2.0"
 "ruff" = "0.9.10"
+"starlette" = "1.6.0"
 "typing-extensions" = "4.16.0"
 "typing-inspection" = "0.4.2"
+"uvicorn" = "0.52.4"
 
-# Ketergantungan di luar paket Python — R-13, keputusan KB-017.
-#
-# `uv.lock` tidak melihat program sistem, sehingga versi mesin OCR yang
-# bergeser tidak tertangkap apa pun. Bagian ini yang menutup celah itu.
-#
-# `versi` sengaja kosong: mesin belum pernah dipasang pada lingkungan
-# penelitian, dan menebaknya dari lingkungan lain menghasilkan patokan yang
-# tidak pernah dipakai siapa pun. Selama kosong, pemeriksa melapor "belum
-# dapat diperiksa" — bukan "lulus". Ia dipatok saat pemasangan pertama.
-#
-# `sidik` TIDAK kosong: berkas model diperiksa langsung dari
-# raw.githubusercontent.com pada 6 Agustus 2026, tugas A-3 fitur 015.
 [sistem.tesseract]
 versi = ""
 berkas_model = "ind.traineddata"
