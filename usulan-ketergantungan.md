@@ -263,6 +263,53 @@ kosong dan melaporkan bersih setiap kali — TA-01 yang justru hendak
 dihindarinya, dan alasan yang sama yang menolak pemeriksa penanda pytest pada
 KB-056. Ia dibangun **bersamaan** dengan baris persetujuannya, bukan sebelum.
 
+#### 9.1b Verifikasi primer terpenuhi — 31 Agustus 2026
+
+Pemegang gerbang membuka halaman model dan mengirimkan tangkapan layarnya.
+Agen membaca tangkapan layar itu langsung; ini **bukan** keterangan yang
+disampaikan ulang, melainkan tampilan halaman yang menjadi sumbernya.
+
+| Butir | Nilai terbaca | Letaknya pada halaman |
+|---|---|---|
+| Alamat | `huggingface.co/intfloat/multilingual-e5-large-instruct` | Bilah alamat peramban |
+| Nama model | `intfloat/multilingual-e5-large-instruct` | Judul halaman |
+| **Lisensi** | **`mit`** | Label `License: mit` di bawah deretan tanda model |
+| Gated | **tidak** | Halaman terbuka penuh dalam keadaan **tidak masuk akun** (tombol *Log In* dan *Sign Up* tampak); tidak ada tombol *Agree and access repository* |
+| Ukuran | 0,6 miliar parameter, tipe tensor F16 | Panel Safetensors |
+| Bentuk | 24 lapis, dimensi sematan 1024 | Kartu model |
+| Tanggal pemeriksaan | 31 Agustus 2026 | Jam sistem pada tangkapan layar |
+
+**Syarat pada tabel 9.1a terpenuhi bagi calon utama.** `mit` berada pada kelas
+permisif yang Bagian 9.3 tetapkan. Keterangan pemegang gerbang tertanggal 16
+Agustus ternyata benar — tetapi pencatatannya sebagai *keterangan* alih-alih
+*verifikasi* tetap benar pula, dan keduanya tidak saling meniadakan: yang
+menjadikannya sah hari ini adalah halamannya dibuka, bukan bahwa tebakannya
+kebetulan cocok.
+
+**Dua hal yang berubah dari catatan sebelumnya.** Pertama, kolom *Gated* pada
+keterangan 16 Agustus berbunyi "ya"; halaman yang sesungguhnya menunjukkan
+**tidak**. Selisih itu justru yang membuat pencatatan terpisah berguna — ia
+terlihat. Kedua, nilai `apache-2.0 / cc-by-nc-4.0` yang sempat disebutkan dua
+kali tidak berlaku bagi model ini.
+
+**Batas yang diakui.** Yang dibaca adalah **label lisensi pada kartu model**,
+yakni pernyataan yang pengunggah tetapkan pada metadata. Berkas `LICENSE` di
+dalam tab *Files and versions* belum dibuka. Bagi keperluan Bagian 9.1a hal ini
+memadai — label itulah yang HuggingFace tampilkan sebagai lisensi resmi
+repositori — tetapi pembedaannya dicatat agar tidak terbaca lebih kuat
+daripada yang sesungguhnya diperiksa.
+
+**Yang masih belum diketahui.** Lisensi `SEA-Embedding-E5-Large-600M`, yakni
+pembanding wajib pada Keputusan A. Fitur 019 dapat dimulai atas calon utama;
+pembandingnya wajib diperiksa dengan cara yang sama **sebelum** ia dipasang.
+
+**Yang belum terbuka meski lisensi sudah pasti.** `torch`, `transformers`, dan
+`sentence-transformers` **belum** ada pada `ketergantungan-disetujui.toml`.
+Verifikasi lisensi memenuhi *syarat* persetujuan bersyarat; ia tidak dengan
+sendirinya menuliskan barisnya. Penulisannya menuntut tindakan yang sama
+dengan kelima paket pada KB-067: perintah pemegang gerbang, lalu pemasangan
+dan penulisan titik nol dalam satu langkah.
+
 ### 9.2 Keputusan B — kerangka web
 
 **`fastapi`, `uvicorn`, `httpx` — disetujui.** Ketiganya berlisensi permisif

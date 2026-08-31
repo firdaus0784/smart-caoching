@@ -198,3 +198,17 @@ Dua pasal tersisa sejak titik ini. Keduanya menunggu sesuatu yang benar-benar
 belum ada — tetapi itu pernyataan yang wajib diperiksa ulang tiap fitur, bukan
 disimpulkan sekali lalu dipercaya, sebab pernyataan sejenis sudah keliru
 sekali.
+
+## Koreksi tanggal atas dua pemutakhiran di atas — 31 Agustus 2026
+
+Judul kedua pemutakhiran di atas bertanggal keliru. Tanggal sesungguhnya
+dibaca dari tanggal commit, bukan dari tulisan tangan:
+
+| Pemutakhiran | Judulnya berbunyi | Tanggal sesungguhnya |
+|---|---|---|
+| Delapan langkah tertinggal disusulkan | 17 Agustus 2026 | **18 Agustus 2026** |
+| Pemeriksa C-14 | 18 Agustus 2026 | **28 Agustus 2026** |
+
+Judul aslinya dibiarkan apa adanya: berkas ini menyatakan pada kepalanya
+sendiri bahwa rekaman lama tetap berdiri, dan itu berlaku pula bagi rekaman
+yang keliru. Sebab dan akibatnya tercatat pada `logbook/L4` KB-069.
