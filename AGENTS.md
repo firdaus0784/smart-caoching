@@ -38,7 +38,13 @@ make test         # seluruh uji, 12 detik
 make lint         # linter + format
 make check        # V-01 s.d. V-06, wajib lulus sebelum commit
 make compliance   # periksa pasal C-01 s.d. C-20
+make jalan        # jalankan pada mesin sendiri — pengembangan, bukan penyebaran
 ```
+
+`make jalan` memakai `perkakas/jalankan_lokal.py`: hanya mengikat `127.0.0.1`,
+**tanpa autentikasi**, dan penanda versinya berbunyi `pengembangan`. Ia berhenti
+berguna ketika fitur 019, 020, dan 024 selesai, dan sebaiknya dihapus pada hari
+itu alih-alih dibiarkan menua.
 
 Jalankan `make check` sebelum menyatakan tugas selesai. Bukan `make test` saja.
 

@@ -32,3 +32,10 @@ check:
 ## compliance — periksa pasal C-01 s.d. C-20
 compliance:
 	@$(UV) run python -m perkakas.kepatuhan.jalankan
+
+## jalan — jalankan aplikasi pada mesin sendiri, untuk pengembangan
+#
+# Bukan perintah penyebaran. Titik jalannya hanya mengikat 127.0.0.1 dan
+# tidak memiliki autentikasi; lihat uraian perkakas/jalankan_lokal.py.
+jalan:
+	@$(UV) run python -m perkakas.jalankan_lokal
