@@ -5,7 +5,7 @@
 | Kebutuhan | ADR-05, ADR-06, ADR-12; C-03, C-05; KA-04 |
 | Dokumen terkait | D-04 ADR-05 dan ADR-06, D-09 Bagian 4, D-14 Bagian 5 |
 | Pasal konstitusi yang menyentuh fitur ini | C-03, C-05, C-12 |
-| Status | Menunggu Gerbang 1 |
+| Status | **Gerbang 1 lolos** — 3 September 2026, nol pertanyaan terbuka. Menunggu Gerbang 2 |
 | Temuan pemicu | TK-56 |
 
 ## Tujuan
@@ -94,23 +94,46 @@ tanpa mengubah bentuk catatannya.
 | Pemindahan antar area | Menuntut hak baca asal **dan** hak tulis tujuan |
 | Sambungan putus di tengah penulisan | Penulisan tidak setengah jadi |
 
-## Pertanyaan yang wajib dijawab Gerbang 1
+## Keputusan Gerbang 1
 
-1. **Satu basis data atau dua?** C-05 menuntut kunci pseudonim terpisah dari
-   data perilaku. ADR-05 menyebut "satu PostgreSQL". Keduanya dapat didamaikan
-   dengan dua basis data pada satu peladen, atau dua peladen. **Pilihan ini
-   menentukan bentuk konfigurasi dan tidak boleh diputuskan saat menulis kode.**
+Diputus pemegang Gerbang 1–4 pada 3 September 2026. Dicatat pula pada KB-077.
 
-2. **Pemisahan area karantina diwujudkan bagaimana?** ADR-06 menolak penandaan
-   status; pilihannya antara pengguna basis data terpisah dengan hak berbeda,
-   atau skema terpisah. Keduanya memenuhi C-03; yang pertama lebih tegas dan
-   lebih mahal disiapkan.
+**1 · Satu peladen, dua basis data.** C-05 dan ADR-05 didamaikan pada tingkat
+basis data, bukan peladen: satu peladen PostgreSQL menaungi dua basis data
+terpisah — satu bagi data perilaku dan korpus, satu bagi kunci pemetaan
+pseudonim. Keduanya disusun dari **dua konfigurasi sambungan yang berdiri
+sendiri**, sehingga tidak ada satu konfigurasi pun yang dapat menghasilkan
+keduanya.
 
-3. **Adaptor ini menguji abstraksi — apa yang terjadi bila tidak pas?**
-   ADR-12 sudah memperkirakan kemungkinan ini dan menetapkan setiap penyesuaian
-   dicatat, bukan diperbaiki diam-diam. Perlu ditegaskan bahwa penyesuaian
-   `PenyimpanDasar` yang lahir dari sini **wajib melewati Gerbang 2 tersendiri**,
-   sebab ia mengubah kontrak yang lima modul sudah pakai.
+Alternatif dua peladen ditolak bukan karena keamanannya kurang melainkan
+karena biaya penyediaannya tidak sebanding pada TKT 3, dan karena keterpisahan
+yang C-05 tuntut sudah tegak pada tingkat basis data. Bila siklus berikutnya
+menaikkan tuntutannya, perpindahan ke dua peladen tidak mengubah kode
+pemanggil — hanya konfigurasinya.
+
+**2 · Karantina dipisah dengan skema terpisah _sekaligus_ pengguna basis data
+terpisah.** Bukan salah satu. ADR-06 menolak penandaan status, dan C-03
+berbunyi "kredensial berbeda, bukan penanda status" — pengguna basis data
+terpisah itulah yang mewujudkan kata "kredensial" secara harfiah. Skema
+terpisah ditambahkan di atasnya agar hak akses dapat dinyatakan sekali pada
+tingkat skema, bukan diulang tabel demi tabel; hak yang harus diulang adalah
+hak yang suatu hari terlupa pada satu tabel.
+
+Biayanya diakui terus terang: penyediaan basis data menjadi lebih panjang —
+D-09 wajib membuat pengguna basis data beserta pernyataan hak aksesnya, dan
+penyiapan pada mesin pengembangan bertambah langkahnya. Itu harga yang
+diterima sadar, bukan yang terlewat dihitung.
+
+**3 · Penyesuaian `PenyimpanDasar` wajib melewati Gerbang 2 tersendiri.**
+Ditegaskan sebagaimana diusulkan. Adaptor ini adalah penguji abstraksi
+sebagaimana ADR-12 perkirakan; bila abstraksinya tidak pas, yang berubah
+adalah kontrak yang lima modul sudah pakai. Perubahan semacam itu diajukan
+dan menunggu, tidak diperbaiki sambil jalan.
+
+**Tidak ada kebutuhan R-01 s.d. R-08 yang berubah karena ketiga keputusan
+ini.** Ketiganya mengunci *cara* R-04 dan R-05 diwujudkan, bukan *apa* yang
+dituntut. Dicatat karena kebutuhan yang diam-diam bergeser saat gerbang
+ditutup adalah kekeliruan yang sulit terlihat belakangan.
 
 ## Ketertelusuran
 
@@ -119,6 +142,6 @@ tanpa mengubah bentuk catatannya.
 | ADR-05 | R-01, R-07 |
 | ADR-06, C-03, KA-04 | R-02, R-03, R-04 |
 | C-05 | R-05 |
-| ADR-12 | R-01, R-06, pertanyaan Gerbang 1 nomor 3 |
+| ADR-12 | R-01, R-06, Keputusan Gerbang 1 nomor 3 |
 | C-12 | Nol ketergantungan baru — `asyncpg` sudah pada berkas persetujuan |
 | D-14 Bagian 5 | R-07 |
