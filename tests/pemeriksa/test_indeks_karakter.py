@@ -326,7 +326,7 @@ def test_c10_terdaftar_dengan_pemeriksa_bukan_fitur_pengunci() -> None:
     assert pasal.fitur_pengunci is None
 
 
-def test_dua_pasal_tersisa_dan_keduanya_menunggu_layar() -> None:
+def test_satu_pasal_tersisa_dan_ia_menunggu_model() -> None:
     """Uji ini semula berbunyi "tiga pasal tersisa" dan menyatakan bahwa
     sesudah C-10 **tidak ada lagi pasal yang dapat berpindah** tanpa `web/`
     atau tanpa model yang belum ada. Pernyataan itu **keliru**, dan
@@ -340,8 +340,22 @@ def test_dua_pasal_tersisa_dan_keduanya_menunggu_layar() -> None:
     tidak dapat kedaluwarsa dengan sendirinya. Ia menyebut syaratnya sendiri
     dan tidak ada yang memeriksa apakah syarat itu sudah terpenuhi.
 
-    Diganti, bukan dihapus. Yang tetap berlaku: kedua pasal yang **memang**
-    tersisa sungguh menunggu sesuatu yang belum ada.
+    **Diganti untuk kedua kalinya, dan kekeliruannya berbentuk sama persis.**
+    Setelah C-14 berpindah, uji ini berbunyi "dua pasal tersisa dan keduanya
+    menunggu layar". C-13 tidak menunggu layar: untai yang menghadap pengguna
+    sudah ada di dalam `src/` sejak fitur 002 — penafian jawaban, pesan di
+    luar domain, pesan galat lapisan HTTP dan jalur ekstraksi. Alasan
+    tunggunya, ``"013 penyempurnaan antarmuka"``, juga untai bebas yang tidak
+    dapat kedaluwarsa dengan sendirinya.
+
+    Yang perlu dibaca dari dua penggantian ini: klaim "sisanya sungguh
+    menunggu sesuatu yang belum ada" sudah **dua kali terbukti keliru**, dan
+    kedua kali sebabnya sama — alasan tunggu berupa untai bebas yang tidak
+    ada mekanismenya untuk kedaluwarsa. Satu pasal yang kini tersisa memakai
+    bentuk pencatatan yang sama, sehingga ia wajib ditinjau tiap fitur, bukan
+    dipercaya.
+
+    Diganti, bukan dihapus.
     """
     belum = {p.kode for p in DAFTAR_PASAL if p.pemeriksa is None}
-    assert belum == {"C-01", "C-13"}
+    assert belum == {"C-01"}

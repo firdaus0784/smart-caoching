@@ -24,6 +24,7 @@ from pathlib import Path
 
 from perkakas.pemeriksa.ambang import periksa_ambang
 from perkakas.pemeriksa.ast_aturan import Temuan
+from perkakas.pemeriksa.bahasa_antarmuka import periksa_bahasa_antarmuka
 from perkakas.pemeriksa.bentuk_tanggapan import periksa_bentuk_tanggapan
 from perkakas.pemeriksa.cakupan import periksa_cakupan
 from perkakas.pemeriksa.catatan_versi import periksa_catatan_versi
@@ -161,7 +162,7 @@ DAFTAR_PASAL: tuple[Pasal, ...] = (
     Pasal(
         "C-13",
         "bahasa antarmuka: kalimat <= 20 kata, tanpa singkatan tak diuraikan",
-        fitur_pengunci="013 penyempurnaan antarmuka",
+        pemeriksa=periksa_bahasa_antarmuka,
     ),
     Pasal(
         "C-14",

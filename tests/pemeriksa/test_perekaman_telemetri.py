@@ -176,13 +176,18 @@ def test_c04_pasal_terakhir_yang_berpindah_bersama_fiturnya() -> None:
     kodenya sudah ada sejak fitur 003 dan hanya pemeriksanya yang belum; lalu
     C-14, yang alasan tunggunya kedaluwarsa ketika fitur 012 lolos Gerbang 4.
 
-    Uji ini semula berbunyi "empat pasal tersisa", lalu "tiga". Ia diganti
-    dua kali dan tidak pernah dihapus: yang tetap berlaku adalah pembedaan
-    antara pasal yang menunggu kode dan pasal yang hanya menunggu
-    pemeriksanya — dan kedua kali penggantian, yang bertambah adalah pasal
-    jenis kedua.
+    Uji ini semula berbunyi "empat pasal tersisa", lalu "tiga", lalu "dua".
+    Ia diganti **tiga kali** dan tidak pernah dihapus: yang tetap berlaku
+    adalah pembedaan antara pasal yang menunggu kode dan pasal yang hanya
+    menunggu pemeriksanya — dan **ketiga kali** penggantian, yang bertambah
+    adalah pasal jenis kedua.
+
+    Tiga kali berturut-turut bukan kebetulan. Ia sifat bentuk pencatatannya:
+    `fitur_pengunci` berupa untai bebas yang menyebut syaratnya sendiri tanpa
+    ada yang memeriksa apakah syarat itu sudah terpenuhi. C-01 yang tersisa
+    memakai bentuk yang sama.
     """
     belum = {p.kode for p in DAFTAR_PASAL if p.pemeriksa is None}
-    assert belum == {"C-01", "C-13"}
-    for kode in ("C-10", "C-14"):
+    assert belum == {"C-01"}
+    for kode in ("C-10", "C-13", "C-14"):
         assert next(p for p in DAFTAR_PASAL if p.kode == kode).pemeriksa is not None

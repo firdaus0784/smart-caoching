@@ -212,3 +212,66 @@ dibaca dari tanggal commit, bukan dari tulisan tangan:
 Judul aslinya dibiarkan apa adanya: berkas ini menyatakan pada kepalanya
 sendiri bahwa rekaman lama tetap berdiri, dan itu berlaku pula bagi rekaman
 yang keliru. Sebab dan akibatnya tercatat pada `logbook/L4` KB-069.
+
+---
+
+## Pemeriksa C-13 — 3 September 2026
+
+C-13 berpindah dari BELUM ke LULUS: `fitur_pengunci` diganti
+`pemeriksa=periksa_bahasa_antarmuka`. Tagihan menyusut dari 2 menjadi **1**;
+`make compliance` melaporkan **19 lulus, 0 gagal, 1 belum**. Dua belas uji
+mutasi dijalankan dan seluruhnya menyala. Tercatat KB-078.
+
+Dikerjakan sebagai commit berdiri sendiri, bentuk yang sama dengan pemeriksa
+C-10, C-14, dan pemeriksa arah.
+
+### Alasan tunggunya tidak pernah benar
+
+Alasan tunggu C-13 berbunyi `"013 penyempurnaan antarmuka"`, dan pertanyaan
+tinjauan yang tertulis pada catatan pemeriksa C-14 sudah menduga sebagiannya:
+*"apakah kaidah bahasa antarmuka dapat diperiksa atas mikrokopi D-05 sebelum
+layarnya dibangun"*.
+
+Keadaannya lebih tegas daripada dugaan itu. **Dua belas untai yang menghadap
+pengguna sudah berada di dalam `src/`**, dan yang paling awal ada sejak fitur
+002 — penafian jawaban, pesan di luar domain, tiga pesan lapisan HTTP, lima
+pesan jalur ekstraksi, dan dua `PESAN_PENGGUNA` pada kelas galat. Seluruhnya
+kode yang disebarkan; seluruhnya terikat C-13; tidak satu pun diperiksa.
+
+C-13 karena itu bukan pasal yang menunggu `web/`. Ia pasal yang **sebagian
+besar permukaannya sudah ada sejak awal** dan tidak pernah ditinjau.
+
+### Ini kekeliruan ketiga dengan bentuk yang sama
+
+| Kali | Uji berbunyi | Yang ternyata dapat berpindah |
+|---|---|---|
+| 1 | "empat pasal tersisa" | C-10 — kodenya ada sejak fitur 003 |
+| 2 | "tiga pasal tersisa" | C-14 — alasannya kedaluwarsa sejak fitur 012 |
+| 3 | "dua pasal tersisa, keduanya menunggu layar" | C-13 — untainya ada sejak fitur 002 |
+
+Tiga kali berturut-turut, dan sebabnya sama setiap kali: `fitur_pengunci`
+berupa **untai bebas** yang menyebut syaratnya sendiri tanpa ada mekanisme
+yang memeriksa apakah syarat itu sudah terpenuhi. Untai bebas tidak dapat
+kedaluwarsa dengan sendirinya.
+
+**C-01 yang tersisa memakai bentuk pencatatan yang sama.** Alasannya berbunyi
+`"020 VS-03 dukungan isi klaim; menuntut model sematan dan BT-29"`. Ditinjau
+hari ini: fitur 019 dan 020 keduanya belum dimulai, dan VS-03 menuntut model
+sematan yang belum dipasang. Alasan itu **masih berlaku** — tetapi ia wajib
+ditinjau lagi pada fitur berikutnya, bukan dipercaya.
+
+### Yang tetap tidak terjaga, dinyatakan terus terang
+
+Pemeriksa membaca tetapan pada berkas Python. Yang tidak terbaca:
+
+| Tidak terjaga | Sebab | Yang kelak menjaganya |
+|---|---|---|
+| Untai yang disusun saat jalan | Sambungan dan pemformatan tidak terbaca statis (RP-01, RP-05) | — |
+| Mikrokopi pada layar `web/` | `web/` belum ada | Fitur 013 |
+| Keterbacaan sesungguhnya bagi pembaca | Mesin menghitung kata, bukan memahami | Uji BT-20 bersama persona P1 dan P3 |
+| Singkatan domain yang asing bagi pembaca | Sengaja tidak disapu — sapuan atas RKAS dan BOS akan menyalak keliru | Uji BT-20 |
+
+Perpindahan ini karena itu bukan "C-13 kini terjaga penuh", melainkan **C-13
+berpindah dari tidak diperiksa sama sekali menjadi diperiksa pada permukaan
+yang sudah ada**. Bagian layarnya tetap menunggu fitur 013, dan itu tercatat
+pada uraian pemeriksanya.

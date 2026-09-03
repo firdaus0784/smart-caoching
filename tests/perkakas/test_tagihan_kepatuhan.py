@@ -26,7 +26,7 @@ sebuah pasal, bukan perawatan terpisah.
 from perkakas.kepatuhan.daftar_pasal import DAFTAR_PASAL
 
 JUMLAH_PASAL = 20
-TERPERIKSA_MESIN = 18
+TERPERIKSA_MESIN = 19
 """Tujuh belas dari dua puluh, sejak C-10 pada 13 Agustus 2026.
 
 Riwayatnya: 7 (fitur 001) → 8 (002, C-03) → 9 (006, C-02) → 10 (007, C-16) →
@@ -90,7 +90,7 @@ C-10 (KB-050) dan pemeriksa arah (KB-038).
 """
 
 
-def test_tagihan_menyusut_menjadi_delapan_belas() -> None:
+def test_tagihan_menyusut_menjadi_sembilan_belas() -> None:
     belum = [p for p in DAFTAR_PASAL if p.pemeriksa is None]
     assert len(DAFTAR_PASAL) == JUMLAH_PASAL
     assert JUMLAH_PASAL - len(belum) == TERPERIKSA_MESIN
