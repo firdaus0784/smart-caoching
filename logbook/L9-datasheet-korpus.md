@@ -151,16 +151,23 @@ FR-B04 dan FR-B05 **prasyarat hukum, bukan fitur tambahan**.
 |---|---|
 | Cara perolehan | Belum ditetapkan |
 | Persetujuan pemilik dokumen | **Belum ada** |
-| *Ethical clearance* (ET-01) | **Tidak ada catatan penyelesaian pada berkas mana pun** |
+| *Ethical clearance* (ET-01) | **Sedang berjalan** — dinyatakan pemegang Gerbang 1–4 pada 6 September 2026. Nomor persetujuan belum terbit; dicatat di sini begitu ada |
 | Nota kesepahaman dengan dinas | Belum tercatat |
 | Rentang waktu | Belum dimulai |
 
 `docs/D01.md` Bagian 14 ET-01 menetapkan pengajuan *ethical clearance* ke
 komite etik penelitian UPI oleh ketua peneliti **sebelum pengambilan data
-(Bulan 1)**. Tidak ditemukan catatan bahwa ia selesai. Ketiadaan catatan
-bukan bukti ia belum diurus — tetapi ia belum dapat dinyatakan selesai, dan
-pengumpulan 11 jenis dokumen berisi data anak tidak boleh dimulai sebelum
-kepastiannya ada.
+(Bulan 1)**. Keadaannya pada 6 September 2026: **sedang berjalan, belum
+terbit**.
+
+Sampai nomornya ada, yang berlaku: **pengumpulan dokumen belum dimulai**, dan
+nama mahasiswa peneliti belum boleh masuk ke jalur yang menyentuh dokumen
+sekolah. Sebelas dari lima puluh jenis dokumen pada Bagian 2.2 memuat data
+peserta didik, dua di antaranya bersifat sensitif.
+
+Yang **boleh** berjalan tanpa menunggu: penyusunan panduan kerja, pelatihan
+anotator memakai contoh buatan, dan seluruh pekerjaan perangkat lunak. Yang
+tidak boleh: menyentuh dokumen sekolah sungguhan.
 
 `docs/D01.md` Bagian 15 catatan (b) menambahkan alasan kedua: jurnal
 terindeks Scopus umumnya meminta nomor persetujuan etik dicantumkan dalam
@@ -226,4 +233,5 @@ Belum ditetapkan.
 
 | Tanggal | Perubahan | Sebab |
 |---|---|---|
+| 6 September 2026 | Bagian 3 diperbarui: ET-01 dinyatakan sedang berjalan oleh pemegang Gerbang 1–4; batas yang berlaku selama menunggu dituliskan | KB-081 |
 | 2 September 2026 | Berkas dibuka. Bagian 2 terisi sebagian dari daftar 50 jenis dokumen; Bagian 3 menyatakan ET-01 tanpa catatan penyelesaian | KB-076 |
