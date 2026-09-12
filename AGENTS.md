@@ -41,6 +41,14 @@ make compliance   # periksa pasal C-01 s.d. C-20
 make jalan        # jalankan pada mesin sendiri — pengembangan, bukan penyebaran
 ```
 
+`make check` **menuntut peladen PostgreSQL berjalan** sejak keputusan tim
+12 September 2026. Alamatnya dibaca dari `PGHOST`, `PGPORT`, dan `PGUSER`.
+Tanpa peladen, rangkaian uji **gagal**, bukan dilewati: sebagian sifat yang
+dijaga fitur 024 — penolakan hak akses oleh peladen, keutuhan penulisan saat
+sambungan putus — tidak dapat ditiru, dan gerbang yang melaporkan lulus tanpa
+memeriksanya adalah laporan palsu. Penyiapannya pada
+`perkakas/basis_data/README.md`.
+
 `make jalan` memakai `perkakas/jalankan_lokal.py`: hanya mengikat `127.0.0.1`,
 **tanpa autentikasi**, dan penanda versinya berbunyi `pengembangan`. Ia berhenti
 berguna ketika fitur 019, 020, dan 024 selesai, dan sebaiknya dihapus pada hari

@@ -8,7 +8,7 @@
 -- Tuntutan kedua ditegakkan di sini: hanya `peran_pseudonim` yang diberi apa
 -- pun, dan peran itu tidak dipakai layanan aplikasi mana pun.
 
-CREATE SCHEMA pseudonim;
+CREATE SCHEMA IF NOT EXISTS pseudonim;
 REVOKE ALL ON SCHEMA public, pseudonim FROM PUBLIC;
 GRANT USAGE ON SCHEMA pseudonim TO peran_pseudonim;
 

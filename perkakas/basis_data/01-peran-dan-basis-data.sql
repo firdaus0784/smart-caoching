@@ -7,13 +7,31 @@
 -- Bila berkas itu berubah, berkas ini wajib ikut berubah — dua daftar yang
 -- bercerita berbeda adalah cacat, dan yang salah justru daftar yang dibaca orang.
 
-CREATE DATABASE smart_coaching;
-CREATE DATABASE smart_coaching_pseudonim;
+-- Dapat dijalankan berulang. Penyiapan yang hanya boleh dijalankan sekali
+-- adalah penyiapan yang gagal pada percobaan kedua, dan percobaan kedua selalu
+-- terjadi — saat memulihkan, saat menambah lingkungan, saat menjalankan uji.
+--
+-- `CREATE DATABASE` tidak mengenal IF NOT EXISTS, sehingga dipanggil lewat
+-- \gexec yang menghasilkan perintahnya hanya bila basis datanya belum ada.
 
-CREATE ROLE peran_penjawaban    LOGIN;
-CREATE ROLE peran_verifikasi    LOGIN;
-CREATE ROLE peran_pemanggil_llm LOGIN;
-CREATE ROLE peran_pseudonim     LOGIN;
+SELECT 'CREATE DATABASE smart_coaching'
+ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'smart_coaching')
+\gexec
+
+SELECT 'CREATE DATABASE smart_coaching_pseudonim'
+ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'smart_coaching_pseudonim')
+\gexec
+
+DO $$
+DECLARE nama text;
+BEGIN
+  FOREACH nama IN ARRAY ARRAY['peran_penjawaban','peran_verifikasi',
+                              'peran_pemanggil_llm','peran_pseudonim'] LOOP
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
+      EXECUTE format('CREATE ROLE %I LOGIN', nama);
+    END IF;
+  END LOOP;
+END $$;
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- BARIS YANG PALING MUDAH TERLUPA, DAN TANPANYA SELURUH BERKAS INI SIA-SIA

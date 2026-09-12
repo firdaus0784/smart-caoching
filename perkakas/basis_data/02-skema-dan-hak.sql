@@ -11,10 +11,10 @@
 -- pemisahan pada tingkat indeks, bukan penyaringan saat kueri. Pemanggil LLM
 -- karena itu tidak diberi USAGE atasnya sama sekali.
 
-CREATE SCHEMA karantina;
-CREATE SCHEMA korpus;
-CREATE SCHEMA indeks_utama;
-CREATE SCHEMA indeks_metadata;
+CREATE SCHEMA IF NOT EXISTS karantina;
+CREATE SCHEMA IF NOT EXISTS korpus;
+CREATE SCHEMA IF NOT EXISTS indeks_utama;
+CREATE SCHEMA IF NOT EXISTS indeks_metadata;
 
 REVOKE ALL ON SCHEMA public, karantina, korpus, indeks_utama, indeks_metadata
   FROM PUBLIC;

@@ -36,7 +36,6 @@ membuangnya sekarang berarti membangunnya lagi pada T-3.
 import json
 import os
 import pathlib
-import shutil
 import subprocess
 from collections.abc import Callable
 
@@ -48,6 +47,7 @@ from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKAS
 from src.penyimpanan.postgres import PenyimpanPostgres
 from src.penyimpanan.tiruan import PenyimpanTiruan
 from tests.konftes_asinkron import jalankan
+from tests.peladen import siapkan
 
 AKAR = pathlib.Path(__file__).resolve().parents[2]
 
@@ -60,13 +60,6 @@ def _susun_tiruan() -> tuple[PenyimpanDasar, Penanam, type[Exception]]:
         penyimpan.tanam(area, id_dokumen, isi)
 
     return PenyimpanTiruan(), tanam, GalatDokumenTidakAda
-
-
-def _peladen_tersedia() -> bool:
-    """Peladen PostgreSQL dapat dihubungi."""
-    if shutil.which("psql") is None:
-        return False
-    return _psql("select 1").returncode == 0
 
 
 def _psql(kueri: str) -> subprocess.CompletedProcess[str]:
@@ -172,13 +165,13 @@ def _susun_postgres() -> tuple[PenyimpanDasar, Penanam, type[Exception]]:
 PABRIK: dict[str, object] = {"tiruan": _susun_tiruan}
 """Pelaksana yang wajib lulus kontrak yang sama — R-01.
 
-`postgres` ditambahkan hanya bila peladen dapat dihubungi. Ketiadaannya
-**dilaporkan**, bukan didiamkan: rangkaian uji yang menguji satu pelaksana
-sambil terbaca seperti menguji dua adalah laporan yang keliru (TA-01).
+Keduanya **wajib** ada. Ketiadaan peladen menggagalkan rangkaian uji, bukan
+mengecilkan `PABRIK` diam-diam: rangkaian yang menguji satu pelaksana sambil
+terbaca seperti menguji dua adalah laporan yang keliru (TA-01).
 """
 
-if _peladen_tersedia():
-    PABRIK["postgres"] = _susun_postgres
+siapkan()
+PABRIK["postgres"] = _susun_postgres
 
 
 @pytest.fixture(params=sorted(PABRIK), ids=sorted(PABRIK))

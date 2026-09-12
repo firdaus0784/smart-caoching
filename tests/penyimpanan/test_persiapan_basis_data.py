@@ -24,49 +24,28 @@ bukan kebetulan urutan.
 
 from __future__ import annotations
 
-import os
-import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
+from tests.peladen import PENGELOLA, psql, wajib_ada
 
 AKAR = Path(__file__).resolve().parents[2]
 BERKAS = AKAR / "perkakas" / "basis_data"
 
-HOST = os.environ.get("PGHOST", "/tmp")
-PORT = os.environ.get("PGPORT", "55432")
-PENGELOLA = os.environ.get("PGUSER", "pengelola")
-
 
 def _psql(pengguna: str, basis_data: str, *argumen: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        ["psql", "-h", HOST, "-p", PORT, "-U", pengguna, "-d", basis_data, "-tAq", *argumen],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-
-
-def _ada_peladen() -> bool:
-    if shutil.which("psql") is None:
-        return False
-    return _psql(PENGELOLA, "postgres", "-c", "select 1").returncode == 0
-
-
-perlu_peladen = pytest.mark.skipif(
-    not _ada_peladen(),
-    reason=(
-        "peladen PostgreSQL tidak dapat dihubungi pada "
-        f"{HOST}:{PORT} sebagai {PENGELOLA!r} — uji golongan 4.2 dilewati. "
-        "Ini BUKAN kelulusan: penolakan hak akses oleh peladen tidak terbukti."
-    ),
-)
+    return psql(basis_data, *argumen, pengguna=pengguna)
 
 
 @pytest.fixture(scope="module")
 def basis_data_siap() -> None:
-    """Jalankan ketiga berkas dari nol, lalu buat tabel SESUDAHNYA."""
+    """Jalankan ketiga berkas dari nol, lalu buat tabel SESUDAHNYA.
+
+    Menggagalkan rangkaian uji bila peladen tidak ada — bukan melewatinya.
+    Lihat `tests/peladen.py`.
+    """
+    wajib_ada()
     _psql(PENGELOLA, "postgres", "-c", "DROP DATABASE IF EXISTS smart_coaching")
     _psql(PENGELOLA, "postgres", "-c", "DROP DATABASE IF EXISTS smart_coaching_pseudonim")
     for peran in ("peran_penjawaban", "peran_verifikasi", "peran_pemanggil_llm", "peran_pseudonim"):
@@ -150,7 +129,6 @@ DIBOLEHKAN = [
 ]
 
 
-@perlu_peladen
 @pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK)
 def test_peladen_menolak(
     basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
@@ -159,7 +137,6 @@ def test_peladen_menolak(
     assert not _boleh(peran, basis_data, kueri), sebab
 
 
-@perlu_peladen
 @pytest.mark.parametrize(("peran", "basis_data", "kueri"), DIBOLEHKAN)
 def test_peladen_membolehkan(
     basis_data_siap: None, peran: str, basis_data: str, kueri: str
