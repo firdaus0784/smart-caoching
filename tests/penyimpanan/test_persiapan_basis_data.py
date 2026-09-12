@@ -80,13 +80,25 @@ def basis_data_siap() -> None:
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
 
+    # Tabel dokumen memakai DDL sungguhan, bukan DDL ringkas buatan uji.
+    # DDL buatan uji pernah membuat berkas ini dan rangkaian uji kontrak
+    # berebut basis data yang sama dengan bentuk tabel berbeda — dan yang
+    # gagal adalah berkas yang kebetulan jalan belakangan.
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-f",
+        str(BERKAS / "04-tabel-dokumen.sql"),
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
     _psql(
         PENGELOLA,
         "smart_coaching",
         "-c",
         """
-        CREATE TABLE karantina.dokumen_sumber(id text PRIMARY KEY);
-        CREATE TABLE korpus.dokumen_sumber(id text PRIMARY KEY);
         CREATE TABLE indeks_utama.segmen_teks(id text PRIMARY KEY);
         CREATE TABLE indeks_metadata.segmen_teks(id text PRIMARY KEY);
     """,
@@ -120,7 +132,7 @@ DITOLAK = [
     (
         "peran_penjawaban",
         "smart_coaching",
-        "insert into korpus.dokumen_sumber values('b')",
+        "insert into korpus.dokumen_sumber (id, isi) values ('b', '{}'::jsonb)",
         "jalur penjawaban tanpa hak tulis (C-17)",
     ),
 ]
@@ -129,7 +141,11 @@ DIBOLEHKAN = [
     ("peran_penjawaban", "smart_coaching", "select * from korpus.dokumen_sumber"),
     ("peran_pemanggil_llm", "smart_coaching", "select * from indeks_utama.segmen_teks"),
     ("peran_verifikasi", "smart_coaching", "select * from karantina.dokumen_sumber"),
-    ("peran_verifikasi", "smart_coaching", "insert into korpus.dokumen_sumber values('a')"),
+    (
+        "peran_verifikasi",
+        "smart_coaching",
+        "insert into korpus.dokumen_sumber (id, isi) values ('a', '{}'::jsonb)",
+    ),
     ("peran_pseudonim", "smart_coaching_pseudonim", "select 1"),
 ]
 

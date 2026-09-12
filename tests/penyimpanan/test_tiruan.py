@@ -19,30 +19,37 @@ bentuk uji dan membuktikan hasilnya tidak berubah, sebelum pelaksana kedua
 ditambahkan pada T-3. Menambah keduanya sekaligus membuat kegagalan tidak
 dapat ditelusuri ke perubahan yang mana.
 
-## Temuan T-2 yang belum diperbaiki, dan sengaja begitu
+## Temuan T-2, dan penyelesaiannya
 
-`GalatDokumenTidakAda` tinggal di `src/penyimpanan/tiruan.py` — di dalam
-**pelaksana** — padahal ia bagian kontrak: R-03 menuntut galat "tidak ada"
-pada area yang boleh dibaca, dan tuntutan itu berlaku bagi setiap pelaksana.
-`PenyimpanPostgres` yang mengimpornya dari `tiruan.py` akan menjadikan
-pelaksana sungguhan bergantung pada pelaksana tiruan.
+`GalatDokumenTidakAda` semula tinggal di `src/penyimpanan/tiruan.py` — di
+dalam **pelaksana** — padahal ia bagian kontrak: R-03 menuntut galat "tidak
+ada" pada area yang boleh dibaca, dan tuntutan itu berlaku bagi setiap
+pelaksana.
 
-Perbaikannya memindahkan kelas itu ke `galat.py`, dan itu **penyesuaian
-kontrak** yang Keputusan Gerbang 1 nomor 3 wajibkan melewati Gerbang 2
-tersendiri. Karena itu tidak dikerjakan di sini. Sebagai gantinya, tiap entri
-`PABRIK` memasok sendiri tipe galatnya — bentuk yang menampung perbaikan itu
-kelak tanpa mengubah satu pun uji di bawah.
+Ia dipindahkan ke `galat.py` pada 12 September 2026 lewat Gerbang 2 tersendiri
+(KB-086), sebagaimana Keputusan Gerbang 1 nomor 3 wajibkan. Bentuk `PABRIK`
+yang memasok tipe galatnya sendiri **dipertahankan**: ia menampung pelaksana
+yang kelak melempar galat berbeda tanpa mengubah satu pun uji di bawah, dan
+membuangnya sekarang berarti membangunnya lagi pada T-3.
 """
 
+import json
+import os
+import pathlib
+import shutil
+import subprocess
 from collections.abc import Callable
 
 import pytest
 from src.penyimpanan.area import Area
 from src.penyimpanan.dasar import PenyimpanDasar
-from src.penyimpanan.galat import GalatAksesDitolak
+from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
-from src.penyimpanan.tiruan import GalatDokumenTidakAda, PenyimpanTiruan
+from src.penyimpanan.postgres import PenyimpanPostgres
+from src.penyimpanan.tiruan import PenyimpanTiruan
 from tests.konftes_asinkron import jalankan
+
+AKAR = pathlib.Path(__file__).resolve().parents[2]
 
 Penanam = Callable[[PenyimpanDasar, Area, str, object], None]
 
@@ -55,8 +62,123 @@ def _susun_tiruan() -> tuple[PenyimpanDasar, Penanam, type[Exception]]:
     return PenyimpanTiruan(), tanam, GalatDokumenTidakAda
 
 
-PABRIK = {"tiruan": _susun_tiruan}
-"""Satu pelaksana hari ini. `PenyimpanPostgres` menyusul pada T-3."""
+def _peladen_tersedia() -> bool:
+    """Peladen PostgreSQL dapat dihubungi."""
+    if shutil.which("psql") is None:
+        return False
+    return _psql("select 1").returncode == 0
+
+
+def _psql(kueri: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [
+            "psql",
+            "-h",
+            os.environ.get("PGHOST", "/tmp"),
+            "-p",
+            os.environ.get("PGPORT", "55432"),
+            "-U",
+            os.environ.get("PGUSER", "pengelola"),
+            "-d",
+            "smart_coaching",
+            "-tAq",
+            "-c",
+            kueri,
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def _susun_postgres() -> tuple[PenyimpanDasar, Penanam, type[Exception]]:
+    """Pelaksana sungguhan di atas peladen yang berjalan.
+
+    Tabel dikosongkan tiap pemanggilan, bukan dibuat ulang: membuat ulang
+    menghapus hak akses bawaan yang `ALTER DEFAULT PRIVILEGES` berikan, dan
+    itu mengubah yang diuji.
+    """
+    import asyncpg
+
+    # Penyiapan idempoten tiap pemanggilan, bukan sekali di awal berkas.
+    # `test_persiapan_basis_data.py` membangun ulang basis data yang sama dari
+    # nol, sehingga berkas mana pun yang menganggap tabelnya sudah ada akan
+    # gagal tergantung urutan jalannya. Urutan uji bukan hal yang boleh
+    # diandalkan.
+    _psql("CREATE SCHEMA IF NOT EXISTS karantina; CREATE SCHEMA IF NOT EXISTS korpus;")
+    berkas = AKAR / "perkakas" / "basis_data" / "04-tabel-dokumen.sql"
+    subprocess.run(
+        [
+            "psql",
+            "-h",
+            os.environ.get("PGHOST", "/tmp"),
+            "-p",
+            os.environ.get("PGPORT", "55432"),
+            "-U",
+            os.environ.get("PGUSER", "pengelola"),
+            "-d",
+            "smart_coaching",
+            "-tAq",
+            "-f",
+            str(berkas),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    _psql("TRUNCATE karantina.dokumen_sumber, korpus.dokumen_sumber")
+
+    class SambunganSekaliPakai:
+        """Menyambung dan menutup pada tiap panggilan.
+
+        Sambungan **tidak disimpan**, dan itu disengaja. `jalankan` memakai
+        `asyncio.run`, yang membuat gelung peristiwa baru tiap pemanggilan;
+        sambungan `asyncpg` terikat pada gelung tempat ia dibuka. Menyimpannya
+        membuat panggilan kedua melempar *"attached to a different loop"* —
+        ditemukan dengan menjalankannya, bukan dengan membacanya.
+
+        Boros bagi uji, dan benar. Pengumpulan sambungan urusan pemanggil
+        sungguhan, bukan urusan pelaksana ini (R-06).
+        """
+
+        async def _dengan(self, nama: str, kueri: str, *argumen: object) -> object:
+            sambungan = await asyncpg.connect(
+                host=os.environ.get("PGHOST", "/tmp"),
+                port=int(os.environ.get("PGPORT", "55432")),
+                user=os.environ.get("PGUSER", "pengelola"),
+                database="smart_coaching",
+            )
+            try:
+                return await getattr(sambungan, nama)(kueri, *argumen)
+            finally:
+                await sambungan.close()
+
+        async def fetchrow(self, kueri: str, *argumen: object) -> object:
+            return await self._dengan("fetchrow", kueri, *argumen)
+
+        async def execute(self, kueri: str, *argumen: object) -> object:
+            return await self._dengan("execute", kueri, *argumen)
+
+    def tanam(penyimpan: PenyimpanDasar, area: Area, id_dokumen: str, isi: object) -> None:
+        skema = {Area.KARANTINA: "karantina", Area.KORPUS: "korpus"}[area]
+        _psql(
+            f"INSERT INTO {skema}.dokumen_sumber (id, isi) VALUES "
+            f"('{id_dokumen}', '{json.dumps(isi)}'::jsonb)"
+        )
+
+    return PenyimpanPostgres(SambunganSekaliPakai()), tanam, GalatDokumenTidakAda
+
+
+PABRIK: dict[str, object] = {"tiruan": _susun_tiruan}
+"""Pelaksana yang wajib lulus kontrak yang sama — R-01.
+
+`postgres` ditambahkan hanya bila peladen dapat dihubungi. Ketiadaannya
+**dilaporkan**, bukan didiamkan: rangkaian uji yang menguji satu pelaksana
+sambil terbaca seperti menguji dua adalah laporan yang keliru (TA-01).
+"""
+
+if _peladen_tersedia():
+    PABRIK["postgres"] = _susun_postgres
 
 
 @pytest.fixture(params=sorted(PABRIK), ids=sorted(PABRIK))

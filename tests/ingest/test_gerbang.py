@@ -15,9 +15,9 @@ from src.ingest.dokumen import Dokumen, StatusPersetujuan, TingkatKerahasiaan
 from src.ingest.gerbang import GalatGerbang, Gerbang
 from src.ingest.peringkat import JenisSumber
 from src.penyimpanan.area import Area
-from src.penyimpanan.galat import GalatAksesDitolak
+from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial_baku import PENJAWABAN, VERIFIKASI
-from src.penyimpanan.tiruan import GalatDokumenTidakAda, PenyimpanTiruan
+from src.penyimpanan.tiruan import PenyimpanTiruan
 from tests.konftes_asinkron import jalankan
 
 ID_VERIFIKATOR = "vrf_001"

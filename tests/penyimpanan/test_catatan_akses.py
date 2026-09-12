@@ -89,3 +89,31 @@ def test_percobaan_berulang_tercatat_seluruhnya() -> None:
     for _ in range(3):
         _tolak(penyimpan)
     assert len(catatan.baris()) == 3
+
+
+def test_penolakan_pada_pelaksana_postgres_juga_tercatat() -> None:
+    """R-08: bentuk catatan sama bagi setiap pelaksana.
+
+    Tidak menuntut peladen — penolakan terjadi **sebelum** basis data
+    disentuh, dan itu justru yang diuji di sini. Sambungan yang melempar bila
+    dipakai membuktikannya: bila pemeriksaan kredensial bergeser ke belakang
+    kueri, uji ini gagal dengan galat sambungan, bukan lulus diam-diam.
+    """
+    from src.penyimpanan.postgres import PenyimpanPostgres
+
+    class SambunganYangMelarang:
+        async def fetchrow(self, kueri: str, *argumen: object) -> object:
+            raise AssertionError("basis data disentuh sebelum kredensial diperiksa")
+
+        async def execute(self, kueri: str, *argumen: object) -> object:
+            raise AssertionError("basis data disentuh sebelum kredensial diperiksa")
+
+    catatan = CatatanAkses()
+    penyimpan = PenyimpanPostgres(SambunganYangMelarang(), catatan=catatan)
+
+    with pytest.raises(GalatAksesDitolak):
+        jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok"))
+
+    assert len(catatan.baris()) == 1
+    assert catatan.baris()[0].kredensial == "penjawaban"
+    assert catatan.baris()[0].area is Area.KARANTINA

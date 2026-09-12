@@ -20,17 +20,8 @@ from __future__ import annotations
 from src.penyimpanan.area import Area
 from src.penyimpanan.catatan_akses import CatatanAkses
 from src.penyimpanan.dasar import PenyimpanDasar
-from src.penyimpanan.galat import GalatAksesDitolak
+from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial import Kredensial
-
-
-class GalatDokumenTidakAda(Exception):
-    """Dokumen tidak ada pada area yang **boleh dibaca** pemanggil.
-
-    Tidak pernah dilempar bagi area yang tidak dijangkau kredensialnya — di
-    sana `GalatAksesDitolak` yang berlaku, tanpa memandang ada tidaknya
-    dokumen.
-    """
 
 
 class PenyimpanTiruan(PenyimpanDasar):

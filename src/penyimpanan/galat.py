@@ -27,6 +27,27 @@ from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial import Kredensial
 
 
+class GalatDokumenTidakAda(Exception):
+    """Dokumen tidak ada pada area yang **boleh dibaca** pemanggil.
+
+    Tidak pernah dilempar bagi area yang tidak dijangkau kredensialnya — di
+    sana `GalatAksesDitolak` yang berlaku, tanpa memandang ada tidaknya
+    dokumen.
+
+    ## Mengapa kelas ini tinggal di sini, bukan di dalam pelaksana
+
+    Ia sempat tinggal di `tiruan.py` sampai 12 September 2026, dan T-2 fitur
+    024 menemukannya: kelas ini **bagian kontrak**, bukan bagian pelaksana.
+    R-03 menuntut galat "tidak ada" pada area yang boleh dibaca, dan tuntutan
+    itu berlaku bagi setiap pelaksana. `PenyimpanPostgres` yang mengimpornya
+    dari `tiruan.py` akan menjadikan pelaksana sungguhan bergantung pada
+    pelaksana tiruan.
+
+    Pemindahannya melewati Gerbang 2 tersendiri sebagaimana Keputusan Gerbang 1
+    nomor 3 wajibkan — bukan dirapikan sambil menulis kode.
+    """
+
+
 class GalatAksesDitolak(Exception):
     """Kredensial tidak menjangkau area yang diminta — R-02.
 
