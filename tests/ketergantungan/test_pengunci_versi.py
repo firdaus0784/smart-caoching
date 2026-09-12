@@ -36,6 +36,10 @@ LANGSUNG_DISETUJUI = {
     "httpx",
     "asyncpg",
     "pgvector",
+    # Keputusan KB-083 (12 September 2026) bagi fitur 019
+    "torch",
+    "transformers",
+    "sentence-transformers",
 }
 
 

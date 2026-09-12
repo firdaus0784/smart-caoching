@@ -34,6 +34,13 @@ DISETUJUI_RUNTIME = {
     "httpx",
     "asyncpg",
     "pgvector",
+    # Keputusan KB-083 (12 September 2026) bagi fitur 019, atas perintah
+    # tertulis pemegang gerbang. Lisensi dibaca dari API PyPI pada
+    # 3 September 2026 — `torch` berlisensi **majemuk**, bukan BSD-3-Clause
+    # tunggal sebagaimana ingatan akan menyebutnya.
+    "torch",
+    "transformers",
+    "sentence-transformers",
 }
 DISETUJUI_PENGEMBANGAN = {"pytest", "pytest-cov", "ruff", "mypy"}
 
