@@ -18,6 +18,7 @@ from src.penyimpanan.area import Area
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial_baku import PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import GalatDokumenTidakAda, PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 ID_VERIFIKATOR = "vrf_001"
 
@@ -46,8 +47,8 @@ def _gerbang() -> Gerbang:
 def test_dokumen_baru_masuk_karantina() -> None:
     """R-03."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    assert gerbang.area(VERIFIKASI, _dokumen().id) is Area.KARANTINA
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    assert jalankan(gerbang.area(VERIFIKASI, _dokumen().id)) is Area.KARANTINA
 
 
 def test_tidak_ada_jalan_menaruh_dokumen_langsung_di_korpus() -> None:
@@ -61,9 +62,9 @@ def test_tidak_ada_jalan_menaruh_dokumen_langsung_di_korpus() -> None:
 def test_dokumen_di_karantina_tidak_terbaca_jalur_penjawaban() -> None:
     """C-03 lewat gerbang."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     with pytest.raises(GalatAksesDitolak):
-        gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_001")
+        jalankan(gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_001"))
 
 
 # --- B-4: perpindahan menuntut persetujuan verifikator -----------------------
@@ -72,27 +73,31 @@ def test_dokumen_di_karantina_tidak_terbaca_jalur_penjawaban() -> None:
 def test_pindah_dengan_persetujuan_verifikator() -> None:
     """R-04 — sisi positif."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.setujui(
-        VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="anonimisasi bersih"
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    jalankan(
+        gerbang.setujui(
+            VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="anonimisasi bersih"
+        )
     )
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KORPUS
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KORPUS
 
 
 def test_pindah_tanpa_id_verifikator_ditolak() -> None:
     """Persetujuan tanpa nama bukan persetujuan; ia tidak dapat ditelusuri."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator="", alasan="bersih")
+        jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator="", alasan="bersih"))
 
 
 def test_pindah_dengan_kredensial_penjawaban_ditolak() -> None:
     """R-04 — kredensial diperiksa, bukan hanya niat pemanggil."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     with pytest.raises(GalatAksesDitolak):
-        gerbang.setujui(PENJAWABAN, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        jalankan(
+            gerbang.setujui(PENJAWABAN, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        )
 
 
 def test_dokumen_tanpa_persetujuan_pemilik_tidak_dapat_disetujui() -> None:
@@ -102,12 +107,16 @@ def test_dokumen_tanpa_persetujuan_pemilik_tidak_dapat_disetujui() -> None:
     mengizinkan pemakaian. Satu tidak menggantikan yang lain.
     """
     gerbang = _gerbang()
-    gerbang.terima(
-        _dokumen(status_persetujuan_pemilik=StatusPersetujuan.BELUM_DIMINTA),
-        "Notulen rapat pleno bulan Maret.",
+    jalankan(
+        gerbang.terima(
+            _dokumen(status_persetujuan_pemilik=StatusPersetujuan.BELUM_DIMINTA),
+            "Notulen rapat pleno bulan Maret.",
+        )
     )
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        jalankan(
+            gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        )
 
 
 # --- B-5: penolakan menahan, penarikan mengeluarkan --------------------------
@@ -116,20 +125,22 @@ def test_dokumen_tanpa_persetujuan_pemilik_tidak_dapat_disetujui() -> None:
 def test_penolakan_menahan_dokumen_beserta_alasan() -> None:
     """R-05, FR-B07."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.tolak(
-        VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="halaman 3 belum bersih"
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    jalankan(
+        gerbang.tolak(
+            VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="halaman 3 belum bersih"
+        )
     )
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
-    assert gerbang.alasan_terakhir(VERIFIKASI, "dok_001") == "halaman 3 belum bersih"
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KARANTINA
+    assert jalankan(gerbang.alasan_terakhir(VERIFIKASI, "dok_001")) == "halaman 3 belum bersih"
 
 
 def test_penolakan_tanpa_alasan_ditolak() -> None:
     """Penolakan tanpa alasan tidak dapat ditindaklanjuti pengunggahnya."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     with pytest.raises(GalatGerbang):
-        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="")
+        jalankan(gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=""))
 
 
 def test_penarikan_tidak_menuntut_kredensial() -> None:
@@ -149,12 +160,14 @@ def test_penarikan_persetujuan_mengeluarkan_dokumen_dari_korpus() -> None:
     Persetujuan yang ditarik tetapi dokumennya tetap dipakai bukan penarikan.
     """
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KORPUS
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KORPUS
 
-    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
+    jalankan(
+        gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    )
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KARANTINA
 
 
 def test_dokumen_yang_ditarik_tidak_terbaca_jalur_penjawaban() -> None:
@@ -166,34 +179,40 @@ def test_dokumen_yang_ditarik_tidak_terbaca_jalur_penjawaban() -> None:
     dokumennya, tidak mencabut hak baca korpus dari siapa pun.
     """
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    jalankan(
+        gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    )
     with pytest.raises(GalatDokumenTidakAda):
-        gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_001")
+        jalankan(gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_001"))
 
     # Dan karantina tetap tertutup bagi jalur penjawaban.
     with pytest.raises(GalatAksesDitolak):
-        gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_001")
+        jalankan(gerbang.penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_001"))
 
 
 def test_dokumen_yang_ditarik_tidak_dapat_disetujui_ulang_tanpa_izin_baru() -> None:
     """Penarikan yang dapat dibatalkan verifikator sendiri bukan penarikan."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    jalankan(
+        gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    )
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        jalankan(
+            gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        )
 
 
 def test_penolakan_tanpa_nama_verifikator_ditolak() -> None:
     """Sepadan dengan `setujui`. Penolakan yang tidak dapat ditelusuri sama
     tidak dapat dipertanggungjawabkannya dengan persetujuan yang begitu."""
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     with pytest.raises(GalatGerbang):
-        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator="", alasan="halaman 3")
+        jalankan(gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator="", alasan="halaman 3"))
 
 
 def test_penarikan_pada_dokumen_yang_masih_di_karantina() -> None:
@@ -204,8 +223,12 @@ def test_penarikan_pada_dokumen_yang_masih_di_karantina() -> None:
     belum berpindah.
     """
     gerbang = _gerbang()
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
-    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
+    jalankan(
+        gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    )
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KARANTINA
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        jalankan(
+            gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        )

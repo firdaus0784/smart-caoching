@@ -64,7 +64,7 @@ class Gerbang:
         self._ditinjau: set[str] = set()
         self._catatan_tinjauan: dict[str, str] = {}
 
-    def terima(self, dokumen: Dokumen, teks: str) -> None:
+    async def terima(self, dokumen: Dokumen, teks: str) -> None:
         """Terima dokumen baru — selalu ke karantina (R-03).
 
         Tidak menerima parameter area. Jalan yang tidak ada tidak dapat
@@ -95,7 +95,7 @@ class Gerbang:
         self._temuan[dokumen.id] = self._jalankan_pemeriksa(teks)
         self._ditinjau.discard(dokumen.id)
         self._catatan_tinjauan.pop(dokumen.id, None)
-        self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, teks)
+        await self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, teks)
 
     def _jalankan_pemeriksa(self, teks: str) -> list[Temuan]:
         """Jalankan pemeriksa; kegagalannya menahan, bukan meloloskan — R-10.
@@ -120,7 +120,7 @@ class Gerbang:
                 )
             ]
 
-    def _pastikan_terbaca(self, kredensial: Kredensial, id_dokumen: str) -> Area:
+    async def _pastikan_terbaca(self, kredensial: Kredensial, id_dokumen: str) -> Area:
         """Satu tempat penjagaan bagi **seluruh** keterangan tentang dokumen.
 
         Ia benar-benar melewati penyimpan, bukan menyalin aturannya. Aturan
@@ -134,43 +134,43 @@ class Gerbang:
         area = self._area.get(id_dokumen)
         if area is None:
             raise GalatAksesDitolak(kredensial=kredensial, area=Area.KARANTINA, operasi="baca")
-        self.penyimpan.baca_dokumen(kredensial, area, id_dokumen)
+        await self.penyimpan.baca_dokumen(kredensial, area, id_dokumen)
         return area
 
-    def area(self, kredensial: Kredensial, id_dokumen: str) -> Area:
+    async def area(self, kredensial: Kredensial, id_dokumen: str) -> Area:
         """Area tempat dokumen berada — R-02.
 
         Digerbangi karena jawabannya sendiri adalah keterangan: siapa pun yang
         dapat menanyakan area sembarang id dapat menyusun daftar isi karantina
         tanpa membaca satu dokumen pun.
         """
-        return self._pastikan_terbaca(kredensial, id_dokumen)
+        return await self._pastikan_terbaca(kredensial, id_dokumen)
 
-    def alasan_terakhir(self, kredensial: Kredensial, id_dokumen: str) -> str:
+    async def alasan_terakhir(self, kredensial: Kredensial, id_dokumen: str) -> str:
         """Alasan putusan terakhir — R-12.
 
         Digerbangi karena alasan penolakan secara alami memuat petunjuk isi
         dokumen: "memuat NIK pada halaman 3". Dokumennya berada di karantina,
         dan alasannya tidak boleh lebih mudah dijangkau daripada dokumennya.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         return self._alasan.get(id_dokumen, "")
 
-    def dokumen(self, kredensial: Kredensial, id_dokumen: str) -> Dokumen:
+    async def dokumen(self, kredensial: Kredensial, id_dokumen: str) -> Dokumen:
         """Metadata dokumen, digerbangi sama dengan yang lain."""
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         return self._dokumen[id_dokumen]
 
-    def temuan(self, kredensial: Kredensial, id_dokumen: str) -> list[Temuan]:
+    async def temuan(self, kredensial: Kredensial, id_dokumen: str) -> list[Temuan]:
         """Temuan pola adversarial pada dokumen — digerbangi.
 
         Kutipan temuan memuat potongan isi dokumen, sehingga ia tidak boleh
         lebih mudah dijangkau daripada dokumennya sendiri.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         return list(self._temuan.get(id_dokumen, []))
 
-    def tinjau_temuan(
+    async def tinjau_temuan(
         self, kredensial: Kredensial, id_dokumen: str, id_peninjau: str, catatan: str
     ) -> None:
         """Tandai temuan sudah ditinjau manusia — FR-B08, KD-01.
@@ -190,7 +190,7 @@ class Gerbang:
         "memuat NIK pada halaman 3" — verifikator berikutnya kehilangan justru
         keterangan yang paling perlu diketahuinya. Dua putusan, dua bidang.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         if not id_peninjau:
             raise GalatGerbang("tinjauan tanpa nama peninjau tidak dapat ditelusuri")
         if not self._temuan.get(id_dokumen):
@@ -198,26 +198,26 @@ class Gerbang:
         self._ditinjau.add(id_dokumen)
         self._catatan_tinjauan[id_dokumen] = catatan
 
-    def catatan_tinjauan(self, kredensial: Kredensial, id_dokumen: str) -> str:
+    async def catatan_tinjauan(self, kredensial: Kredensial, id_dokumen: str) -> str:
         """Catatan peninjau atas temuan — digerbangi.
 
         Catatan tinjauan menyebut isi dokumen karantina hampir selalu; ia
         menjelaskan mengapa sebuah kutipan dianggap sah. Ia tidak boleh lebih
         mudah dijangkau daripada kutipan yang dibicarakannya.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         return self._catatan_tinjauan.get(id_dokumen, "")
 
-    def sudah_ditinjau(self, kredensial: Kredensial, id_dokumen: str) -> bool:
+    async def sudah_ditinjau(self, kredensial: Kredensial, id_dokumen: str) -> bool:
         """Apakah temuan dokumen sudah ditinjau manusia — digerbangi.
 
         Jawabannya menyiratkan dokumen itu bertemuan, dan itu keterangan
         tentang isi karantina.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         return id_dokumen in self._ditinjau
 
-    def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
+    async def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
         """Peringkat kepercayaan dokumen — hanya dari area yang dijangkau
         kredensial pemanggil (R-07a).
 
@@ -237,10 +237,10 @@ class Gerbang:
         yang boleh Anda baca" adalah keterangan yang memang hak pemanggil,
         sedangkan di sini pertanyaannya melintasi area.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         return self._dokumen[id_dokumen].peringkat
 
-    def setujui(
+    async def setujui(
         self, kredensial: Kredensial, id_dokumen: str, id_verifikator: str, alasan: str
     ) -> None:
         """Pindahkan dokumen ke korpus atas persetujuan verifikator — R-04.
@@ -276,14 +276,14 @@ class Gerbang:
             ke_area=Area.KORPUS,
             alasan=alasan,
         )
-        self.penyimpan.pindahkan(kredensial, id_dokumen, Area.KARANTINA, Area.KORPUS, alasan)
+        await self.penyimpan.pindahkan(kredensial, id_dokumen, Area.KARANTINA, Area.KORPUS, alasan)
         self._area[id_dokumen] = Area.KORPUS
         self._alasan[id_dokumen] = alasan
         self._dokumen[id_dokumen] = dokumen.model_copy(
             update={"status_anonimisasi": StatusAnonimisasi.TERVERIFIKASI}
         )
 
-    def tolak(
+    async def tolak(
         self, kredensial: Kredensial, id_dokumen: str, id_verifikator: str, alasan: str
     ) -> None:
         """Tahan dokumen di karantina beserta alasannya — R-05, FR-B07.
@@ -297,7 +297,7 @@ class Gerbang:
         tidak pernah memakainya, sehingga jalur penjawaban dapat menolak
         dokumen orang. Tertangkap pemeriksaan Fase B, bukan oleh uji.
         """
-        self._pastikan_terbaca(kredensial, id_dokumen)
+        await self._pastikan_terbaca(kredensial, id_dokumen)
         if not id_verifikator:
             raise GalatGerbang("penolakan tanpa nama verifikator tidak dapat ditelusuri")
         if not alasan:
@@ -316,7 +316,7 @@ class Gerbang:
             update={"status_anonimisasi": StatusAnonimisasi.DITOLAK}
         )
 
-    def cabut_persetujuan(self, id_dokumen: str, id_pemohon: str, alasan: str) -> None:
+    async def cabut_persetujuan(self, id_dokumen: str, id_pemohon: str, alasan: str) -> None:
         """Tarik persetujuan pemilik — dokumen keluar dari korpus (KB-014).
 
         **Tidak menuntut kredensial pemanggil.** Mencabut akses selalu aman:
@@ -359,7 +359,7 @@ class Gerbang:
         self._alasan[id_dokumen] = alasan
 
         if self._area[id_dokumen] is Area.KORPUS:
-            self.penyimpan.pindahkan(
+            await self.penyimpan.pindahkan(
                 _KREDENSIAL_PENARIKAN, id_dokumen, Area.KORPUS, Area.KARANTINA, alasan
             )
             self._area[id_dokumen] = Area.KARANTINA

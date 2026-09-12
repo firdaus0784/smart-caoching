@@ -15,6 +15,7 @@ from src.penyimpanan.catatan_akses import CatatanAkses
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial_baku import PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 
 def _dengan_catatan() -> tuple[PenyimpanTiruan, CatatanAkses]:
@@ -26,7 +27,7 @@ def _dengan_catatan() -> tuple[PenyimpanTiruan, CatatanAkses]:
 
 def _tolak(penyimpan: PenyimpanTiruan) -> None:
     with pytest.raises(GalatAksesDitolak):
-        penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_karantina")
+        jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_karantina"))
 
 
 def test_penolakan_tercatat() -> None:
@@ -62,7 +63,7 @@ def test_akses_yang_diizinkan_tidak_dicatat() -> None:
     dan itu urusan telemetri yang tunduk C-04 — bukan urusan lapisan
     penyimpanan (AP-04)."""
     penyimpan, catatan = _dengan_catatan()
-    penyimpan.baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina")
+    jalankan(penyimpan.baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina"))
     assert catatan.baris() == []
 
 

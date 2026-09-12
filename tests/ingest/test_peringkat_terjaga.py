@@ -21,6 +21,7 @@ from src.kamus.segmen import Peringkat
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 ID_VERIFIKATOR = "vrf_001"
 
@@ -41,7 +42,7 @@ def _dokumen(**ubah: object) -> Dokumen:
 
 def _gerbang_terisi() -> Gerbang:
     gerbang = Gerbang(PenyimpanTiruan())
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     return gerbang
 
 
@@ -52,25 +53,25 @@ def test_peringkat_dokumen_karantina_tidak_terbaca_jalur_penjawaban() -> None:
     """**Uji terpenting berkas ini.** Dokumen berperingkat T3 masih di
     karantina, sehingga kata "terverifikasi" pada D-13 Bagian 6 belum berlaku."""
     with pytest.raises(GalatAksesDitolak):
-        _gerbang_terisi().peringkat(PENJAWABAN, "dok_001")
+        jalankan(_gerbang_terisi().peringkat(PENJAWABAN, "dok_001"))
 
 
 def test_peringkat_dokumen_karantina_tidak_terbaca_pemanggil_llm() -> None:
     """KD-10 menyebut pemanggil LLM terpisah, dan ia diuji terpisah."""
     with pytest.raises(GalatAksesDitolak):
-        _gerbang_terisi().peringkat(PEMANGGIL_LLM, "dok_001")
+        jalankan(_gerbang_terisi().peringkat(PEMANGGIL_LLM, "dok_001"))
 
 
 def test_verifikasi_dapat_membaca_peringkat_di_karantina() -> None:
     """Verifikator perlu melihatnya justru untuk menilai."""
-    assert _gerbang_terisi().peringkat(VERIFIKASI, "dok_001") is Peringkat.T3
+    assert jalankan(_gerbang_terisi().peringkat(VERIFIKASI, "dok_001")) is Peringkat.T3
 
 
 def test_peringkat_terbaca_jalur_penjawaban_setelah_disetujui() -> None:
     """Gerbang R-04 yang menyahkannya, bukan berjalannya waktu."""
     gerbang = _gerbang_terisi()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.peringkat(PENJAWABAN, "dok_001") is Peringkat.T3
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    assert jalankan(gerbang.peringkat(PENJAWABAN, "dok_001")) is Peringkat.T3
 
 
 def test_dokumen_tak_dikenal_dijawab_sama_dengan_dokumen_karantina() -> None:
@@ -80,7 +81,7 @@ def test_dokumen_tak_dikenal_dijawab_sama_dengan_dokumen_karantina() -> None:
     galat = []
     for id_dokumen in ("dok_001", "dok_tidak_pernah_ada"):
         with pytest.raises(GalatAksesDitolak) as tertangkap:
-            gerbang.peringkat(PENJAWABAN, id_dokumen)
+            jalankan(gerbang.peringkat(PENJAWABAN, id_dokumen))
         galat.append(tertangkap.value.tanggapan().galat.pesan_pengguna)
     assert galat[0] == galat[1]
 
@@ -89,10 +90,12 @@ def test_peringkat_setelah_penarikan_tidak_terbaca_lagi() -> None:
     """Penarikan persetujuan mengembalikan dokumen ke karantina, dan
     peringkatnya ikut tertutup kembali."""
     gerbang = _gerbang_terisi()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    jalankan(
+        gerbang.cabut_persetujuan("dok_001", id_pemohon="ops_001", alasan="pemilik menarik izin")
+    )
     with pytest.raises(GalatAksesDitolak):
-        gerbang.peringkat(PENJAWABAN, "dok_001")
+        jalankan(gerbang.peringkat(PENJAWABAN, "dok_001"))
 
 
 # --- B-7: R-08 ----------------------------------------------------------------

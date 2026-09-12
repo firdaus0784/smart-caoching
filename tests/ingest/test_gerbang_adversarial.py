@@ -17,6 +17,7 @@ from src.ingest.peringkat import JenisSumber
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial_baku import PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 ID_VERIFIKATOR = "vrf_001"
 BERSIH = "Kepala sekolah menugaskan wakil kurikulum menyusun jadwal supervisi."
@@ -39,7 +40,7 @@ def _gerbang(teks: str, pemeriksa=None) -> Gerbang:
     gerbang = (
         Gerbang(PenyimpanTiruan(), pemeriksa=pemeriksa) if pemeriksa else Gerbang(PenyimpanTiruan())
     )
-    gerbang.terima(_dokumen(), teks)
+    jalankan(gerbang.terima(_dokumen(), teks))
     return gerbang
 
 
@@ -49,15 +50,19 @@ def _gerbang(teks: str, pemeriksa=None) -> Gerbang:
 def test_dokumen_bersih_dapat_disetujui() -> None:
     """Dasar pembanding. Tanpa ini, uji berikutnya tidak membuktikan apa pun."""
     gerbang = _gerbang(BERSIH)
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area(PENJAWABAN, "dok_001") is Area.KORPUS
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    assert jalankan(gerbang.area(PENJAWABAN, "dok_001")) is Area.KORPUS
 
 
 def test_dokumen_bertemuan_tidak_dapat_disetujui() -> None:
     """FR-B08 — temuan menahan, bukan sekadar dicatat."""
     gerbang = _gerbang(DISUSUPI)
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="tampak wajar")
+        jalankan(
+            gerbang.setujui(
+                VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="tampak wajar"
+            )
+        )
 
 
 def test_persetujuan_verifikator_tidak_menggantikan_tinjauan_temuan() -> None:
@@ -68,22 +73,30 @@ def test_persetujuan_verifikator_tidak_menggantikan_tinjauan_temuan() -> None:
     """
     gerbang = _gerbang(DISUSUPI)
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
+        jalankan(
+            gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        )
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KARANTINA
 
 
 def test_dokumen_dapat_disetujui_setelah_temuan_ditinjau() -> None:
     """Tinjauan manusia yang membuka jalan, bukan berjalannya waktu."""
     gerbang = _gerbang(DISUSUPI)
-    gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID_VERIFIKATOR, catatan="kutipan sah")
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area(PENJAWABAN, "dok_001") is Area.KORPUS
+    jalankan(
+        gerbang.tinjau_temuan(
+            VERIFIKASI, "dok_001", id_peninjau=ID_VERIFIKATOR, catatan="kutipan sah"
+        )
+    )
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    assert jalankan(gerbang.area(PENJAWABAN, "dok_001")) is Area.KORPUS
 
 
 def test_tinjauan_menuntut_nama_peninjau() -> None:
     gerbang = _gerbang(DISUSUPI)
     with pytest.raises(GalatGerbang):
-        gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau="", catatan="kutipan sah")
+        jalankan(
+            gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau="", catatan="kutipan sah")
+        )
 
 
 def test_tinjauan_menuntut_kredensial_karantina() -> None:
@@ -92,13 +105,15 @@ def test_tinjauan_menuntut_kredensial_karantina() -> None:
 
     gerbang = _gerbang(DISUSUPI)
     with pytest.raises(GalatAksesDitolak):
-        gerbang.tinjau_temuan(PENJAWABAN, "dok_001", id_peninjau=ID_VERIFIKATOR, catatan="sah")
+        jalankan(
+            gerbang.tinjau_temuan(PENJAWABAN, "dok_001", id_peninjau=ID_VERIFIKATOR, catatan="sah")
+        )
 
 
 def test_temuan_terbaca_verifikator() -> None:
     """Verifikator memutuskan dari temuannya, sehingga ia wajib melihatnya."""
     gerbang = _gerbang(DISUSUPI)
-    assert gerbang.temuan(VERIFIKASI, "dok_001")
+    assert jalankan(gerbang.temuan(VERIFIKASI, "dok_001"))
 
 
 def test_temuan_tidak_terbaca_jalur_penjawaban() -> None:
@@ -107,7 +122,7 @@ def test_temuan_tidak_terbaca_jalur_penjawaban() -> None:
 
     gerbang = _gerbang(DISUSUPI)
     with pytest.raises(GalatAksesDitolak):
-        gerbang.temuan(PENJAWABAN, "dok_001")
+        jalankan(gerbang.temuan(PENJAWABAN, "dok_001"))
 
 
 # --- C-3: pemeriksa yang gagal menahan --------------------------------------
@@ -126,13 +141,15 @@ def test_pemeriksa_gagal_menahan_dokumen() -> None:
     """
     gerbang = _gerbang(BERSIH, pemeriksa=_pemeriksa_rusak)
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        jalankan(
+            gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
+        )
 
 
 def test_kegagalan_pemeriksa_terbaca_verifikator() -> None:
     """Ditahan tanpa keterangan menyuruh verifikator menebak sebabnya."""
     gerbang = _gerbang(BERSIH, pemeriksa=_pemeriksa_rusak)
-    assert "gagal" in gerbang.temuan(VERIFIKASI, "dok_001")[0].pola.lower()
+    assert "gagal" in jalankan(gerbang.temuan(VERIFIKASI, "dok_001"))[0].pola.lower()
 
 
 def test_kegagalan_pemeriksa_tetap_dapat_ditinjau_manusia() -> None:
@@ -140,8 +157,10 @@ def test_kegagalan_pemeriksa_tetap_dapat_ditinjau_manusia() -> None:
     memutuskan. Tanpa itu, satu pemeriksa rusak menghentikan seluruh ingesti
     tanpa jalan pulih."""
     gerbang = _gerbang(BERSIH, pemeriksa=_pemeriksa_rusak)
-    gerbang.tinjau_temuan(
-        VERIFIKASI, "dok_001", id_peninjau=ID_VERIFIKATOR, catatan="diperiksa manual"
+    jalankan(
+        gerbang.tinjau_temuan(
+            VERIFIKASI, "dok_001", id_peninjau=ID_VERIFIKATOR, catatan="diperiksa manual"
+        )
     )
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area(PENJAWABAN, "dok_001") is Area.KORPUS
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    assert jalankan(gerbang.area(PENJAWABAN, "dok_001")) is Area.KORPUS

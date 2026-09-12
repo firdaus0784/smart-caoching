@@ -66,19 +66,19 @@ class PenyimpanTiruan(PenyimpanDasar):
         if not kredensial.boleh_tulis(area):
             raise self._tolak(kredensial, area, "tulis")
 
-    def baca_dokumen(self, kredensial: Kredensial, area: Area, id_dokumen: str) -> object:
+    async def baca_dokumen(self, kredensial: Kredensial, area: Area, id_dokumen: str) -> object:
         self._pastikan_boleh_baca(kredensial, area)
         if id_dokumen not in self._isi[area]:
             raise GalatDokumenTidakAda(id_dokumen)
         return self._isi[area][id_dokumen]
 
-    def tulis_dokumen(
+    async def tulis_dokumen(
         self, kredensial: Kredensial, area: Area, id_dokumen: str, isi: object
     ) -> None:
         self._pastikan_boleh_tulis(kredensial, area)
         self._isi[area][id_dokumen] = isi
 
-    def pindahkan(
+    async def pindahkan(
         self, kredensial: Kredensial, id_dokumen: str, dari: Area, ke: Area, alasan: str
     ) -> None:
         """Baca dari asal, tulis ke tujuan, hapus dari asal.

@@ -42,6 +42,7 @@ from src.penyimpanan.dasar import PenyimpanDasar
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import GalatDokumenTidakAda, PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 Penanam = Callable[[PenyimpanDasar, Area, str, object], None]
 
@@ -68,13 +69,13 @@ def terisi(request: pytest.FixtureRequest) -> tuple[PenyimpanDasar, type[Excepti
 
 
 def test_penjawaban_membaca_korpus(terisi: tuple) -> None:
-    assert terisi[0].baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_korpus")
+    assert jalankan(terisi[0].baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_korpus"))
 
 
 def test_penjawaban_ditolak_membaca_karantina(terisi: tuple) -> None:
     """C-03, R-01a."""
     with pytest.raises(GalatAksesDitolak):
-        terisi[0].baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_karantina")
+        jalankan(terisi[0].baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_karantina"))
 
 
 def test_dokumen_karantina_yang_tidak_ada_juga_galat_akses(terisi: tuple) -> None:
@@ -86,7 +87,7 @@ def test_dokumen_karantina_yang_tidak_ada_juga_galat_akses(terisi: tuple) -> Non
     karantina dapat disusun dari luar.
     """
     with pytest.raises(GalatAksesDitolak):
-        terisi[0].baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_tidak_pernah_ada")
+        jalankan(terisi[0].baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_tidak_pernah_ada"))
 
 
 def test_dua_galat_tidak_dapat_dibedakan_dari_luar(terisi: tuple) -> None:
@@ -95,7 +96,7 @@ def test_dua_galat_tidak_dapat_dibedakan_dari_luar(terisi: tuple) -> None:
     hasil = []
     for id_dokumen in ("dok_karantina", "dok_tidak_pernah_ada"):
         try:
-            penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, id_dokumen)
+            jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, id_dokumen))
         except GalatAksesDitolak as galat:
             hasil.append(galat.tanggapan().galat.pesan_pengguna)
     assert len(hasil) == 2
@@ -103,51 +104,55 @@ def test_dua_galat_tidak_dapat_dibedakan_dari_luar(terisi: tuple) -> None:
 
 
 def test_verifikasi_membaca_karantina(terisi: tuple) -> None:
-    assert terisi[0].baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina")
+    assert jalankan(terisi[0].baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina"))
 
 
 def test_dokumen_tidak_ada_pada_area_yang_boleh_dibaca(terisi: tuple) -> None:
     """Ketika kredensialnya memang menjangkau, barulah keberadaan diperiksa."""
     with pytest.raises(terisi[1]):
-        terisi[0].baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_tidak_pernah_ada")
+        jalankan(terisi[0].baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_tidak_pernah_ada"))
 
 
 def test_pemanggil_llm_tidak_dapat_menulis(terisi: tuple) -> None:
     """R-01b."""
     with pytest.raises(GalatAksesDitolak):
-        terisi[0].tulis_dokumen(PEMANGGIL_LLM, Area.KORPUS, "dok_baru", {"isi": "x"})
+        jalankan(terisi[0].tulis_dokumen(PEMANGGIL_LLM, Area.KORPUS, "dok_baru", {"isi": "x"}))
 
 
 def test_penjawaban_tidak_dapat_menulis(terisi: tuple) -> None:
     """C-17."""
     with pytest.raises(GalatAksesDitolak):
-        terisi[0].tulis_dokumen(PENJAWABAN, Area.KORPUS, "dok_baru", {"isi": "x"})
+        jalankan(terisi[0].tulis_dokumen(PENJAWABAN, Area.KORPUS, "dok_baru", {"isi": "x"}))
 
 
 def test_verifikasi_menulis_ke_korpus(terisi: tuple) -> None:
     """Sisi positif R-04. Uji yang hanya memeriksa penolakan tidak
     membuktikan bahwa yang berhak dapat bekerja."""
     penyimpan = terisi[0]
-    penyimpan.tulis_dokumen(VERIFIKASI, Area.KORPUS, "dok_baru", {"isi": "x"})
-    assert penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_baru") == {"isi": "x"}
+    jalankan(penyimpan.tulis_dokumen(VERIFIKASI, Area.KORPUS, "dok_baru", {"isi": "x"}))
+    assert jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_baru")) == {"isi": "x"}
 
 
 def test_pindah_menuntut_baca_asal_dan_tulis_tujuan(terisi: tuple) -> None:
     """R-04."""
     penyimpan = terisi[0]
-    penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos")
-    assert penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_karantina")
+    jalankan(penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos"))
+    assert jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_karantina"))
 
 
 def test_pindah_ditolak_bagi_kredensial_penjawaban(terisi: tuple) -> None:
     with pytest.raises(GalatAksesDitolak):
-        terisi[0].pindahkan(PENJAWABAN, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos")
+        jalankan(
+            terisi[0].pindahkan(PENJAWABAN, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos")
+        )
 
 
 def test_pindah_dokumen_yang_tidak_ada(terisi: tuple) -> None:
     with pytest.raises(terisi[1]):
-        terisi[0].pindahkan(
-            VERIFIKASI, "dok_tidak_pernah_ada", Area.KARANTINA, Area.KORPUS, "lolos"
+        jalankan(
+            terisi[0].pindahkan(
+                VERIFIKASI, "dok_tidak_pernah_ada", Area.KARANTINA, Area.KORPUS, "lolos"
+            )
         )
 
 
@@ -155,6 +160,6 @@ def test_dokumen_hilang_dari_area_asal_setelah_dipindah(terisi: tuple) -> None:
     """Menyalin, bukan memindahkan, meninggalkan salinan mentah di karantina —
     dan salinan itulah yang ADR-06 cegah."""
     penyimpan = terisi[0]
-    penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos")
+    jalankan(penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos"))
     with pytest.raises(terisi[1]):
-        penyimpan.baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina")
+        jalankan(penyimpan.baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina"))

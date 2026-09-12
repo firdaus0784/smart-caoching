@@ -20,6 +20,7 @@ from src.penyimpanan.area import Area
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 ID_VERIFIKATOR = "vrf_001"
 ALASAN_PEKA = "memuat NIK pada halaman 3"
@@ -48,7 +49,7 @@ def _dokumen() -> Dokumen:
 
 def _gerbang() -> Gerbang:
     gerbang = Gerbang(PenyimpanTiruan())
-    gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret.")
+    jalankan(gerbang.terima(_dokumen(), "Notulen rapat pleno bulan Maret."))
     return gerbang
 
 
@@ -58,13 +59,19 @@ def _gerbang() -> Gerbang:
 def test_jalur_penjawaban_tidak_dapat_menolak_dokumen() -> None:
     """Menilai isi karantina menuntut hak membacanya."""
     with pytest.raises(GalatAksesDitolak):
-        _gerbang().tolak(PENJAWABAN, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
+        jalankan(
+            _gerbang().tolak(
+                PENJAWABAN, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA
+            )
+        )
 
 
 def test_pemanggil_llm_tidak_dapat_menolak_dokumen() -> None:
     with pytest.raises(GalatAksesDitolak):
-        _gerbang().tolak(
-            PEMANGGIL_LLM, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA
+        jalankan(
+            _gerbang().tolak(
+                PEMANGGIL_LLM, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA
+            )
         )
 
 
@@ -79,16 +86,20 @@ def test_alasan_penolakan_tidak_terbaca_jalur_penjawaban() -> None:
     sentuh sama sekali.
     """
     gerbang = _gerbang()
-    gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
+    jalankan(
+        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
+    )
     with pytest.raises(GalatAksesDitolak):
-        gerbang.alasan_terakhir(PENJAWABAN, "dok_001")
+        jalankan(gerbang.alasan_terakhir(PENJAWABAN, "dok_001"))
 
 
 def test_verifikasi_tetap_dapat_membaca_alasan() -> None:
     """Penjagaan yang menutup semua orang bukan penjagaan melainkan kelumpuhan."""
     gerbang = _gerbang()
-    gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
-    assert gerbang.alasan_terakhir(VERIFIKASI, "dok_001") == ALASAN_PEKA
+    jalankan(
+        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
+    )
+    assert jalankan(gerbang.alasan_terakhir(VERIFIKASI, "dok_001")) == ALASAN_PEKA
 
 
 # --- Cacat 3: area() mengungkap keberadaan ----------------------------------
@@ -98,7 +109,7 @@ def test_area_dokumen_karantina_tidak_terbaca_jalur_penjawaban() -> None:
     """Kelas kebocoran yang sama dengan yang A-6 tutup: daftar dokumen
     karantina dapat disusun hanya dengan menanyakan areanya."""
     with pytest.raises(GalatAksesDitolak):
-        _gerbang().area(PENJAWABAN, "dok_001")
+        jalankan(_gerbang().area(PENJAWABAN, "dok_001"))
 
 
 def test_dokumen_tak_dikenal_dijawab_sama_dengan_dokumen_karantina() -> None:
@@ -107,15 +118,15 @@ def test_dokumen_tak_dikenal_dijawab_sama_dengan_dokumen_karantina() -> None:
     pesan = []
     for id_dokumen in ("dok_001", "dok_tidak_pernah_ada"):
         with pytest.raises(GalatAksesDitolak) as tertangkap:
-            gerbang.area(PENJAWABAN, id_dokumen)
+            jalankan(gerbang.area(PENJAWABAN, id_dokumen))
         pesan.append(tertangkap.value.tanggapan().galat.pesan_pengguna)
     assert pesan[0] == pesan[1]
 
 
 def test_area_terbaca_jalur_penjawaban_setelah_disetujui() -> None:
     gerbang = _gerbang()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    assert gerbang.area(PENJAWABAN, "dok_001") is Area.KORPUS
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    assert jalankan(gerbang.area(PENJAWABAN, "dok_001")) is Area.KORPUS
 
 
 # --- Cacat 4: status_anonimisasi tidak pernah disetel ------------------------
@@ -130,14 +141,19 @@ def test_penolakan_menyetel_status_anonimisasi_ditolak() -> None:
     """tasks.md B-5 mensyaratkannya, dan saya sempat menandai B-5 selesai
     tanpa memenuhinya."""
     gerbang = _gerbang()
-    gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
-    assert gerbang.dokumen(VERIFIKASI, "dok_001").status_anonimisasi is StatusAnonimisasi.DITOLAK
+    jalankan(
+        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan=ALASAN_PEKA)
+    )
+    assert (
+        jalankan(gerbang.dokumen(VERIFIKASI, "dok_001")).status_anonimisasi
+        is StatusAnonimisasi.DITOLAK
+    )
 
 
 def test_persetujuan_menyetel_status_anonimisasi_terverifikasi() -> None:
     gerbang = _gerbang()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih")
-    dokumen = gerbang.dokumen(VERIFIKASI, "dok_001")
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID_VERIFIKATOR, alasan="bersih"))
+    dokumen = jalankan(gerbang.dokumen(VERIFIKASI, "dok_001"))
     assert dokumen.status_anonimisasi is StatusAnonimisasi.TERVERIFIKASI
 
 

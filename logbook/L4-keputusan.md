@@ -1255,3 +1255,22 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis jembatan sinkron dan melanjutkan T-3 — ditolak; ia keputusan kontrak yang menyamar sebagai keputusan pelaksanaan, dan justru bentuk itu yang Keputusan Gerbang 1 nomor 3 cegah. Menambah `psycopg` yang sinkron — ditolak; ketergantungan baru menuntut C-12, dan memilih penggerak demi menghindari keputusan kontrak adalah keputusan kontrak yang disembunyikan di dalam daftar paket. Menunda T-9 sampai T-3 selesai sebagaimana urutan `tasks.md` — ditolak; T-9 tidak bergantung padanya, dan peladen tersedia hari ini. |
 | Dampak | Berkas baru: tiga SQL, satu README, satu berkas uji. Tidak ada kode `src/` berubah. Fitur 024 kini **3 dari 9 tugas** (T-1, T-2, T-9). `make check` lulus enam gerbang. **Yang menunggu putusan**: (a) `PenyimpanDasar` sinkron atau asinkron — menghentikan T-3 s.d. T-8; (b) pemindahan `GalatDokumenTidakAda` ke `galat.py` (KB-083). |
 | Pemutus | Agen untuk T-9 di dalam batas `tasks.md`; keputusan kontrak menunggu Gerbang 2 |
+
+---
+
+## KB-085 · `PenyimpanDasar` menjadi asinkron — Gerbang 2 tersendiri
+
+| | |
+|---|---|
+| Tanggal | 2026-09-12 |
+| Konteks | KB-084 menghentikan T-3 dan mengajukan pertanyaan kontrak ke Gerbang 2: `PenyimpanDasar` seluruhnya sinkron, sedangkan `asyncpg` — satu-satunya penggerak PostgreSQL yang disetujui C-12 — hanya asinkron. |
+| Keputusan | **Pemegang Gerbang 1–4 memutuskan: jadikan asinkron.** Ketiga metode kontrak `baca_dokumen`, `tulis_dokumen`, dan `pindahkan` menjadi `async def`, beserta seluruh pemanggilnya. |
+| Mengapa bukan jembatan sinkron | Jembatan **dapat** ditulis; yang keliru arahnya. Lapisan HTTP sudah asinkron (`async def tanya`), sehingga jalurnya menjadi asinkron → sinkron → asinkron dan gelung peristiwa yang sedang berjalan memblokir dirinya sendiri menunggu gelung lain. Pada beban bersamaan itu tempat NFR-01 gagal, dan sebabnya tidak terbaca dari kode mana pun. |
+| Dampak sesungguhnya jauh lebih kecil daripada dugaan | Survei sebelum menyentuh apa pun: `src/rag/pengambilan/hibrida.py` dan `kecukupan.py` ternyata hanya **menyebut** `PenyimpanDasar` pada uraiannya, tanpa satu pemanggilan pun. Pemanggil sungguhan **hanya** `src/ingest/gerbang.py`. Tiga berkas `src/` berubah, bukan lima sebagaimana ADR-12 duga. |
+| Yang berubah | `dasar.py` dan `tiruan.py`: tiga metode. `gerbang.py`: **13 metode** menjadi asinkron dan 13 penantian ditambahkan — seluruh metode yang menyentuh penyimpanan, langsung maupun lewat `_pastikan_terbaca`. Delapan berkas uji: **128 tempat panggilan** dibungkus. |
+| Pembungkusan uji dikerjakan lewat AST, bukan pencarian teks | Nama metode seperti `dokumen`, `area`, dan `temuan` muncul di dalam ekspresi bersarang dan pada nama peubah. Penggantian teks akan menyentuh yang bukan panggilan. Transformasi memakai `ast` untuk menemukan simpul `Call` beserta posisi awal dan akhirnya, lalu menerapkannya dari belakang agar offset tidak bergeser. |
+| Tanpa ketergantungan baru | `pytest-asyncio` **tidak** ditambahkan. C-12 menuntut persetujuan bagi ketergantungan baru, dan `asyncio.run` sudah cukup. Satu pembantu `tests/konftes_asinkron.py` dipakai seluruh berkas uji. Menambah paket demi kenyamanan uji adalah cara daftar ketergantungan tumbuh tanpa ada yang memutuskannya. |
+| Uji mutasi | Tiga dijalankan atas penantian yang baru ditambahkan — `await` dihapus satu per satu dari tulis, baca, dan pindah. **Ketiganya menyala.** Ini yang membuktikan uji benar-benar menjalankan jalur asinkronnya; korutin yang tidak ditunggu tidak pernah berjalan dan akan lolos diam-diam bila ujinya lemah. |
+| Alternatif | Menyediakan dua permukaan, sinkron dan asinkron — ditolak; dua permukaan atas satu penyimpanan adalah dua tempat C-03 wajib ditegakkan, dan yang kedua akan tertinggal. Menambah `psycopg` yang sinkron — ditolak; memilih penggerak demi menghindari keputusan kontrak adalah keputusan kontrak yang disembunyikan di dalam daftar paket. Menunda sampai T-3 selesai — tidak berlaku; justru T-3 yang tertahan olehnya. |
+| Dampak | Fitur 024 kini **3 dari 9 tugas**, dan **T-3 tidak lagi tertahan**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum. Cakupan uji tidak turun. **Yang masih menunggu putusan**: pemindahan `GalatDokumenTidakAda` ke `galat.py` (KB-083). |
+| Pemutus | Pemegang Gerbang 1–4 (KB-001), Gerbang 2 tersendiri pada 12 September 2026 |

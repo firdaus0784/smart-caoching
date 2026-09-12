@@ -24,10 +24,29 @@ from src.penyimpanan.kredensial import Kredensial
 
 
 class PenyimpanDasar(ABC):
-    """Kontrak akses penyimpanan. Setiap metode menuntut kredensial."""
+    """Kontrak akses penyimpanan. Setiap metode menuntut kredensial.
+
+    ## Mengapa asinkron — Gerbang 2 fitur 024, 12 September 2026
+
+    Kontrak ini semula sinkron, dan T-3 fitur 024 menabraknya pada langkah
+    pertama: `asyncpg`, satu-satunya penggerak PostgreSQL yang disetujui C-12,
+    hanya asinkron.
+
+    Jembatan sinkron-di-atas-asinkron **dapat** ditulis. Yang membuatnya keliru
+    bukan kesulitannya melainkan arahnya: lapisan HTTP sudah asinkron, sehingga
+    jalurnya menjadi asinkron → sinkron → asinkron, dan gelung peristiwa yang
+    sedang berjalan memblokir dirinya sendiri menunggu gelung lain. Pada beban
+    bersamaan itu tempat NFR-01 gagal, dan sebabnya tidak terbaca dari kode
+    mana pun.
+
+    Perubahan ini yang ADR-12 perkirakan dengan kalimat *"adaptor nyata
+    pertama menjadi penguji abstraksi ini"*. Ia melewati Gerbang 2 tersendiri
+    sebagaimana Keputusan Gerbang 1 nomor 3 wajibkan — bukan diperbaiki sambil
+    menulis kode.
+    """
 
     @abstractmethod
-    def baca_dokumen(self, kredensial: Kredensial, area: Area, id_dokumen: str) -> object:
+    async def baca_dokumen(self, kredensial: Kredensial, area: Area, id_dokumen: str) -> object:
         """Baca satu dokumen dari sebuah area.
 
         Pelaksana wajib memeriksa kredensial **sebelum** menyentuh data.
@@ -37,13 +56,13 @@ class PenyimpanDasar(ABC):
         """
 
     @abstractmethod
-    def tulis_dokumen(
+    async def tulis_dokumen(
         self, kredensial: Kredensial, area: Area, id_dokumen: str, isi: object
     ) -> None:
         """Simpan satu dokumen pada sebuah area."""
 
     @abstractmethod
-    def pindahkan(
+    async def pindahkan(
         self, kredensial: Kredensial, id_dokumen: str, dari: Area, ke: Area, alasan: str
     ) -> None:
         """Pindahkan dokumen antar area.

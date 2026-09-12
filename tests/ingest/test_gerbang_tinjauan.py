@@ -16,6 +16,7 @@ from src.ingest.peringkat import JenisSumber
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial_baku import VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 ID = "vrf_001"
 BERSIH = "Kepala sekolah menugaskan wakil kurikulum menyusun jadwal supervisi."
@@ -37,7 +38,7 @@ def _dokumen() -> Dokumen:
 
 def _gerbang(teks: str) -> Gerbang:
     gerbang = Gerbang(PenyimpanTiruan())
-    gerbang.terima(_dokumen(), teks)
+    jalankan(gerbang.terima(_dokumen(), teks))
     return gerbang
 
 
@@ -52,10 +53,10 @@ def test_unggahan_ulang_membatalkan_tinjauan_sebelumnya() -> None:
     itulah bentuk serangannya: yang disahkan bukan yang dinilai.
     """
     gerbang = _gerbang(DISUSUPI)
-    gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah")
-    gerbang.terima(_dokumen(), DISUSUPI_LAIN)
+    jalankan(gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah"))
+    jalankan(gerbang.terima(_dokumen(), DISUSUPI_LAIN))
     with pytest.raises(GalatGerbang):
-        gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="bersih")
+        jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="bersih"))
 
 
 def test_unggahan_ulang_membatalkan_tinjauan_walau_isinya_tetap_bersih() -> None:
@@ -66,9 +67,9 @@ def test_unggahan_ulang_membatalkan_tinjauan_walau_isinya_tetap_bersih() -> None
     muncul akan gagal justru pada isi yang tampak bersih bagi pemeriksa.
     """
     gerbang = _gerbang(DISUSUPI)
-    gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah")
-    gerbang.terima(_dokumen(), BERSIH)
-    assert not gerbang.sudah_ditinjau(VERIFIKASI, "dok_001")
+    jalankan(gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah"))
+    jalankan(gerbang.terima(_dokumen(), BERSIH))
+    assert not jalankan(gerbang.sudah_ditinjau(VERIFIKASI, "dok_001"))
 
 
 def test_tinjauan_pada_dokumen_tanpa_temuan_ditolak() -> None:
@@ -76,7 +77,7 @@ def test_tinjauan_pada_dokumen_tanpa_temuan_ditolak() -> None:
     justru itu yang membuatnya berguna sebagai langkah pertama jalan pintas."""
     gerbang = _gerbang(BERSIH)
     with pytest.raises(GalatGerbang):
-        gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="apa saja")
+        jalankan(gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="apa saja"))
 
 
 def test_catatan_tinjauan_tidak_menimpa_alasan_penolakan() -> None:
@@ -86,10 +87,12 @@ def test_catatan_tinjauan_tidak_menimpa_alasan_penolakan() -> None:
     ditolak karena data pribadi, meski temuannya sudah ditinjau.
     """
     gerbang = _gerbang(DISUSUPI)
-    gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="memuat NIK pada halaman 3")
-    gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah")
-    assert gerbang.alasan_terakhir(VERIFIKASI, "dok_001") == "memuat NIK pada halaman 3"
-    assert gerbang.catatan_tinjauan(VERIFIKASI, "dok_001") == "kutipan sah"
+    jalankan(
+        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="memuat NIK pada halaman 3")
+    )
+    jalankan(gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah"))
+    assert jalankan(gerbang.alasan_terakhir(VERIFIKASI, "dok_001")) == "memuat NIK pada halaman 3"
+    assert jalankan(gerbang.catatan_tinjauan(VERIFIKASI, "dok_001")) == "kutipan sah"
 
 
 def test_catatan_tinjauan_digerbangi() -> None:
@@ -98,17 +101,17 @@ def test_catatan_tinjauan_digerbangi() -> None:
     from src.penyimpanan.kredensial_baku import PENJAWABAN
 
     gerbang = _gerbang(DISUSUPI)
-    gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah")
+    jalankan(gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah"))
     with pytest.raises(GalatAksesDitolak):
-        gerbang.catatan_tinjauan(PENJAWABAN, "dok_001")
+        jalankan(gerbang.catatan_tinjauan(PENJAWABAN, "dok_001"))
 
 
 def test_jalur_sah_tetap_berjalan() -> None:
     """Penjagaan yang menutup jalan sah akan dimatikan orang."""
     gerbang = _gerbang(DISUSUPI)
-    gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah")
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="bersih")
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KORPUS
+    jalankan(gerbang.tinjau_temuan(VERIFIKASI, "dok_001", id_peninjau=ID, catatan="kutipan sah"))
+    jalankan(gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="bersih"))
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KORPUS
 
 
 def test_uraian_pemeriksa_menyatakan_cakupannya_apa_adanya() -> None:

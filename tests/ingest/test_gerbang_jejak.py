@@ -13,6 +13,7 @@ from src.ingest.peringkat import JenisSumber
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial_baku import VERIFIKASI
 from src.penyimpanan.tiruan import PenyimpanTiruan
+from tests.konftes_asinkron import jalankan
 
 ID = "vrf_001"
 BERSIH = "Kepala sekolah menugaskan wakil kurikulum menyusun jadwal supervisi."
@@ -32,14 +33,18 @@ def _dokumen() -> Dokumen:
 
 def _gerbang() -> Gerbang:
     gerbang = Gerbang(PenyimpanTiruan())
-    gerbang.terima(_dokumen(), BERSIH)
+    jalankan(gerbang.terima(_dokumen(), BERSIH))
     return gerbang
 
 
 def test_persetujuan_menghasilkan_satu_baris_jejak() -> None:
     """R-11 — perpindahan karantina ke korpus tercatat lengkap."""
     gerbang = _gerbang()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi terverifikasi")
+    jalankan(
+        gerbang.setujui(
+            VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi terverifikasi"
+        )
+    )
     baris = gerbang.jejak.baris()
     assert len(baris) == 1
     assert baris[0].id_pelaku == ID
@@ -54,7 +59,9 @@ def test_penolakan_juga_tercatat() -> None:
     berulang kali tidak terlihat sama sekali.
     """
     gerbang = _gerbang()
-    gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi belum lengkap")
+    jalankan(
+        gerbang.tolak(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi belum lengkap")
+    )
     baris = gerbang.jejak.baris()
     assert len(baris) == 1
     assert baris[0].dari_area is Area.KARANTINA
@@ -65,9 +72,15 @@ def test_penarikan_persetujuan_tercatat() -> None:
     """Dokumen yang keluar dari korpus tanpa jejak adalah korpus yang menyusut
     tanpa penjelasan."""
     gerbang = _gerbang()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi terverifikasi")
-    gerbang.cabut_persetujuan(
-        "dok_001", id_pemohon="ops_001", alasan="pemilik menarik persetujuannya"
+    jalankan(
+        gerbang.setujui(
+            VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi terverifikasi"
+        )
+    )
+    jalankan(
+        gerbang.cabut_persetujuan(
+            "dok_001", id_pemohon="ops_001", alasan="pemilik menarik persetujuannya"
+        )
     )
     baris = gerbang.jejak.baris()
     assert len(baris) == 2
@@ -84,27 +97,31 @@ def test_alasan_bermuatan_data_pribadi_membatalkan_penolakan() -> None:
     """
     gerbang = _gerbang()
     with pytest.raises(GalatJejak):
-        gerbang.tolak(
-            VERIFIKASI,
-            "dok_001",
-            id_verifikator=ID,
-            alasan="memuat NIK 3211012509870001 pada halaman 3",
+        jalankan(
+            gerbang.tolak(
+                VERIFIKASI,
+                "dok_001",
+                id_verifikator=ID,
+                alasan="memuat NIK 3211012509870001 pada halaman 3",
+            )
         )
     assert gerbang.jejak.baris() == []
-    assert gerbang.alasan_terakhir(VERIFIKASI, "dok_001") == ""
+    assert jalankan(gerbang.alasan_terakhir(VERIFIKASI, "dok_001")) == ""
 
 
 def test_alasan_bermuatan_data_pribadi_membatalkan_persetujuan() -> None:
     """Sisi yang sama pada arah sebaliknya: dokumen tetap di karantina."""
     gerbang = _gerbang()
     with pytest.raises(GalatJejak):
-        gerbang.setujui(
-            VERIFIKASI,
-            "dok_001",
-            id_verifikator=ID,
-            alasan="pemilik dihubungi di 081234567890",
+        jalankan(
+            gerbang.setujui(
+                VERIFIKASI,
+                "dok_001",
+                id_verifikator=ID,
+                alasan="pemilik dihubungi di 081234567890",
+            )
         )
-    assert gerbang.area(VERIFIKASI, "dok_001") is Area.KARANTINA
+    assert jalankan(gerbang.area(VERIFIKASI, "dok_001")) is Area.KARANTINA
     assert gerbang.jejak.baris() == []
 
 
@@ -116,9 +133,15 @@ def test_jejak_tidak_memuat_kutipan_isi_dokumen() -> None:
     menyalin isi lewat bidang lain.
     """
     gerbang = _gerbang()
-    gerbang.setujui(VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi terverifikasi")
-    gerbang.cabut_persetujuan(
-        "dok_001", id_pemohon="ops_001", alasan="pemilik menarik persetujuannya"
+    jalankan(
+        gerbang.setujui(
+            VERIFIKASI, "dok_001", id_verifikator=ID, alasan="anonimisasi terverifikasi"
+        )
+    )
+    jalankan(
+        gerbang.cabut_persetujuan(
+            "dok_001", id_pemohon="ops_001", alasan="pemilik menarik persetujuannya"
+        )
     )
     for baris in gerbang.jejak.baris():
         for potongan in BERSIH.split():
