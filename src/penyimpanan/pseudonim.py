@@ -53,6 +53,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.penyimpanan.sambungan import SambunganAktif
+
 
 class GalatPseudonim(Exception):
     """Permintaan tidak dapat dilayani peta pseudonim."""
@@ -134,3 +136,82 @@ class PetaPseudonim:
             raise GalatPseudonim("peta pseudonim menuntut kredensialnya sendiri")
         if not kredensial.nama.strip():
             raise GalatPseudonim("kredensial tanpa nama tidak dapat ditelusuri")
+
+
+class PetaPseudonimPostgres:
+    """Peta pseudonim di atas basis data **kedua** — T-5 fitur 024, C-05.
+
+    ## Dua tuntutan C-05, dan yang menegakkan masing-masing
+
+    *"Tidak berada pada basis data yang sama dengan data perilaku."* Ditegakkan
+    **peladen**, bukan kelas ini: `REVOKE CONNECT` pada `01-peran-dan-basis-
+    data.sql` membuat peran jalur penjawaban tidak dapat menyambung ke basis
+    data ini sama sekali. Kelas yang menegakkan keterpisahan basis data dengan
+    memeriksa nama basis datanya sendiri hanya memeriksa untai.
+
+    *"Tidak terjangkau dari layanan aplikasi."* Ditegakkan `KredensialPseudonim`
+    yang **tidak boleh dibentuk di mana pun pada `src/`** — dijaga pemeriksa
+    C-05 aturan 1. Layanan aplikasi tidak memiliki cara membuat argumen yang
+    dituntut setiap metode di sini.
+
+    ## Mengapa kelas ini tinggal pada berkas yang sama
+
+    Pemeriksa C-05 aturan 2 melarang `PetaPseudonim` diimpor modul lain pada
+    `src/`. Menaruh varian PostgreSQL pada berkas tersendiri akan menuntut
+    impor itu, dan pemeriksanya benar untuk menolaknya: modul yang mengimpor
+    peta sudah cukup dekat untuk memanggilnya dengan kredensial yang
+    diteruskan dari tempat lain.
+
+    Kesamaan bentuknya dengan `PetaPseudonim` disalin dengan sadar, alasan yang
+    sejajar dengan kedua tipe konfigurasi pada `sambungan.py`.
+    """
+
+    def __init__(self, sambungan: SambunganAktif) -> None:
+        self._sambungan = sambungan
+
+    async def daftarkan(
+        self, id_pengguna: str, pseudonim: str, *, kredensial: KredensialPseudonim
+    ) -> None:
+        """Catat satu pemetaan. Menimpa pemetaan yang sudah ada ditolak.
+
+        Penolakannya datang dari **batasan unik basis data**, bukan dari
+        pembacaan lebih dulu. Membaca lalu menulis meninggalkan celah antara
+        keduanya, dan celah itu tepat tempat dua pendaftaran bersamaan
+        menghasilkan satu pseudonim milik dua orang.
+        """
+        PetaPseudonim._pastikan_berwenang(kredensial)
+        if not id_pengguna or not pseudonim:
+            raise GalatPseudonim("pemetaan menuntut id pengguna dan pseudonim")
+        try:
+            await self._sambungan.execute(
+                "INSERT INTO pseudonim.peta_pseudonim (id_pengguna, pseudonim) VALUES ($1, $2)",
+                id_pengguna,
+                pseudonim,
+            )
+        except Exception as galat:  # batasan unik — kedua arah
+            raise GalatPseudonim("pemetaan pseudonim tidak dapat ditimpa") from galat
+
+    async def pseudonim_bagi(
+        self, id_pengguna: str, *, kredensial: KredensialPseudonim
+    ) -> str | None:
+        PetaPseudonim._pastikan_berwenang(kredensial)
+        baris = await self._sambungan.fetchrow(
+            "SELECT pseudonim FROM pseudonim.peta_pseudonim WHERE id_pengguna = $1",
+            id_pengguna,
+        )
+        return None if baris is None else str(baris["pseudonim"])
+
+    async def id_pengguna_bagi(
+        self, pseudonim: str, *, kredensial: KredensialPseudonim
+    ) -> str | None:
+        """**Arah balik — inilah yang C-05 lindungi.**
+
+        Telemetri menyimpan pseudonim; yang mengubahnya kembali menjadi
+        identitas adalah fungsi ini, dan ia satu-satunya pada pelaksana ini.
+        """
+        PetaPseudonim._pastikan_berwenang(kredensial)
+        baris = await self._sambungan.fetchrow(
+            "SELECT id_pengguna FROM pseudonim.peta_pseudonim WHERE pseudonim = $1",
+            pseudonim,
+        )
+        return None if baris is None else str(baris["id_pengguna"])

@@ -49,9 +49,12 @@ tersembunyi di dalam pustaka adalah pilihan yang tidak dapat diuji pemanggil.
 
 from __future__ import annotations
 
-from typing import Final
+from typing import TYPE_CHECKING, Final, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:  # pragma: no cover — hanya bagi pemeriksa tipe
+    from collections.abc import Awaitable, Mapping
 
 PORTA_BAKU: Final = 5432
 """Porta lazim PostgreSQL. Nilai bawaan bagi kenyamanan, bukan ketentuan."""
@@ -152,3 +155,22 @@ def periksa_keterpisahan(perilaku: KonfigurasiPerilaku, pseudonim: KonfigurasiPs
             f"({perilaku.pengguna!r}) — keterpisahan yang dapat ditembus satu "
             "pernyataan hak akses bukan keterpisahan"
         )
+
+
+class SambunganAktif(Protocol):
+    """Permukaan sambungan yang sedang terbuka — dan hanya itu.
+
+    Dinyatakan sebagai protokol agar pelaksana penyimpanan tidak mengimpor
+    `asyncpg` secara langsung, dan agar uji dapat memasok sambungan lain tanpa
+    pelaksananya tahu. Yang tidak disebut di sini tidak dipakai.
+
+    Berbeda dari `KonfigurasiPerilaku` dan `KonfigurasiPseudonim` yang
+    **menggambarkan** sambungan: ini sambungan yang sudah terbuka. Keduanya
+    sengaja tidak disatukan — yang menggambarkan boleh tercetak ke log, yang
+    terbuka membawa sandi.
+    """
+
+    def fetchrow(
+        self, kueri: str, /, *argumen: object
+    ) -> Awaitable[Mapping[str, object] | None]: ...
+    def execute(self, kueri: str, /, *argumen: object) -> Awaitable[object]: ...

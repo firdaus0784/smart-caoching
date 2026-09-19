@@ -35,16 +35,14 @@ pustaka adalah pilihan yang tidak dapat diuji.
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Final, Protocol
+from typing import Final
 
 from src.penyimpanan.area import Area
 from src.penyimpanan.catatan_akses import CatatanAkses
 from src.penyimpanan.dasar import PenyimpanDasar
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial import Kredensial
-
-if TYPE_CHECKING:  # pragma: no cover — hanya bagi pemeriksa tipe
-    from collections.abc import Awaitable, Mapping
+from src.penyimpanan.sambungan import SambunganAktif
 
 SKEMA: Final[dict[Area, str]] = {
     Area.KARANTINA: "karantina",
@@ -61,24 +59,10 @@ TABEL: Final = "dokumen_sumber"
 """`docs/D14.md` Bagian 5."""
 
 
-class Sambungan(Protocol):
-    """Permukaan `asyncpg` yang dipakai modul ini — dan hanya itu.
-
-    Dinyatakan sebagai protokol agar uji dapat memasok sambungan lain tanpa
-    pelaksana ini mengimpor `asyncpg` secara langsung. Yang tidak disebut di
-    sini tidak dipakai.
-    """
-
-    def fetchrow(
-        self, kueri: str, /, *argumen: object
-    ) -> Awaitable[Mapping[str, object] | None]: ...
-    def execute(self, kueri: str, /, *argumen: object) -> Awaitable[object]: ...
-
-
 class PenyimpanPostgres(PenyimpanDasar):
     """Penyimpan di atas PostgreSQL. Isinya bertahan sesudah proses berhenti."""
 
-    def __init__(self, sambungan: Sambungan, catatan: CatatanAkses | None = None) -> None:
+    def __init__(self, sambungan: SambunganAktif, catatan: CatatanAkses | None = None) -> None:
         self._sambungan = sambungan
         self._catatan = catatan
 
