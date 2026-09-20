@@ -1388,3 +1388,23 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memakai keputusan asinkron `PenyimpanDasar` tanpa mengajukannya lagi — ditolak; lihat di atas. Menyimpan kalibrasi di dalam 019 dan menandainya "menunggu" — ditolak; itu persis bentuk yang membuat angka ketidakselesaian berhenti dibaca. Menyusun gold set kecil agar 025 dapat dimulai — ditolak tegas; D-08 pemilik tunggalnya, dan angka yang diturunkan agen tidak dapat dipertahankan di hadapan penilai. |
 | Dampak | `docs/D12.md` ke **0.31**, register `docs/D00.md` ke **2.48**, jumlah fitur menjadi **25**. `specs/019-sumber-vektor-dan-pemeringkat-ulang/spec.md` (diubah namanya, memuat Keputusan Gerbang 1) dan `specs/025-kalibrasi-ambang/spec.md` (baru). Tidak ada kode ditulis. `make check` lulus enam gerbang. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-001) pada 20 September 2026 |
+
+---
+
+## KB-092 · Gerbang 1 fitur 019 ditutup; `plan.md` diajukan — dan pemeriksa yang menentukan letak modul
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | Pertanyaan Gerbang 1 terakhir fitur 019 dijawab: vektor disimpan sebagai kolom pada tabel di skema yang sudah ada. |
+| Keputusan | **Gerbang 1 lolos, nol pertanyaan terbuka.** `plan.md` disusun dan diajukan ke Gerbang 2. Tidak ada kode ditulis. |
+| Mengapa kolom, bukan tabel tersendiri | Fitur 024 sudah menegakkan C-02 pada tingkat **skema**: `peran_pemanggil_llm` tidak diberi `USAGE` atas `indeks_metadata` sama sekali, dan penolakannya terbukti pada sepuluh arah uji T-9. Tabel tersendiri **tidak menambah penjagaan apa pun** di atas itu; ia hanya menambah satu tempat lagi yang dapat hanyut dari pasangannya. R-04 terpenuhi oleh **letak** tabelnya, bukan oleh bentuknya. |
+| Letak penyemat ditentukan pemeriksa, bukan oleh selera | `periksa_impor_penyedia` menyenaraikan `torch`, `transformers`, dan `sentence_transformers` sebagai pustaka model yang **hanya boleh diimpor di dalam `src/llm/`** — C-08 tanpa pengecualian. Menaruh penyemat di `src/rag/` akan menjatuhkan V-02 pada commit pertama. Pertanyaan "di mana penyemat tinggal" karena itu **tidak perlu ditanyakan**: ia sudah dijawab pemeriksa yang berdiri sejak fitur 001. |
+| Dan `src/rag/` boleh mengimpornya | `llm` ternyata **lapisan terbuka** menurut `AGENTS.md`, sejajar `kamus`, `penyimpanan`, dan `logbook`. Diperiksa dengan **menjalankan** pembaca arahnya — `baca_arah` mengembalikan `['kamus', 'llm', 'logbook', 'penyimpanan']` — bukan dengan membaca kalimatnya. `AGENTS.md` karena itu tidak perlu diperbarui: tidak ada tepi arah baru. |
+| Urutan tugas mengikuti pelajaran fitur 024 | Perubahan kontrak asinkron dikerjakan **sendirian lebih dulu** (tugas 1), lalu rangkaian uji dijadikan berparameter dengan **masih satu pelaksana** (tugas 2), baru sumber vektor ditambahkan (tugas 5). Menggabungkannya membuat kegagalan tidak dapat ditelusuri ke perubahan yang mana — persis alasan T-1 dan T-2 fitur 024 dipisah. |
+| Satu ketergantungan peladen baru diajukan, tidak dikerjakan | Ekstensi `pgvector` pada PostgreSQL bukan paket Python; tempatnya bagian `[sistem]` pada berkas persetujuan, sejajar `tesseract`. Berkas itu menyatakan sendiri bahwa perubahannya **keputusan tim, bukan keputusan agen** — diajukan pada Gerbang 2. Paket Python-nya sendiri sudah disetujui (KB-083), sehingga nol ketergantungan Python baru. |
+| Tiruan deterministik dinyatakan tiruan | Penyemat tiruan memetakan teks ke vektor tetap lewat fungsi hash dan **menyatakan dirinya tiruan pada `versi` yang dikeluarkannya**. Ia bukan penyemat sungguhan yang disederhanakan: penyemat buatan sendiri yang "mirip semantik" menghasilkan angka kemiripan yang tidak berarti apa-apa sambil terbaca seperti berfungsi. |
+| Catatan pada rencana uji mutasi | Delapan mutasi direncanakan, dan rencananya menambahkan satu kalimat yang tidak ada pada fitur sebelumnya: **bila sebuah mutasi diam, yang pertama diperiksa adalah apakah mutasinya terlalu lemah.** Itu pelajaran M-3 fitur 024, dituliskan agar tidak perlu ditemukan lagi. |
+| Alternatif | Tabel vektor tersendiri — ditolak; tidak menambah penjagaan, menambah tempat hanyut. Menaruh penyemat di `src/rag/` agar dekat pemakainya — ditolak; C-08 dan pemeriksanya menolaknya lebih dulu. Membangun adaptor penyemat sungguhan sekarang — ditolak; bobotnya tidak terjangkau, dan adaptor yang tidak pernah dijalankan adalah kode yang belum diuji sambil terbaca selesai. |
+| Dampak | Berkas baru `specs/019-.../plan.md`; `spec.md` berpindah ke **Gerbang 1 lolos**. Tidak ada kode, tidak ada ketergantungan Python baru. `make check` lulus enam gerbang. **Menunggu putusan**: Gerbang 2, dan persetujuan ekstensi `pgvector` pada bagian `[sistem]`. |
+| Pemutus | Pemegang Gerbang 1–4 untuk Keputusan Gerbang 1 nomor 3; agen untuk penyusunan rencana |

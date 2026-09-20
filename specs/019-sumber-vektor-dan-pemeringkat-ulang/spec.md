@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | ADR-03 sisi semantik, ADR-05, ADR-12; BT-30; C-02, C-09, C-12 |
 | Dokumen terkait | D-04 ADR-03 dan ADR-05, D-07 Bagian 4.4 dan 4.6, D-08 Bagian 5, D-11 Bagian 3.4 |
-| Status | **Menunggu Gerbang 1** — dua dari empat pertanyaan dijawab 20 September 2026 |
+| Status | **Gerbang 1 lolos** — 20 September 2026, nol pertanyaan terbuka. Menunggu Gerbang 2 |
 
 ## Tujuan
 
@@ -125,13 +125,16 @@ Bagian 7 dan register D-00 sudah menyesuaikan; jumlah fitur menjadi 25.
 versinya dipatok adalah pertanyaan yang hanya berlaku ketika penyemat
 sungguhan dipakai, dan itu terjadi pada fitur 025.
 
-## Pertanyaan yang masih wajib dijawab Gerbang 1
+**3 · Vektor disimpan sebagai kolom pada tabel di skema yang sudah ada.**
+Bukan tabel tersendiri. Fitur 024 sudah menegakkan C-02 pada tingkat skema —
+`peran_pemanggil_llm` tidak diberi `USAGE` atas `indeks_metadata` sama sekali,
+sehingga pemisahannya ditolak peladen. Tabel tersendiri **tidak menambah
+penjagaan apa pun** di atas itu; ia hanya menambah satu tempat lagi yang dapat
+hanyut dari pasangannya.
 
-1. **Vektor `indeks_metadata` disimpan di mana?** R-04 menuntut keterpisahan
-   yang ditolak peladen. Fitur 024 sudah menyediakan skema `indeks_utama` dan
-   `indeks_metadata` beserta hak aksesnya — pertanyaannya apakah kolom vektor
-   cukup ditambahkan di sana, atau perlu tabel tersendiri. **Menentukan bentuk
-   migrasi, dan tidak boleh diputuskan saat menulis kode.**
+R-04 karena itu terpenuhi oleh letak tabelnya, bukan oleh bentuk tabelnya —
+dan letak itu sudah ada beserta hak aksesnya yang terbukti pada sepuluh arah
+uji T-9 fitur 024.
 
 ## Ketertelusuran
 
