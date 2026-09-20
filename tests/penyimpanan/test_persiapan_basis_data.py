@@ -28,7 +28,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from tests.peladen import PENGELOLA, psql, wajib_ada
+from tests.peladen import DIMENSI_UJI, PENGELOLA, psql, wajib_ada
 
 AKAR = Path(__file__).resolve().parents[2]
 BERKAS = AKAR / "perkakas" / "basis_data"
@@ -73,15 +73,19 @@ def basis_data_siap() -> None:
     )
     assert hasil.returncode == 0, hasil.stderr
 
-    _psql(
+    # Tabel segmen memakai DDL sungguhan `05-kolom-vektor.sql`, bukan DDL
+    # ringkas buatan uji — alasan yang sama dengan tabel dokumen di atas.
+    hasil = _psql(
         PENGELOLA,
         "smart_coaching",
-        "-c",
-        """
-        CREATE TABLE indeks_utama.segmen_teks(id text PRIMARY KEY);
-        CREATE TABLE indeks_metadata.segmen_teks(id text PRIMARY KEY);
-    """,
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-v",
+        f"dimensi={DIMENSI_UJI}",
+        "-f",
+        str(BERKAS / "05-kolom-vektor.sql"),
     )
+    assert hasil.returncode == 0, hasil.stderr
 
 
 def _boleh(peran: str, basis_data: str, kueri: str) -> bool:

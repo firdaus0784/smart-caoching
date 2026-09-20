@@ -31,6 +31,14 @@ from pathlib import Path
 
 BERKAS = Path(__file__).resolve().parents[1] / "perkakas" / "basis_data"
 
+DIMENSI_UJI = 16
+"""Dimensi kolom vektor pada basis data uji — sama dengan `DIMENSI_TIRUAN`.
+
+Ditulis di sini, bukan diimpor dari `src/llm/sematan.py`. Pemeriksaan
+kecocokan dimensi yang membaca kedua angkanya dari satu tempat hanya
+membuktikan angka itu sama dengan dirinya sendiri.
+"""
+
 HOST = os.environ.get("PGHOST", "/tmp")
 PORT = os.environ.get("PGPORT", "55432")
 PENGELOLA = os.environ.get("PGUSER", "pengelola")
@@ -105,3 +113,18 @@ def siapkan() -> None:
         hasil = psql(basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         if hasil.returncode != 0:
             raise RuntimeError(f"{nama} gagal: {hasil.stderr}")
+
+    # 05 menuntut dimensi diberikan — lihat uraian berkasnya. Uji memakai
+    # dimensi tiruan, bukan dimensi model sungguhan: tiruan yang berdimensi
+    # sama dengan model sungguhan mengundang kolom disusun menurut tiruannya.
+    hasil = psql(
+        "smart_coaching",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-v",
+        f"dimensi={DIMENSI_UJI}",
+        "-f",
+        str(BERKAS / "05-kolom-vektor.sql"),
+    )
+    if hasil.returncode != 0:
+        raise RuntimeError(f"05-kolom-vektor.sql gagal: {hasil.stderr}")
