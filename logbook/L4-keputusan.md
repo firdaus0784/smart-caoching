@@ -1461,3 +1461,23 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menghapus uji kueri kosong agar jumlahnya persis — ditolak, lihat di atas. Memasukkan `SumberTiruan` ke `PABRIK` sekarang — ditolak; mengubah cakupan yang sudah lewat gerbang. Membiarkan kelima uji di `test_kandidat.py` dan menyalinnya ke berkas kontrak — ditolak; dua salinan aturan yang sama akan berselisih pada hari salah satunya disunting, dan yang disunting bukan yang diperiksa. |
 | Dampak | Fitur 019: **2 dari 9 tugas**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum; cakupan tidak turun. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-2 |
+
+---
+
+## KB-096 · T-3 fitur 019 — penyemat, dan tiruan yang menyatakan dirinya tiruan
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | T-3: antarmuka penyemat beserta pelaksana tiruan deterministik. |
+| Keputusan | **T-3 selesai.** `src/llm/sematan.py` — `Penyemat` abstrak, `VersiPenyemat`, dan `PenyematTiruan`, beserta 14 ujinya. |
+| Letak berkas ditentukan pemeriksa | `periksa_impor_penyedia` hanya mengizinkan `torch`, `transformers`, dan `sentence_transformers` diimpor **di dalam `src/llm/`** — C-08. Adaptor sungguhan yang kelak memakainya tidak punya rumah lain, dan antarmukanya tinggal bersamanya agar keduanya tidak terpisah batas lapisan. `src/rag/` boleh mengimpornya sebab `llm` lapisan terbuka. |
+| Yang paling perlu dijaga pada berkas ini | `PenyematTiruan` **bukan penyemat sungguhan yang disederhanakan**. Ia memetakan teks ke vektor tetap lewat SHA-256, dan `versi` yang dikeluarkannya berbunyi `penyemat-tiruan`. Penyemat buatan sendiri yang "mirip semantik" menghasilkan angka kemiripan yang tidak berarti apa-apa sambil terbaca seperti berfungsi — dan angka semacam itu akan masuk catatan percobaan, lalu masuk naskah. Uji `test_versi_menyatakan_dirinya_tiruan` yang menjaganya. |
+| Dimensi tiruan sengaja jauh lebih kecil | 16, bukan 1024 milik model sungguhan. Tiruan yang berdimensi sama mengundang kolom vektor disusun menurut tiruannya, dan ketidakcocokannya baru terlihat pada hari model sungguhan dipasang — di lingkungan penelitian, jauh dari sini. |
+| Asinkron meski tiruannya tidak menunggu apa pun | Alasan yang sama dengan `SumberKandidat.cari` pada T-1: kontrak yang bentuknya bergantung pada pelaksana mana yang kebetulan ada hari ini adalah kontrak yang berubah tiap pelaksana baru. Adaptor sungguhan memanggil model, baik lewat jaringan maupun lewat GPU. |
+| Yang sengaja **tidak** diuji | Mutu penyematannya. Vektor dari fungsi hash tidak memiliki mutu semantik untuk diukur, dan uji yang berpura-pura mengukurnya akan lulus tanpa membuktikan apa pun. Mutu sesungguhnya diukur pada kalibrasi gold set — fitur 025. Dinyatakan pada uraian berkas uji agar ketiadaannya terbaca sebagai pilihan, bukan sebagai kelalaian. |
+| Uji mutasi | Enam dijalankan, **enam menyala**: tiruan berhenti menyatakan dirinya tiruan, pemeriksaan dimensi saat penyusunan dimatikan, penolakan teks kosong dimatikan, seluruh teks dipetakan ke vektor yang sama, penyematan dibuat tidak deterministik, dan panjang vektor dibuat menyimpang dari dimensi yang dinyatakan. |
+| Satu uji penjaga yang menentukan | `test_teks_berbeda_menghasilkan_vektor_berbeda` ada khusus untuk menangkap mutasi T3-4: penyemat yang mengembalikan vektor tetap bagi segala masukan **juga lulus** uji determinisme. Tanpa penjaga itu, determinisme terbukti sementara kegunaannya tidak. |
+| Alternatif | Menaruh antarmuka penyemat di `src/rag/pengambilan/` agar dekat pemakainya — ditolak; C-08 dan pemeriksanya menolaknya lebih dulu, dan adaptor sungguhan akan terpisah dari antarmukanya. Membuat tiruan berdimensi 1024 agar "siap" — ditolak, lihat di atas. Membangun adaptor sungguhan sekarang — ditolak; bobotnya tidak terjangkau, dan adaptor yang tidak pernah dijalankan adalah kode yang belum diuji sambil terbaca selesai. |
+| Dampak | Berkas baru `src/llm/sematan.py` dan `tests/llm/test_sematan.py`. Tidak ada modul lain berubah. Fitur 019: **3 dari 9 tugas**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-3 |
