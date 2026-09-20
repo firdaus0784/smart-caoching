@@ -1,10 +1,10 @@
-# Spec: 019-sumber-vektor-dan-kalibrasi
+# Spec: 019-sumber-vektor-dan-pemeringkat-ulang
 
 | | |
 |---|---|
-| Kebutuhan | ADR-03 sisi semantik, ADR-05, ADR-12; BT-29, BT-30; C-02, C-12, C-16 |
+| Kebutuhan | ADR-03 sisi semantik, ADR-05, ADR-12; BT-30; C-02, C-09, C-12 |
 | Dokumen terkait | D-04 ADR-03 dan ADR-05, D-07 Bagian 4.4 dan 4.6, D-08 Bagian 5, D-11 Bagian 3.4 |
-| Status | **Menunggu Gerbang 1** |
+| Status | **Menunggu Gerbang 1** — dua dari empat pertanyaan dijawab 20 September 2026 |
 
 ## Tujuan
 
@@ -14,8 +14,9 @@ penggabungan Reciprocal Rank Fusion. **Sisi semantiknya belum ada sama
 sekali**, sehingga `ambil_hibrida` hari ini berjalan dengan satu sumber dan
 gagal tepat pada hal yang ADR-03 sebut sebagai alasannya: parafrase pengguna.
 
-Fitur ini menambahkan sumber vektor, pemeringkat ulang, dan — bila bahannya
-tersedia — kalibrasi ambang BT-29.
+Fitur ini menambahkan **sumber vektor dan pemeringkat ulang**. Kalibrasi
+ambang BT-29 dipecah menjadi fitur **025** atas keputusan Gerbang 1 — lihat
+Keputusan Gerbang 1 nomor 2.
 
 ## Bentuk yang sudah disiapkan fitur 007, dan mengapa itu penting
 
@@ -39,7 +40,6 @@ ini, dan menyatakannya sekarang lebih murah daripada menemukannya di tengah.
 | Antarmuka penyemat beserta pelaksana tiruan deterministik | **dapat dibangun** | — |
 | Pemeringkat ulang beserta jalur mundurnya | **dapat dibangun** | — |
 | Penyemat sungguhan `intfloat/multilingual-e5-large-instruct` | **tertahan** | Bobot model tidak terjangkau dari lingkungan agen — permintaan ke HuggingFace ditolak proksi organisasi (403). Pengunduhan dilakukan pada mesin penelitian |
-| Kalibrasi ambang BT-29 | **tertahan** | Menuntut *gold set* D-08 Bagian 5 yang **dibekukan sebelum kalibrasi**. Gold set belum disusun |
 
 Pembagian ini bukan penundaan yang menumpuk utang: bagian yang dapat dibangun
 adalah bagian yang membuat sisanya murah pada hari bahannya ada.
@@ -51,12 +51,10 @@ seseorang karena mengira ia terlupa.
 
 - **Melatih atau menyetel model penyemat.** Model praterlatih dipakai apa
   adanya; pelatihan adalah fitur 017 dan menuntut korpus teranotasi.
-- **Menyetel ambang di luar prosedur BT-29.** C-16 melarangnya, dan larangan
-  itu berlaku terutama pada fitur ini — di sinilah godaannya paling besar,
-  sebab ambang yang "kelihatan masuk akal" akan membuat sistem menjawab.
-- **Menyusun gold set.** Ia milik D-08, disusun tim substansi dari survei 50
-  kepala sekolah, dan dibekukan sebelum kalibrasi. Agen yang menyusunnya
-  menguji dirinya sendiri.
+- **Kalibrasi ambang.** Seluruhnya milik fitur 025. C-16 melarang ambang
+  disetel di luar prosedur BT-29, dan larangan itu berlaku terutama di sekitar
+  fitur ini — sumber vektor yang sudah berjalan membuat ambang yang "kelihatan
+  masuk akal" terasa satu langkah lagi dari sistem yang menjawab.
 - **Mengubah `ambil_hibrida`.** Lihat bagian di atas.
 
 ## Kebutuhan (EARS)
@@ -82,9 +80,9 @@ ketiadaannya WAJIB tercatat pada keluaran — bukan didiamkan (BT-30).
 **R-06.** Penyemat WAJIB mencatat nama dan versi model pada setiap keluaran
 yang dipakai membentuk indeks, mengikuti C-09.
 
-**R-07.** SELAMA kalibrasi BT-29 belum dijalankan, sistem WAJIB **tetap
-menolak** membentuk `AmbangKecukupan` — C-16 berlaku tanpa pengecualian, dan
-ketiadaan ambang adalah keadaan yang benar, bukan cacat yang perlu ditambal.
+**R-07.** Fitur ini TIDAK BOLEH membentuk `AmbangKecukupan` maupun menyentuh
+nilai ambang mana pun. Selesainya sumber vektor **tidak** mengubah keadaan
+C-16: ketiadaan ambang tetap keadaan yang benar sampai fitur 025 dijalankan.
 
 **R-08.** Dimensi vektor dan ukuran jarak WAJIB dinyatakan satu tempat, dan
 ketidakcocokan antara dimensi model dan dimensi kolom WAJIB tertangkap saat
@@ -100,32 +98,40 @@ penyusunan — bukan saat kueri pertama.
 | Kredensial tidak menjangkau indeks | Sumber tidak dijalankan sama sekali |
 | Pemeringkat ulang tidak tersedia | Urutan penggabungan dipakai, dan ketiadaannya tercatat |
 
-## Pertanyaan yang wajib dijawab Gerbang 1
+## Keputusan Gerbang 1
 
-1. **`SumberKandidat.cari` menjadi asinkron?** Sumber vektor menanyakan
-   `pgvector` lewat `asyncpg`, sedangkan `cari` hari ini sinkron. Ini
-   **bentuk kekeliruan yang sama persis** dengan yang menghentikan T-3 fitur
-   024, dan Gerbang 2 sudah memutuskannya untuk `PenyimpanDasar` (KB-085).
-   Keputusan yang sama belum diambil untuk kontrak ini, dan mengambilnya
-   diam-diam karena "sudah pernah diputuskan pada kontrak lain" adalah cara
-   keputusan menyebar tanpa dicatat.
+Diputus pemegang Gerbang 1–4 pada 20 September 2026. Dicatat pula pada KB-091.
 
-2. **Fitur ini dipecah dua atau tidak?** Bagian yang dapat dibangun dan bagian
-   yang tertahan gold set berbeda tenggat berbulan-bulan. Satu fitur yang
-   separuhnya menunggu akan tercatat "belum selesai" sepanjang itu, dan
-   ketidakselesaiannya akan berhenti bermakna. **Pemecahan menuntut baris baru
-   pada `docs/D12.md` Bagian 7**, dan itu keputusan tim.
+**1 · `SumberKandidat.cari` menjadi asinkron.** Alasannya sejajar dengan
+KB-085: sumber vektor menanyakan `pgvector` lewat `asyncpg`, dan jembatan
+sinkron memaksa jalur asinkron → sinkron → asinkron yang memblokir gelung
+peristiwanya sendiri. Keputusannya diambil **tersendiri** meski bentuknya sama
+dengan `PenyimpanDasar`, sebab keputusan yang menyebar tanpa dicatat bukan
+keputusan.
 
-3. **Vektor `indeks_metadata` disimpan di mana?** R-04 menuntut keterpisahan
+Ia mengubah kontrak yang `bm25.py`, `hibrida.py`, dan setiap pemanggilnya
+pakai. Bila abstraksinya ternyata tidak pas sesudah sumber nyata pertama
+menguji — sebagaimana ADR-12 perkirakan dan sebagaimana benar-benar terjadi
+pada fitur 024 — penyesuaiannya melewati Gerbang 2 tersendiri.
+
+**2 · Fitur dipecah dua.** **019** memuat sumber vektor dan pemeringkat ulang;
+**025** memuat kalibrasi ambang BT-29. Sebabnya bukan besarnya melainkan **apa
+yang menghalangi masing-masing**: 019 tertahan bobot model yang diunduh di
+mesin penelitian, 025 tertahan gold set D-08 yang belum disusun — dua
+penghalang berbeda dengan tenggat berbeda berbulan-bulan. `docs/D12.md`
+Bagian 7 dan register D-00 sudah menyesuaikan; jumlah fitur menjadi 25.
+
+**Pertanyaan nomor 4 pindah ke fitur 025.** Siapa mengunduh bobot dan di mana
+versinya dipatok adalah pertanyaan yang hanya berlaku ketika penyemat
+sungguhan dipakai, dan itu terjadi pada fitur 025.
+
+## Pertanyaan yang masih wajib dijawab Gerbang 1
+
+1. **Vektor `indeks_metadata` disimpan di mana?** R-04 menuntut keterpisahan
    yang ditolak peladen. Fitur 024 sudah menyediakan skema `indeks_utama` dan
    `indeks_metadata` beserta hak aksesnya — pertanyaannya apakah kolom vektor
    cukup ditambahkan di sana, atau perlu tabel tersendiri. **Menentukan bentuk
    migrasi, dan tidak boleh diputuskan saat menulis kode.**
-
-4. **Siapa menjalankan pengunduhan bobot model, dan hasilnya dipatok di mana?**
-   Lingkungan agen tidak dapat menjangkau HuggingFace. Versi bobot yang dipakai
-   wajib tercatat (C-09), dan pencatatan itu tidak dapat dilakukan oleh yang
-   tidak mengunduhnya.
 
 ## Ketertelusuran
 
@@ -136,6 +142,6 @@ penyusunan — bukan saat kueri pertama.
 | C-02, FR-D06 | R-03, R-04 |
 | BT-30 | R-05 |
 | C-09 | R-06 |
-| C-16, BT-29 | R-07 |
+| C-16 | R-07 — lewat larangan, bukan lewat pembentukan |
 | ADR-05 `pgvector` | R-04, R-08 |
 | C-12 | Nol ketergantungan baru — `torch`, `transformers`, `sentence-transformers`, dan `pgvector` sudah pada berkas persetujuan (KB-083) |
