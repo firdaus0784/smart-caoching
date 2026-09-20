@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | Gerbang 1 lolos 20 September 2026, nol pertanyaan terbuka |
-| Status | **Menunggu Gerbang 2** |
+| Status | **Gerbang 2 lolos** — 20 September 2026 |
 | Kebutuhan | ADR-03 sisi semantik, ADR-05, ADR-12; BT-30; C-02, C-08, C-09, C-12 |
 
 ## 1. Letak modul — ditentukan pemeriksa, bukan oleh selera
@@ -138,11 +138,12 @@ mutasinya terlalu lemah. Pelajaran M-3 fitur 024.
 `sentence-transformers`, dan `pgvector` sudah pada berkas persetujuan (KB-083).
 Diperiksa, bukan diperkirakan.
 
-**Satu ketergantungan peladen baru**: ekstensi `pgvector` pada PostgreSQL. Ia
-bukan paket Python dan tidak masuk `ketergantungan-disetujui.toml` bagian
-`langsung`; tempatnya bagian `[sistem]`, sejajar `tesseract`. **Itu penambahan
-pada berkas persetujuan, dan berkas itu menyatakan sendiri bahwa perubahannya
-keputusan tim** — diajukan pada Gerbang 2, tidak dikerjakan agen.
+**Satu ketergantungan peladen baru, disetujui pada Gerbang 2**: ekstensi
+`pgvector`, tercatat `[sistem.pgvector]` versi 0.6.0. Ia bukan paket Python —
+paket Python `pgvector` hanya menyediakan tipe bagi `asyncpg` dan tidak dapat
+menyimpan satu vektor pun tanpa ekstensi ini pada peladennya. Keduanya wajib
+ada, dan keduanya dicatat terpisah karena dipasang orang yang berbeda dengan
+perintah yang berbeda.
 
 ## 8. Urutan tugas yang diusulkan untuk `tasks.md`
 
@@ -161,7 +162,7 @@ keputusan tim** — diajukan pada Gerbang 2, tidak dikerjakan agen.
 | Risiko | Bila terjadi |
 |---|---|
 | `SumberKandidat` ternyata tidak pas bagi sumber asinkron | Ajukan lewat Gerbang 2 tersendiri; jangan perbaiki sambil jalan |
-| Ekstensi `pgvector` tidak disetujui masuk `[sistem]` | Tugas 4–6 berhenti; sisanya tetap dapat dikerjakan |
+| ~~Ekstensi `pgvector` tidak disetujui~~ | Tidak lagi berlaku — disetujui Gerbang 2, terpasang dan terbukti bekerja |
 | Tiruan deterministik terbaca sebagai penyemat sungguhan | Uraiannya menyatakan dirinya tiruan, dan `versi` yang dikeluarkannya berbunyi demikian |
 
 ## 10. Berhenti di Gerbang 2

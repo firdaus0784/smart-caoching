@@ -142,6 +142,29 @@ sumber = "https://raw.githubusercontent.com/tesseract-ocr/tessdata/main/ind.trai
 lisensi = "Apache-2.0"
 ukuran_bita = 8279230
 
+# Ekstensi pgvector pada peladen PostgreSQL — fitur 019, keputusan KB-093.
+#
+# **Bukan paket Python.** Paket Python `pgvector` sudah ada pada daftar
+# `langsung` (KB-083) dan hanya menyediakan tipe bagi `asyncpg`; ia tidak
+# dapat menyimpan satu vektor pun tanpa ekstensi ini terpasang pada
+# peladennya. Keduanya wajib ada, dan keduanya dicatat terpisah karena
+# dipasang orang yang berbeda dengan perintah yang berbeda.
+#
+# Pemasangannya pekerjaan operasi (D-09), bukan `make setup`:
+#
+#     apt-get install postgresql-16-pgvector    # atau setara distribusinya
+#     psql -d smart_coaching -c 'CREATE EXTENSION vector'
+#
+# `versi` diisi versi yang benar-benar dipakai menjalankan uji, bukan versi
+# yang diharapkan — sejajar [sistem.label_studio] dan berbeda dari
+# [sistem.tesseract] yang sengaja kosong.
+[sistem.pgvector]
+versi = "0.6.0"
+paket = "postgresql-16-pgvector"
+versi_peladen = "PostgreSQL 16.13"
+lisensi = "PostgreSQL"
+diperiksa = "20 September 2026"
+
 # Label Studio — R-13 fitur 016, keputusan KB-020 dan KB-025.
 #
 # **Bukan paket Python.** KB-020 menolaknya sebagai ketergantungan proyek:

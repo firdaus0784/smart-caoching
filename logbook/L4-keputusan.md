@@ -1408,3 +1408,21 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Tabel vektor tersendiri — ditolak; tidak menambah penjagaan, menambah tempat hanyut. Menaruh penyemat di `src/rag/` agar dekat pemakainya — ditolak; C-08 dan pemeriksanya menolaknya lebih dulu. Membangun adaptor penyemat sungguhan sekarang — ditolak; bobotnya tidak terjangkau, dan adaptor yang tidak pernah dijalankan adalah kode yang belum diuji sambil terbaca selesai. |
 | Dampak | Berkas baru `specs/019-.../plan.md`; `spec.md` berpindah ke **Gerbang 1 lolos**. Tidak ada kode, tidak ada ketergantungan Python baru. `make check` lulus enam gerbang. **Menunggu putusan**: Gerbang 2, dan persetujuan ekstensi `pgvector` pada bagian `[sistem]`. |
 | Pemutus | Pemegang Gerbang 1–4 untuk Keputusan Gerbang 1 nomor 3; agen untuk penyusunan rencana |
+
+---
+
+## KB-093 · Gerbang 2 fitur 019 lolos; ekstensi `pgvector` disetujui dan terbukti bekerja
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | `plan.md` fitur 019 diajukan ke Gerbang 2 bersama satu permintaan persetujuan: ekstensi `pgvector` pada peladen PostgreSQL. |
+| Keputusan | **Gerbang 2 lolos.** Ekstensi `pgvector` **disetujui** dan dicatat pada `ketergantungan-disetujui.toml` bagian `[sistem.pgvector]`. `tasks.md` sembilan tugas disusun dan diajukan ke Gerbang 3. Tidak ada kode ditulis. |
+| Yang diperiksa sebelum mencatat persetujuan | Ekstensi itu **tidak tersedia** pada peladen lingkungan agen — `pg_available_extensions` tidak memuat `vector` sama sekali. Dipasang (`postgresql-16-pgvector` 0.6.0), lalu dibuktikan bekerja: `CREATE EXTENSION` berhasil dan `'[1,2,3]'::vector <=> '[1,2,4]'::vector` menghasilkan jarak kosinus. Versi yang dicatat karena itu **versi yang benar-benar dipakai**, bukan versi yang diharapkan — sejajar `[sistem.label_studio]` dan berbeda dari `[sistem.tesseract]` yang sengaja kosong. |
+| Mengapa dua catatan terpisah bagi satu kemampuan | Paket Python `pgvector` sudah ada pada daftar `langsung` sejak KB-083, dan ia **hanya menyediakan tipe bagi `asyncpg`** — ia tidak dapat menyimpan satu vektor pun tanpa ekstensi peladennya. Keduanya wajib ada, dan keduanya dicatat terpisah karena **dipasang orang yang berbeda dengan perintah yang berbeda**: `make setup` memasang yang pertama, D-09 memasang yang kedua. Catatan tunggal akan membuat salah satunya terlupa pada lingkungan berikutnya. |
+| Bentuk `tasks.md` | Sembilan tugas. T-1 (kontrak asinkron) dan T-2 (uji berparameter, masih satu pelaksana) sengaja mendahului T-3 s.d. T-5: keduanya tidak menyentuh vektor sama sekali, sehingga bila kontrak `SumberKandidat` ternyata tidak pas bagi sumber asinkron, hal itu terlihat dengan dua tugas sudah aman di belakang. Bentuk dan alasan yang sama dengan T-1/T-2 fitur 024. |
+| Tiga keadaan yang **menghentikan** pekerjaan, bukan memperlambatnya | Kontrak tidak pas → ajukan Gerbang 2 tersendiri. Satu uji T-2 perlu diubah → catat sebagai temuan sebelum mengubah. **Godaan menetapkan ambang agar sistem menjawab → berhenti**; C-16, dan R-07 spec menegaskan fitur ini tidak menyentuh ambang mana pun. Yang ketiga ditulis tegas karena di sekitar fitur inilah godaannya paling besar. |
+| Dua pelajaran fitur 024 dituliskan ke dalam tugas | T-2: *"bila satu uji perlu diubah agar berparameter, itu temuan — catat, jangan rapikan."* T-8: *"bila sebuah mutasi diam, yang pertama diperiksa adalah apakah mutasinya terlalu lemah, bukan langsung menambah uji."* Keduanya ditemukan dengan mahal pada fitur 024; menuliskannya ke dalam tugas membuatnya tidak perlu ditemukan lagi. |
+| Alternatif | Mencatat persetujuan ekstensi tanpa memasangnya lebih dulu — ditolak; catatan versi yang tidak pernah dijalankan adalah versi yang diharapkan, dan berkas persetujuan sudah pernah menanggung bentuk itu pada `[sistem.tesseract]` di mana ia **disengaja** dan dinyatakan. Menggabungkan paket Python dan ekstensi peladen pada satu catatan — ditolak; lihat di atas. Menggabungkan T-1 dan T-5 agar lebih cepat — ditolak; kecepatan terakhir, selalu. |
+| Dampak | `ketergantungan-disetujui.toml` bertambah `[sistem.pgvector]`; `plan.md` berpindah ke Gerbang 2 lolos; `tasks.md` baru. Tidak ada kode. `make check` lulus enam gerbang, termasuk V-04 yang menjaga berkas persetujuan. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-001) pada 20 September 2026 |
