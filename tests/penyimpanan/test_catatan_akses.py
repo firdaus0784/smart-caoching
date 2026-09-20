@@ -9,6 +9,8 @@ bukan sasarannya**. Id dokumen pada catatan akses menghasilkan daftar dokumen
 karantina — kebocoran yang sama dengan yang A-6 tutup, lewat pintu belakang.
 """
 
+import contextlib
+
 import pytest
 from src.penyimpanan.area import Area
 from src.penyimpanan.catatan_akses import CatatanAkses
@@ -91,29 +93,78 @@ def test_percobaan_berulang_tercatat_seluruhnya() -> None:
     assert len(catatan.baris()) == 3
 
 
-def test_penolakan_pada_pelaksana_postgres_juga_tercatat() -> None:
-    """R-08: bentuk catatan sama bagi setiap pelaksana.
+# ═══════════════════════════════════════════════════════════════════════
+# T-7 · ketiga jalur, kedua pelaksana
+#
+# `tasks.md` T-7 menuntut catatan pada **setiap** jalur, termasuk jalur
+# penolakan. Uji di atas menyentuh `baca_dokumen` pada satu pelaksana; enam
+# gabungan sisanya tidak terjaga sama sekali sampai bagian ini ada.
+#
+# Tidak menuntut peladen, dan itu justru yang diuji: penolakan terjadi
+# **sebelum** basis data disentuh. Sambungan yang melempar bila dipakai
+# membuktikannya — bila pemeriksaan kredensial bergeser ke belakang kueri,
+# uji gagal dengan galat sambungan alih-alih lulus diam-diam.
+# ═══════════════════════════════════════════════════════════════════════
 
-    Tidak menuntut peladen — penolakan terjadi **sebelum** basis data
-    disentuh, dan itu justru yang diuji di sini. Sambungan yang melempar bila
-    dipakai membuktikannya: bila pemeriksaan kredensial bergeser ke belakang
-    kueri, uji ini gagal dengan galat sambungan, bukan lulus diam-diam.
-    """
+
+class SambunganYangMelarang:
+    async def fetchrow(self, kueri: str, *argumen: object) -> object:
+        raise AssertionError("basis data disentuh sebelum kredensial diperiksa")
+
+    async def execute(self, kueri: str, *argumen: object) -> object:
+        raise AssertionError("basis data disentuh sebelum kredensial diperiksa")
+
+
+def _pelaksana(nama: str, catatan: CatatanAkses) -> object:
+    if nama == "tiruan":
+        return PenyimpanTiruan(catatan=catatan)
     from src.penyimpanan.postgres import PenyimpanPostgres
 
-    class SambunganYangMelarang:
-        async def fetchrow(self, kueri: str, *argumen: object) -> object:
-            raise AssertionError("basis data disentuh sebelum kredensial diperiksa")
+    return PenyimpanPostgres(SambunganYangMelarang(), catatan=catatan)
 
-        async def execute(self, kueri: str, *argumen: object) -> object:
-            raise AssertionError("basis data disentuh sebelum kredensial diperiksa")
 
+JALUR = {
+    "baca": lambda p: p.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok_rahasia"),
+    "tulis": lambda p: p.tulis_dokumen(PENJAWABAN, Area.KORPUS, "dok_rahasia", {"a": 1}),
+    "pindah": lambda p: p.pindahkan(PENJAWABAN, "dok_rahasia", Area.KARANTINA, Area.KORPUS, "uji"),
+}
+
+
+@pytest.mark.parametrize("pelaksana", ["tiruan", "postgres"])
+@pytest.mark.parametrize("jalur", sorted(JALUR))
+def test_setiap_jalur_mencatat_penolakannya(pelaksana: str, jalur: str) -> None:
     catatan = CatatanAkses()
-    penyimpan = PenyimpanPostgres(SambunganYangMelarang(), catatan=catatan)
+    penyimpan = _pelaksana(pelaksana, catatan)
 
     with pytest.raises(GalatAksesDitolak):
-        jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KARANTINA, "dok"))
+        jalankan(JALUR[jalur](penyimpan))
+
+    assert len(catatan.baris()) == 1, f"{pelaksana}/{jalur} tidak mencatat penolakannya"
+
+
+@pytest.mark.parametrize("pelaksana", ["tiruan", "postgres"])
+@pytest.mark.parametrize("jalur", sorted(JALUR))
+def test_catatan_tidak_pernah_memuat_id_dokumen(pelaksana: str, jalur: str) -> None:
+    """R-12. Id dokumen pada catatan menghasilkan daftar dokumen karantina
+    bagi siapa pun yang dapat membaca catatan."""
+    catatan = CatatanAkses()
+    penyimpan = _pelaksana(pelaksana, catatan)
+
+    with pytest.raises(GalatAksesDitolak):
+        jalankan(JALUR[jalur](penyimpan))
+
+    for baris in catatan.baris():
+        assert "dok_rahasia" not in str(baris), str(baris)
+
+
+@pytest.mark.parametrize("pelaksana", ["tiruan", "postgres"])
+def test_pencatatan_mendahului_pelemparan(pelaksana: str) -> None:
+    """Percobaan tetap tercatat meski pemanggil menangkap galatnya dan
+    berpura-pura tidak terjadi apa-apa."""
+    catatan = CatatanAkses()
+    penyimpan = _pelaksana(pelaksana, catatan)
+
+    with contextlib.suppress(GalatAksesDitolak):
+        jalankan(JALUR["baca"](penyimpan))
 
     assert len(catatan.baris()) == 1
-    assert catatan.baris()[0].kredensial == "penjawaban"
-    assert catatan.baris()[0].area is Area.KARANTINA
