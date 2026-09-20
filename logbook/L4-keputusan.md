@@ -1443,3 +1443,21 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membiarkan `SumberBM25.cari` sinkron dan membungkusnya di `ambil_hibrida` — ditolak; lihat di atas. Menggabungkan T-1 dengan penambahan sumber vektor agar sekali jalan — ditolak; kegagalan tidak akan dapat ditelusuri ke perubahan yang mana, dan itu persis alasan T-1 dan T-2 dipisah. Memperbaiki `plan.md` Bagian 2 diam-diam — ditolak; rencana yang dirapikan sesudah kenyataannya terlihat berhenti berguna sebagai rencana. |
 | Dampak | Enam berkas `src/` dan `perkakas/`, delapan berkas uji. Fitur 019: **1 dari 9 tugas**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum; cakupan tidak turun. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-1 |
+
+---
+
+## KB-095 · T-2 fitur 019 — dan syarat "sama persis" yang tidak saya penuhi
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | T-2: rangkaian uji kontrak `SumberKandidat` dijadikan berparameter, masih satu pelaksana, sebelum sumber vektor ditambahkan pada T-5. |
+| Keputusan | **T-2 selesai.** Berkas baru `tests/rag/pengambilan/test_kontrak_sumber.py` dengan `PABRIK` berisi satu entri (`bm25`). Lima uji dipindahkan dari `test_kandidat.py`. |
+| **Syarat T-2 tidak terpenuhi sebagaimana tertulis** | `tasks.md` T-2 berbunyi *"jumlah uji yang lulus sama persis sebelum dan sesudah"*. Jumlahnya **2014 menjadi 2016**. Dinyatakan di sini alih-alih diredefinisikan, sebab syarat yang disesuaikan dengan hasilnya berhenti menjadi syarat. |
+| Selisihnya terhitung penuh, dan tidak ada yang hilang | Perbandingan jumlah uji **per berkas** sebelum dan sesudah menunjukkan tepat dua perubahan: `test_kandidat.py` 14 → 9 (lima pindah), dan `test_kontrak_sumber.py` 0 → 7. Ketujuhnya: empat uji kontrak lewat fixture, **satu uji kontrak baru** (kueri kosong ditolak), dan **dua** dari satu uji yang kini berparameter atas kedua nilai `IndeksTujuan`. Netto +2 = satu uji baru + satu parameterisasi tambahan. |
+| Mengapa saya tidak menghapus uji baru itu demi angkanya | Menghapus uji yang sah agar sebuah angka cocok adalah mengejar ukurannya alih-alih maksudnya. Maksud syarat T-2 adalah **mendeteksi kehilangan**, dan perbandingan per berkas membuktikan tidak ada yang hilang. Yang patut dicatat sebagai kelemahan: menambah uji pada langkah yang seharusnya murni perubahan bentuk membuat pembuktian "bentuk berubah, hasil tidak" sedikit lebih lemah daripada seharusnya. |
+| Pembagian yang dipilih antara kontrak dan khas pelaksana | Yang pindah: uji yang berlaku bagi **setiap** sumber — determinisme, versi indeks, peringkat dihitung dari posisi, batas memangkas bukan mengisi, indeks tujuan dinyatakan. Yang tetap di `test_kandidat.py`: uji atas **tipe** `Kandidat`, `HasilSumber`, `urutkan_kandidat`. Yang tetap di `test_bm25.py`: skor yang dihitung tangan, perlakuan stem, kata henti — sumber vektor tidak memiliki skor BM25 untuk dihitung. |
+| Temuan yang dicatat, bukan diperbaiki | `SumberTiruan` — dipakai `test_gabung.py` dan `test_hibrida.py` — **tidak lagi dijalankan terhadap kontrak** sesudah kelima uji itu pindah, sebab ia ganda uji dan bukan pelaksana yang disebarkan. Bila ganda itu menyimpang, berkas yang bersandar padanya akan lulus sambil membuktikan lebih sedikit daripada yang terbaca. Menambahkannya ke `PABRIK` perubahan satu baris, dan **sengaja tidak dikerjakan**: `tasks.md` T-2 menetapkan satu pelaksana, dan menambah entri kedua atas penilaian sendiri adalah mengubah cakupan yang sudah lewat Gerbang 3. Diangkat pada T-5. |
+| Alternatif | Menghapus uji kueri kosong agar jumlahnya persis — ditolak, lihat di atas. Memasukkan `SumberTiruan` ke `PABRIK` sekarang — ditolak; mengubah cakupan yang sudah lewat gerbang. Membiarkan kelima uji di `test_kandidat.py` dan menyalinnya ke berkas kontrak — ditolak; dua salinan aturan yang sama akan berselisih pada hari salah satunya disunting, dan yang disunting bukan yang diperiksa. |
+| Dampak | Fitur 019: **2 dari 9 tugas**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum; cakupan tidak turun. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-2 |

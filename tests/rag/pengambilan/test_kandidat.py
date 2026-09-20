@@ -20,10 +20,7 @@ satu galat pun.
 
 import pytest
 from pydantic import ValidationError
-from src.kamus.segmen import IndeksTujuan
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, urutkan_kandidat
-from tests.konftes_asinkron import jalankan
-from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
 
 
 def test_kandidat_membawa_id_segmen_bukan_id_dokumen() -> None:
@@ -110,65 +107,7 @@ def test_seri_sebagian_tetap_menghormati_skor_lebih_dulu() -> None:
     assert [k.id_segmen for k in hasil] == ["SEG-Z", "SEG-A", "SEG-B"]
 
 
-def test_peringkat_sama_pada_masukan_sama() -> None:
-    """**R-02.** Dijalankan dua kali pada sumber yang sama."""
-    sumber = SumberTiruan("tiruan", {"SEG-A": 1.0, "SEG-B": 2.0, "SEG-C": 2.0})
-    pertama = jalankan(sumber.cari("kepala sekolah", batas=10))
-    kedua = jalankan(sumber.cari("kepala sekolah", batas=10))
-    assert pertama.peringkat == kedua.peringkat
-
-
 # ------------------------------------------------------------------ HasilSumber
-
-
-def test_hasil_sumber_membawa_versi_indeks() -> None:
-    """D-07 Bagian 3.3: "Setiap pembangunan ulang menghasilkan nomor versi;
-    tercatat pada setiap jawaban (RT-05)."
-
-    Tanpanya, dua percobaan atas indeks berbeda tidak dapat dibedakan pada
-    catatan D-10 L1, dan perbandingan antarpercobaan menjadi perbandingan yang
-    tidak diketahui apa yang berubah.
-    """
-    hasil = jalankan(
-        SumberTiruan("bm25", {"SEG-A": 1.0}, versi_indeks="indeks-2026-08-12").cari(
-            "kueri", batas=5
-        )
-    )
-    assert hasil.versi_indeks == "indeks-2026-08-12"
-
-
-def test_hasil_sumber_menyatakan_peringkat_setiap_kandidat() -> None:
-    """Peringkat dihitung dari posisinya, bukan disimpan terpisah.
-
-    Dua sumber kebenaran bagi hal yang sama akan berbeda ketika salah satunya
-    disunting, dan yang berbeda adalah yang tidak diperbarui.
-    """
-    hasil = jalankan(
-        SumberTiruan("bm25", {"SEG-A": 3.0, "SEG-B": 2.0, "SEG-C": 1.0}).cari("q", batas=5)
-    )
-    assert hasil.peringkat_dari("SEG-A") == 1
-    assert hasil.peringkat_dari("SEG-C") == 3
-    assert hasil.peringkat_dari("SEG-TIDAK-ADA") is None
-
-
-def test_batas_memangkas_bukan_mengisi() -> None:
-    """Kandidat yang lebih sedikit daripada batas diteruskan seluruhnya.
-
-    Mengisi sampai penuh dengan segmen berskor nol memberi penyusun jawaban
-    bahan yang tidak relevan, dan penilaian kecukupan bukti kemudian menghitung
-    bahan itu sebagai bukti.
-    """
-    sumber = SumberTiruan("bm25", {"SEG-A": 3.0, "SEG-B": 2.0})
-    assert len(jalankan(sumber.cari("q", batas=10)).peringkat) == 2
-    assert len(jalankan(sumber.cari("q", batas=1)).peringkat) == 1
-
-
-def test_sumber_menyatakan_indeks_tujuannya() -> None:
-    """Dipakai C-1: kredensial diperiksa terhadap indeks tujuan sumber
-    **sebelum** sumber dijalankan."""
-    assert SumberTiruan("m", {}, indeks_tujuan=IndeksTujuan.METADATA).indeks_tujuan is (
-        IndeksTujuan.METADATA
-    )
 
 
 def test_hasil_sumber_beku() -> None:
