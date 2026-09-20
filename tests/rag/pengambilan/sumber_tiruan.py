@@ -28,7 +28,14 @@ from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, SumberKandidat, 
 
 
 class SumberTiruan(SumberKandidat):
-    """Sumber yang mengembalikan skor yang sudah ditetapkan pemanggilnya."""
+    """Sumber yang mengembalikan skor yang sudah ditetapkan pemanggilnya.
+
+    Penolakan kueri kosong ditambahkan pada T-5 fitur 019. Sebelumnya ganda
+    ini **menyimpang dari kontrak** — ia menerima kueri kosong yang setiap
+    pelaksana sungguhan tolak — dan berkas yang bersandar padanya lulus sambil
+    membuktikan lebih sedikit daripada yang terbaca. Ditemukan ketika ia
+    dimasukkan ke `PABRIK` uji kontrak, persis sebagaimana KB-095 duga.
+    """
 
     def __init__(
         self,
@@ -57,6 +64,8 @@ class SumberTiruan(SumberKandidat):
         return self._versi_indeks
 
     async def cari(self, kueri: str, *, batas: int) -> HasilSumber:
+        if not kueri.strip():
+            raise ValueError("kueri kosong tidak dapat dicari")
         self.dipanggil += 1
         kandidat = urutkan_kandidat(
             Kandidat(id_segmen=id_segmen, skor=skor) for id_segmen, skor in self._skor.items()

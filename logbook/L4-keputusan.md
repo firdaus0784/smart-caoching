@@ -1502,3 +1502,24 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menuliskan dimensi sebagai tetapan Python — ditolak; dua sumber kebenaran. Memberi `05-kolom-vektor.sql` dimensi bawaan — ditolak; lihat di atas. Memeriksa dimensi pada kueri pertama — ditolak; terlambat, dan yang membacanya sudah di lingkungan sungguhan. Membiarkan T4-4 tercatat diam — ditolak tegas; ia menyentuh C-02. |
 | Dampak | Berkas baru: `05-kolom-vektor.sql`, `src/rag/pengambilan/vektor.py`, `tests/rag/pengambilan/test_dimensi_vektor.py`. `tests/peladen.py` dan `test_persiapan_basis_data.py` menyesuaikan. Fitur 019: **4 dari 9 tugas**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-4 |
+
+---
+
+## KB-098 · T-5 fitur 019 — R-01 terbukti tiga pelaksana, dan lima mutasi diam
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | T-5: `SumberVektor` berdiri dan wajib lulus rangkaian uji kontrak yang sama tanpa satu pun uji diubah. |
+| Keputusan | **T-5 selesai. R-01 terbukti atas tiga pelaksana** — `bm25`, `tiruan`, dan `vektor` menjalankan rangkaian yang sama. `ambil_hibrida` **tidak berubah satu baris pun**, dan itu ukuran keberhasilan fitur 019 sebagaimana `plan.md` nyatakan. |
+| Temuan KB-095 ditutup, dan dugaannya benar | `SumberTiruan` dimasukkan ke `PABRIK` sebagaimana dijanjikan — dan **ia memang menyimpang dari kontrak**: ia menerima kueri kosong yang setiap pelaksana sungguhan tolak. Berkas yang bersandar padanya (`test_gabung.py`, `test_hibrida.py`) selama ini lulus sambil membuktikan lebih sedikit daripada yang terbaca. Diperbaiki. |
+| Penyusunan lewat `susun`, bukan pemanggilan langsung | Pencocokan dimensi menanyakan basis data. Pemanggil yang menyusun langsung memperoleh objek yang **belum diperiksa**; `susun` membuat pemeriksaan itu tidak dapat dilewati. |
+| Mengapa skor `2 - jarak`, bukan `1 - jarak` | `Kandidat.skor` menolak nilai negatif. `1 - jarak` bernilai negatif bagi vektor berlawanan arah, dan penolakannya akan jatuh justru pada kandidat yang paling tidak relevan — bentuk kegagalan yang tampak acak. `2 - jarak` tak-negatif pada seluruh rentang `<=>` dan mempertahankan urutannya. |
+| **Lima dari tujuh mutasi diam pada putaran pertama** | Dan empat di antaranya lubang nyata: penolakan kueri kosong, penyaringan segmen tanpa vektor, arah skor, dan nama sumber. Tidak satu pun tertangkap rangkaian yang sudah ada. |
+| Yang paling perlu dibaca dari kelimanya | **T5-1 diam karena sumber bersandar pada penyemat** — `PenyematTiruan` menolak teks kosong, sehingga penjagaan sumbernya sendiri tidak pernah diuji. Adaptor sungguhan mungkin lebih longgar. Ditutup dengan penyemat yang melempar bila dipakai. **T5-3 dan T5-5 diam karena tidak ada uji yang menuntut segmen terdekat berperingkat teratas** — sifat yang membuat sumber ini ada sama sekali tidak terjaga. Ditutup dengan kueri yang sama persis dengan teks segmen, diuji bagi **ketiga** segmen: sumber yang selalu mengembalikan segmen yang sama juga lulus bila hanya satu diperiksa. |
+| T5-3 tetap diam sesudah perbaikan pertama, dan sebabnya halus | `urutkan_kandidat` mengurutkan ulang menurut skor, sehingga `ORDER BY` pada kueri **tidak terlihat pada hasil selama tidak ada yang terpangkas**. Ketika `LIMIT` memangkas, urutan kueri yang menentukan baris mana yang selamat — dan urutan yang keliru membuang justru yang terdekat. Ditutup uji dengan `batas=1`. |
+| T5-7 juga tetap diam, dan sebabnya sejajar | Uji kontrak menuntut nama pada hasil sama dengan nama pada sumber; **keduanya berubah bersama**, sehingga penukaran nama lolos. Yang menjadikannya penting: `HasilPengambilan.asal` menyusun daftar penyumbang menurut nama, dan dua sumber bernama sama menumpuk menjadi satu baris. Ditutup dua uji: nama harfiahnya, dan ketiadaan nama kembar di seluruh `PABRIK`. |
+| Pelajaran yang ditambahkan | Mutasi yang diam karena **dua sisi berubah bersama** adalah bentuk yang tidak disebut `tasks.md` T-8 maupun pelajaran M-3 fitur 024. Uji yang membandingkan dua nilai yang keduanya berasal dari kode yang sedang diuji hanya membuktikan keduanya konsisten — bukan benar. |
+| Alternatif | Membiarkan `SumberTiruan` di luar `PABRIK` — ditolak; KB-095 sudah menjanjikan sebaliknya, dan penyimpangannya memang ada. Menerima T5-3 sebagai mutasi setara — ditolak sesudah diperiksa; ia setara hanya selama tidak ada pemangkasan, dan pemangkasan adalah keadaan lazim. Mengurutkan di SQL saja tanpa `urutkan_kandidat` — ditolak; kontrak menuntut urutan yang sama bagi setiap pelaksana, dan menyerahkannya ke SQL membuat pelaksana in-memory berbeda. |
+| Dampak | `src/rag/pengambilan/vektor.py` bertambah `SumberVektor`; `SambunganAktif` bertambah `fetch`. Berkas uji baru `test_sumber_vektor.py`; `test_kontrak_sumber.py` `PABRIK` menjadi tiga; `sumber_tiruan.py` menolak kueri kosong. Fitur 019: **5 dari 9 tugas**. `make check` lulus enam gerbang. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-5 |

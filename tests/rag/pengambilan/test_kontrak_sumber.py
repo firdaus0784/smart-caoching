@@ -41,10 +41,41 @@ from collections.abc import Callable
 
 import pytest
 from src.kamus.segmen import IndeksTujuan
+from src.llm.sematan import PenyematTiruan
 from src.penyimpanan.indeks import SegmenTerindeks, StatusLisensi
 from src.rag.pengambilan.bm25 import SumberBM25, bangun_indeks
 from src.rag.pengambilan.kandidat import SumberKandidat
+from src.rag.pengambilan.vektor import SKEMA, TABEL, SumberVektor
 from tests.konftes_asinkron import jalankan
+from tests.peladen import DIMENSI_UJI, HOST, PORT, psql, siapkan
+from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
+
+siapkan()
+
+
+class SambunganUji:
+    """Menyambung sebagai pengelola, menutup tiap panggilan."""
+
+    async def _dengan(self, nama: str, kueri: str, *argumen: object) -> object:
+        import asyncpg
+
+        sambungan = await asyncpg.connect(
+            host=HOST, port=int(PORT), user="pengelola", database="smart_coaching"
+        )
+        try:
+            return await getattr(sambungan, nama)(kueri, *argumen)
+        finally:
+            await sambungan.close()
+
+    async def fetchrow(self, kueri: str, *argumen: object) -> object:
+        return await self._dengan("fetchrow", kueri, *argumen)
+
+    async def fetch(self, kueri: str, *argumen: object) -> object:
+        return await self._dengan("fetch", kueri, *argumen)
+
+    async def execute(self, kueri: str, *argumen: object) -> object:
+        return await self._dengan("execute", kueri, *argumen)
+
 
 VERSI_UJI = "indeks-2026-08-12"
 
@@ -84,10 +115,62 @@ def _susun_bm25(indeks_tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> SumberKandi
     return SumberBM25(bangun_indeks(korpus, versi=VERSI_UJI, indeks_tujuan=indeks_tujuan))
 
 
-PABRIK: dict[str, Callable[[IndeksTujuan], SumberKandidat]] = {"bm25": _susun_bm25}
+def _susun_vektor(indeks_tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> SumberKandidat:
+    """Sumber vektor di atas peladen sungguhan, dengan korpus yang sama.
+
+    Isi tabelnya ditanam ulang tiap pemanggilan: rangkaian uji lain memakai
+    tabel yang sama, dan urutan uji bukan hal yang boleh diandalkan.
+    """
+    penyemat = PenyematTiruan(dimensi=DIMENSI_UJI)
+    skema = SKEMA[indeks_tujuan]
+    psql("smart_coaching", "-c", f"DELETE FROM {skema}.{TABEL}")
+    for segmen in KORPUS:
+        vektor = jalankan(penyemat.sematkan([segmen.teks]))[0]
+        nilai = "[" + ",".join(repr(float(n)) for n in vektor) + "]"
+        psql(
+            "smart_coaching",
+            "-c",
+            f"INSERT INTO {skema}.{TABEL} "
+            "(id_segmen, id_dokumen, teks, lisensi, anonimisasi_terverifikasi, "
+            "penanda_bagian, vektor) VALUES "
+            f"('{segmen.id_segmen}', '{segmen.id_dokumen}', '{segmen.teks}', "
+            f"'{segmen.lisensi.value}', true, '{segmen.penanda_bagian}', '{nilai}'::vector)",
+        )
+    return jalankan(
+        SumberVektor.susun(
+            sambungan=SambunganUji(),
+            penyemat=penyemat,
+            indeks_tujuan=indeks_tujuan,
+            versi_indeks=VERSI_UJI,
+        )
+    )
+
+
+def _susun_tiruan(indeks_tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> SumberKandidat:
+    """Ganda uji yang dipakai `test_gabung.py` dan `test_hibrida.py`.
+
+    Ia **wajib** memenuhi kontrak yang sama: ganda yang menyimpang membuat
+    berkas yang bersandar padanya lulus sambil membuktikan lebih sedikit
+    daripada yang terbaca. Diangkat di sini sebagaimana KB-095 janjikan, dan
+    penyimpangannya memang ditemukan — ia menerima kueri kosong.
+    """
+    return SumberTiruan(
+        "tiruan",
+        {"SEG-A": 3.0, "SEG-B": 2.0, "SEG-C": 1.0},
+        indeks_tujuan=indeks_tujuan,
+        versi_indeks=VERSI_UJI,
+    )
+
+
+PABRIK: dict[str, Callable[[IndeksTujuan], SumberKandidat]] = {
+    "bm25": _susun_bm25,
+    "tiruan": _susun_tiruan,
+    "vektor": _susun_vektor,
+}
 """Pelaksana yang wajib lulus kontrak yang sama — R-01.
 
-`vektor` menyusul pada T-5.
+Ketiganya menjalankan **rangkaian uji yang sama, tanpa satu pun uji diubah**.
+Itu bunyi R-01 apa adanya.
 """
 
 
@@ -146,6 +229,22 @@ def test_batas_memangkas_bukan_mengisi(sumber: SumberKandidat) -> None:
     assert len(longgar.peringkat) <= 10
     assert len(sempit.peringkat) == 1
     assert len(longgar.peringkat) >= len(sempit.peringkat)
+
+
+def test_nama_sumber_terbawa_ke_hasilnya(sumber: SumberKandidat) -> None:
+    """`ambil_hibrida` menyusun daftar penyumbang dari `nama_sumber` pada
+    hasil. Sumber yang menamai hasilnya berbeda dari dirinya sendiri membuat
+    daftar itu menyebut sumber yang tidak pernah dijalankan."""
+    hasil = jalankan(sumber.cari(KUERI_DUA_HASIL, batas=5))
+    assert hasil.nama_sumber == sumber.nama
+
+
+def test_sumber_menyatakan_versi_indeksnya(sumber: SumberKandidat) -> None:
+    """Dibaca sebelum sumber dijalankan — mis. ketika penyusun hibrida
+    melaporkan indeks mana yang ikut menyumbang. Sumber yang hanya
+    menyatakannya di dalam hasil memaksa pemanggil menjalankannya dulu untuk
+    tahu indeks apa yang akan dijalankan."""
+    assert sumber.versi_indeks == VERSI_UJI
 
 
 def test_kueri_kosong_ditolak(sumber: SumberKandidat) -> None:

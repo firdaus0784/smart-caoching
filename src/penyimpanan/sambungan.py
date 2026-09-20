@@ -54,7 +54,7 @@ from typing import TYPE_CHECKING, Final, Protocol
 from pydantic import BaseModel, ConfigDict, Field
 
 if TYPE_CHECKING:  # pragma: no cover — hanya bagi pemeriksa tipe
-    from collections.abc import Awaitable, Mapping
+    from collections.abc import Awaitable, Mapping, Sequence
 
 PORTA_BAKU: Final = 5432
 """Porta lazim PostgreSQL. Nilai bawaan bagi kenyamanan, bukan ketentuan."""
@@ -173,4 +173,7 @@ class SambunganAktif(Protocol):
     def fetchrow(
         self, kueri: str, /, *argumen: object
     ) -> Awaitable[Mapping[str, object] | None]: ...
+    def fetch(
+        self, kueri: str, /, *argumen: object
+    ) -> Awaitable[Sequence[Mapping[str, object]]]: ...
     def execute(self, kueri: str, /, *argumen: object) -> Awaitable[object]: ...

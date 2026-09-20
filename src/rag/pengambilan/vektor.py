@@ -31,11 +31,18 @@ saat dijalankan justru agar tidak ada nilai bawaan yang diam-diam terpakai.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Final
 
 from src.kamus.segmen import IndeksTujuan
 from src.llm.sematan import Penyemat
 from src.penyimpanan.sambungan import SambunganAktif
+from src.rag.pengambilan.kandidat import (
+    HasilSumber,
+    Kandidat,
+    SumberKandidat,
+    urutkan_kandidat,
+)
 
 SKEMA: Final[dict[IndeksTujuan, str]] = {
     IndeksTujuan.UTAMA: "indeks_utama",
@@ -109,3 +116,124 @@ async def pastikan_dimensi_cocok(
             f"perkakas/basis_data/05-kolom-vektor.sql dengan -v dimensi="
             f"{penyemat.dimensi}, atau pasang penyemat yang sesuai"
         )
+
+
+class SumberVektor(SumberKandidat):
+    """Sisi semantik pengambilan hibrida — ADR-03, R-01, R-03.
+
+    Satu pelaksana baru pada kontrak yang sudah ada. `ambil_hibrida` tidak
+    berubah sama sekali karenanya, dan itu ukuran keberhasilan fitur 019.
+
+    ## Disusun lewat `susun`, bukan lewat pemanggilan langsung
+
+    Pencocokan dimensi menanyakan basis data, dan `__init__` tidak dapat
+    menunggu. Pemanggil yang menyusun langsung memperoleh objek yang **belum
+    diperiksa**; `susun` membuat pemeriksaan itu tidak dapat dilewati.
+
+    ## Mengapa skor berbentuk `2 - jarak`
+
+    `Kandidat.skor` menolak nilai negatif — BM25 dan RRF keduanya tak-negatif,
+    dan skor negatif berarti perhitungannya keliru. Jarak kosinus `<=>` berada
+    pada [0, 2], sehingga `2 - jarak` tak-negatif **dan** mempertahankan
+    urutannya: makin dekat, makin besar.
+
+    Bukan `1 - jarak`, yang bernilai negatif bagi vektor berlawanan arah dan
+    akan ditolak justru pada kandidat yang paling tidak relevan.
+
+    ## Segmen tanpa vektor
+
+    Dikeluarkan lewat `WHERE vektor IS NOT NULL`. Segmen yang sudah terindeks
+    leksikal tetapi belum disematkan adalah keadaan sah selama penyematan
+    berjalan bertahap; yang tidak sah adalah ia muncul sebagai kandidat dengan
+    jarak yang tidak terdefinisi.
+    """
+
+    def __init__(
+        self,
+        *,
+        sambungan: SambunganAktif,
+        penyemat: Penyemat,
+        indeks_tujuan: IndeksTujuan,
+        versi_indeks: str,
+    ) -> None:
+        self._sambungan = sambungan
+        self._penyemat = penyemat
+        self._indeks_tujuan = indeks_tujuan
+        self._versi_indeks = versi_indeks
+
+    @classmethod
+    async def susun(
+        cls,
+        *,
+        sambungan: SambunganAktif,
+        penyemat: Penyemat,
+        indeks_tujuan: IndeksTujuan,
+        versi_indeks: str,
+    ) -> SumberVektor:
+        """Susun sesudah dimensi terbukti cocok — R-08."""
+        await pastikan_dimensi_cocok(sambungan, penyemat, indeks_tujuan)
+        return cls(
+            sambungan=sambungan,
+            penyemat=penyemat,
+            indeks_tujuan=indeks_tujuan,
+            versi_indeks=versi_indeks,
+        )
+
+    @property
+    def nama(self) -> str:
+        return "vektor"
+
+    @property
+    def indeks_tujuan(self) -> IndeksTujuan:
+        return self._indeks_tujuan
+
+    @property
+    def versi_indeks(self) -> str:
+        return self._versi_indeks
+
+    async def cari(self, kueri: str, *, batas: int) -> HasilSumber:
+        if not kueri.strip():
+            raise ValueError("kueri kosong tidak dapat dicari")
+
+        vektor = (await self._penyemat.sematkan([kueri]))[0]
+        baris = await self._sambungan.fetch(
+            f"SELECT id_segmen, 2 - (vektor <=> $1::vector) AS skor "
+            f"FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
+            f"WHERE {KOLOM_VEKTOR} IS NOT NULL "
+            f"ORDER BY vektor <=> $1::vector "
+            f"LIMIT $2",
+            _untai_vektor(vektor),
+            batas,
+        )
+        return HasilSumber(
+            nama_sumber=self.nama,
+            versi_indeks=self._versi_indeks,
+            peringkat=urutkan_kandidat(
+                Kandidat(id_segmen=str(b["id_segmen"]), skor=_angka(b["skor"])) for b in baris
+            ),
+        )
+
+
+def _angka(nilai: object) -> float:
+    """Skor dari peladen, dipastikan bilangan.
+
+    `pgvector` mengembalikan `double precision` bagi ungkapan jaraknya, tetapi
+    katalog yang berubah bentuk akan menghasilkan sesuatu yang lain — dan
+    `float()` atas sesuatu yang lain menghasilkan galat yang menyebut tipe
+    Python, bukan menyebut kueri mana yang berubah.
+    """
+    if not isinstance(nilai, int | float):
+        raise GalatDimensiVektor(
+            f"peladen mengembalikan skor bertipe {type(nilai).__name__}, bukan bilangan"
+        )
+    return float(nilai)
+
+
+def _untai_vektor(vektor: Sequence[float]) -> str:
+    """Bentuk untai yang `pgvector` terima — `[0.1,0.2,...]`.
+
+    Dikirim sebagai untai lalu dicor `::vector` pada kueri, bukan lewat tipe
+    `asyncpg` khusus. Itu menghindari pendaftaran tipe yang harus diulang pada
+    setiap sambungan baru, dan sambungan di sini sengaja berumur pendek.
+    """
+    return "[" + ",".join(repr(float(n)) for n in vektor) + "]"
