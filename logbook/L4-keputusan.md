@@ -1350,3 +1350,21 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membiarkan M-3 tercatat diam tanpa diperiksa sebabnya — ditolak; mutasi diam adalah pertanyaan, dan pertanyaan yang tidak ditanyakan pada pasal sepenting C-03 adalah kelalaian. Menambah uji yang memeriksa hak akses basis data yang sedang berjalan — ditolak; itu memeriksa lingkungan, bukan memeriksa ciptaan, dan `make check` yang gagal karena lingkungan tetangga akan segera diabaikan. |
 | Dampak | Berkas uji baru: `test_pemilihan_pelaksana.py`, `test_keutuhan_penulisan.py`. `test_catatan_akses.py` bertambah uji berparameter. `tasks.md` fitur 024 berpindah ke **Gerbang 4 lolos**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum. **19 dari 24 fitur** kini lolos Gerbang 4. |
 | Pemutus | Agen untuk bentuk ketiga tugas di dalam batas `tasks.md`; Gerbang 4 menunggu pengesahan pemegang gerbang |
+
+---
+
+## KB-090 · Fitur 019 dimulai — dan separuhnya tertahan sebelum baris pertama ditulis
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | Pemegang Gerbang 1–4 memerintahkan fitur 019 dimulai: sumber vektor, pemeringkat ulang, kalibrasi ambang (ADR-03 sisi semantik, BT-29). |
+| Keputusan | **`spec.md` disusun dan diajukan ke Gerbang 1** dengan empat pertanyaan terbuka. Tidak ada kode ditulis. |
+| Kabar baik yang ditemukan lebih dulu | `SumberKandidat` sudah berupa antarmuka abstrak sejak fitur 007, dan `ambil_hibrida` sudah menerima **urutan** sumber. Menambahkan sisi semantik karena itu **tidak mengubah `ambil_hibrida` sama sekali** — ia satu pelaksana baru pada kontrak yang sudah ada. Dinyatakan pada spec sebagai ukuran keberhasilan: bila `ambil_hibrida` ternyata perlu diubah, kontraknya yang salah. |
+| Dua penghalang ditemukan sebelum baris pertama | **Bobot model tidak terjangkau**: permintaan ke HuggingFace ditolak proksi organisasi dengan 403. Tidak dicoba ulang — aturan proksi melarang mengulang penolakan kebijakan. Pengunduhan wajib dilakukan pada mesin penelitian. **Kalibrasi BT-29 menuntut *gold set*** D-08 Bagian 5 yang dibekukan sebelum kalibrasi, dan gold set itu belum disusun. |
+| Mengapa pembagiannya dinyatakan di muka | Bagian yang dapat dibangun dan bagian yang tertahan berbeda tenggat berbulan-bulan. Menemukannya di tengah pengerjaan jauh lebih mahal daripada menyatakannya pada spec — dan satu fitur yang separuhnya menunggu akan tercatat "belum selesai" sepanjang itu sampai ketidakselesaiannya berhenti bermakna. Pemecahan menjadi dua fitur diajukan sebagai pertanyaan Gerbang 1, sebab ia menuntut baris baru pada D-12 Bagian 7 — keputusan tim. |
+| Pertanyaan Gerbang 1 nomor 1 sengaja tidak dijawab agen | `SumberKandidat.cari` sinkron, sedangkan sumber vektor menanyakan `pgvector` lewat `asyncpg`. Ini **bentuk kekeliruan yang sama persis** dengan yang menghentikan T-3 fitur 024, dan Gerbang 2 sudah memutuskannya untuk `PenyimpanDasar` (KB-085). Mengambil keputusan yang sama diam-diam untuk kontrak ini karena "sudah pernah diputuskan pada kontrak lain" adalah cara keputusan menyebar tanpa dicatat. |
+| Yang ditegaskan pada R-07 | Selama kalibrasi belum berjalan, sistem **tetap menolak** membentuk `AmbangKecukupan`. Ketiadaan ambang adalah keadaan yang benar, bukan cacat yang perlu ditambal — dan fitur inilah tempat godaan melanggar C-16 paling besar, sebab ambang yang "kelihatan masuk akal" akan membuat sistem menjawab. |
+| Alternatif | Membangun sumber vektor dengan penyemat sederhana buatan sendiri agar tidak menunggu bobot — ditolak; ia menghasilkan angka kemiripan yang tidak berarti apa-apa sambil terbaca seperti berfungsi. Menetapkan ambang sementara agar sistem dapat menjawab lebih awal — ditolak tegas, C-16. Menunda seluruh fitur sampai gold set ada — ditolak; sumber vektor, penyimpanan, dan pemeringkat ulang dapat dibangun sekarang dan membuat sisanya murah pada hari bahannya ada. |
+| Dampak | Berkas baru `specs/019-sumber-vektor-dan-kalibrasi/spec.md`. Tidak ada kode, tidak ada ketergantungan baru — keempat paket yang dibutuhkan sudah pada berkas persetujuan (KB-083). **Menunggu putusan**: empat pertanyaan Gerbang 1. |
+| Pemutus | Agen untuk penyusunan spec; Gerbang 1 menunggu pemegang gerbang |
