@@ -23,6 +23,7 @@ import pytest
 from src.penyimpanan.indeks import IndeksTujuan, SegmenTerindeks, StatusLisensi
 from src.rag.pengambilan.bm25 import SumberBM25, bangun_indeks
 from src.rag.pengambilan.tetapan import BM25_B, BM25_K1
+from tests.konftes_asinkron import jalankan
 
 
 def _segmen(
@@ -83,7 +84,7 @@ def test_skor_terhadap_contoh_yang_dihitung_tangan() -> None:
     yang salah tetap terbaca meyakinkan, sedangkan ungkapan yang salah terbaca
     salah pada langkah tempat kekeliruannya berada.
     """
-    hasil = _sumber().cari("RKAS", batas=10)
+    hasil = jalankan(_sumber().cari("RKAS", batas=10))
     diharapkan = math.log(1 + 2.5 / 1.5) * (2.2 / 2.5)
 
     assert len(hasil.peringkat) == 1
@@ -110,7 +111,7 @@ def test_segmen_lebih_pendek_menang_pada_frekuensi_sama() -> None:
     Versi dengan b = 0 lolos uji hitung tangan di atas — kebetulan, sebab di
     sana |D| dan avgdl tidak dibandingkan — dan gagal di sini.
     """
-    hasil = _sumber().cari("kepala", batas=10)
+    hasil = jalankan(_sumber().cari("kepala", batas=10))
     assert [k.id_segmen for k in hasil.peringkat] == ["SEG-B", "SEG-A"]
 
 
@@ -121,9 +122,11 @@ def test_kata_yang_tersebar_luas_menyumbang_lebih_sedikit() -> None:
     manajerial penuh dengannya — "sekolah" ada pada hampir setiap segmen
     korpus ini.
     """
-    skor_rkas = _sumber().cari("RKAS", batas=10).peringkat[0].skor
+    skor_rkas = jalankan(_sumber().cari("RKAS", batas=10)).peringkat[0].skor
     skor_kepala = next(
-        k.skor for k in _sumber().cari("kepala", batas=10).peringkat if k.id_segmen == "SEG-A"
+        k.skor
+        for k in jalankan(_sumber().cari("kepala", batas=10)).peringkat
+        if k.id_segmen == "SEG-A"
     )
     assert skor_rkas > skor_kepala
 
@@ -141,8 +144,10 @@ def test_pencocokan_atas_stem_bukan_permukaan() -> None:
     sebagai korpus yang tidak memuat jawabannya, bukan sebagai cacat.
     """
     korpus = (_segmen("SEG-T", "Guru ditugaskan kepala sekolah"),)
-    hasil = SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
-        "penugasan", batas=10
+    hasil = jalankan(
+        SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
+            "penugasan", batas=10
+        )
     )
     assert [k.id_segmen for k in hasil.peringkat] == ["SEG-T"]
 
@@ -152,7 +157,7 @@ def test_tiga_imbuhan_berbeda_menemukan_segmen_yang_sama() -> None:
     korpus = (_segmen("SEG-T", "Guru ditugaskan kepala sekolah"),)
     sumber = SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA))
     for kueri in ("menugaskan", "penugasan", "tugas"):
-        assert [k.id_segmen for k in sumber.cari(kueri, batas=10).peringkat] == ["SEG-T"]
+        assert [k.id_segmen for k in jalankan(sumber.cari(kueri, batas=10)).peringkat] == ["SEG-T"]
 
 
 # ------------------------------------------------------------------ seri, R-03
@@ -165,8 +170,10 @@ def test_seri_diputus_id_segmen() -> None:
         _segmen("SEG-D", "Kepala sekolah menyusun RAPBS"),
         _segmen("SEG-A", "Kepala sekolah menyusun RKAS"),
     )
-    hasil = SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
-        "menyusun", batas=10
+    hasil = jalankan(
+        SumberBM25(bangun_indeks(korpus, versi="uji-1", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
+            "menyusun", batas=10
+        )
     )
     assert [k.id_segmen for k in hasil.peringkat] == ["SEG-A", "SEG-D"]
     assert hasil.peringkat[0].skor == pytest.approx(hasil.peringkat[1].skor)
@@ -182,8 +189,10 @@ def test_indeks_kosong_menghasilkan_hasil_kosong_bukan_galat() -> None:
     korpus tiruan yang disusun demi meloloskan galat adalah korpus yang tidak
     menguji apa pun.
     """
-    hasil = SumberBM25(bangun_indeks((), versi="kosong", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
-        "kepala sekolah", batas=10
+    hasil = jalankan(
+        SumberBM25(bangun_indeks((), versi="kosong", indeks_tujuan=IndeksTujuan.UTAMA)).cari(
+            "kepala sekolah", batas=10
+        )
     )
     assert hasil.peringkat == ()
     assert hasil.versi_indeks == "kosong"
@@ -191,7 +200,7 @@ def test_indeks_kosong_menghasilkan_hasil_kosong_bukan_galat() -> None:
 
 def test_kueri_kosong_ditolak() -> None:
     with pytest.raises(ValueError, match="kueri"):
-        _sumber().cari("   ", batas=10)
+        jalankan(_sumber().cari("   ", batas=10))
 
 
 def test_kueri_yang_seluruhnya_stop_word_menghasilkan_kosong_bukan_galat() -> None:
@@ -203,16 +212,16 @@ def test_kueri_yang_seluruhnya_stop_word_menghasilkan_kosong_bukan_galat() -> No
     pesan galat. D-05 memisahkan keduanya sebagai keadaan layar yang berbeda,
     dan pengguna yang menerima pesan galat menyimpulkan sistemnya rusak.
     """
-    hasil = _sumber().cari("dan yang di", batas=10)
+    hasil = jalankan(_sumber().cari("dan yang di", batas=10))
     assert hasil.peringkat == ()
 
 
 def test_kueri_tanpa_kecocokan_menghasilkan_kosong() -> None:
-    assert _sumber().cari("Dapodik", batas=10).peringkat == ()
+    assert jalankan(_sumber().cari("Dapodik", batas=10)).peringkat == ()
 
 
 def test_batas_memangkas_dari_atas() -> None:
-    hasil = _sumber().cari("kepala sekolah", batas=1)
+    hasil = jalankan(_sumber().cari("kepala sekolah", batas=1))
     assert [k.id_segmen for k in hasil.peringkat] == ["SEG-B"]
 
 
@@ -221,7 +230,7 @@ def test_batas_memangkas_dari_atas() -> None:
 
 def test_versi_indeks_ikut_pada_setiap_hasil() -> None:
     """**R-13**, D-07 Bagian 3.3 dan RT-05."""
-    assert _sumber(versi="indeks-2026-08-12").cari("kepala", batas=5).versi_indeks == (
+    assert jalankan(_sumber(versi="indeks-2026-08-12").cari("kepala", batas=5)).versi_indeks == (
         "indeks-2026-08-12"
     )
 

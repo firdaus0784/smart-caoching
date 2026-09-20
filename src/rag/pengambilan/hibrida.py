@@ -99,7 +99,7 @@ class HasilPengambilan(BaseModel):
         return None
 
 
-def ambil_hibrida(
+async def ambil_hibrida(
     kueri: str,
     *,
     kredensial: Kredensial,
@@ -117,7 +117,7 @@ def ambil_hibrida(
 
     terjangkau = [s for s in sumber if kredensial.boleh_baca_indeks(s.indeks_tujuan)]
 
-    hasil_sumber = [s.cari(kueri, batas=JUMLAH_KANDIDAT_PER_SUMBER) for s in terjangkau]
+    hasil_sumber = [await s.cari(kueri, batas=JUMLAH_KANDIDAT_PER_SUMBER) for s in terjangkau]
     gabungan = gabung_peringkat(hasil_sumber)
 
     return HasilPengambilan(

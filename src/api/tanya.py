@@ -198,7 +198,7 @@ class Jalur:
         self._pembungkus = pembungkus
         self._konfigurasi = konfigurasi
 
-    def jawab(
+    async def jawab(
         self,
         pertanyaan: str,
         *,
@@ -228,7 +228,7 @@ class Jalur:
                 alasan_berhenti=AlasanBerhenti.DI_LUAR_DOMAIN,
             )
 
-        hasil = ambil_hibrida(pertanyaan, kredensial=kredensial, sumber=self._sumber)
+        hasil = await ambil_hibrida(pertanyaan, kredensial=kredensial, sumber=self._sumber)
         kecukupan = self._penilai.nilai(hasil, segmen_resmi=segmen_resmi)
 
         # Tahap 7 — dan berhenti di sini berarti **tanpa memanggil model**.

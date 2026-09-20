@@ -22,6 +22,7 @@ import pytest
 from src.rag.pengambilan.gabung import gabung_peringkat
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat
 from src.rag.pengambilan.tetapan import TETAPAN_RRF_K
+from tests.konftes_asinkron import jalankan
 from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
 
 
@@ -232,5 +233,7 @@ def test_bekerja_atas_hasil_sumber_sungguhan() -> None:
     memang yang diterima penggabungan."""
     leksikal = SumberTiruan("bm25", {"SEG-A": 3.0, "SEG-B": 1.0})
     semantik = SumberTiruan("vektor", {"SEG-B": 5.0})
-    hasil = gabung_peringkat([leksikal.cari("q", batas=10), semantik.cari("q", batas=10)])
+    hasil = gabung_peringkat(
+        [jalankan(leksikal.cari("q", batas=10)), jalankan(semantik.cari("q", batas=10))]
+    )
     assert [h.id_segmen for h in hasil] == ["SEG-B", "SEG-A"]

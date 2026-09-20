@@ -22,6 +22,7 @@ import pytest
 from pydantic import ValidationError
 from src.kamus.segmen import IndeksTujuan
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, urutkan_kandidat
+from tests.konftes_asinkron import jalankan
 from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
 
 
@@ -112,8 +113,8 @@ def test_seri_sebagian_tetap_menghormati_skor_lebih_dulu() -> None:
 def test_peringkat_sama_pada_masukan_sama() -> None:
     """**R-02.** Dijalankan dua kali pada sumber yang sama."""
     sumber = SumberTiruan("tiruan", {"SEG-A": 1.0, "SEG-B": 2.0, "SEG-C": 2.0})
-    pertama = sumber.cari("kepala sekolah", batas=10)
-    kedua = sumber.cari("kepala sekolah", batas=10)
+    pertama = jalankan(sumber.cari("kepala sekolah", batas=10))
+    kedua = jalankan(sumber.cari("kepala sekolah", batas=10))
     assert pertama.peringkat == kedua.peringkat
 
 
@@ -128,8 +129,10 @@ def test_hasil_sumber_membawa_versi_indeks() -> None:
     catatan D-10 L1, dan perbandingan antarpercobaan menjadi perbandingan yang
     tidak diketahui apa yang berubah.
     """
-    hasil = SumberTiruan("bm25", {"SEG-A": 1.0}, versi_indeks="indeks-2026-08-12").cari(
-        "kueri", batas=5
+    hasil = jalankan(
+        SumberTiruan("bm25", {"SEG-A": 1.0}, versi_indeks="indeks-2026-08-12").cari(
+            "kueri", batas=5
+        )
     )
     assert hasil.versi_indeks == "indeks-2026-08-12"
 
@@ -140,7 +143,9 @@ def test_hasil_sumber_menyatakan_peringkat_setiap_kandidat() -> None:
     Dua sumber kebenaran bagi hal yang sama akan berbeda ketika salah satunya
     disunting, dan yang berbeda adalah yang tidak diperbarui.
     """
-    hasil = SumberTiruan("bm25", {"SEG-A": 3.0, "SEG-B": 2.0, "SEG-C": 1.0}).cari("q", batas=5)
+    hasil = jalankan(
+        SumberTiruan("bm25", {"SEG-A": 3.0, "SEG-B": 2.0, "SEG-C": 1.0}).cari("q", batas=5)
+    )
     assert hasil.peringkat_dari("SEG-A") == 1
     assert hasil.peringkat_dari("SEG-C") == 3
     assert hasil.peringkat_dari("SEG-TIDAK-ADA") is None
@@ -154,8 +159,8 @@ def test_batas_memangkas_bukan_mengisi() -> None:
     bahan itu sebagai bukti.
     """
     sumber = SumberTiruan("bm25", {"SEG-A": 3.0, "SEG-B": 2.0})
-    assert len(sumber.cari("q", batas=10).peringkat) == 2
-    assert len(sumber.cari("q", batas=1).peringkat) == 1
+    assert len(jalankan(sumber.cari("q", batas=10)).peringkat) == 2
+    assert len(jalankan(sumber.cari("q", batas=1)).peringkat) == 1
 
 
 def test_sumber_menyatakan_indeks_tujuannya() -> None:

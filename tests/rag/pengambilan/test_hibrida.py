@@ -24,6 +24,7 @@ from src.rag.pengambilan.tetapan import (
     JUMLAH_KANDIDAT_PER_SUMBER,
     JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM,
 )
+from tests.konftes_asinkron import jalankan
 from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
 
 
@@ -48,7 +49,9 @@ def test_pemanggil_llm_tidak_pernah_menerima_segmen_metadata() -> None:
     leksikal = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("vektor", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError):
-        ambil_hibrida("kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[leksikal, metadata])
+        jalankan(
+            ambil_hibrida("kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[leksikal, metadata])
+        )
     assert metadata.dipanggil == 0
 
 
@@ -63,8 +66,10 @@ def test_sumber_yang_tidak_dijangkau_tidak_dijalankan_sama_sekali() -> None:
     utama_b = SumberTiruan("vektor", {"SEG-B": 2.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
 
-    hasil = ambil_hibrida(
-        "kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[utama_a, utama_b, metadata]
+    hasil = jalankan(
+        ambil_hibrida(
+            "kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[utama_a, utama_b, metadata]
+        )
     )
 
     assert metadata.dipanggil == 0
@@ -83,7 +88,9 @@ def test_jalur_penjawaban_menjangkau_kedua_indeks() -> None:
     """
     utama = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
-    hasil = ambil_hibrida("kepala sekolah", kredensial=PENJAWABAN, sumber=[utama, metadata])
+    hasil = jalankan(
+        ambil_hibrida("kepala sekolah", kredensial=PENJAWABAN, sumber=[utama, metadata])
+    )
     assert metadata.dipanggil == 1
     assert {h.id_segmen for h in hasil.segmen} == {"SEG-A", "SEG-M"}
 
@@ -91,7 +98,7 @@ def test_jalur_penjawaban_menjangkau_kedua_indeks() -> None:
 def test_verifikasi_juga_menjangkau_kedua_indeks() -> None:
     utama = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
-    ambil_hibrida("kepala sekolah", kredensial=VERIFIKASI, sumber=[utama, metadata])
+    jalankan(ambil_hibrida("kepala sekolah", kredensial=VERIFIKASI, sumber=[utama, metadata]))
     assert metadata.dipanggil == 1
 
 
@@ -103,7 +110,7 @@ def test_kredensial_diperiksa_sebelum_kueri_diproses() -> None:
     metadata_a = SumberTiruan("m1", {"SEG-M": 1.0}, indeks_tujuan=IndeksTujuan.METADATA)
     metadata_b = SumberTiruan("m2", {"SEG-N": 1.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError):
-        ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=[metadata_a, metadata_b])
+        jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=[metadata_a, metadata_b]))
     assert metadata_a.dipanggil == 0
     assert metadata_b.dipanggil == 0
 
@@ -120,7 +127,7 @@ def test_satu_sumber_terjangkau_ditolak() -> None:
     utama = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError, match="ADR-03"):
-        ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=[utama, metadata])
+        jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=[utama, metadata]))
 
 
 # ---------------------------------------------------------------- pemangkasan
@@ -131,10 +138,12 @@ def test_paling_banyak_delapan_segmen_diteruskan() -> None:
     segmen dipangkas bila melampaui batas" (RT-03)."""
     banyak = {f"SEG-{i:02d}": float(30 - i) for i in range(30)}
     lain = {f"SEG-{i:02d}": float(i) for i in range(30)}
-    hasil = ambil_hibrida(
-        "kepala sekolah",
-        kredensial=PEMANGGIL_LLM,
-        sumber=[SumberTiruan("bm25", banyak), SumberTiruan("vektor", lain)],
+    hasil = jalankan(
+        ambil_hibrida(
+            "kepala sekolah",
+            kredensial=PEMANGGIL_LLM,
+            sumber=[SumberTiruan("bm25", banyak), SumberTiruan("vektor", lain)],
+        )
     )
     assert len(hasil.segmen) == JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM
 
@@ -144,10 +153,12 @@ def test_setiap_sumber_diminta_dua_puluh_kandidat() -> None:
     teratas". Batasnya diterapkan **per sumber**, sebelum penggabungan."""
     banyak = {f"SEG-{i:02d}": float(30 - i) for i in range(30)}
     sumber = SumberTiruan("bm25", banyak)
-    hasil = ambil_hibrida(
-        "kueri",
-        kredensial=PEMANGGIL_LLM,
-        sumber=[sumber, SumberTiruan("vektor", {})],
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=[sumber, SumberTiruan("vektor", {})],
+        )
     )
     asal = hasil.asal_dari("bm25")
     assert asal is not None
@@ -158,7 +169,7 @@ def test_kandidat_lebih_sedikit_diteruskan_seluruhnya() -> None:
     """Bukan diisi sampai penuh. Mengisi dengan segmen berskor rendah memberi
     penyusun jawaban bahan tidak relevan, dan penilaian kecukupan kemudian
     menghitung bahan itu sebagai bukti."""
-    hasil = ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan()))
+    hasil = jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan())))
     assert len(hasil.segmen) == 3
 
 
@@ -172,13 +183,15 @@ def test_versi_setiap_indeks_ikut_pada_hasil() -> None:
     percobaan yang tercatat pada D-10 L1 kemudian menyebut versi indeks yang
     separuh keliru.
     """
-    hasil = ambil_hibrida(
-        "kueri",
-        kredensial=PEMANGGIL_LLM,
-        sumber=[
-            SumberTiruan("bm25", {"SEG-A": 1.0}, versi_indeks="leksikal-7"),
-            SumberTiruan("vektor", {"SEG-B": 1.0}, versi_indeks="vektor-3"),
-        ],
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=[
+                SumberTiruan("bm25", {"SEG-A": 1.0}, versi_indeks="leksikal-7"),
+                SumberTiruan("vektor", {"SEG-B": 1.0}, versi_indeks="vektor-3"),
+            ],
+        )
     )
     assert [(a.nama_sumber, a.versi_indeks) for a in hasil.asal] == [
         ("bm25", "leksikal-7"),
@@ -210,7 +223,7 @@ def test_pengambilan_tidak_menulis_apa_pun() -> None:
 
 
 def test_hasil_beku() -> None:
-    hasil = ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan()))
+    hasil = jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan())))
     with pytest.raises(ValidationError):
         hasil.segmen = ()  # type: ignore[misc]
 
@@ -224,7 +237,7 @@ def test_asal_berupa_tuple_bukan_pemetaan() -> None:
     pengambilan yang asal-usulnya dapat disunting adalah hasil yang catatan
     percobaannya tidak membuktikan apa pun.
     """
-    hasil = ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan()))
+    hasil = jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan())))
     assert isinstance(hasil.asal, tuple)
     assert hasil.asal_dari("tidak-ada") is None
 
@@ -232,5 +245,5 @@ def test_asal_berupa_tuple_bukan_pemetaan() -> None:
 def test_kueri_kosong_ditolak_sebelum_sumber_dijalankan() -> None:
     sumber = list(_pasangan())
     with pytest.raises(ValueError, match="kueri"):
-        ambil_hibrida("   ", kredensial=PEMANGGIL_LLM, sumber=sumber)
+        jalankan(ambil_hibrida("   ", kredensial=PEMANGGIL_LLM, sumber=sumber))
     assert all(s.dipanggil == 0 for s in sumber)

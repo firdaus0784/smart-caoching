@@ -53,7 +53,7 @@ class JalurPalsu:
         self.jumlah_panggilan = 0
         self.pertanyaan_terakhir: str | None = None
 
-    def jawab(self, pertanyaan: str, **_: object) -> HasilTanya:
+    async def jawab(self, pertanyaan: str, **_: object) -> HasilTanya:
         self.jumlah_panggilan += 1
         self.pertanyaan_terakhir = pertanyaan
         return self._hasil

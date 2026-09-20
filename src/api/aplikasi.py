@@ -96,7 +96,7 @@ class PenentuIdentitas(Protocol):
 class JalurPenjawab(Protocol):
     """Bentuk `Jalur.jawab()` sebagaimana dipakai adaptor ini."""
 
-    def jawab(self, pertanyaan: str, **argumen: Any) -> HasilTanya: ...
+    async def jawab(self, pertanyaan: str, **argumen: Any) -> HasilTanya: ...
 
 
 class PermintaanTanya(BaseModel):
@@ -150,7 +150,7 @@ def susun_aplikasi(
         if not badan.pertanyaan.strip():
             return _galat(400, PESAN_TIDAK_LENGKAP)
 
-        hasil = jalur.jawab(badan.pertanyaan)
+        hasil = await jalur.jawab(badan.pertanyaan)
         # R-03: tertahan atau tidak, bentuk dan statusnya sama. D-14
         # menetapkan `tidak_ditemukan` memakai bentuk jawaban yang sah, dan
         # status galat akan membuat layar menampilkannya sebagai kegagalan

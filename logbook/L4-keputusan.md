@@ -1426,3 +1426,20 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mencatat persetujuan ekstensi tanpa memasangnya lebih dulu — ditolak; catatan versi yang tidak pernah dijalankan adalah versi yang diharapkan, dan berkas persetujuan sudah pernah menanggung bentuk itu pada `[sistem.tesseract]` di mana ia **disengaja** dan dinyatakan. Menggabungkan paket Python dan ekstensi peladen pada satu catatan — ditolak; lihat di atas. Menggabungkan T-1 dan T-5 agar lebih cepat — ditolak; kecepatan terakhir, selalu. |
 | Dampak | `ketergantungan-disetujui.toml` bertambah `[sistem.pgvector]`; `plan.md` berpindah ke Gerbang 2 lolos; `tasks.md` baru. Tidak ada kode. `make check` lulus enam gerbang, termasuk V-04 yang menjaga berkas persetujuan. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-001) pada 20 September 2026 |
+
+---
+
+## KB-094 · T-1 fitur 019 — dan rencana yang meremehkan ruang tersentuhnya
+
+| | |
+|---|---|
+| Tanggal | 2026-09-20 |
+| Konteks | Gerbang 3 fitur 019 lolos. T-1: `SumberKandidat.cari` menjadi asinkron, dikerjakan sendirian sebelum sumber vektor ada. |
+| Keputusan | **T-1 selesai.** Kontrak menjadi asinkron beserta seluruh cascade-nya. **2013 uji lulus sebelum dan 2013 sesudah** — syarat T-1 terpenuhi persis, dan tidak satu uji pun dihapus (`git diff` menunjukkan 14 berkas berubah, nol berkas hilang). |
+| **Rencana meremehkan ruang tersentuhnya, dan itu temuan** | `plan.md` Bagian 2 menyenaraikan tiga berkas `src/`: `kandidat.py`, `bm25.py`, `hibrida.py`. Yang sebenarnya tersentuh **enam**, sebab `ambil_hibrida` dipanggil `Jalur.jawab()` yang juga wajib menjadi asinkron, dan dari sana ke protokol `JalurPenjawab` pada `aplikasi.py` serta `PenjawabBelumSiap` pada titik jalan lokal. |
+| Mengapa kekeliruan itu tidak berbahaya kali ini, dan kapan ia akan berbahaya | Ia hanya menambah pekerjaan, tidak mengubah keputusan — rantai pemanggilnya seluruhnya asinkron di ujung (`async def tanya` pada FastAPI), sehingga tidak ada tempat yang memaksa jembatan. Ia akan berbahaya pada rencana yang ruang tersentuhnya menentukan **apakah pekerjaan itu layak**: perkiraan yang meleset dua kali lipat pada keputusan semacam itu membalikkan jawabannya. Yang seharusnya dilakukan saat menyusun rencana: menelusuri pemanggil sampai ujung, bukan berhenti pada lapisan yang namanya disebut kebutuhan. |
+| Satu keputusan kecil yang layak dicatat | `SumberBM25.cari` **tidak menunggu apa pun** dan tetap dijadikan asinkron. Kontrak yang bentuknya bergantung pada pelaksana mana yang kebetulan ada hari ini adalah kontrak yang berubah tiap pelaksana baru — dan perubahan kontrak menyentuh setiap pemanggilnya. |
+| Uji mutasi | Empat dijalankan atas penantian yang baru ditambahkan, **empat menyala**: `await` dihapus dari pemanggilan sumber, dari `ambil_hibrida`, dan dari `jalur.jawab`; lalu pelaksana BM25 dikembalikan sinkron. Ini yang membuktikan uji benar-benar menjalankan jalur asinkronnya — korutin yang tidak ditunggu tidak pernah berjalan dan akan lolos diam-diam bila ujinya lemah. |
+| Alternatif | Membiarkan `SumberBM25.cari` sinkron dan membungkusnya di `ambil_hibrida` — ditolak; lihat di atas. Menggabungkan T-1 dengan penambahan sumber vektor agar sekali jalan — ditolak; kegagalan tidak akan dapat ditelusuri ke perubahan yang mana, dan itu persis alasan T-1 dan T-2 dipisah. Memperbaiki `plan.md` Bagian 2 diam-diam — ditolak; rencana yang dirapikan sesudah kenyataannya terlihat berhenti berguna sebagai rencana. |
+| Dampak | Enam berkas `src/` dan `perkakas/`, delapan berkas uji. Fitur 019: **1 dari 9 tugas**. `make check` lulus enam gerbang; kepatuhan tetap 19 lulus / 0 gagal / 1 belum; cakupan tidak turun. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-1 |

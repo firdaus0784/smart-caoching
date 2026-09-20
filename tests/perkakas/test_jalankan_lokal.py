@@ -37,6 +37,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from tests.konftes_asinkron import jalankan
 
 from perkakas.jalankan_lokal import (
     ALAMAT_AMAN,
@@ -77,7 +78,7 @@ def test_aplikasi_dapat_disusun_dan_menjawab() -> None:
 
 def test_jawaban_menyatakan_sebab_belum_menjawab() -> None:
     """Bukan diam. Sebabnya dibawa keluar agar dapat ditagih."""
-    hasil = PenjawabBelumSiap().jawab("Bagaimana menyusun RKAS?")
+    hasil = jalankan(PenjawabBelumSiap().jawab("Bagaimana menyusun RKAS?"))
     assert hasil.alasan_berhenti is not None
     assert hasil.alasan_berhenti.value == "bukti_tidak_cukup"
 

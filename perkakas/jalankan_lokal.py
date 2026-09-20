@@ -80,7 +80,7 @@ class PenjawabBelumSiap:
     dibawa keluar tidak dapat ditagih siapa pun.
     """
 
-    def jawab(self, pertanyaan: str, **_: Any) -> HasilTanya:
+    async def jawab(self, pertanyaan: str, **_: Any) -> HasilTanya:
         return HasilTanya(
             tanggapan=Tanggapan(
                 id_pesan="pengembangan",

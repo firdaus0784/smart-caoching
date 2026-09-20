@@ -56,7 +56,7 @@ class SumberTiruan(SumberKandidat):
     def versi_indeks(self) -> str:
         return self._versi_indeks
 
-    def cari(self, kueri: str, *, batas: int) -> HasilSumber:
+    async def cari(self, kueri: str, *, batas: int) -> HasilSumber:
         self.dipanggil += 1
         kandidat = urutkan_kandidat(
             Kandidat(id_segmen=id_segmen, skor=skor) for id_segmen, skor in self._skor.items()

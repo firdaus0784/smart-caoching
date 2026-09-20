@@ -120,6 +120,20 @@ class HasilSumber(BaseModel):
 class SumberKandidat(ABC):
     """Kontrak satu sisi pengambilan hibrida — ADR-03, ADR-12.
 
+    ## Mengapa `cari` asinkron — Gerbang 1 fitur 019, 20 September 2026
+
+    Sumber vektor menanyakan `pgvector` lewat `asyncpg`, dan jembatan sinkron
+    di atasnya memaksa jalur asinkron → sinkron → asinkron: gelung peristiwa
+    yang sedang berjalan memblokir dirinya sendiri menunggu gelung lain.
+
+    Keputusannya diambil **tersendiri** meski bentuknya sama persis dengan
+    yang Gerbang 2 putuskan bagi `PenyimpanDasar` (KB-085). Keputusan yang
+    menyebar ke kontrak lain tanpa dicatat bukan keputusan.
+
+    Sumber BM25 tidak menunggu apa pun dan tetap asinkron: kontrak yang
+    bentuknya bergantung pada pelaksana mana yang kebetulan ada hari ini
+    adalah kontrak yang berubah tiap pelaksana baru.
+
     Antarmuka abstrak dengan pelaksana tiruan deterministik, mengikuti ADR-12
     yang sudah terbukti pada fitur 002 dan 015.
 
@@ -146,7 +160,7 @@ class SumberKandidat(ABC):
         """Versi indeks yang dilayani — D-07 Bagian 3.3, RT-05."""
 
     @abstractmethod
-    def cari(self, kueri: str, *, batas: int) -> HasilSumber:
+    async def cari(self, kueri: str, *, batas: int) -> HasilSumber:
         """Cari kandidat teratas.
 
         `batas` **memangkas**, tidak mengisi. Kandidat yang lebih sedikit

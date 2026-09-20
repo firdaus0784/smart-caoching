@@ -166,7 +166,7 @@ class SumberBM25(SumberKandidat):
     def versi_indeks(self) -> str:
         return self._indeks.versi
 
-    def cari(self, kueri: str, *, batas: int) -> HasilSumber:
+    async def cari(self, kueri: str, *, batas: int) -> HasilSumber:
         if not kueri.strip():
             raise ValueError("kueri kosong tidak dapat dicari")
         kata = _stem_dari(kueri)

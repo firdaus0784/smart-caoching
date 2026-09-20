@@ -36,6 +36,7 @@ from src.rag.jawaban.tanggapan import StatusDasar, Versi
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, SumberKandidat
 from src.rag.pengambilan.kecukupan import AmbangKecukupan, CatatanKalibrasi, PenilaianKecukupan
 from src.rag.validator.keluaran import SegmenRujukan
+from tests.konftes_asinkron import jalankan
 
 # ------------------------------------------------------------------- tiruan
 
@@ -61,7 +62,7 @@ class SumberTiruan(SumberKandidat):
     def versi_indeks(self) -> str:
         return "uji-1"
 
-    def cari(self, kueri: str, *, batas: int) -> HasilSumber:
+    async def cari(self, kueri: str, *, batas: int) -> HasilSumber:
         self.jumlah_cari += 1
         return HasilSumber(
             nama_sumber=self.nama,
@@ -220,7 +221,7 @@ def _jawab(jalur: Jalur, pertanyaan: str, **ganti: object) -> HasilTanya:
         "versi": VERSI,
     }
     argumen.update(ganti)
-    return jalur.jawab(pertanyaan, **argumen)  # type: ignore[arg-type]
+    return jalankan(jalur.jawab(pertanyaan, **argumen))  # type: ignore[arg-type]
 
 
 # ------------------------------------------------- R-07 · di luar domain lebih dulu
