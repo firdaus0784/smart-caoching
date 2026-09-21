@@ -1602,3 +1602,22 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menomori ulang 01-05 agar ekstensi masuk urutan rapi — ditolak; penomoran ulang menyentuh README, `tests/peladen.py`, dan dua berkas uji demi kerapian, dan `01b` menyatakan tempatnya pada urutan jalan dengan jujur. Memeriksa versi pgvector dan menggagalkan bila berbeda — ditolak; 0.6.1 bukan pelanggaran, dan gerbang yang menolak versi lebih baru akan dilucuti orang pertama yang terhalang. Versinya **dicetak**, dan yang disetujui tetap tercatat pada `ketergantungan-disetujui.toml`. |
 | Dampak | `perkakas/basis_data/01b-ekstensi-vektor.sql` baru; `05` kehilangan `CREATE EXTENSION` dan memperoleh dua penjagaan yang benar-benar menggagalkan; README bertambah bagian ekstensi dan bagian `\quit`; `tests/peladen.py` dan fixture persiapan menjalankan 01b; dua uji baru. **Fitur 019 selesai — 9 dari 9 tugas.** `make check` lulus enam gerbang. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-9 |
+
+---
+
+## KB-103 · TK-58 — delapan `plan.md` menyatakan gerbang yang sudah lama terlampaui
+
+| | |
+|---|---|
+| Tanggal | 2026-09-21 |
+| Konteks | Menyusun laporan keadaan sesudah fitur 019 selesai. Menyapu baris `| Status |` seluruh `specs/` untuk mengetahui fitur mana yang tersisa. |
+| Keputusan | **Kedelapan baris disesuaikan ke `tasks.md`, dan `periksa_status_gerbang` ditambahkan pada V-03.** `tasks.md` dinyatakan berwenang. |
+| Apa yang ditemukan | Fitur 001, 002, 010, 012, 015, 022, 023, dan 024 memiliki `tasks.md` yang mencatat putusan gerbangnya dengan benar sementara `plan.md`-nya tertinggal. Fitur 024 **sudah lolos Gerbang 4 pada 20 September** sementara `plan.md`-nya berbunyi "Menunggu Gerbang 2"; fitur 001 dan 010 sama. |
+| Tidak satu aturan pun dilanggar | Itu bagian yang penting. Kebiasaan mencatat putusan gerbang pada `tasks.md` benar dan dijalankan setiap kali. Kewajiban **mencerminkannya** ke `plan.md` tidak pernah dinyatakan, sehingga tidak pernah dilalaikan — dan tidak ada yang memeriksanya. Bentuk yang sama persis dengan TK-45, yang melahirkan pemeriksa ini. |
+| Mengapa ia merugikan, bukan sekadar tidak rapi | Alur SDD menyarankan membaca `plan.md` lebih dulu. Pembaca yang menurutinya membaca pekerjaan yang sudah selesai sebagai pekerjaan yang belum dimulai — dan pekerjaan yang dibaca belum dimulai adalah pekerjaan yang dikerjakan ulang. Saya sendiri hampir melaporkan Gerbang 4 fitur 024 sebagai "menunggu ratifikasi" pada laporan sebelumnya, padahal KB-089 sudah mencatatnya lolos. |
+| Perbaikannya pemeriksaan, bukan imbauan | AP-01 D-04 diterapkan pada mekanisme kendali itu sendiri, sama dengan TK-45. `periksa_status_gerbang` membaca tahap dari **kata** — "Menunggu Gerbang 3" berarti dua sudah lewat, "Lolos Gerbang 1–3" berarti tiga — lalu membandingkan keduanya. Dua bentuk tanda pisah diterima: pengurai yang menuntut satu bentuk akan memaksa dokumen diseragamkan demi perkakas, dan RQ-01 pemeriksa ini sudah menolak arah itu. |
+| Fitur tanpa baris status dilewati, bukan ditemukan | Sebagian fitur awal tidak memakai baris `| Status |`. Menuntutnya di sini mengubah pemeriksa **selaras** menjadi pemeriksa **seragam**, dan yang kedua tidak pernah diminta siapa pun. |
+| Uji | Tujuh kasus pembacaan tahap dari kata; satu selaras; satu tertinggal; satu tanpa baris status; satu sapuan atas repositori sungguhan — yang terakhir merah pada delapan fitur sebelum perbaikan, hijau sesudahnya. |
+| Alternatif | Memindahkan baris status hanya ke `tasks.md` dan menghapusnya dari `plan.md` — ditolak; `plan.md` dibaca sendirian oleh orang yang menilai rancangan, dan dokumen tanpa status memaksa pembacanya membuka berkas lain untuk tahu apakah rancangan itu masih hidup. Menyesuaikan kedelapan baris tanpa menambah pemeriksa — ditolak tegas; itu memperbaiki delapan kejadian sambil membiarkan sebabnya, dan TK-45 sudah membuktikan sebab ini berulang. |
+| Dampak | Delapan `plan.md` disesuaikan; `periksa_status_gerbang` masuk V-03; `tests/pemeriksa/test_konsistensi_dokumen.py` bertambah sebelas kasus. D-00 2.49 → 2.50, TK-58 ditutup pada kemunculannya. `make check` lulus enam gerbang. |
+| Pemutus | Agen — perbaikan dokumen dan penambahan pemeriksa, tanpa perubahan perilaku sistem |

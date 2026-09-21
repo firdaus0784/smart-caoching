@@ -5,8 +5,7 @@ Disusun agen. Ditinjau manusia sebelum `tasks.md`.
 | | |
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 pada 5 Agustus 2026 |
-| Status | **Lolos Gerbang 2** — 5 Agustus 2026. Menunggu `tasks.md` dan Gerbang 3 |
-
+| Status | **Lolos Gerbang 4** — 6 Agustus 2026, seluruh 18 tugas selesai (lihat `tasks.md`). Gerbang 2 lolos 5 Agustus 2026 |
 ## Keputusan Gerbang 1 yang mengikat rencana ini
 
 1. FR-B01 s.d. FR-B04 dibangun pada fitur 015. Rencana ini tidak menyentuhnya.

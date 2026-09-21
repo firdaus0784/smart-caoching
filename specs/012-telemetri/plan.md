@@ -4,8 +4,7 @@
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 (KB-048) |
 | Ketergantungan baru | **Nol** |
-| Status | **Lolos Gerbang 1–3** (KB-048) |
-
+| Status | **Lolos Gerbang 4** (KB-049). Gerbang 1-3 lolos KB-048 |
 ## 1 · Letak modul
 
 ```

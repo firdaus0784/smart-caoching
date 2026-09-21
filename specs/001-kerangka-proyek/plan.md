@@ -5,7 +5,7 @@ Disusun agen. Ditinjau manusia sebelum `tasks.md`.
 | | |
 |---|---|
 | Spec | `specs/001-kerangka-proyek/spec.md` (lolos Gerbang 1) |
-| Status | Menunggu Gerbang 2 |
+| Status | **SELESAI** — lolos Gerbang 4 pada 5 Agustus 2026 (lihat `tasks.md`) |
 | Yang diminta persetujuan | Daftar ketergantungan (C-12) · keputusan BT-14 · ambang ±30 tugas |
 
 ## Keputusan Gerbang 1 yang mengikat rencana ini

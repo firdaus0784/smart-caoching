@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | `specs/023-lapisan-http/spec.md` |
-| Status | Gerbang 2 lolos — KB-070 |
+| Status | Gerbang 3 lolos — KB-070 |
 | Ketergantungan baru | **Nol.** `fastapi` sudah masuk titik nol pada KB-067 |
 
 ## 1. Letak modul

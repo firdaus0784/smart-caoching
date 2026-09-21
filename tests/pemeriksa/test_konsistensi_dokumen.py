@@ -259,3 +259,73 @@ def test_docs_nyata_tanpa_kode_menggantung() -> None:
     akar = Path(__file__).resolve().parents[2]
     temuan = periksa_kode_menggantung(akar)
     assert temuan == [], "; ".join(str(t) for t in temuan[:8])
+
+
+# ── status gerbang: plan.md dan tasks.md tidak boleh berselisih ──────
+
+from perkakas.pemeriksa.konsistensi_dokumen import (  # noqa: E402
+    periksa_status_gerbang,
+    tahap_gerbang,
+)
+
+
+@pytest.mark.parametrize(
+    ("sel", "harap"),
+    [
+        ("**Lolos Gerbang 4** — 6 Agustus 2026", 4),
+        ("Menunggu Gerbang 2", 1),
+        # Tanda pisah, bukan tanda hubung — disalin apa adanya dari
+        # `specs/012-telemetri/plan.md`. Menggantinya di sini membuat uji
+        # berhenti menguji bentuk yang sungguh ada pada dokumen.
+        ("**Lolos Gerbang 1–3** (KB-048)", 3),  # noqa: RUF001
+        ("Gerbang 3 lolos — KB-070", 3),
+        ("**Lolos Gerbang 2** — 5 Agustus. Menunggu `tasks.md` dan Gerbang 3", 2),
+        ("Seluruh tugas selesai — menunggu Gerbang 4", 3),
+        ("**SELESAI** — tanpa menyebut gerbang mana pun", None),
+    ],
+)
+def test_tahap_gerbang_dibaca_dari_kata(sel: str, harap: int | None) -> None:
+    """Dibaca dari kata, bukan dari penomoran berkas. Penomoran berkas tidak
+    menyatakan apa pun tentang persetujuan manusia."""
+    assert tahap_gerbang(sel) == harap
+
+
+def _fitur(akar: Path, nama: str, status_plan: str, status_tasks: str) -> None:
+    folder = akar / "specs" / nama
+    folder.mkdir(parents=True)
+    (folder / "plan.md").write_text(f"# Plan\n\n| | |\n|---|---|\n| Status | {status_plan} |\n")
+    (folder / "tasks.md").write_text(f"# Tasks\n\n| | |\n|---|---|\n| Status | {status_tasks} |\n")
+
+
+def test_status_selaras_bersih(tmp_path: Path) -> None:
+    _fitur(tmp_path, "007-contoh", "**Lolos Gerbang 4**", "**Lolos Gerbang 4**")
+    assert periksa_status_gerbang(tmp_path) == []
+
+
+def test_plan_tertinggal_di_belakang_tasks_ditemukan(tmp_path: Path) -> None:
+    """Bentuk kekeliruan TK-58: `tasks.md` mencatat Gerbang 4 sementara
+    `plan.md` masih berbunyi menunggu Gerbang 2. Tidak satu aturan pun
+    dilanggar — kewajiban mencerminkannya tidak pernah dinyatakan."""
+    _fitur(tmp_path, "007-contoh", "Menunggu Gerbang 2", "**Lolos Gerbang 4**")
+    temuan = periksa_status_gerbang(tmp_path)
+    assert len(temuan) == 1
+    assert "gerbang 1" in temuan[0].pesan and "4" in temuan[0].pesan
+
+
+def test_fitur_tanpa_baris_status_dilewati(tmp_path: Path) -> None:
+    """Dilewati, bukan ditemukan: sebagian fitur awal tidak memakai baris
+    status, dan menuntutnya di sini akan mengubah pemeriksa selaras menjadi
+    pemeriksa seragam."""
+    folder = tmp_path / "specs" / "007-contoh"
+    folder.mkdir(parents=True)
+    (folder / "plan.md").write_text("# Plan\n")
+    (folder / "tasks.md").write_text("# Tasks\n\n| Status | **Lolos Gerbang 4** |\n")
+    assert periksa_status_gerbang(tmp_path) == []
+
+
+def test_specs_nyata_selaras() -> None:
+    """Sapuan atas repositori sungguhan — yang menemukan delapan fitur
+    berselisih pada hari pemeriksa ini ditulis."""
+    akar = Path(__file__).resolve().parents[2]
+    temuan = periksa_status_gerbang(akar)
+    assert temuan == [], "; ".join(str(t) for t in temuan)

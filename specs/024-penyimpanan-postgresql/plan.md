@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | `specs/024-penyimpanan-postgresql/spec.md` — Gerbang 1 lolos 3 September 2026 |
-| Status | **Menunggu Gerbang 2** |
+| Status | **Gerbang 4 lolos** — 20 September 2026, sembilan tugas selesai (KB-089) |
 | Kebutuhan | ADR-05, ADR-06, ADR-12; C-03, C-05, C-12; KA-04 |
 
 ## 1. Bentuk yang dituju

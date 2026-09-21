@@ -40,6 +40,7 @@ from perkakas.pemeriksa.ketergantungan_sistem import periksa_ketergantungan_sist
 from perkakas.pemeriksa.konsistensi_dokumen import (
     periksa_kode_menggantung,
     periksa_konsistensi_dokumen,
+    periksa_status_gerbang,
 )
 from perkakas.pemeriksa.perintah_selaras import periksa_perintah_selaras
 from perkakas.pemeriksa.placeholder import periksa_placeholder
@@ -111,6 +112,7 @@ def _v03(akar: Path) -> HasilGerbang:
         *periksa_perintah_selaras(akar),
         *periksa_konsistensi_dokumen(akar),
         *periksa_kode_menggantung(akar),
+        *periksa_status_gerbang(akar),
         *periksa_arah_arsitektur(akar),
         *periksa_rute_terdaftar(akar),
         *periksa_hasil_jalur(akar),

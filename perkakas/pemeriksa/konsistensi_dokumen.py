@@ -220,3 +220,66 @@ def periksa_kode_menggantung(akar: Path) -> list[Temuan]:
                         )
                     )
     return temuan
+
+
+# Baris status pada `specs/nnn-*/plan.md` dan `tasks.md`.
+POLA_STATUS = re.compile(r"^\|\s*Status\s*\|\s*(.+?)\s*\|\s*$", re.MULTILINE)
+# Rentang "Gerbang 1-3" ditulis dengan tanda pisah maupun tanda hubung pada
+# dokumen yang sudah ada. Keduanya diterima: pengurai yang menuntut satu
+# bentuk akan memaksa dokumen diseragamkan demi perkakas.
+POLA_GERBANG = re.compile("Gerbang\\s+(\\d)(?:\\s*[-\u2013]+\\s*(\\d))?")
+
+
+def tahap_gerbang(sel: str) -> int | None:
+    """Gerbang terakhir yang **sudah** dilewati menurut satu sel status.
+
+    "Menunggu Gerbang 3" berarti dua sudah lewat; "Lolos Gerbang 1-3" berarti
+    tiga. Dibaca dari kata, bukan dari penomoran berkas, sebab penomoran berkas
+    tidak menyatakan apa pun tentang persetujuan manusia.
+    """
+    angka = [int(n) for cocok in POLA_GERBANG.finditer(sel) for n in cocok.groups() if n]
+    if not angka:
+        return None
+    tertinggi = max(angka)
+    return tertinggi - 1 if "enunggu" in sel else tertinggi
+
+
+def periksa_status_gerbang(akar: Path) -> list[Temuan]:
+    """`plan.md` dan `tasks.md` satu fitur wajib menyebut gerbang yang sama.
+
+    **TK-58.** Lima fitur — 001, 002, 010, 015, 024 — memiliki `tasks.md` yang
+    menyatakan Gerbang 4 lolos sementara `plan.md`-nya masih berbunyi "Menunggu
+    Gerbang 2". Tidak satu aturan pun dilanggar: kebiasaan mencatat putusan
+    gerbang pada `tasks.md` tidak pernah disertai kewajiban mencerminkannya ke
+    `plan.md`, dan tidak ada yang memeriksanya.
+
+    Bentuk kekeliruan yang sama dengan TK-45, dan perbaikannya sama: bukan
+    imbauan, melainkan pemeriksaan. Dokumen yang menyatakan pekerjaan belum
+    dimulai padahal sudah selesai menuntun pembacanya mengerjakan ulang.
+
+    `tasks.md` adalah yang berwenang: ia artefak terakhir pada alurnya, dan
+    putusan Gerbang 3 dan 4 dicatat di sana.
+    """
+    temuan: list[Temuan] = []
+    for folder in sorted((akar / "specs").glob("[0-9][0-9][0-9]-*")):
+        berkas = {nama: folder / f"{nama}.md" for nama in ("plan", "tasks")}
+        if not all(b.is_file() for b in berkas.values()):
+            continue
+        tahap: dict[str, int | None] = {}
+        for nama, b in berkas.items():
+            cocok = POLA_STATUS.search(b.read_text(encoding="utf-8"))
+            tahap[nama] = tahap_gerbang(cocok.group(1)) if cocok else None
+        if tahap["plan"] is None or tahap["tasks"] is None:
+            continue
+        if tahap["plan"] != tahap["tasks"]:
+            temuan.append(
+                Temuan(
+                    berkas["plan"],
+                    0,
+                    f"plan.md menyatakan gerbang {tahap['plan']} sedangkan tasks.md "
+                    f"menyatakan {tahap['tasks']} — tasks.md yang berwenang, dan "
+                    "plan.md yang tertinggal akan dibaca sebagai pekerjaan yang "
+                    "belum dimulai",
+                )
+            )
+    return temuan

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | `spec.md`, lolos Gerbang 1 — 6 Agustus 2026 |
-| Status | **Lolos Gerbang 2** — 6 Agustus 2026. Kedua pertanyaan diputus (KB-018). Menunggu `tasks.md` dan Gerbang 3 |
+| Status | **Lolos Gerbang 4** — 6 Agustus 2026, seluruh 17 tugas selesai (lihat `tasks.md`). Gerbang 2 lolos 6 Agustus 2026, kedua pertanyaan diputus (KB-018) |
 | Ketergantungan baru | Lima, disetujui KB-017 |
 | Pertanyaan yang menuntut putusan Anda | **Dua, keduanya sudah diputus** — Bagian 1 dan Bagian 6; putusannya pada Bagian 9 |
 
