@@ -86,6 +86,24 @@ class HasilSumber(BaseModel):
     yang tidak diketahui apa yang berubah.
     """
     peringkat: tuple[Kandidat, ...]
+    segmen_tanpa_vektor: int | None = Field(default=None, ge=0)
+    """Segmen yang ada pada indeks tetapi belum disematkan — T-6 fitur 019.
+
+    **Opsional, dan itu disengaja.** Hanya sumber yang dapat memiliki segmen
+    belum tersemat yang mengisinya; BM25 membiarkannya `None`. Menjadikannya
+    wajib akan memaksa setiap pelaksana menjawab pertanyaan yang tidak berlaku
+    baginya, dan jawaban yang dikarang agar bidang terisi lebih buruk daripada
+    bidang kosong.
+
+    Dibawa keluar, bukan hanya dicatat ke log. Indeks yang separuh terisi
+    sambil terbaca penuh adalah bentuk kekeliruan yang sama dengan uji yang
+    dilewati tanpa dilaporkan — hasilnya tampak sah, dan yang membacanya tidak
+    punya cara mengetahui sebaliknya.
+
+    `None` berarti **tidak diketahui**, bukan nol. Pembedaan itu menentukan:
+    nol menyatakan indeks penuh, sedangkan tidak diketahui tidak menyatakan
+    apa pun.
+    """
 
     @model_validator(mode="after")
     def _tanpa_segmen_kembar(self) -> HasilSumber:

@@ -43,7 +43,9 @@ def test_skor_bukan_bilangan_dari_peladen_ditolak() -> None:
 
     class SambunganAneh:
         async def fetchrow(self, kueri: str, *argumen: object) -> object:
-            return {"dimensi": DIMENSI_UJI}
+            # Satu sambungan melayani dua kueri berbeda — pencocokan dimensi
+            # dan penghitungan segmen tanpa vektor. Keduanya dijawab.
+            return {"dimensi": DIMENSI_UJI, "jumlah": 0}
 
         async def fetch(self, kueri: str, *argumen: object) -> object:
             return [{"id_segmen": "SEG-A", "skor": "dekat sekali"}]
@@ -195,3 +197,62 @@ def test_nama_pelaksana_tidak_ada_yang_kembar() -> None:
 
     nama = [PABRIK[k](IndeksTujuan.UTAMA).nama for k in sorted(PABRIK)]
     assert len(set(nama)) == len(nama), nama
+
+
+# ── T-6 · jumlah segmen tanpa vektor dibawa keluar ──────────────────
+
+
+def test_indeks_penuh_melaporkan_nol() -> None:
+    """Nol menyatakan indeks penuh. Ia bukan hal yang sama dengan `None`."""
+    hasil = jalankan(_sumber_terisi().cari(KORPUS[0].teks, batas=5))
+    assert hasil.segmen_tanpa_vektor == 0
+
+
+def test_segmen_belum_tersemat_terhitung_dan_terbawa_keluar() -> None:
+    """**Inti T-6.**
+
+    Indeks yang separuh terisi sambil terbaca penuh adalah bentuk kekeliruan
+    yang sama dengan uji yang dilewati tanpa dilaporkan: hasilnya tampak sah,
+    dan yang membacanya tidak punya cara mengetahui sebaliknya.
+    """
+    sumber = _sumber_terisi()
+    for nomor in (1, 2):
+        psql(
+            "smart_coaching",
+            "-c",
+            "INSERT INTO indeks_utama.segmen_teks "
+            "(id_segmen, id_dokumen, teks, lisensi, anonimisasi_terverifikasi, penanda_bagian) "
+            f"VALUES ('SEG-KOSONG-{nomor}', 'DOC-X', 'belum disematkan', 'terbuka', "
+            "true, 'Pasal 1')",
+        )
+    hasil = jalankan(sumber.cari(KORPUS[0].teks, batas=10))
+    assert hasil.segmen_tanpa_vektor == 2
+    assert all(not k.id_segmen.startswith("SEG-KOSONG") for k in hasil.peringkat)
+
+
+def test_jumlah_tetap_terbawa_ketika_pencarian_tidak_menemukan_apa_pun() -> None:
+    """Keadaan yang paling perlu terbaca, dan yang paling mudah hilang.
+
+    Kueri gabungan yang menyisipkan hitungan ke baris hasil kehilangan
+    angkanya tepat ketika tidak ada baris hasil — yaitu ketika seluruh isi
+    indeks belum tersemat.
+    """
+    sumber = _sumber_terisi()
+    psql("smart_coaching", "-c", "UPDATE indeks_utama.segmen_teks SET vektor = NULL")
+    hasil = jalankan(sumber.cari(KORPUS[0].teks, batas=10))
+    assert hasil.peringkat == ()
+    assert hasil.segmen_tanpa_vektor == len(KORPUS)
+
+
+def test_sumber_lain_membiarkan_jumlah_tidak_diketahui() -> None:
+    """`None` berarti tidak diketahui, bukan nol.
+
+    BM25 tidak memiliki gagasan "segmen belum tersemat"; memaksanya menjawab
+    akan menghasilkan angka yang dikarang agar bidang terisi, dan angka
+    semacam itu lebih buruk daripada bidang kosong.
+    """
+    from tests.rag.pengambilan.test_kontrak_sumber import PABRIK
+
+    for nama in ("bm25", "tiruan"):
+        hasil = jalankan(PABRIK[nama](IndeksTujuan.UTAMA).cari("kepala sekolah", batas=5))
+        assert hasil.segmen_tanpa_vektor is None, nama

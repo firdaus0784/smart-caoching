@@ -31,7 +31,7 @@ saat dijalankan justru agar tidak ada nilai bawaan yang diam-diam terpakai.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Final
 
 from src.kamus.segmen import IndeksTujuan
@@ -68,6 +68,30 @@ class GalatDimensiVektor(Exception):
     """
 
 
+def _bilangan(baris: Mapping[str, object] | None, kolom: str, bila_kosong: str) -> int:
+    """Baca satu bilangan dari baris peladen, atau tolak dengan sebab.
+
+    **Satu penjagaan, dipakai setiap kueri yang mengembalikan bilangan.**
+    Sebelumnya tiap kueri membawa penjagaannya sendiri, dan dua salinan aturan
+    yang sama akan berselisih pada hari salah satunya disunting — yang
+    disunting bukan yang diperiksa.
+
+    Cabang "bukan bilangan" tidak dapat dipicu PostgreSQL 16 mana pun; ia
+    menjaga **bentuk** keluaran, bukan nilainya, dan diuji lewat sambungan
+    buatan. Penjagaan yang tidak pernah dijalankan adalah penjagaan yang belum
+    diketahui bekerja atau tidak.
+    """
+    if baris is None:
+        raise GalatDimensiVektor(bila_kosong)
+    nilai = baris[kolom]
+    if not isinstance(nilai, int):
+        raise GalatDimensiVektor(
+            f"peladen mengembalikan {kolom} bertipe {type(nilai).__name__}, "
+            "bukan bilangan — bentuk keluarannya berubah dan kueri ini perlu ditinjau"
+        )
+    return nilai
+
+
 async def dimensi_kolom(sambungan: SambunganAktif, indeks_tujuan: IndeksTujuan) -> int:
     """Dimensi kolom vektor sebagaimana tercatat peladen.
 
@@ -84,18 +108,12 @@ async def dimensi_kolom(sambungan: SambunganAktif, indeks_tujuan: IndeksTujuan) 
         TABEL,
         KOLOM_VEKTOR,
     )
-    if baris is None:
-        raise GalatDimensiVektor(
-            f"kolom {KOLOM_VEKTOR!r} tidak ada pada {SKEMA[indeks_tujuan]}.{TABEL} — "
-            "jalankan perkakas/basis_data/05-kolom-vektor.sql lebih dulu"
-        )
-    mentah = baris["dimensi"]
-    if not isinstance(mentah, int):
-        raise GalatDimensiVektor(
-            f"katalog peladen mengembalikan dimensi bertipe {type(mentah).__name__}, "
-            "bukan bilangan — bentuk katalog berubah dan kueri ini perlu ditinjau"
-        )
-    return mentah
+    return _bilangan(
+        baris,
+        "dimensi",
+        f"kolom {KOLOM_VEKTOR!r} tidak ada pada {SKEMA[indeks_tujuan]}.{TABEL} — "
+        "jalankan perkakas/basis_data/05-kolom-vektor.sql lebih dulu",
+    )
 
 
 async def pastikan_dimensi_cocok(
@@ -196,6 +214,7 @@ class SumberVektor(SumberKandidat):
             raise ValueError("kueri kosong tidak dapat dicari")
 
         vektor = (await self._penyemat.sematkan([kueri]))[0]
+        tanpa_vektor = await self._jumlah_tanpa_vektor()
         baris = await self._sambungan.fetch(
             f"SELECT id_segmen, 2 - (vektor <=> $1::vector) AS skor "
             f"FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
@@ -211,6 +230,29 @@ class SumberVektor(SumberKandidat):
             peringkat=urutkan_kandidat(
                 Kandidat(id_segmen=str(b["id_segmen"]), skor=_angka(b["skor"])) for b in baris
             ),
+            segmen_tanpa_vektor=tanpa_vektor,
+        )
+
+    async def _jumlah_tanpa_vektor(self) -> int:
+        """Segmen yang ada pada indeks tetapi belum disematkan — R-06 T-6.
+
+        Kueri tersendiri, bukan disisipkan ke kueri pencarian. Kueri gabungan
+        kehilangan angkanya tepat ketika pencarian tidak menemukan apa-apa —
+        dan keadaan "nol hasil dengan banyak segmen belum tersemat" justru
+        yang paling perlu terbaca.
+
+        Diakui terbuka: antara kedua kueri, isi tabel dapat berubah. Angka ini
+        keterangan keadaan indeks, bukan bagian dari hasil pencarian, sehingga
+        selisih sesaat tidak mengubah jawaban yang diberikan.
+        """
+        baris = await self._sambungan.fetchrow(
+            f"SELECT count(*) AS jumlah FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
+            f"WHERE {KOLOM_VEKTOR} IS NULL"
+        )
+        return _bilangan(
+            baris,
+            "jumlah",
+            f"tabel {SKEMA[self._indeks_tujuan]}.{TABEL} tidak dapat dihitung",
         )
 
 

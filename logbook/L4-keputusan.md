@@ -1523,3 +1523,22 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membiarkan `SumberTiruan` di luar `PABRIK` — ditolak; KB-095 sudah menjanjikan sebaliknya, dan penyimpangannya memang ada. Menerima T5-3 sebagai mutasi setara — ditolak sesudah diperiksa; ia setara hanya selama tidak ada pemangkasan, dan pemangkasan adalah keadaan lazim. Mengurutkan di SQL saja tanpa `urutkan_kandidat` — ditolak; kontrak menuntut urutan yang sama bagi setiap pelaksana, dan menyerahkannya ke SQL membuat pelaksana in-memory berbeda. |
 | Dampak | `src/rag/pengambilan/vektor.py` bertambah `SumberVektor`; `SambunganAktif` bertambah `fetch`. Berkas uji baru `test_sumber_vektor.py`; `test_kontrak_sumber.py` `PABRIK` menjadi tiga; `sumber_tiruan.py` menolak kueri kosong. Fitur 019: **5 dari 9 tugas**. `make check` lulus enam gerbang. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-5 |
+
+---
+
+## KB-099 · T-6 fitur 019 — jumlah segmen belum tersemat dibawa keluar
+
+| | |
+|---|---|
+| Tanggal | 2026-09-21 |
+| Konteks | T-6: segmen tanpa vektor dikeluarkan dari kandidat, **dan jumlahnya dilaporkan**. Pengeluarannya sudah ada sejak T-5; yang ditambahkan pelaporannya. |
+| Keputusan | **T-6 selesai.** `HasilSumber` bertambah bidang **opsional** `segmen_tanpa_vektor`; `SumberVektor` mengisinya, pelaksana lain membiarkannya `None`. |
+| Mengapa opsional, dan mengapa itu bukan kompromi | BM25 tidak memiliki gagasan "segmen belum tersemat". Menjadikan bidang itu wajib memaksa setiap pelaksana menjawab pertanyaan yang tidak berlaku baginya, dan **jawaban yang dikarang agar bidang terisi lebih buruk daripada bidang kosong**. Bidang ditambahkan secara aditif dengan nilai bawaan, sehingga tidak ada pelaksana yang perlu berubah — itu sebabnya ia tidak diperlakukan sebagai perubahan kontrak yang menuntut gerbang tersendiri. |
+| `None` bukan nol, dan pembedaan itu menentukan | Nol menyatakan **indeks penuh**; `None` menyatakan **tidak diketahui**. Mutasi T6-4 mengubah bawaan dari `None` menjadi `0` — yakni mengubah "tidak diketahui" menjadi "penuh" pada setiap sumber yang tidak menghitungnya — dan uji menangkapnya. |
+| Dihitung kueri tersendiri, bukan disisipkan ke kueri pencarian | Kueri gabungan kehilangan angkanya **tepat ketika pencarian tidak menemukan apa-apa** — dan keadaan "nol hasil dengan seluruh indeks belum tersemat" justru yang paling perlu terbaca. Diuji tersendiri. Batas yang diakui terbuka: antara kedua kueri isi tabel dapat berubah; angka ini keterangan keadaan indeks, bukan bagian hasil pencarian. |
+| Empat penjagaan disatukan menjadi satu | Penambahan kueri kedua sempat menghasilkan dua salinan penjagaan "baris kosong" dan dua salinan "bukan bilangan". Dua salinan aturan yang sama akan berselisih pada hari salah satunya disunting, dan yang disunting bukan yang diperiksa. Disatukan menjadi `_bilangan`, dan cakupan `vektor.py` naik ke **100%** — bukan lewat uji tambahan melainkan lewat penghapusan duplikasi. |
+| Kekeliruan saya membaca gejala | `make check` sempat gagal berulang dan saya menduga cakupan, lalu menduga kelambatan — `tail` menahan keluaran sampai perintah selesai, sehingga layar kosong terbaca seperti menggantung. Keduanya keliru: rangkaian uji tetap **12 detik**, dan kegagalannya berasal dari keadaan basis data yang tersisa dari percobaan sebelumnya. Dicatat karena bentuknya berulang: yang terlihat lambat belum tentu lambat, dan yang gagal bersama belum tentu gagal karena kodenya. |
+| Uji mutasi | Empat dijalankan, **empat menyala**: jumlah dikarang nol, jumlah tidak dibawa keluar, yang dihitung justru segmen yang sudah tersemat, dan bawaan `None` diubah menjadi `0`. |
+| Alternatif | Menaruh jumlah pada `HasilPengambilan.asal` agar terbaca ujung ke ujung — ditolak untuk sekarang; ia menambah permukaan kontrak di luar cakupan T-6, dan diangkat bila ada yang membutuhkannya. Mencatat jumlah ke log saja — ditolak; `tasks.md` T-6 menuntutnya dibawa keluar, dan indeks yang separuh terisi sambil terbaca penuh adalah bentuk kekeliruan yang sama dengan uji yang dilewati tanpa dilaporkan. Menjadikan bidang wajib — ditolak, lihat di atas. |
+| Dampak | `HasilSumber` bertambah satu bidang opsional; `SumberVektor` bertambah `_jumlah_tanpa_vektor`; empat uji baru. Fitur 019: **6 dari 9 tugas**. `make check` lulus enam gerbang; cakupan `vektor.py` 100%. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-6 |
