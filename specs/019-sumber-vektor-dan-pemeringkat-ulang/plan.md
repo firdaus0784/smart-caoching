@@ -3,7 +3,8 @@
 | | |
 |---|---|
 | Spec | Gerbang 1 lolos 20 September 2026, nol pertanyaan terbuka |
-| Status | **Gerbang 2 lolos** — 20 September 2026 |
+| Status | **Seluruh tugas selesai 21 September 2026 — menunggu Gerbang 4** |
+| Gerbang 2 | Lolos 20 September 2026 |
 | Kebutuhan | ADR-03 sisi semantik, ADR-05, ADR-12; BT-30; C-02, C-08, C-09, C-12 |
 
 ## 1. Letak modul — ditentukan pemeriksa, bukan oleh selera
