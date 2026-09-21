@@ -39,6 +39,7 @@ from collections.abc import Iterable
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.kamus.segmen import IndeksTujuan
+from src.llm.sematan import VersiPenyemat
 
 
 class Kandidat(BaseModel):
@@ -86,6 +87,26 @@ class HasilSumber(BaseModel):
     yang tidak diketahui apa yang berubah.
     """
     peringkat: tuple[Kandidat, ...]
+    versi_penyemat: VersiPenyemat | None = None
+    """Nama dan versi model penyemat yang melayani pencarian ini — R-06, C-09.
+
+    **Opsional dengan alasan yang sama dengan `segmen_tanpa_vektor`**: BM25
+    tidak memakai penyemat, dan versi yang dikarang agar bidang terisi lebih
+    buruk daripada bidang kosong. `None` berarti sumber ini tidak memakai
+    model penyemat — bukan bahwa versinya tidak diketahui.
+
+    Ia ada di sini karena tidak ada tempat lain yang tersisa. C-09 menuntut
+    versi model tercatat pada setiap keluaran percobaan, dan hasil pengambilan
+    adalah keluaran yang D-10 L1 catat. Sebelum bidang ini, `Penyemat.versi`
+    hanya muncul pada satu pesan galat — uji mutasi M-7 tidak dapat dipasang
+    sama sekali karena tidak ada keluaran yang membawanya.
+
+    **Setengah R-06 tetap belum terpenuhi, dan itu dinyatakan di sini
+    alih-alih didiamkan.** R-06 berbunyi "setiap keluaran yang dipakai
+    **membentuk indeks**". Jalur pembentukan indeks belum ada pada fitur 019 —
+    vektor ditulis perkakas SQL, bukan kode — sehingga bidang ini menutup sisi
+    pencarian saja. Sisi penulisan menunggu fitur yang membangunnya.
+    """
     segmen_tanpa_vektor: int | None = Field(default=None, ge=0)
     """Segmen yang ada pada indeks tetapi belum disematkan — T-6 fitur 019.
 

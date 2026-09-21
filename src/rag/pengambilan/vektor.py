@@ -230,6 +230,7 @@ class SumberVektor(SumberKandidat):
             peringkat=urutkan_kandidat(
                 Kandidat(id_segmen=str(b["id_segmen"]), skor=_angka(b["skor"])) for b in baris
             ),
+            versi_penyemat=self._penyemat.versi,
             segmen_tanpa_vektor=tanpa_vektor,
         )
 

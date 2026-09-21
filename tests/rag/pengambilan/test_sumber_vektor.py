@@ -13,6 +13,7 @@ from src.llm.sematan import PenyematTiruan
 from src.rag.pengambilan.vektor import GalatDimensiVektor, SumberVektor
 from tests.konftes_asinkron import jalankan
 from tests.peladen import DIMENSI_UJI, psql, siapkan
+from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
 from tests.rag.pengambilan.test_kontrak_sumber import KORPUS, VERSI_UJI, SambunganUji
 
 siapkan()
@@ -68,9 +69,8 @@ def test_skor_bukan_bilangan_dari_peladen_ditolak() -> None:
 # ── urutan menurut jarak — sifat yang membuat sumber ini ada ─────────
 
 
-def _sumber_terisi() -> SumberVektor:
-    """Sumber vektor berisi tiga segmen, disemat dengan penyemat tiruan."""
-    penyemat = PenyematTiruan(dimensi=DIMENSI_UJI)
+def _isi_korpus(penyemat: PenyematTiruan) -> None:
+    """Tulis KORPUS ke indeks utama, disemat dengan `penyemat`."""
     psql("smart_coaching", "-c", "DELETE FROM indeks_utama.segmen_teks")
     for segmen in KORPUS:
         vektor = jalankan(penyemat.sematkan([segmen.teks]))[0]
@@ -84,6 +84,12 @@ def _sumber_terisi() -> SumberVektor:
             f"('{segmen.id_segmen}', '{segmen.id_dokumen}', '{segmen.teks}', "
             f"'{segmen.lisensi.value}', true, '{segmen.penanda_bagian}', '{nilai}'::vector)",
         )
+
+
+def _sumber_terisi() -> SumberVektor:
+    """Sumber vektor berisi tiga segmen, disemat dengan penyemat tiruan."""
+    penyemat = PenyematTiruan(dimensi=DIMENSI_UJI)
+    _isi_korpus(penyemat)
     return jalankan(
         SumberVektor.susun(
             sambungan=SambunganUji(),
@@ -256,3 +262,63 @@ def test_sumber_lain_membiarkan_jumlah_tidak_diketahui() -> None:
     for nama in ("bm25", "tiruan"):
         hasil = jalankan(PABRIK[nama](IndeksTujuan.UTAMA).cari("kepala sekolah", batas=5))
         assert hasil.segmen_tanpa_vektor is None, nama
+
+
+# ── penyemat dipilih pemanggil, dan versinya terbawa keluar ──────────
+
+
+def test_sumber_memakai_penyemat_yang_diserahkan_pemanggil() -> None:
+    """**R-02.** Pelaksana sungguhan dipilih pemanggil, bukan disusun sumber.
+
+    Ditemukan lewat mutasi M-8 T-8, yang **diam** pada putaran pertama:
+    seluruh uji menyerahkan `PenyematTiruan()`, sehingga sumber yang diam-diam
+    menyusun `PenyematTiruan()` sendiri menghasilkan keluaran yang persis sama.
+    Mutasinya tidak lemah — tidak ada uji yang membedakan penyemat pemanggil
+    dari penyemat baku, karena tidak pernah ada penyemat kedua.
+
+    Uji ini memberi penyemat yang **tidak dapat ditiru bawaan**: ia memetakan
+    teks apa pun ke vektor segmen ketiga. Hasilnya menjadi pasti, bukan
+    kebetulan — kueri berbunyi teks segmen pertama, dan yang wajib teratas
+    tetap segmen ketiga.
+    """
+    sasaran = KORPUS[2]
+
+    class PenyematTetap(PenyematTiruan):
+        """Memetakan teks apa pun ke vektor `sasaran`."""
+
+        async def sematkan(self, teks):  # type: ignore[no-untyped-def]
+            satu = (await super().sematkan([sasaran.teks]))[0]
+            return [satu for _ in teks]
+
+    penyemat = PenyematTiruan(dimensi=DIMENSI_UJI)
+    _isi_korpus(penyemat)
+    sumber = jalankan(
+        SumberVektor.susun(
+            sambungan=SambunganUji(),
+            penyemat=PenyematTetap(dimensi=DIMENSI_UJI),
+            indeks_tujuan=IndeksTujuan.UTAMA,
+            versi_indeks=VERSI_UJI,
+        )
+    )
+
+    hasil = jalankan(sumber.cari(KORPUS[0].teks, batas=5))
+    assert hasil.peringkat[0].id_segmen == sasaran.id_segmen
+
+
+def test_versi_penyemat_terbawa_pada_hasil() -> None:
+    """**R-06, C-09.** Versi model tercatat pada keluaran percobaan.
+
+    Sebelum bidang ini ada, `Penyemat.versi` hanya muncul pada satu pesan
+    galat — mutasi M-7 tidak dapat dipasang sama sekali, sebab tidak ada
+    keluaran yang membawanya.
+    """
+    hasil = jalankan(_sumber_terisi().cari(KORPUS[0].teks, batas=5))
+    assert hasil.versi_penyemat == PenyematTiruan(dimensi=DIMENSI_UJI).versi
+
+
+def test_sumber_tanpa_penyemat_membiarkan_versinya_kosong() -> None:
+    """`None` berarti sumber ini tidak memakai model penyemat — bukan bahwa
+    versinya tidak diketahui. BM25 tidak boleh mengarang versi agar bidangnya
+    terisi."""
+    hasil = jalankan(SumberTiruan("bm25", {"SEG-A": 1.0}).cari("kueri", batas=5))
+    assert hasil.versi_penyemat is None
