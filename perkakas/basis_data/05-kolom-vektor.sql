@@ -25,13 +25,37 @@
 -- dapat hanyut dari pasangannya.
 -- ─────────────────────────────────────────────────────────────────────────
 
+\set ON_ERROR_STOP on
+
 \if :{?dimensi}
 \else
-  \echo 'GAGAL: jalankan dengan -v dimensi=<N>, misalnya -v dimensi=1024'
-  \quit
+  \warn 'GAGAL: jalankan dengan -v dimensi=<N>, misalnya -v dimensi=1024'
+  -- Galat SQL, bukan `\quit`. Penjagaan ini ditulis pada T-4 dengan `\quit`,
+  -- dan selama itu berkas ini **keluar dengan status 0** ketika dimensinya
+  -- lupa diberikan: penyiapan yang tidak membuat satu tabel pun terbaca
+  -- berhasil. Ditemukan pada T-9, dengan mencoba (KB-102).
+  DO $$ BEGIN
+    RAISE EXCEPTION 'dimensi wajib diberikan: jalankan dengan -v dimensi=<N>';
+  END $$;
 \endif
 
-CREATE EXTENSION IF NOT EXISTS vector;
+-- Ekstensinya TIDAK dipasang di sini. Ia dipasang 01b-ekstensi-vektor.sql,
+-- dan berkas ini berhenti bila ekstensinya belum ada — dengan menyebut berkas
+-- mana yang memasangnya, bukan dengan galat tipe `vector` tidak dikenal.
+--
+-- Memasangnya di dua tempat akan membuat salah satunya usang tanpa terlihat.
+
+SELECT NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector')
+    AS ekstensi_belum_ada \gset
+
+\if :ekstensi_belum_ada
+  \warn 'GAGAL: ekstensi pgvector belum ada pada basis data ini.'
+  \warn 'Jalankan lebih dulu: psql -d smart_coaching -f 01b-ekstensi-vektor.sql'
+  -- Galat SQL, bukan `\quit` — lihat alasannya pada 01b-ekstensi-vektor.sql.
+  DO $$ BEGIN
+    RAISE EXCEPTION 'ekstensi pgvector belum ada pada basis data ini';
+  END $$;
+\endif
 
 -- Bidangnya mengikuti `SegmenTerindeks` pada `src/penyimpanan/indeks.py`
 -- satu lawan satu. Dua daftar yang menggambarkan hal yang sama akan hanyut,

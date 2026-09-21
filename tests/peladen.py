@@ -97,7 +97,7 @@ def wajib_ada() -> None:
 
 
 def siapkan() -> None:
-    """Jalankan keempat berkas persiapan — aman dipanggil berulang.
+    """Jalankan seluruh berkas persiapan — aman dipanggil berulang.
 
     Tiap modul uji memanggilnya sendiri alih-alih mengandalkan modul lain sudah
     menjalankannya. Urutan uji bukan kontrak, dan berkas uji yang bergantung
@@ -106,6 +106,7 @@ def siapkan() -> None:
     wajib_ada()
     for nama, basis in (
         ("01-peran-dan-basis-data.sql", "postgres"),
+        ("01b-ekstensi-vektor.sql", "smart_coaching"),
         ("02-skema-dan-hak.sql", "smart_coaching"),
         ("03-basis-data-pseudonim.sql", "smart_coaching_pseudonim"),
         ("04-tabel-dokumen.sql", "smart_coaching"),

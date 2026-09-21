@@ -40,7 +40,7 @@ def _psql(pengguna: str, basis_data: str, *argumen: str) -> subprocess.Completed
 
 @pytest.fixture(scope="module")
 def basis_data_siap() -> None:
-    """Jalankan ketiga berkas dari nol, lalu buat tabel SESUDAHNYA.
+    """Jalankan berkas persiapan dari nol, lalu buat tabel SESUDAHNYA.
 
     Menggagalkan rangkaian uji bila peladen tidak ada — bukan melewatinya.
     Lihat `tests/peladen.py`.
@@ -53,6 +53,10 @@ def basis_data_siap() -> None:
 
     for nama, basis in (
         ("01-peran-dan-basis-data.sql", "postgres"),
+        # 01b memasang ekstensi pgvector. Basis datanya baru saja dijatuhkan,
+        # sehingga ekstensinya ikut hilang — berkas ini wajib ada pada daftar,
+        # dan ketiadaannya sempat terbaca sebagai hak akses yang salah.
+        ("01b-ekstensi-vektor.sql", "smart_coaching"),
         ("02-skema-dan-hak.sql", "smart_coaching"),
         ("03-basis-data-pseudonim.sql", "smart_coaching_pseudonim"),
     ):
@@ -171,3 +175,41 @@ def test_revoke_connect_ada_pada_berkas() -> None:
     sql = (BERKAS / "01-peran-dan-basis-data.sql").read_text(encoding="utf-8")
     for basis in ("smart_coaching", "smart_coaching_pseudonim"):
         assert f"REVOKE CONNECT ON DATABASE {basis}" in sql, basis
+
+
+# ── penjagaan berkas persiapan benar-benar menggagalkan ──────────────
+
+
+def test_tanpa_dimensi_berkas_kolom_vektor_gagal(basis_data_siap: None) -> None:
+    """**Penjagaan yang keluar dengan status 0 bukan penjagaan.**
+
+    `05-kolom-vektor.sql` ditulis pada T-4 dengan `\\quit` sebagai jalur
+    gagalnya. `\\quit` mengabaikan argumen statusnya diam-diam dan keluar
+    dengan **0**: penyiapan yang tidak membuat satu tabel pun terbaca
+    berhasil. Ditemukan pada T-9, dengan mencoba.
+
+    Yang diuji status keluarnya, bukan pesannya — pesan dapat berubah, dan
+    yang menentukan bagi pemanggil adalah apakah ia tahu penyiapannya gagal.
+    """
+    hasil = _psql(PENGELOLA, "smart_coaching", "-f", str(BERKAS / "05-kolom-vektor.sql"))
+    assert hasil.returncode != 0, hasil.stdout
+
+
+def test_tidak_ada_lagi_quit_sebagai_jalur_gagal() -> None:
+    """Penjagaan yang sama tidak boleh ditulis ulang dengan bentuk yang sudah
+    terbukti bocor.
+
+    Sapuan statis, bukan uji perilaku: ia menjaga berkas persiapan yang belum
+    ditulis. Uji perilaku hanya dapat menjaga yang sudah ada, dan bentuk ini
+    lolos sekali justru karena tampak benar saat dibaca.
+    """
+    tersangka = [
+        f"{berkas.name}:{nomor}"
+        for berkas in sorted(BERKAS.glob("*.sql"))
+        for nomor, baris in enumerate(berkas.read_text().splitlines(), start=1)
+        if baris.strip().startswith("\\quit") or baris.strip().startswith("\\q ")
+    ]
+    assert not tersangka, (
+        "`\\quit` keluar dengan status 0 dan argumennya diabaikan — pakai "
+        f"`RAISE EXCEPTION` di dalam blok DO sebagai jalur gagal: {tersangka}"
+    )
