@@ -227,6 +227,9 @@ POLA_STATUS = re.compile(r"^\|\s*Status\s*\|\s*(.+?)\s*\|\s*$", re.MULTILINE)
 # Rentang "Gerbang 1-3" ditulis dengan tanda pisah maupun tanda hubung pada
 # dokumen yang sudah ada. Keduanya diterima: pengurai yang menuntut satu
 # bentuk akan memaksa dokumen diseragamkan demi perkakas.
+GERBANG_TERAKHIR = 4
+"""Gerbang 4 adalah verifikasi — D-12 Bagian 4 langkah 9."""
+
 POLA_GERBANG = re.compile("Gerbang\\s+(\\d)(?:\\s*[-\u2013]+\\s*(\\d))?")
 
 
@@ -265,12 +268,29 @@ def periksa_status_gerbang(akar: Path) -> list[Temuan]:
         berkas = {nama: folder / f"{nama}.md" for nama in ("plan", "tasks")}
         if not all(b.is_file() for b in berkas.values()):
             continue
+        sel: dict[str, str] = {}
         tahap: dict[str, int | None] = {}
         for nama, b in berkas.items():
             cocok = POLA_STATUS.search(b.read_text(encoding="utf-8"))
-            tahap[nama] = tahap_gerbang(cocok.group(1)) if cocok else None
+            sel[nama] = cocok.group(1) if cocok else ""
+            tahap[nama] = tahap_gerbang(sel[nama]) if cocok else None
         if tahap["plan"] is None or tahap["tasks"] is None:
             continue
+        isi_tugas = berkas["tasks"].read_text(encoding="utf-8")
+        selesai = isi_tugas.count("- [x]")
+        seluruhnya_selesai = bool(selesai) and "- [ ]" not in isi_tugas
+        belum_diajukan = f"Gerbang {GERBANG_TERAKHIR}" not in sel["tasks"]
+        if seluruhnya_selesai and belum_diajukan:
+            temuan.append(
+                Temuan(
+                    berkas["tasks"],
+                    0,
+                    f"seluruh {selesai} kotak tugas tercentang sementara status tidak "
+                    f"menyebut Gerbang {GERBANG_TERAKHIR} sama sekali — pekerjaan yang "
+                    "selesai dan tidak diajukan adalah pekerjaan yang menunggu tanpa "
+                    "ada yang tahu",
+                )
+            )
         if tahap["plan"] != tahap["tasks"]:
             temuan.append(
                 Temuan(

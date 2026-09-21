@@ -1621,3 +1621,21 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memindahkan baris status hanya ke `tasks.md` dan menghapusnya dari `plan.md` — ditolak; `plan.md` dibaca sendirian oleh orang yang menilai rancangan, dan dokumen tanpa status memaksa pembacanya membuka berkas lain untuk tahu apakah rancangan itu masih hidup. Menyesuaikan kedelapan baris tanpa menambah pemeriksa — ditolak tegas; itu memperbaiki delapan kejadian sambil membiarkan sebabnya, dan TK-45 sudah membuktikan sebab ini berulang. |
 | Dampak | Delapan `plan.md` disesuaikan; `periksa_status_gerbang` masuk V-03; `tests/pemeriksa/test_konsistensi_dokumen.py` bertambah sebelas kasus. D-00 2.49 → 2.50, TK-58 ditutup pada kemunculannya. `make check` lulus enam gerbang. |
 | Pemutus | Agen — perbaikan dokumen dan penambahan pemeriksa, tanpa perubahan perilaku sistem |
+
+---
+
+## KB-104 · Fitur 023 selesai penuh tanpa diajukan, dan pemeriksa TK-58 diperluas
+
+| | |
+|---|---|
+| Tanggal | 2026-09-21 |
+| Konteks | Menyusun daftar fitur yang tersisa sesudah TK-58 ditutup. Baris status kini selaras, sehingga daftar itu dapat dipercaya — dan yang pertama terlihat darinya adalah fitur 023. |
+| Temuan | **Fitur 023 lengkap sejak 10 September dan tidak pernah diajukan ke Gerbang 4.** Seluruh sembilan belas kotak tugasnya tercentang, termasuk C-1 "uji mutasi dan Gerbang 4" — delapan mutasi menyala, `make check` lulus, cakupan tidak turun, catatan L4 ditulis. Yang tidak terjadi hanya satu: baris statusnya tidak pernah berpindah dari "Gerbang 3 lolos", sehingga tidak ada yang tahu ia menunggu. |
+| Mengapa TK-58 belum menangkapnya | Pemeriksa yang baru ditulis membandingkan `plan.md` dengan `tasks.md`. Pada fitur 023 keduanya **cocok** — keduanya sama-sama tertinggal. Perbandingan dua dokumen yang bersumber dari kebiasaan yang sama tidak dapat menangkap kekeliruan kebiasaan itu; ia bentuk yang sama dengan KB-098, mutasi yang diam karena dua sisi berubah bersama. |
+| Sumber kebenaran ketiga | Kotak tugas. Ia dicentang ketika pekerjaan benar-benar selesai, bukan ketika status ditulis, sehingga ia tidak ikut hanyut. Pemeriksa diperluas: seluruh kotak tercentang sementara status tidak menyebut Gerbang 4 sama sekali adalah temuan. |
+| Bentuk aturannya, dan mengapa bukan "tahap < 4" | Rancangan pertama menolak status bertahap di bawah 4 — dan itu menuduh setiap fitur yang sah sedang menunggu ratifikasi. Yang sesungguhnya diperiksa bukan apakah gerbangnya sudah lewat melainkan apakah keadaannya **diakui**. Status yang berbunyi "menunggu Gerbang 4" sudah mengakuinya, dan itulah yang pemeriksa tuntut. |
+| Yang dikerjakan | Status `tasks.md` dan `plan.md` fitur 023 menjadi "Seluruh 19 tugas selesai — menunggu Gerbang 4". Saya **tidak** menyatakannya lolos: ratifikasi Gerbang 4 keputusan manusia, dan mencentangnya sendiri adalah bentuk laporan palsu yang paling mudah dilakukan hari ini. |
+| Alternatif | Membiarkan fitur 023 sebagaimana adanya dan hanya melaporkannya pada percakapan — ditolak; laporan percakapan hilang, dokumen tinggal, dan yang tinggal itu yang dibaca berikutnya. Menuntut baris status memuat jumlah tugas selesai — ditolak; itu menuntut keseragaman bentuk, dan RQ-01 pemeriksa ini menolak arah tersebut. |
+| Dampak | Dua baris status fitur 023 disesuaikan; `periksa_status_gerbang` bertambah satu aturan dan dua uji. `make check` lulus enam gerbang. **Dua fitur kini menunggu ratifikasi Gerbang 4: 019 dan 023.** |
+| Pemutus | Agen — perbaikan dokumen dan penambahan pemeriksa. Ratifikasi keduanya menunggu manusia |
+| Keputusan | **Fitur 023 dinyatakan selesai penuh dan menunggu Gerbang 4; `periksa_status_gerbang` diperluas dengan kotak tugas sebagai sumber kebenaran ketiga.** Baris ini ditambahkan **sesudah** baris Pemutus di atasnya, bukan disisipkan ke tempat semestinya: entri ini semula ditulis dengan bidang bernama "Temuan" alih-alih `Keputusan`, dan `make check` menolaknya. `logbook/` tambah-saja, termasuk untuk memperbaikinya — sehingga urutan bidang yang janggal ini tinggal sebagai jejak kekeliruan penulisnya. Bentuk yang sama dengan KB-058. |

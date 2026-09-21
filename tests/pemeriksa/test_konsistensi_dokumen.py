@@ -329,3 +329,24 @@ def test_specs_nyata_selaras() -> None:
     akar = Path(__file__).resolve().parents[2]
     temuan = periksa_status_gerbang(akar)
     assert temuan == [], "; ".join(str(t) for t in temuan)
+
+
+def test_seluruh_kotak_tercentang_tetapi_status_tertinggal_ditemukan(tmp_path: Path) -> None:
+    """Fitur 023 duduk selesai penuh selama sebelas hari dengan status masih
+    berbunyi Gerbang 3. Tidak ada yang salah pada kotaknya — yang tidak ada
+    adalah yang membaca kotak itu bersama status di atasnya."""
+    folder = tmp_path / "specs" / "007-contoh"
+    folder.mkdir(parents=True)
+    (folder / "plan.md").write_text("| Status | Gerbang 3 lolos |\n")
+    (folder / "tasks.md").write_text("| Status | Gerbang 3 lolos |\n\n- [x] satu\n- [x] dua\n")
+    temuan = periksa_status_gerbang(tmp_path)
+    assert len(temuan) == 1
+    assert "tercentang" in temuan[0].pesan
+
+
+def test_masih_ada_kotak_kosong_bukan_temuan(tmp_path: Path) -> None:
+    folder = tmp_path / "specs" / "007-contoh"
+    folder.mkdir(parents=True)
+    (folder / "plan.md").write_text("| Status | Gerbang 3 lolos |\n")
+    (folder / "tasks.md").write_text("| Status | Gerbang 3 lolos |\n\n- [x] satu\n- [ ] dua\n")
+    assert periksa_status_gerbang(tmp_path) == []
