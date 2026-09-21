@@ -27,6 +27,20 @@ sumber yang sesungguhnya. Menghitungnya sebelum penyaringan meloloskan
 pengambilan leksikal saja yang ADR-03 tolak — dengan hitungan yang terlihat
 benar.
 
+## Tahap 5 dijalankan di sini, sebelum pemangkasan
+
+`docs/D07.md` Bagian 4 baris [5]: *"Penggabungan dan pemeringkatan ulang →
+5-8 segmen teratas"*. Urutannya menentukan: memeringkat ulang **sesudah**
+pemangkasan berarti model tahap 5 hanya melihat delapan segmen yang sudah
+dipilih penggabungan, dan segmen peringkat sembilan yang seharusnya naik tidak
+pernah ditawarkan kepadanya. Pemeringkat ulang yang bekerja atas hasil
+pemangkasan adalah pemeringkat ulang yang tidak dapat memperbaiki apa pun yang
+paling perlu diperbaiki.
+
+`pemeringkat` wajib diserahkan pemanggil, tanpa nilai baku. Alasannya ada pada
+`peringkat_ulang.py`: parameter yang boleh dihilangkan mengembalikan jalur
+mundur yang diam, dan R-05 melarangnya.
+
 ## Versi indeks per sumber, bukan satu
 
 Dua sumber membaca dua indeks yang dibangun ulang pada waktu berbeda. Satu
@@ -45,6 +59,11 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.penyimpanan.kredensial import Kredensial
 from src.rag.pengambilan.gabung import HasilGabungan, gabung_peringkat
 from src.rag.pengambilan.kandidat import SumberKandidat
+from src.rag.pengambilan.peringkat_ulang import (
+    Pemeringkat,
+    Pemeringkatan,
+    peringkat_ulang,
+)
 from src.rag.pengambilan.tetapan import (
     JUMLAH_KANDIDAT_PER_SUMBER,
     JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM,
@@ -81,6 +100,13 @@ class HasilPengambilan(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     segmen: tuple[HasilGabungan, ...]
+    pemeringkatan: Pemeringkatan
+    """Siapa yang menjalankan tahap 5 — R-05, BT-30.
+
+    Tanpa nilai baku, dengan sengaja. Jalur mundur BT-30 menghasilkan urutan
+    yang sama dengan pemeringkat ulang yang berjalan tanpa mengubah apa pun,
+    dan tanpa bidang ini keduanya tidak dapat dibedakan dari keluaran.
+    """
     asal: tuple[AsalSumber, ...]
     """Sumber yang berpartisipasi, terurut menurut nama.
 
@@ -104,6 +130,7 @@ async def ambil_hibrida(
     *,
     kredensial: Kredensial,
     sumber: Sequence[SumberKandidat],
+    pemeringkat: Pemeringkat,
 ) -> HasilPengambilan:
     """Jalankan tahap 4-5 D-07 Bagian 4.
 
@@ -119,9 +146,11 @@ async def ambil_hibrida(
 
     hasil_sumber = [await s.cari(kueri, batas=JUMLAH_KANDIDAT_PER_SUMBER) for s in terjangkau]
     gabungan = gabung_peringkat(hasil_sumber)
+    tahap_lima = await peringkat_ulang(kueri, gabungan, pemeringkat=pemeringkat)
 
     return HasilPengambilan(
-        segmen=gabungan[:JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM],
+        segmen=tahap_lima.segmen[:JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM],
+        pemeringkatan=tahap_lima.pemeringkatan,
         asal=tuple(
             sorted(
                 (

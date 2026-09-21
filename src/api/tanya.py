@@ -99,6 +99,7 @@ from src.rag.pengambilan.hibrida import ambil_hibrida
 from src.rag.pengambilan.kandidat import SumberKandidat
 from src.rag.pengambilan.kecukupan import PenilaianKecukupan
 from src.rag.pengambilan.kecukupan import StatusDasar as StatusKecukupan
+from src.rag.pengambilan.peringkat_ulang import Pemeringkat
 from src.rag.validator.keluaran import KeluaranModel, SegmenRujukan
 from src.rag.validator.pemeriksaan import KodePemeriksaan
 from src.rag.validator.validator import (
@@ -189,11 +190,18 @@ class Jalur:
         self,
         *,
         sumber: Sequence[SumberKandidat],
+        pemeringkat: Pemeringkat,
         penilai: PenilaianKecukupan,
         pembungkus: Pembungkus,
         konfigurasi: Konfigurasi,
     ) -> None:
         self._sumber = tuple(sumber)
+        # Kolaborator tahap 5 — R-05. Ia duduk di sini, bukan disusun di dalam
+        # `jawab()`, karena pemeringkat yang berpindah tiap panggilan adalah
+        # pemeringkat yang dapat berbeda antar panggilan tanpa seorang pun
+        # memutuskannya, dan catatan percobaan D-10 L1 kemudian menyebut satu
+        # tahap 5 padahal dua yang berjalan.
+        self._pemeringkat = pemeringkat
         self._penilai = penilai
         self._pembungkus = pembungkus
         self._konfigurasi = konfigurasi
@@ -228,7 +236,12 @@ class Jalur:
                 alasan_berhenti=AlasanBerhenti.DI_LUAR_DOMAIN,
             )
 
-        hasil = await ambil_hibrida(pertanyaan, kredensial=kredensial, sumber=self._sumber)
+        hasil = await ambil_hibrida(
+            pertanyaan,
+            kredensial=kredensial,
+            sumber=self._sumber,
+            pemeringkat=self._pemeringkat,
+        )
         kecukupan = self._penilai.nilai(hasil, segmen_resmi=segmen_resmi)
 
         # Tahap 7 — dan berhenti di sini berarti **tanpa memanggil model**.

@@ -35,6 +35,7 @@ from src.penyimpanan.kredensial import Kredensial
 from src.rag.jawaban.tanggapan import StatusDasar, Versi
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, SumberKandidat
 from src.rag.pengambilan.kecukupan import AmbangKecukupan, CatatanKalibrasi, PenilaianKecukupan
+from src.rag.pengambilan.peringkat_ulang import PemeringkatTidakTersedia
 from src.rag.validator.keluaran import SegmenRujukan
 from tests.konftes_asinkron import jalankan
 
@@ -194,6 +195,7 @@ def _jalur(
     )
     jalur = Jalur(
         sumber=list(sumber),
+        pemeringkat=PemeringkatTidakTersedia(),
         penilai=_penilai(),
         pembungkus=pembungkus,
         konfigurasi=Konfigurasi(

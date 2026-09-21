@@ -30,6 +30,7 @@ from src.rag.pengambilan.kecukupan import (
     PenilaianKecukupan,
     StatusDasar,
 )
+from src.rag.pengambilan.peringkat_ulang import SEBAB_BT30, JalurMundurBT30
 
 KALIBRASI = CatatanKalibrasi(
     tanggal=date(2026, 9, 1),
@@ -59,6 +60,7 @@ def _hasil(*skor: tuple[str, float]) -> HasilPengambilan:
             )
             for id_segmen, nilai in skor
         ),
+        pemeringkatan=JalurMundurBT30(sebab=SEBAB_BT30),
         asal=(
             AsalSumber(nama_sumber="bm25", versi_indeks="v1", jumlah_kandidat=len(skor)),
             AsalSumber(nama_sumber="vektor", versi_indeks="v1", jumlah_kandidat=0),

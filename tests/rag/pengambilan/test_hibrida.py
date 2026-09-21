@@ -20,6 +20,13 @@ from pydantic import ValidationError
 from src.kamus.segmen import IndeksTujuan
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.rag.pengambilan.hibrida import ambil_hibrida
+from src.rag.pengambilan.peringkat_ulang import (
+    JalurMundurBT30,
+    Pemeringkat,
+    Pemeringkatan,
+    PemeringkatDipakai,
+    PemeringkatTidakTersedia,
+)
 from src.rag.pengambilan.tetapan import (
     JUMLAH_KANDIDAT_PER_SUMBER,
     JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM,
@@ -50,7 +57,12 @@ def test_pemanggil_llm_tidak_pernah_menerima_segmen_metadata() -> None:
     metadata = SumberTiruan("vektor", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError):
         jalankan(
-            ambil_hibrida("kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[leksikal, metadata])
+            ambil_hibrida(
+                "kepala sekolah",
+                kredensial=PEMANGGIL_LLM,
+                sumber=[leksikal, metadata],
+                pemeringkat=PemeringkatTidakTersedia(),
+            )
         )
     assert metadata.dipanggil == 0
 
@@ -68,7 +80,10 @@ def test_sumber_yang_tidak_dijangkau_tidak_dijalankan_sama_sekali() -> None:
 
     hasil = jalankan(
         ambil_hibrida(
-            "kepala sekolah", kredensial=PEMANGGIL_LLM, sumber=[utama_a, utama_b, metadata]
+            "kepala sekolah",
+            kredensial=PEMANGGIL_LLM,
+            sumber=[utama_a, utama_b, metadata],
+            pemeringkat=PemeringkatTidakTersedia(),
         )
     )
 
@@ -89,7 +104,12 @@ def test_jalur_penjawaban_menjangkau_kedua_indeks() -> None:
     utama = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
     hasil = jalankan(
-        ambil_hibrida("kepala sekolah", kredensial=PENJAWABAN, sumber=[utama, metadata])
+        ambil_hibrida(
+            "kepala sekolah",
+            kredensial=PENJAWABAN,
+            sumber=[utama, metadata],
+            pemeringkat=PemeringkatTidakTersedia(),
+        )
     )
     assert metadata.dipanggil == 1
     assert {h.id_segmen for h in hasil.segmen} == {"SEG-A", "SEG-M"}
@@ -98,7 +118,14 @@ def test_jalur_penjawaban_menjangkau_kedua_indeks() -> None:
 def test_verifikasi_juga_menjangkau_kedua_indeks() -> None:
     utama = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
-    jalankan(ambil_hibrida("kepala sekolah", kredensial=VERIFIKASI, sumber=[utama, metadata]))
+    jalankan(
+        ambil_hibrida(
+            "kepala sekolah",
+            kredensial=VERIFIKASI,
+            sumber=[utama, metadata],
+            pemeringkat=PemeringkatTidakTersedia(),
+        )
+    )
     assert metadata.dipanggil == 1
 
 
@@ -110,7 +137,14 @@ def test_kredensial_diperiksa_sebelum_kueri_diproses() -> None:
     metadata_a = SumberTiruan("m1", {"SEG-M": 1.0}, indeks_tujuan=IndeksTujuan.METADATA)
     metadata_b = SumberTiruan("m2", {"SEG-N": 1.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError):
-        jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=[metadata_a, metadata_b]))
+        jalankan(
+            ambil_hibrida(
+                "kueri",
+                kredensial=PEMANGGIL_LLM,
+                sumber=[metadata_a, metadata_b],
+                pemeringkat=PemeringkatTidakTersedia(),
+            )
+        )
     assert metadata_a.dipanggil == 0
     assert metadata_b.dipanggil == 0
 
@@ -127,7 +161,14 @@ def test_satu_sumber_terjangkau_ditolak() -> None:
     utama = SumberTiruan("bm25", {"SEG-A": 3.0})
     metadata = SumberTiruan("bacaan", {"SEG-M": 9.0}, indeks_tujuan=IndeksTujuan.METADATA)
     with pytest.raises(ValueError, match="ADR-03"):
-        jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=[utama, metadata]))
+        jalankan(
+            ambil_hibrida(
+                "kueri",
+                kredensial=PEMANGGIL_LLM,
+                sumber=[utama, metadata],
+                pemeringkat=PemeringkatTidakTersedia(),
+            )
+        )
 
 
 # ---------------------------------------------------------------- pemangkasan
@@ -143,6 +184,7 @@ def test_paling_banyak_delapan_segmen_diteruskan() -> None:
             "kepala sekolah",
             kredensial=PEMANGGIL_LLM,
             sumber=[SumberTiruan("bm25", banyak), SumberTiruan("vektor", lain)],
+            pemeringkat=PemeringkatTidakTersedia(),
         )
     )
     assert len(hasil.segmen) == JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM
@@ -158,6 +200,7 @@ def test_setiap_sumber_diminta_dua_puluh_kandidat() -> None:
             "kueri",
             kredensial=PEMANGGIL_LLM,
             sumber=[sumber, SumberTiruan("vektor", {})],
+            pemeringkat=PemeringkatTidakTersedia(),
         )
     )
     asal = hasil.asal_dari("bm25")
@@ -169,7 +212,14 @@ def test_kandidat_lebih_sedikit_diteruskan_seluruhnya() -> None:
     """Bukan diisi sampai penuh. Mengisi dengan segmen berskor rendah memberi
     penyusun jawaban bahan tidak relevan, dan penilaian kecukupan kemudian
     menghitung bahan itu sebagai bukti."""
-    hasil = jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan())))
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=list(_pasangan()),
+            pemeringkat=PemeringkatTidakTersedia(),
+        )
+    )
     assert len(hasil.segmen) == 3
 
 
@@ -191,6 +241,7 @@ def test_versi_setiap_indeks_ikut_pada_hasil() -> None:
                 SumberTiruan("bm25", {"SEG-A": 1.0}, versi_indeks="leksikal-7"),
                 SumberTiruan("vektor", {"SEG-B": 1.0}, versi_indeks="vektor-3"),
             ],
+            pemeringkat=PemeringkatTidakTersedia(),
         )
     )
     assert [(a.nama_sumber, a.versi_indeks) for a in hasil.asal] == [
@@ -223,7 +274,14 @@ def test_pengambilan_tidak_menulis_apa_pun() -> None:
 
 
 def test_hasil_beku() -> None:
-    hasil = jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan())))
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=list(_pasangan()),
+            pemeringkat=PemeringkatTidakTersedia(),
+        )
+    )
     with pytest.raises(ValidationError):
         hasil.segmen = ()  # type: ignore[misc]
 
@@ -237,7 +295,14 @@ def test_asal_berupa_tuple_bukan_pemetaan() -> None:
     pengambilan yang asal-usulnya dapat disunting adalah hasil yang catatan
     percobaannya tidak membuktikan apa pun.
     """
-    hasil = jalankan(ambil_hibrida("kueri", kredensial=PEMANGGIL_LLM, sumber=list(_pasangan())))
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=list(_pasangan()),
+            pemeringkat=PemeringkatTidakTersedia(),
+        )
+    )
     assert isinstance(hasil.asal, tuple)
     assert hasil.asal_dari("tidak-ada") is None
 
@@ -245,5 +310,62 @@ def test_asal_berupa_tuple_bukan_pemetaan() -> None:
 def test_kueri_kosong_ditolak_sebelum_sumber_dijalankan() -> None:
     sumber = list(_pasangan())
     with pytest.raises(ValueError, match="kueri"):
-        jalankan(ambil_hibrida("   ", kredensial=PEMANGGIL_LLM, sumber=sumber))
+        jalankan(
+            ambil_hibrida(
+                "   ",
+                kredensial=PEMANGGIL_LLM,
+                sumber=sumber,
+                pemeringkat=PemeringkatTidakTersedia(),
+            )
+        )
     assert all(s.dipanggil == 0 for s in sumber)
+
+
+# ----------------------------------------------------------- R-05, BT-30
+
+
+def test_keterangan_tahap_lima_ikut_pada_hasil_pengambilan() -> None:
+    """**R-05.** Ketiadaan pemeringkat ulang terbaca dari hasil pengambilan,
+    bukan hanya dari dalam modul tahap 5."""
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=list(_pasangan()),
+            pemeringkat=PemeringkatTidakTersedia(),
+        )
+    )
+    assert isinstance(hasil.pemeringkatan, JalurMundurBT30)
+
+
+def test_pemeringkatan_berjalan_sebelum_pemangkasan() -> None:
+    """`docs/D07.md` Bagian 4 baris [5]: pemeringkatan ulang **lalu** 5-8
+    teratas.
+
+    Pemeringkat ulang yang berjalan sesudah pemangkasan hanya melihat delapan
+    segmen yang sudah dipilih penggabungan — segmen peringkat kesepuluh yang
+    seharusnya naik tidak pernah ditawarkan kepadanya. Uji ini menaikkan segmen
+    terakhir ke puncak; ia mustahil lulus bila urutannya terbalik.
+    """
+
+    class PemeringkatMembalik(Pemeringkat):
+        @property
+        def keterangan(self) -> Pemeringkatan:
+            return PemeringkatDipakai(nama_model="pembalik", versi_model="1.0")
+
+        async def urutkan(self, kueri, segmen):
+            return tuple(reversed(segmen))
+
+    sepuluh = {f"SEG-{i:02d}": float(20 - i) for i in range(10)}
+    hasil = jalankan(
+        ambil_hibrida(
+            "kueri",
+            kredensial=PEMANGGIL_LLM,
+            sumber=[SumberTiruan("bm25", sepuluh), SumberTiruan("vektor", sepuluh)],
+            pemeringkat=PemeringkatMembalik(),
+        )
+    )
+
+    assert len(hasil.segmen) == JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM
+    assert hasil.segmen[0].id_segmen == "SEG-09"
+    assert hasil.pemeringkatan == PemeringkatDipakai(nama_model="pembalik", versi_model="1.0")
