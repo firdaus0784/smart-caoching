@@ -80,7 +80,7 @@ def _isi_korpus(penyemat: PenyematTiruan) -> None:
             "-c",
             "INSERT INTO indeks_utama.segmen_teks "
             "(id_segmen, id_dokumen, teks, lisensi, anonimisasi_terverifikasi, "
-            "penanda_bagian, vektor) VALUES "
+            "penanda_bagian, vektor_sematan) VALUES "
             f"('{segmen.id_segmen}', '{segmen.id_dokumen}', '{segmen.teks}', "
             f"'{segmen.lisensi.value}', true, '{segmen.penanda_bagian}', '{nilai}'::vector)",
         )
@@ -244,7 +244,7 @@ def test_jumlah_tetap_terbawa_ketika_pencarian_tidak_menemukan_apa_pun() -> None
     indeks belum tersemat.
     """
     sumber = _sumber_terisi()
-    psql("smart_coaching", "-c", "UPDATE indeks_utama.segmen_teks SET vektor = NULL")
+    psql("smart_coaching", "-c", "UPDATE indeks_utama.segmen_teks SET vektor_sematan = NULL")
     hasil = jalankan(sumber.cari(KORPUS[0].teks, batas=10))
     assert hasil.peringkat == ()
     assert hasil.segmen_tanpa_vektor == len(KORPUS)

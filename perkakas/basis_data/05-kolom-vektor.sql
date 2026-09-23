@@ -69,7 +69,8 @@ CREATE TABLE IF NOT EXISTS indeks_utama.segmen_teks (
     lisensi                   text NOT NULL,
     anonimisasi_terverifikasi boolean NOT NULL,
     penanda_bagian            text NOT NULL,
-    vektor                    vector(:dimensi),
+    vektor_sematan            vector(:dimensi),
+    versi_model_sematan       text,
     diindeks_pada             timestamptz NOT NULL DEFAULT now()  -- KM-01: UTC
 );
 
@@ -80,7 +81,8 @@ CREATE TABLE IF NOT EXISTS indeks_metadata.segmen_teks (
     lisensi                   text NOT NULL,
     anonimisasi_terverifikasi boolean NOT NULL,
     penanda_bagian            text NOT NULL,
-    vektor                    vector(:dimensi),
+    vektor_sematan            vector(:dimensi),
+    versi_model_sematan       text,
     diindeks_pada             timestamptz NOT NULL DEFAULT now()
 );
 
@@ -91,7 +93,55 @@ CREATE TABLE IF NOT EXISTS indeks_metadata.segmen_teks (
 -- berlaku pada skema dan tabel, tidak pada nilai baris. Bentuk yang sama
 -- dengan `area_simpan` pada 04-tabel-dokumen.sql, dan alasan yang sejajar.
 
+-- Nama kedua kolom mengikuti `docs/D04.md` Bagian 7.2, yang menetapkannya
+-- sebelum proyek ini berjalan. Fitur 019 sempat menamainya `vektor` saja dan
+-- tidak pernah membuat `versi_model_sematan` sama sekali — tercatat TK-60,
+-- diluruskan pada T-1 fitur 026.
+--
+-- `versi_model_sematan` berupa kolom per baris, bukan tabel metadata
+-- tersendiri: indeks yang bercampur dua model terdeteksi dengan
+-- SELECT DISTINCT, dan kebenarannya tinggal bersama datanya. Tabel
+-- tersendiri dapat hanyut dari baris yang digambarkannya.
+--
 -- Vektor boleh NULL: segmen yang sudah terindeks leksikal tetapi belum
 -- disematkan adalah keadaan yang sah selama penyematan berjalan bertahap.
 -- Yang TIDAK sah adalah segmen semacam itu muncul sebagai kandidat, dan yang
 -- menjaganya kueri pada fitur ini — bukan batasan kolom.
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- Migrasi tabel yang SUDAH ADA — T-1 fitur 026
+--
+-- `CREATE TABLE IF NOT EXISTS` di atas tidak menyentuh tabel yang sudah ada.
+-- Pada basis data yang dibangun sebelum 23 September 2026, kolomnya masih
+-- bernama `vektor` dan `versi_model_sematan` belum ada — dan berkas ini akan
+-- **selesai dengan status 0 tanpa mengubah apa pun**. Bentuk kegagalan yang
+-- sama dengan `\quit` pada T-9 fitur 019: penyiapan yang tidak mengerjakan
+-- apa-apa terbaca berhasil.
+--
+-- Ketiga pernyataan di bawah aman dijalankan berulang.
+-- ─────────────────────────────────────────────────────────────────────────
+
+DO $$
+DECLARE
+  s text;
+BEGIN
+  FOREACH s IN ARRAY ARRAY['indeks_utama', 'indeks_metadata'] LOOP
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = s AND table_name = 'segmen_teks' AND column_name = 'vektor'
+    ) AND NOT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = s AND table_name = 'segmen_teks' AND column_name = 'vektor_sematan'
+    ) THEN
+      EXECUTE format('ALTER TABLE %I.segmen_teks RENAME COLUMN vektor TO vektor_sematan', s);
+    END IF;
+
+    -- Kolom lama yang tersisa berdampingan dengan yang baru dibuang. Dua
+    -- kolom yang menyimpan hal yang sama akan berbeda isinya pada hari salah
+    -- satunya lupa ditulis, dan yang lupa ditulis adalah yang tidak dibaca uji.
+    EXECUTE format('ALTER TABLE %I.segmen_teks DROP COLUMN IF EXISTS vektor', s);
+    EXECUTE format(
+      'ALTER TABLE %I.segmen_teks ADD COLUMN IF NOT EXISTS versi_model_sematan text', s
+    );
+  END LOOP;
+END $$;

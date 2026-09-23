@@ -82,7 +82,11 @@ def test_penyemat_berdimensi_lain_ditolak(tujuan: IndeksTujuan) -> None:
 def test_kolom_yang_tidak_ada_menyebut_berkas_migrasinya() -> None:
     """Galat pemasangan yang tidak menyebut cara memperbaikinya memaksa yang
     membacanya mencari — di lingkungan sungguhan, saat sesuatu sedang rusak."""
-    psql("smart_coaching", "-c", "ALTER TABLE indeks_utama.segmen_teks DROP COLUMN vektor")
+    psql(
+        "smart_coaching",
+        "-c",
+        "ALTER TABLE indeks_utama.segmen_teks DROP COLUMN vektor_sematan",
+    )
     try:
         with pytest.raises(GalatDimensiVektor, match="05-kolom-vektor"):
             jalankan(dimensi_kolom(SambunganNyata(), IndeksTujuan.UTAMA))
@@ -90,7 +94,7 @@ def test_kolom_yang_tidak_ada_menyebut_berkas_migrasinya() -> None:
         psql(
             "smart_coaching",
             "-c",
-            f"ALTER TABLE indeks_utama.segmen_teks ADD COLUMN vektor vector({DIMENSI_UJI})",
+            f"ALTER TABLE indeks_utama.segmen_teks ADD COLUMN vektor_sematan vector({DIMENSI_UJI})",
         )
 
 
@@ -153,7 +157,7 @@ def test_kolom_tabel_selaras_dengan_segmen_terindeks(skema: str) -> None:
     bidang = set(SegmenTerindeks.model_fields)
 
     assert bidang - kolom == {"indeks_tujuan"}, f"bidang tanpa kolom: {sorted(bidang - kolom)}"
-    assert kolom - bidang == {"vektor", "diindeks_pada"}, (
+    assert kolom - bidang == {"vektor_sematan", "versi_model_sematan", "diindeks_pada"}, (
         f"kolom tanpa bidang: {sorted(kolom - bidang)}"
     )
 

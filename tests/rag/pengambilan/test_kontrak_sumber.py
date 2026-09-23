@@ -132,7 +132,7 @@ def _susun_vektor(indeks_tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> SumberKan
             "-c",
             f"INSERT INTO {skema}.{TABEL} "
             "(id_segmen, id_dokumen, teks, lisensi, anonimisasi_terverifikasi, "
-            "penanda_bagian, vektor) VALUES "
+            "penanda_bagian, vektor_sematan) VALUES "
             f"('{segmen.id_segmen}', '{segmen.id_dokumen}', '{segmen.teks}', "
             f"'{segmen.lisensi.value}', true, '{segmen.penanda_bagian}', '{nilai}'::vector)",
         )

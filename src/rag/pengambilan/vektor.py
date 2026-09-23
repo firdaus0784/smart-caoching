@@ -57,7 +57,15 @@ yang sama dengan `SKEMA` pada `src/penyimpanan/postgres.py`.
 """
 
 TABEL: Final = "segmen_teks"
-KOLOM_VEKTOR: Final = "vektor"
+KOLOM_VEKTOR_SEMATAN: Final = "vektor_sematan"
+"""Nama kolom vektor — `docs/D04.md` Bagian 7.2.
+
+Fitur 019 menamainya `vektor`; D-04 sudah menetapkan `vektor_sematan`
+sebelum proyek ini berjalan. Diluruskan pada T-1 fitur 026 (TK-60).
+"""
+
+KOLOM_VERSI_SEMATAN: Final = "versi_model_sematan"
+"""Versi model yang menghasilkan vektor pada baris itu — D-04 Bagian 7.2."""
 
 
 class GalatDimensiVektor(Exception):
@@ -106,12 +114,12 @@ async def dimensi_kolom(sambungan: SambunganAktif, indeks_tujuan: IndeksTujuan) 
         "WHERE n.nspname = $1 AND c.relname = $2 AND a.attname = $3",
         SKEMA[indeks_tujuan],
         TABEL,
-        KOLOM_VEKTOR,
+        KOLOM_VEKTOR_SEMATAN,
     )
     return _bilangan(
         baris,
         "dimensi",
-        f"kolom {KOLOM_VEKTOR!r} tidak ada pada {SKEMA[indeks_tujuan]}.{TABEL} — "
+        f"kolom {KOLOM_VEKTOR_SEMATAN!r} tidak ada pada {SKEMA[indeks_tujuan]}.{TABEL} — "
         "jalankan perkakas/basis_data/05-kolom-vektor.sql lebih dulu",
     )
 
@@ -129,7 +137,7 @@ async def pastikan_dimensi_cocok(
     if dari_kolom != penyemat.dimensi:
         raise GalatDimensiVektor(
             f"penyemat {penyemat.versi.nama_model!r} berdimensi {penyemat.dimensi}, "
-            f"sedangkan kolom {SKEMA[indeks_tujuan]}.{TABEL}.{KOLOM_VEKTOR} "
+            f"sedangkan kolom {SKEMA[indeks_tujuan]}.{TABEL}.{KOLOM_VEKTOR_SEMATAN} "
             f"berdimensi {dari_kolom}. Jalankan ulang "
             f"perkakas/basis_data/05-kolom-vektor.sql dengan -v dimensi="
             f"{penyemat.dimensi}, atau pasang penyemat yang sesuai"
@@ -216,10 +224,10 @@ class SumberVektor(SumberKandidat):
         vektor = (await self._penyemat.sematkan([kueri]))[0]
         tanpa_vektor = await self._jumlah_tanpa_vektor()
         baris = await self._sambungan.fetch(
-            f"SELECT id_segmen, 2 - (vektor <=> $1::vector) AS skor "
+            f"SELECT id_segmen, 2 - ({KOLOM_VEKTOR_SEMATAN} <=> $1::vector) AS skor "
             f"FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
-            f"WHERE {KOLOM_VEKTOR} IS NOT NULL "
-            f"ORDER BY vektor <=> $1::vector "
+            f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NOT NULL "
+            f"ORDER BY {KOLOM_VEKTOR_SEMATAN} <=> $1::vector "
             f"LIMIT $2",
             _untai_vektor(vektor),
             batas,
@@ -248,7 +256,7 @@ class SumberVektor(SumberKandidat):
         """
         baris = await self._sambungan.fetchrow(
             f"SELECT count(*) AS jumlah FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
-            f"WHERE {KOLOM_VEKTOR} IS NULL"
+            f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NULL"
         )
         return _bilangan(
             baris,

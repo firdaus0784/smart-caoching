@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Menunggu Gerbang 3** |
+| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 selesai; enam tugas tersisa |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -21,19 +21,25 @@ Mendahului seluruhnya. Ia menyentuh fitur 019 yang **sudah lolos Gerbang 4**,
 dan menggabungkannya dengan kode baru membuat kegagalan tidak dapat
 ditelusuri ke perubahan yang mana.
 
-- [ ] Uji: sapuan menemukan `segmen_teks.vektor_sematan` dan
+- [x] Uji: sapuan menemukan `segmen_teks.vektor_sematan` dan
       `segmen_teks.versi_model_sematan` ada pada kedua skema
-- [ ] Uji: **nama sumber `"vektor"` masih utuh pada 26 tempat** — sapuan
+- [x] Uji: **nama sumber `"vektor"` masih utuh pada 26 tempat** — sapuan
       penjaga atas jebakan (a) `plan.md` Bagian 6
-- [ ] Uji: tidak ada untai SQL yang menyebut nama kolom di luar tetapannya —
+- [x] Uji: tidak ada untai SQL yang menyebut nama kolom di luar tetapannya —
       penjaga atas jebakan (b); dua untai hari ini melewatinya
-- [ ] `05-kolom-vektor.sql`: `vektor` → `vektor_sematan`; tambah
+- [x] `05-kolom-vektor.sql`: `vektor` → `vektor_sematan`; tambah
       `versi_model_sematan text` pada kedua skema
-- [ ] `vektor.py`: tetapan `KOLOM_VEKTOR` → `KOLOM_VEKTOR_SEMATAN`; dua untai
+- [x] **Migrasi tabel yang sudah ada** — `CREATE TABLE IF NOT EXISTS` tidak
+      menyentuhnya, sehingga berkas selesai dengan status 0 tanpa mengubah apa
+      pun. Ditemukan saat T-1 dijalankan, bukan saat direncanakan
+- [x] `vektor.py`: tetapan `KOLOM_VEKTOR` → `KOLOM_VEKTOR_SEMATAN`; dua untai
       harfiah disatukan ke tetapan
-- [ ] Dua berkas uji menyesuaikan daftar kolom pada INSERT
-- [ ] Rangkaian uji lulus dengan **jumlah sama persis** sebelum dan sesudah —
-      tugas ini mengubah nama, bukan perilaku
+- [x] Empat berkas uji menyesuaikan nama kolom — dua daftar INSERT, satu
+      `ALTER TABLE` pada uji dimensi, satu `UPDATE` pada uji jumlah
+- [x] **Tidak ada uji lama bertambah maupun hilang**: 2.108 → 2.115, tepat
+      tujuh uji penjaga baru yang tugas ini sendiri tuntut. Kalimat semula
+      berbunyi "jumlah sama persis", yang mustahil dipenuhi bersamaan dengan
+      tiga uji penjaga — dikoreksi, dan koreksinya dicatat pada KB-112
 
 > Bila `SumberVektor` ternyata perlu berubah lebih dari namanya: **berhenti**.
 > Itu berarti abstraksinya bocor, dan perubahannya melewati Gerbang 2
