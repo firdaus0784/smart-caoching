@@ -43,9 +43,10 @@ import pytest
 from src.kamus.segmen import IndeksTujuan
 from src.llm.sematan import PenyematTiruan
 from src.penyimpanan.indeks import SegmenTerindeks, StatusLisensi
+from src.penyimpanan.skema_indeks import SKEMA_INDEKS, TABEL_SEGMEN
 from src.rag.pengambilan.bm25 import SumberBM25, bangun_indeks
 from src.rag.pengambilan.kandidat import SumberKandidat
-from src.rag.pengambilan.vektor import SKEMA, TABEL, SumberVektor
+from src.rag.pengambilan.vektor import SumberVektor
 from tests.konftes_asinkron import jalankan
 from tests.peladen import DIMENSI_UJI, HOST, PORT, psql, siapkan
 from tests.rag.pengambilan.sumber_tiruan import SumberTiruan
@@ -122,15 +123,15 @@ def _susun_vektor(indeks_tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> SumberKan
     tabel yang sama, dan urutan uji bukan hal yang boleh diandalkan.
     """
     penyemat = PenyematTiruan(dimensi=DIMENSI_UJI)
-    skema = SKEMA[indeks_tujuan]
-    psql("smart_coaching", "-c", f"DELETE FROM {skema}.{TABEL}")
+    skema = SKEMA_INDEKS[indeks_tujuan]
+    psql("smart_coaching", "-c", f"DELETE FROM {skema}.{TABEL_SEGMEN}")
     for segmen in KORPUS:
         vektor = jalankan(penyemat.sematkan([segmen.teks]))[0]
         nilai = "[" + ",".join(repr(float(n)) for n in vektor) + "]"
         psql(
             "smart_coaching",
             "-c",
-            f"INSERT INTO {skema}.{TABEL} "
+            f"INSERT INTO {skema}.{TABEL_SEGMEN} "
             "(id_segmen, id_dokumen, teks, lisensi, anonimisasi_terverifikasi, "
             "penanda_bagian, vektor_sematan) VALUES "
             f"('{segmen.id_segmen}', '{segmen.id_dokumen}', '{segmen.teks}', "

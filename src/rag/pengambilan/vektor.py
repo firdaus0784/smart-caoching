@@ -31,117 +31,24 @@ saat dijalankan justru agar tidak ada nilai bawaan yang diam-diam terpakai.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from typing import Final
-
 from src.kamus.segmen import IndeksTujuan
 from src.llm.sematan import Penyemat
 from src.penyimpanan.sambungan import SambunganAktif
+from src.penyimpanan.skema_indeks import (
+    KOLOM_VEKTOR_SEMATAN,
+    SKEMA_INDEKS,
+    TABEL_SEGMEN,
+    GalatDimensiVektor,
+    bilangan_dari_baris,
+    pastikan_dimensi_cocok,
+    untai_vektor,
+)
 from src.rag.pengambilan.kandidat import (
     HasilSumber,
     Kandidat,
     SumberKandidat,
     urutkan_kandidat,
 )
-
-SKEMA: Final[dict[IndeksTujuan, str]] = {
-    IndeksTujuan.UTAMA: "indeks_utama",
-    IndeksTujuan.METADATA: "indeks_metadata",
-}
-"""Nama skema per indeks tujuan — `perkakas/basis_data/02-skema-dan-hak.sql`.
-
-Bukan dirakit dari `indeks_tujuan.value` saat jalan. Nama skema yang dirakit
-dari nilai enum ikut berubah diam-diam ketika enum berubah, dan yang berubah
-bersamanya adalah kueri yang sudah berjalan di lingkungan sungguhan. Bentuk
-yang sama dengan `SKEMA` pada `src/penyimpanan/postgres.py`.
-"""
-
-TABEL: Final = "segmen_teks"
-KOLOM_VEKTOR_SEMATAN: Final = "vektor_sematan"
-"""Nama kolom vektor — `docs/D04.md` Bagian 7.2.
-
-Fitur 019 menamainya `vektor`; D-04 sudah menetapkan `vektor_sematan`
-sebelum proyek ini berjalan. Diluruskan pada T-1 fitur 026 (TK-60).
-"""
-
-KOLOM_VERSI_SEMATAN: Final = "versi_model_sematan"
-"""Versi model yang menghasilkan vektor pada baris itu — D-04 Bagian 7.2."""
-
-
-class GalatDimensiVektor(Exception):
-    """Dimensi penyemat tidak cocok dengan dimensi kolom.
-
-    Bukan galat yang menghadapi pengguna: ia menghadapi orang yang memasang
-    sistem, dan karena itu pesannya justru wajib menyebut angka dan nama.
-    """
-
-
-def _bilangan(baris: Mapping[str, object] | None, kolom: str, bila_kosong: str) -> int:
-    """Baca satu bilangan dari baris peladen, atau tolak dengan sebab.
-
-    **Satu penjagaan, dipakai setiap kueri yang mengembalikan bilangan.**
-    Sebelumnya tiap kueri membawa penjagaannya sendiri, dan dua salinan aturan
-    yang sama akan berselisih pada hari salah satunya disunting — yang
-    disunting bukan yang diperiksa.
-
-    Cabang "bukan bilangan" tidak dapat dipicu PostgreSQL 16 mana pun; ia
-    menjaga **bentuk** keluaran, bukan nilainya, dan diuji lewat sambungan
-    buatan. Penjagaan yang tidak pernah dijalankan adalah penjagaan yang belum
-    diketahui bekerja atau tidak.
-    """
-    if baris is None:
-        raise GalatDimensiVektor(bila_kosong)
-    nilai = baris[kolom]
-    if not isinstance(nilai, int):
-        raise GalatDimensiVektor(
-            f"peladen mengembalikan {kolom} bertipe {type(nilai).__name__}, "
-            "bukan bilangan — bentuk keluarannya berubah dan kueri ini perlu ditinjau"
-        )
-    return nilai
-
-
-async def dimensi_kolom(sambungan: SambunganAktif, indeks_tujuan: IndeksTujuan) -> int:
-    """Dimensi kolom vektor sebagaimana tercatat peladen.
-
-    Dibaca dari katalog, bukan dari tetapan mana pun pada kode. `atttypmod`
-    menyimpan dimensi `vector(N)` apa adanya.
-    """
-    baris = await sambungan.fetchrow(
-        "SELECT a.atttypmod AS dimensi "
-        "FROM pg_attribute a "
-        "JOIN pg_class c ON c.oid = a.attrelid "
-        "JOIN pg_namespace n ON n.oid = c.relnamespace "
-        "WHERE n.nspname = $1 AND c.relname = $2 AND a.attname = $3",
-        SKEMA[indeks_tujuan],
-        TABEL,
-        KOLOM_VEKTOR_SEMATAN,
-    )
-    return _bilangan(
-        baris,
-        "dimensi",
-        f"kolom {KOLOM_VEKTOR_SEMATAN!r} tidak ada pada {SKEMA[indeks_tujuan]}.{TABEL} — "
-        "jalankan perkakas/basis_data/05-kolom-vektor.sql lebih dulu",
-    )
-
-
-async def pastikan_dimensi_cocok(
-    sambungan: SambunganAktif, penyemat: Penyemat, indeks_tujuan: IndeksTujuan
-) -> None:
-    """Tolak ketidakcocokan **saat penyusunan** — R-08.
-
-    Pesannya menyebut kedua angka dan nama penyematnya. Galat pemasangan yang
-    hanya menyebut satu sisi memaksa yang membacanya menebak sisi mana yang
-    keliru, dan tebakan itu dilakukan di lingkungan sungguhan.
-    """
-    dari_kolom = await dimensi_kolom(sambungan, indeks_tujuan)
-    if dari_kolom != penyemat.dimensi:
-        raise GalatDimensiVektor(
-            f"penyemat {penyemat.versi.nama_model!r} berdimensi {penyemat.dimensi}, "
-            f"sedangkan kolom {SKEMA[indeks_tujuan]}.{TABEL}.{KOLOM_VEKTOR_SEMATAN} "
-            f"berdimensi {dari_kolom}. Jalankan ulang "
-            f"perkakas/basis_data/05-kolom-vektor.sql dengan -v dimensi="
-            f"{penyemat.dimensi}, atau pasang penyemat yang sesuai"
-        )
 
 
 class SumberVektor(SumberKandidat):
@@ -197,7 +104,14 @@ class SumberVektor(SumberKandidat):
         versi_indeks: str,
     ) -> SumberVektor:
         """Susun sesudah dimensi terbukti cocok — R-08."""
-        await pastikan_dimensi_cocok(sambungan, penyemat, indeks_tujuan)
+        # Angka dan nama diserahkan sebagai nilai, bukan objek `Penyemat`:
+        # `src/penyimpanan/` lapisan di bawah dan tidak memanggil `llm`.
+        await pastikan_dimensi_cocok(
+            sambungan,
+            dimensi_model=penyemat.dimensi,
+            nama_model=penyemat.versi.nama_model,
+            indeks_tujuan=indeks_tujuan,
+        )
         return cls(
             sambungan=sambungan,
             penyemat=penyemat,
@@ -225,11 +139,11 @@ class SumberVektor(SumberKandidat):
         tanpa_vektor = await self._jumlah_tanpa_vektor()
         baris = await self._sambungan.fetch(
             f"SELECT id_segmen, 2 - ({KOLOM_VEKTOR_SEMATAN} <=> $1::vector) AS skor "
-            f"FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
+            f"FROM {SKEMA_INDEKS[self._indeks_tujuan]}.{TABEL_SEGMEN} "
             f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NOT NULL "
             f"ORDER BY {KOLOM_VEKTOR_SEMATAN} <=> $1::vector "
             f"LIMIT $2",
-            _untai_vektor(vektor),
+            untai_vektor(vektor),
             batas,
         )
         return HasilSumber(
@@ -255,13 +169,13 @@ class SumberVektor(SumberKandidat):
         selisih sesaat tidak mengubah jawaban yang diberikan.
         """
         baris = await self._sambungan.fetchrow(
-            f"SELECT count(*) AS jumlah FROM {SKEMA[self._indeks_tujuan]}.{TABEL} "
+            f"SELECT count(*) AS jumlah FROM {SKEMA_INDEKS[self._indeks_tujuan]}.{TABEL_SEGMEN} "
             f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NULL"
         )
-        return _bilangan(
+        return bilangan_dari_baris(
             baris,
             "jumlah",
-            f"tabel {SKEMA[self._indeks_tujuan]}.{TABEL} tidak dapat dihitung",
+            f"tabel {SKEMA_INDEKS[self._indeks_tujuan]}.{TABEL_SEGMEN} tidak dapat dihitung",
         )
 
 
@@ -278,13 +192,3 @@ def _angka(nilai: object) -> float:
             f"peladen mengembalikan skor bertipe {type(nilai).__name__}, bukan bilangan"
         )
     return float(nilai)
-
-
-def _untai_vektor(vektor: Sequence[float]) -> str:
-    """Bentuk untai yang `pgvector` terima — `[0.1,0.2,...]`.
-
-    Dikirim sebagai untai lalu dicor `::vector` pada kueri, bukan lewat tipe
-    `asyncpg` khusus. Itu menghindari pendaftaran tipe yang harus diulang pada
-    setiap sambungan baru, dan sambungan di sini sengaja berumur pendek.
-    """
-    return "[" + ",".join(repr(float(n)) for n in vektor) + "]"

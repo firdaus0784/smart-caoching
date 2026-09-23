@@ -10,7 +10,8 @@ from __future__ import annotations
 import pytest
 from src.kamus.segmen import IndeksTujuan
 from src.llm.sematan import PenyematTiruan
-from src.rag.pengambilan.vektor import GalatDimensiVektor, SumberVektor
+from src.penyimpanan.skema_indeks import GalatDimensiVektor
+from src.rag.pengambilan.vektor import SumberVektor
 from tests.konftes_asinkron import jalankan
 from tests.peladen import DIMENSI_UJI, psql, siapkan
 from tests.rag.pengambilan.sumber_tiruan import SumberTiruan

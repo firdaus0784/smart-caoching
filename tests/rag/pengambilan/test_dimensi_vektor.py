@@ -16,8 +16,7 @@ from __future__ import annotations
 
 import pytest
 from src.kamus.segmen import IndeksTujuan
-from src.llm.sematan import PenyematTiruan
-from src.rag.pengambilan.vektor import (
+from src.penyimpanan.skema_indeks import (
     GalatDimensiVektor,
     dimensi_kolom,
     pastikan_dimensi_cocok,
@@ -59,7 +58,14 @@ def test_dimensi_dibaca_dari_katalog_peladen(tujuan: IndeksTujuan) -> None:
 
 @pytest.mark.parametrize("tujuan", list(IndeksTujuan))
 def test_penyemat_sepadan_diterima(tujuan: IndeksTujuan) -> None:
-    jalankan(pastikan_dimensi_cocok(SambunganNyata(), PenyematTiruan(dimensi=DIMENSI_UJI), tujuan))
+    jalankan(
+        pastikan_dimensi_cocok(
+            SambunganNyata(),
+            dimensi_model=DIMENSI_UJI,
+            nama_model="penyemat-tiruan",
+            indeks_tujuan=tujuan,
+        )
+    )
 
 
 # ── ketidakcocokan ditolak saat penyusunan ───────────────────────────
@@ -70,7 +76,10 @@ def test_penyemat_berdimensi_lain_ditolak(tujuan: IndeksTujuan) -> None:
     with pytest.raises(GalatDimensiVektor) as galat:
         jalankan(
             pastikan_dimensi_cocok(
-                SambunganNyata(), PenyematTiruan(dimensi=DIMENSI_UJI + 1), tujuan
+                SambunganNyata(),
+                dimensi_model=DIMENSI_UJI + 1,
+                nama_model="penyemat-tiruan",
+                indeks_tujuan=tujuan,
             )
         )
     pesan = str(galat.value)
