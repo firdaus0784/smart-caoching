@@ -5,7 +5,7 @@
 | Kebutuhan | R-06 fitur 019; C-09, C-02, C-03, C-12; ADR-05, ADR-12 |
 | Dokumen terkait | D-07 Bagian 3.3 dan 4.4, D-10 Bagian 3 dan 4, D-14 Bagian 5 |
 | Temuan asal | **TK-57** `docs/D00.md` Bagian 7.12 |
-| Status | **Menunggu Gerbang 1** |
+| Status | **Nol pertanyaan terbuka** — menunggu putusan Gerbang 1 |
 
 ## Tujuan
 
@@ -94,6 +94,7 @@ tertahan atau tidak. Ia **tidak** tertahan.
 | R-08 | Menjalankan ulang jalur ini atas indeks yang sudah tersemat penuh **HARUS** aman dan **TIDAK BOLEH** menulis ulang vektor yang sudah ada, kecuali diminta tegas |
 | R-09 | **JIKA** versi penyemat berbeda dari versi yang tercatat bagi indeks itu, **MAKA** sistem **HARUS** menolak penyematan sebagian, sebab indeks bercampur dua model tidak dapat dibandingkan jaraknya |
 | R-10 | Fitur ini **TIDAK BOLEH** mengubah `SumberVektor`, `ambil_hibrida`, maupun bentuk `HasilSumber` |
+| R-11 | Nama bidang **HARUS** mengikuti `docs/D04.md` Bagian 7.2: `segmen_teks.vektor_sematan` dan `segmen_teks.versi_model_sematan` |
 
 ## Keadaan yang wajib ditangani
 
@@ -107,34 +108,76 @@ tertahan atau tidak. Ia **tidak** tertahan.
 | Kredensial tidak menjangkau indeks sasaran | Ditolak peladen, bukan disaring kode |
 | Segmen bertext kosong | Dilewati dan dihitung, bukan disemat menjadi vektor nol |
 
-## Pertanyaan terbuka
+## Keputusan Gerbang 1
 
-Ditulis di sini alih-alih ditebak. **Fitur dengan pertanyaan terbuka tidak
-diserahkan ke agen** — ketiganya menuntut putusan Gerbang 1.
+### K-1 · Jalur ini tinggal di `src/ingest/`
 
-**P-1 · Di mana jalur ini tinggal?** Tiga kemungkinan, dan masing-masing
-membawa akibat arah impor yang berbeda:
-(a) `src/rag/indeks/` — dekat dengan yang membacanya, tetapi memberi `rag`
-hak tulis, dan C-17 melarang akses tulis **dari jalur penjawaban**; jalur ini
-bukan jalur penjawaban, tetapi kedekatannya mengundang keliru baca.
-(b) `src/penyimpanan/` — dekat dengan yang menulisnya, dan kredensialnya
-sudah di sana; tetapi ia lapisan di bawah dan tidak boleh memanggil `llm`.
-(c) `src/ingest/` — ia yang sudah memanggil `llm` dan `nlp`, dan penyematan
-adalah kelanjutan alami penerimaan korpus. **Anjuran saya: (c)**, sebab
-tepinya sudah ada dan tidak satu pun aturan arah perlu ditambah.
+**Diputus pemegang Gerbang 1–4, 23 September 2026.**
 
-**P-2 · Apa yang menjadi "versi indeks"?** `HasilSumber.versi_indeks` sudah
-dipakai sejak fitur 007 dan hari ini diserahkan pemanggil sebagai untai.
-Sesudah fitur ini, versi itu **dihasilkan** oleh pembangunan indeks. Yang
-perlu diputus: bentuknya — cap waktu, cacah naik, atau ringkasan isi — dan
-siapa yang menyimpannya. Untai yang dikarang pemanggil dan untai yang
-dihasilkan pembangunan tidak boleh sama bentuknya, sebab keduanya akan
-tertukar.
+Tepi `ingest → llm` dan `ingest → nlp` sudah ada dan sudah tertulis pada
+`AGENTS.md`, sehingga tidak satu pun aturan arah perlu ditambah. Dua
+kemungkinan lain ditolak: `src/rag/` akan memberi hak tulis kepada lapisan
+yang C-17 justru batasi, dan `src/penyimpanan/` lapisan di bawah yang tidak
+boleh memanggil `llm`.
 
-**P-3 · R-09 menuntut versi penyemat tersimpan per indeks. Di mana?**
-Kolom pada tabel indeks akan berulang di tiap baris; tabel metadata indeks
-tersendiri belum ada pada D-14 Bagian 5, dan menambahnya menyentuh kamus
-data. Perlu putusan, dan bila jawabannya tabel baru maka D-14 ikut berubah.
+### K-2 · Versi indeks berupa cap waktu UTC pembangunan, bukan cacah naik
+
+**Diputus agen.** D-07 Bagian 3.3 menuntut *"setiap pembangunan ulang
+menghasilkan nomor versi"*, dan RI-11 menuntut penyimpanan sementara
+kedaluwarsa ketika indeks dibangun ulang. Keduanya menuntut satu sifat:
+**nilainya berubah pada tiap pembangunan, dan tidak pernah terpakai ulang.**
+
+Cacah naik menuntut keadaan tersimpan, dan keadaan tersimpan dapat hilang
+atau disetel ulang. Cacah yang tersetel ulang **memakai kembali nomor versi
+yang sudah pernah dipakai** — tanpa galat, dan dua percobaan berbeda
+kemudian tercatat pada versi indeks yang sama. Itu kegagalan yang lebih buruk
+daripada tidak punya versi sama sekali.
+
+Cap waktu tidak menuntut keadaan tersimpan dan tidak dapat terpakai ulang.
+Bentuknya `<indeks>-<YYYYMMDDTHHMMSSZ>`, UTC mengikuti KM-01.
+
+**Yang membuat keputusan ini salah:** bila dua pembangunan indeks dapat
+selesai dalam detik yang sama. Bila itu terjadi, bentuknya diperhalus, bukan
+diganti menjadi cacah.
+
+Bentuk ini juga **berbeda dari untai yang diserahkan pemanggil** hari ini
+(`uji-1`, `leksikal-7`), sehingga keduanya tidak dapat tertukar saat dibaca
+pada catatan percobaan D-10 L1.
+
+### K-3 · Versi penyemat disimpan sebagai kolom — dan itu bukan keputusan baru
+
+**Sudah ditetapkan `docs/D04.md` Bagian 7.2 sebelum proyek ini dimulai.**
+Baris `segmen_teks` di sana berbunyi:
+
+> `id, id_dokumen, urutan, teks, vektor_sematan, versi_model_sematan`
+
+Pertanyaan P-3 pada rancangan spec ini **keliru diajukan sebagai pertanyaan
+terbuka**. Jawabannya sudah ada, dan yang kurang adalah pembacaan dokumen
+pemiliknya. Dicatat apa adanya alih-alih diperbaiki diam-diam.
+
+Kolom per baris juga bentuk yang lebih kuat bagi R-09: indeks yang bercampur
+dua model terdeteksi dengan `SELECT DISTINCT versi_model_sematan`, dan
+kebenarannya tinggal **bersama datanya**. Tabel metadata tersendiri dapat
+hanyut dari baris yang digambarkannya, dan proyek ini sudah mencatat bentuk
+hanyut itu berkali-kali.
+
+### K-4 · Fitur 019 menyimpang dari D-04, dan fitur ini yang meluruskannya
+
+Ditemukan saat menjawab K-3. `perkakas/basis_data/05-kolom-vektor.sql`
+menamai kolomnya **`vektor`**, sedangkan D-04 Bagian 7.2 menetapkan
+**`vektor_sematan`**; dan **`versi_model_sematan` tidak pernah dibuat sama
+sekali**. Kedua nama itu tidak muncul di satu baris kode pun — hanya pada
+D-04 baris 178.
+
+`AGENTS.md` menetapkan nama bidang mengikuti `docs/D14.md` Bagian 5. D-14
+tidak menamai kedua bidang ini, dan D-04 Bagian 7.2 yang menamainya —
+sehingga D-04 yang berwenang di sini. Tercatat sebagai **TK-60**.
+
+Meluruskannya tugas fitur ini, bukan tambalan pada fitur 019 yang sudah lolos
+Gerbang 4. `plan.md` yang menetapkan caranya: penggantian nama kolom
+menyentuh `05-kolom-vektor.sql`, `SumberVektor`, dan berkas uji, dan
+**besarnya perubahan itu wajib dinyatakan di muka** — `plan.md` fitur 019
+dua kali menyatakan blast radius di bawah kenyataan (KB-094, KB-100).
 
 ## Ketertelusuran
 
@@ -147,6 +190,7 @@ data. Perlu putusan, dan bila jawabannya tabel baru maka D-14 ikut berubah.
 | R-07 | C-03, ADR-06 |
 | R-09 | D-07 Bagian 3.3 — jarak hanya bermakna di dalam satu ruang sematan |
 | R-10 | ADR-12: abstraksi diuji pelaksana, bukan diubah olehnya |
+| R-11 | D-04 Bagian 7.2; TK-60 |
 
 ## Kriteria penerimaan
 
@@ -158,4 +202,4 @@ data. Perlu putusan, dan bila jawabannya tabel baru maka D-14 ikut berubah.
 - [ ] `make check` lulus enam gerbang; cakupan tidak turun
 - [ ] `HasilSumber.versi_penyemat` docstring diperbarui: setengah R-06 yang
       dinyatakan terbuka di sana kini tertutup
-- [ ] TK-57 berpindah ke **Selesai** pada `docs/D00.md` Bagian 7.12
+- [ ] TK-57 dan **TK-60** berpindah ke **Selesai** pada `docs/D00.md` Bagian 7.12
