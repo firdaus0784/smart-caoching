@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 dan T-2 selesai; lima tugas tersisa |
+| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-3 selesai; **T-4 tertahan TK-61** |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -77,13 +77,20 @@ jalurnya ada.
 
 Murni bentuk; tanpa peladen.
 
-- [ ] Uji: versi indeks berbentuk `<indeks>-<YYYYMMDDTHHMMSSZ>`, dinilai atas
+- [x] Uji: versi indeks berbentuk `<indeks>-<YYYYMMDDTHHMMSSZ>`, dinilai atas
       **nilainya** dengan jam tetap yang disuntikkan — bukan atas polanya
-- [ ] Uji: `datetime` tanpa zona waktu ditolak (KM-01)
-- [ ] Uji: dua pembangunan pada detik berbeda menghasilkan versi berbeda
-- [ ] Uji: `HasilPenyematan` beku, `extra="forbid"`, ketiga bidang hitungan
-      tidak boleh negatif
-- [ ] `HasilPenyematan` dan penyusun versi indeks
+- [x] Uji: `datetime` tanpa zona waktu ditolak; waktu berzona lain **diubah**
+      ke UTC, tidak ditolak (KM-01)
+- [x] Uji: dua pembangunan pada detik berbeda menghasilkan versi berbeda, dan
+      dua indeks pada saat yang sama tidak bertabrakan
+- [x] Uji: `HasilPenyematan` beku, `extra="forbid"`, ketiga bidang hitungan
+      tidak boleh negatif, seluruh bidang wajib dengan **sebab galat diperiksa**
+- [x] `HasilPenyematan` dan `susun_versi_indeks`
+- [x] Empat mutasi dijalankan, **empat menyala**
+
+> **T-4 tertahan TK-61.** Nama skema indeks tinggal di
+> `src/rag/pengambilan/vektor.py`, dan `src/ingest/` tidak boleh mengimpor
+> `rag`. Ditemukan saat T-3 memeriksa impor, sebelum T-4 menabraknya.
 
 ---
 

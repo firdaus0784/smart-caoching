@@ -1812,3 +1812,24 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memakai `tambah_baris` telanjang bagi L2 — ditolak; `tambah_percobaan` menerima `Versi` bertipe justru agar bidangnya tidak luput, dan L2 menuntut enam keterangan yang sama mudahnya terlupa. Membuat bentuk bagi kesepuluh artefak D-10 sekaligus — ditolak; bentuk yang dibuat sebelum ada yang mengisinya adalah bentuk yang ditebak, dan tebakan pada catatan penelitian berakhir pada kolom yang tidak pernah diisi. |
 | Dampak | Berkas baru `src/logbook/artefak.py` dan `tests/logbook/test_artefak.py` (16 uji); `penulis.py` bertambah satu fungsi. Tidak ada modul lain berubah. `make check` lulus enam gerbang. Fitur 026: **2 dari 7 tugas**. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-2 |
+
+---
+
+## KB-114 · T-3 fitur 026 selesai; dan TK-61 ditemukan sebelum T-4 menabraknya
+
+| | |
+|---|---|
+| Tanggal | 2026-09-23 |
+| Konteks | T-3: `HasilPenyematan` dan penyusun versi indeks. Murni bentuk, tanpa peladen. |
+| Keputusan | **T-3 selesai.** `src/ingest/penyematan.py` memuat `susun_versi_indeks` dan `HasilPenyematan`. Empat mutasi dijalankan, **empat menyala**. Satu temuan didaftarkan: **TK-61**, yang **menghentikan T-4**. |
+| Versi indeks diuji atas **nilainya**, bukan polanya | Uji yang mencocokkan pola membuktikan pola — ia lulus juga pada penyusun yang selalu mengembalikan tanggal yang sama. Jam disuntikkan, nilainya dibandingkan harfiah: `utama-20260923T073000Z`. |
+| Waktu berzona lain **diubah**, bukan ditolak | KM-01 menuntut penyimpanan dalam UTC; ia tidak menuntut pemanggil sudah mengubahnya. Jam 14.30 WIB wajib menghasilkan `073000Z`, bukan `143000Z` — yang kedua menyatakan hal yang tidak benar dengan bentuk yang tampak benar. Waktu **tanpa** zona tetap ditolak: ia tidak dapat diubah tanpa menebak, dan tebakan itu tidak pernah terlihat pada hasilnya. |
+| Nama indeks pada versi dibaca dari enum, bukan dari nama skema | Yang disusun label percobaan, bukan pengenal tabel. Menyalin nama skema ke sini akan membuat dua tempat menyatakan hal yang sama — larangan yang docstring `SKEMA` sendiri nyatakan. Hasilnya `utama-…`, bukan `indeks_utama-…`. |
+| Pelajaran T-2 dipakai kembali pada hari yang sama | Uji "bidang wajib" di sini **langsung** memeriksa sebab galatnya — bertipe `missing` dengan `loc` tepat — alih-alih `pytest.raises` telanjang. KB-113 baru ditulis beberapa jam sebelumnya, dan bentuk yang sama akan diam dengan cara yang sama. |
+| **TK-61 — ditemukan dengan memeriksa impor, bukan dengan menabraknya** | `SKEMA`, pemetaan `IndeksTujuan` ke nama skema basis data, tinggal pada `src/rag/pengambilan/vektor.py`. T-4 menuntutnya bagi penulisan, dan `baca_arah()` dijalankan hari ini menegaskan `ingest -> ['llm', 'nlp']` dengan `rag` **bukan** lapisan terbuka. Jalur penyematan karena itu **tidak dapat** mengimpornya. |
+| Menyalinnya ditolak oleh docstringnya sendiri | *"Bukan dirakit dari `indeks_tujuan.value` saat jalan. Nama skema yang dirakit … akan berbeda di salah satunya."* Dua salinan `SKEMA` adalah persis bentuk yang kalimat itu larang. |
+| Anjuran, dan mengapa ia kecil | Pindahkan `SKEMA` indeks ke `src/penyimpanan/` — lapisan **terbuka**, dan tempat `SKEMA` bagi `Area` sudah berada sejak fitur 024. Yang kedua ada di tempat yang benar; yang pertama tidak, dan ketidaksesuaiannya baru terasa ketika ada yang menulis. Nol tepi arah baru bagi siapa pun; `rag` mengimpornya dari sana. |
+| Mengapa tidak dikerjakan sendiri | Ia menyentuh `src/rag/pengambilan/vektor.py`, fitur 019 yang **sudah lolos Gerbang 4**, dan `plan.md` fitur 026 tidak memperkirakannya. `plan.md` Bagian 9 menetapkan bahwa perubahan yang keluar dari perkiraannya berhenti dan diajukan, bukan dikerjakan sambil jalan. T-1 menyentuh fitur 019 **dengan izin tertulis** pada `tasks.md`; ini tidak. |
+| Alternatif | Memakai `indeks_tujuan.value` sebagai nama skema di `ingest` — ditolak; itu merakit nama skema saat jalan, yang docstring `SKEMA` tolak tegas. Memindahkan seluruh `SumberVektor` ke `ingest` — ditolak; ia pembaca, dan C-17 menaruh pembacaan pada jalur penjawaban. Menunda T-4 dan mengerjakan T-5 lebih dulu — ditolak; T-5 sifat atas dua penjalanan jalur yang belum ada. |
+| Dampak | Berkas baru `src/ingest/penyematan.py` dan `tests/ingest/test_penyematan_bentuk.py` (17 uji). `docs/D00.md` 2.54 → 2.55 dengan TK-61. `make check` lulus enam gerbang. Fitur 026: **3 dari 7 tugas**, dan **T-4 tertahan sampai TK-61 diputus**. |
+| Pemutus | T-3 oleh agen di dalam batas `tasks.md`. **TK-61 menunggu pemegang gerbang.** |
