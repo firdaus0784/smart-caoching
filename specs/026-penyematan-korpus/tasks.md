@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-4 selesai; tiga tugas tersisa |
+| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-5 selesai; dua tugas tersisa |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -128,14 +128,18 @@ Inti fitur. Menuntut peladen.
 Dipisah dari T-4 dengan sengaja: keduanya sifat atas **dua** penjalanan, dan
 uji atas satu penjalanan tidak dapat menyatakannya.
 
-- [ ] Uji: penjalanan kedua atas indeks penuh menulis **nol** baris dan tidak
+- [x] Uji: penjalanan kedua atas indeks penuh menulis **nol** baris dan tidak
       menyentuh vektor yang sudah ada
-- [ ] Uji: penjalanan kedua dengan penyemat **berbeda versi** ditolak, dan
+- [x] Uji: penjalanan kedua dengan penyemat **berbeda versi** ditolak, dan
       pesannya menyebut **kedua** versi
-- [ ] Uji: penolakan itu terjadi **sebelum** satu baris pun ditulis — indeks
+- [x] Uji: penolakan itu terjadi **sebelum** satu baris pun ditulis — indeks
       tidak boleh tertinggal separuh bercampur
-- [ ] Uji: indeks yang separuh tersemat dilanjutkan oleh penyemat **sama
+- [x] Uji: indeks yang separuh tersemat dilanjutkan oleh penyemat **sama
       versi** tanpa menulis ulang yang sudah ada
+- [x] **Ditemukan saat menulis tugas ini:** dua model berbeda dengan untai
+      versi yang sama (`model-a/1.0`, `model-b/1.0`) tercatat identik, sebab
+      T-4 hanya menulis `versi_model`. Kini ditulis `nama/versi`
+- [x] Empat mutasi dijalankan, **empat menyala**
 
 > R-09 tidak menghasilkan galat bila dilanggar. Ia menghasilkan peringkat
 > yang masuk akal dan salah — jarak hanya bermakna di dalam satu ruang

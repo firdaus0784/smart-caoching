@@ -1872,3 +1872,23 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menjadikan `tulis_indeks` berbawaan kosong agar penyusun lain tidak perlu berubah — ditolak; uraian bidang `indeks` sudah menolaknya sejak fitur 006, dan bidang berbawaan pada permukaan C-17 adalah persis bentuk yang kalimat itu cegah. Memberi `PENYEMATAN` hak tulis `Area.KORPUS` "untuk berjaga" — ditolak; hak yang tidak diminta adalah hak yang kelak dipakai. Menyemat kedua indeks dalam satu panggilan — ditolak; R-06 menuntut keduanya terpisah dengan kredensial masing-masing, dan satu panggilan yang menyentuh keduanya membuat penolakan salah satunya tidak dapat diuji. |
 | Dampak | `src/penyimpanan/kredensial.py` bertambah bidang dan metode; `kredensial_baku.py` bertambah `PENYEMATAN`; `src/ingest/gerbang.py` dua kredensial menyesuaikan; lima berkas uji menyesuaikan. `src/ingest/penyematan.py` bertambah `SEGMEN_PER_KUMPULAN` dan `sematkan_indeks`. Berkas uji baru `test_kredensial_tulis_indeks.py` (11 uji) dan `test_penyematan_jalur.py` (7 uji). `docs/D00.md` 2.56 → 2.57, TK-62 **Selesai**. `make check` lulus enam gerbang. Fitur 026: **4 dari 7 tugas**. |
 | Pemutus | TK-62 oleh pemegang Gerbang 1–4; T-4 oleh agen di dalam batas `tasks.md` |
+
+---
+
+## KB-117 · T-5 fitur 026 — R-09, dan satu lubang di T-4 yang baru terlihat dari R-09
+
+| | |
+|---|---|
+| Tanggal | 2026-09-23 |
+| Konteks | T-5: sifat atas **dua** penjalanan — penjalanan ulang aman (R-08) dan penolakan indeks bercampur dua model (R-09). Dipisah dari T-4 dengan sengaja, sebab uji atas satu penjalanan tidak dapat menyatakan keduanya. |
+| Keputusan | **T-5 selesai.** Penjagaan ketiga `plan.md` Bagian 3 ditambahkan pada `sematkan_indeks`: versi penyemat dicocokkan dengan isi indeks **sebelum** segmen dibaca. Empat mutasi dijalankan, **empat menyala**. |
+| R-08 sudah terpenuhi oleh T-4, dan itu diuji alih-alih dipercaya | `WHERE vektor_sematan IS NULL` membuat penjalanan ulang aman tanpa penanda apa pun. Dua uji R-08 lulus pada putaran pertama — tetapi mutasi M-4, yang membuang klausa itu, **menyala**, sehingga lulusnya bukan kebetulan. |
+| **Lubang di T-4 yang baru terlihat dari R-09** | T-4 menulis `versi_model` saja ke kolom `versi_model_sematan`. Akibatnya `model-a/1.0` dan `model-b/1.0` tercatat **sama persis**, dan penjagaan R-09 akan meloloskan penggantian model selama untai versinya kebetulan sama. Ia bukan kasus buatan: "1.0" adalah versi pertama hampir setiap model. |
+| Mengapa T-4 tidak menangkapnya | Uji T-4 memeriksa bahwa **sesuatu** tertulis pada kolom versi, dan memang tertulis. Tidak ada uji T-4 yang menuntut dua model berbeda dapat **dibedakan** dari kolom itu, sebab pembedaan itu baru bermakna ketika ada yang membandingkannya — yaitu R-09. Sifat sebuah kolom kadang baru teruji oleh pembacanya, bukan oleh penulisnya. |
+| Yang menutupnya | `penanda_model(versi)` menulis `nama/versi`. Garis miring dipilih karena tidak muncul pada nama model yang lazim maupun untai versi — penanda yang dapat dibaca dua cara bukan penanda. Mutasi M-3b, yang mengembalikan penanda ke versi saja, **menyala**. |
+| Nama kolom tidak diubah | D-04 Bagian 7.2 menamainya `versi_model_sematan`, dan isinya kini lebih setia pada namanya daripada sebelumnya: *versi* sebuah *model* sematan, bukan untai versi yang terlepas dari modelnya. |
+| Penolakan sebelum menulis, diuji terpisah | M-3c memindahkan pemeriksaan versi ke sesudah penulisan. Hasilnya tetap galat — tetapi segmen baru sudah tertulis, dan indeks tertinggal **separuh bercampur**, persis keadaan yang R-09 cegah. Uji yang menuntut segmen baru tetap `NULL` sesudah penolakan menangkapnya. |
+| Pesan penolakan menyebut kedua versi, dan arah perbaikannya | *"…bangun ulang seluruh indeks dengan satu model, bukan melanjutkannya."* Galat pemasangan yang hanya menyebut satu sisi memaksa pembacanya menebak, dan tebakan itu dilakukan di lingkungan sungguhan. |
+| Alternatif | Menambah kolom `nama_model_sematan` terpisah — ditolak; D-04 menetapkan satu kolom, dan dua kolom yang harus dibaca bersama adalah dua kolom yang kelak ditulis sendiri-sendiri. Mengizinkan penyematan sebagian dengan model baru lalu menandai baris lama "usang" — ditolak; indeks yang memuat dua ruang sematan sekaligus menghasilkan jarak yang tidak dapat dibandingkan, dan penanda usang tidak mengubah itu. |
+| Dampak | `src/ingest/penyematan.py` bertambah `penanda_model` dan penjagaan ketiga; lima uji baru pada `test_penyematan_jalur.py`; dua nilai harapan uji T-4 menyesuaikan penanda baru. `make check` lulus enam gerbang. Fitur 026: **5 dari 7 tugas**. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-5 |

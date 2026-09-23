@@ -149,7 +149,7 @@ def test_segmen_tersemat_beserta_versi_modelnya() -> None:
     assert hasil.versi_penyemat == PenyematTiruan(dimensi=DIMENSI_UJI).versi
     for id_segmen in ("SEG-A", "SEG-B"):
         assert _kolom(id_segmen, KOLOM_VEKTOR_SEMATAN) != ""
-        assert _kolom(id_segmen, KOLOM_VERSI_SEMATAN) == "hash-sha256-1"
+        assert _kolom(id_segmen, KOLOM_VERSI_SEMATAN) == "penyemat-tiruan/hash-sha256-1"
 
 
 def test_segmen_bertext_kosong_dilewati_dan_dihitung() -> None:
@@ -213,4 +213,100 @@ def test_jalur_memakai_penyemat_yang_diserahkan_pemanggil() -> None:
     hasil = _semat(penyemat=PenyematLain())
 
     assert hasil.versi_penyemat.nama_model == "penyemat-lain"
-    assert _kolom("SEG-A", KOLOM_VERSI_SEMATAN) == "9.9"
+    assert _kolom("SEG-A", KOLOM_VERSI_SEMATAN) == "penyemat-lain/9.9"
+
+
+# ── T-5: dua penjalanan — R-08, R-09 ────────────────────────────────
+
+
+class PenyematBerversi(Penyemat):
+    """Penyemat yang nama dan versinya ditentukan uji, dimensinya cocok."""
+
+    def __init__(self, nama: str, versi: str) -> None:
+        self._versi = VersiPenyemat(nama_model=nama, versi_model=versi)
+
+    @property
+    def versi(self) -> VersiPenyemat:
+        return self._versi
+
+    @property
+    def dimensi(self) -> int:
+        return DIMENSI_UJI
+
+    async def sematkan(self, teks):  # type: ignore[no-untyped-def]
+        return [[0.25] * DIMENSI_UJI for _ in teks]
+
+
+def test_penjalanan_kedua_atas_indeks_penuh_tidak_menulis_apa_pun() -> None:
+    """**R-08.** Aman dijalankan ulang, tanpa penanda apa pun selain `NULL`."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"), ("SEG-B", "supervisi"))
+    _semat()
+    sebelum = _kolom("SEG-A", KOLOM_VEKTOR_SEMATAN)
+
+    kedua = _semat()
+    assert kedua.tersemat == 0
+    assert kedua.tersisa_tanpa_vektor == 0
+    assert _kolom("SEG-A", KOLOM_VEKTOR_SEMATAN) == sebelum, "vektor lama tertimpa"
+
+
+def test_indeks_separuh_dilanjutkan_tanpa_menulis_ulang_yang_sudah_ada() -> None:
+    """**R-08.** Segmen yang bertambah sesudah penjalanan pertama disemat;
+    yang sudah tersemat tidak disentuh."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"))
+    _semat()
+    lama = _kolom("SEG-A", KOLOM_VEKTOR_SEMATAN)
+
+    _tanam(("SEG-B", "segmen yang datang belakangan"))
+    kedua = _semat()
+    assert kedua.tersemat == 1
+    assert _kolom("SEG-A", KOLOM_VEKTOR_SEMATAN) == lama
+    assert _kolom("SEG-B", KOLOM_VEKTOR_SEMATAN) != ""
+
+
+def test_penyemat_berbeda_versi_ditolak_dan_pesannya_menyebut_keduanya() -> None:
+    """**R-09.** Indeks bercampur dua model **tidak menghasilkan galat** — ia
+    menghasilkan peringkat yang masuk akal dan salah, sebab jarak hanya
+    bermakna di dalam satu ruang sematan. Karena itu penolakannya kebutuhan,
+    bukan kehati-hatian."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"))
+    _semat(penyemat=PenyematBerversi("model-a", "1.0"))
+
+    _tanam(("SEG-B", "segmen baru"))
+    with pytest.raises(ValueError) as galat:
+        _semat(penyemat=PenyematBerversi("model-a", "2.0"))
+    pesan = str(galat.value)
+    assert "model-a/1.0" in pesan and "model-a/2.0" in pesan, pesan
+
+
+def test_penolakan_percampuran_terjadi_sebelum_satu_baris_pun_ditulis() -> None:
+    """Indeks tidak boleh tertinggal separuh bercampur. Penolakan yang
+    terjadi sesudah sebagian ditulis meninggalkan persis keadaan yang R-09
+    cegah."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"))
+    _semat(penyemat=PenyematBerversi("model-a", "1.0"))
+    _tanam(("SEG-B", "segmen baru"))
+
+    with pytest.raises(ValueError):
+        _semat(penyemat=PenyematBerversi("model-b", "1.0"))
+    assert _kolom("SEG-B", KOLOM_VEKTOR_SEMATAN) == "", "segmen tertulis sebelum ditolak"
+
+
+def test_dua_model_berbeda_dengan_untai_versi_sama_tetap_terbedakan() -> None:
+    """**Ditemukan saat menulis T-5.** T-4 menyimpan `versi_model` saja pada
+    `versi_model_sematan`, sehingga `model-a/1.0` dan `model-b/1.0` tercatat
+    sama persis — dan R-09 tidak dapat membedakannya.
+
+    Model yang berbeda dengan untai versi yang kebetulan sama bukan kasus
+    buatan: "1.0" adalah versi pertama hampir setiap model."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"))
+    _semat(penyemat=PenyematBerversi("model-a", "1.0"))
+    assert _kolom("SEG-A", KOLOM_VERSI_SEMATAN) == "model-a/1.0"
+
+    _tanam(("SEG-B", "segmen baru"))
+    with pytest.raises(ValueError, match="model-b/1.0"):
+        _semat(penyemat=PenyematBerversi("model-b", "1.0"))

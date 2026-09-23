@@ -120,6 +120,21 @@ class HasilPenyematan(BaseModel):
     """Segmen yang masih belum tersemat sesudah penjalanan ini selesai."""
 
 
+def penanda_model(versi: VersiPenyemat) -> str:
+    """Nilai yang ditulis ke `versi_model_sematan` — nama **dan** versi.
+
+    **Ditemukan saat menulis T-5.** T-4 semula menulis `versi_model` saja,
+    sehingga `model-a/1.0` dan `model-b/1.0` tercatat sama persis dan R-09
+    tidak dapat membedakannya. Model yang berbeda dengan untai versi yang
+    kebetulan sama bukan kasus buatan: "1.0" adalah versi pertama hampir
+    setiap model.
+
+    Garis miring dipilih karena tidak muncul pada nama model yang lazim
+    maupun pada untai versi; penanda yang dapat dibaca dua cara bukan penanda.
+    """
+    return f"{versi.nama_model}/{versi.versi_model}"
+
+
 SEGMEN_PER_KUMPULAN: Final = 64
 """Berapa segmen disemat sekali jalan.
 
@@ -172,6 +187,25 @@ async def sematkan_indeks(
     )
 
     skema = SKEMA_INDEKS[indeks_tujuan]
+    penanda = penanda_model(versi)
+
+    # Penjagaan 3 — R-09. Indeks bercampur dua model tidak menghasilkan galat;
+    # ia menghasilkan peringkat yang masuk akal dan salah, sebab jarak hanya
+    # bermakna di dalam satu ruang sematan. Diperiksa **sebelum** membaca
+    # segmen, agar penolakan tidak pernah meninggalkan indeks separuh bercampur.
+    sudah_ada = await sambungan.fetch(
+        f"SELECT DISTINCT {KOLOM_VERSI_SEMATAN} AS penanda FROM {skema}.{TABEL_SEGMEN} "
+        f"WHERE {KOLOM_VERSI_SEMATAN} IS NOT NULL"
+    )
+    lain = sorted({str(b["penanda"]) for b in sudah_ada} - {penanda})
+    if lain:
+        raise ValueError(
+            f"indeks {skema} sudah disemat dengan {', '.join(lain)}, sedangkan "
+            f"penyemat yang diserahkan {penanda}. Indeks bercampur dua model "
+            "menghasilkan jarak yang tidak dapat dibandingkan (R-09) — bangun ulang "
+            "seluruh indeks dengan satu model, bukan melanjutkannya"
+        )
+
     baris = await sambungan.fetch(
         f"SELECT id_segmen, teks FROM {skema}.{TABEL_SEGMEN} "
         f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NULL ORDER BY id_segmen"
@@ -195,7 +229,7 @@ async def sematkan_indeks(
                 f"SET {KOLOM_VEKTOR_SEMATAN} = $1::vector, {KOLOM_VERSI_SEMATAN} = $2 "
                 "WHERE id_segmen = $3",
                 untai_vektor(satu),
-                versi.versi_model,
+                penanda,
                 id_segmen,
             )
             tersemat += 1
