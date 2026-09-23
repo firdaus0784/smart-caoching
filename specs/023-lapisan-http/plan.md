@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | `specs/023-lapisan-http/spec.md` |
-| Status | **Seluruh 19 tugas selesai — menunggu Gerbang 4.** Gerbang 2 lolos KB-070 |
+| Status | **Gerbang 4 lolos** — 23 September 2026 (KB-106). Gerbang 2 lolos KB-070 |
 | Ketergantungan baru | **Nol.** `fastapi` sudah masuk titik nol pada KB-067 |
 
 ## 1. Letak modul

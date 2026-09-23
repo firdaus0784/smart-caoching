@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Plan | `specs/023-lapisan-http/plan.md` |
-| Status | **Seluruh 19 tugas selesai — menunggu Gerbang 4.** Gerbang 3 lolos KB-070 |
+| Status | **Gerbang 4 lolos** — 23 September 2026. Sembilan belas tugas selesai (KB-106); Gerbang 3 lolos KB-070 |
 Satu tugas satu commit. Uji ditulis sebelum implementasi.
 
 ## Fase A — kerangka aplikasi dan kendali peran

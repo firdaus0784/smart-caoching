@@ -275,3 +275,45 @@ Perpindahan ini karena itu bukan "C-13 kini terjaga penuh", melainkan **C-13
 berpindah dari tidak diperiksa sama sekali menjadi diperiksa pada permukaan
 yang sudah ada**. Bagian layarnya tetap menunggu fitur 013, dan itu tercatat
 pada uraian pemeriksanya.
+
+---
+
+### Fitur 023 dan 019 — 23 September 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — angka yang sama dengan akhir fitur 024 pada 20 September, dan sama
+dengan akhir fitur 022 pada 13 September. Tidak ada pasal berpindah.
+
+Itu keadaan yang sah, dan berkas ini menuntutnya dinyatakan alih-alih
+dilewatkan: C-01 satu-satunya yang tersisa, dan tidak satu pun dari ketiga
+fitur itu menyentuh apa yang C-01 tunggu.
+
+**Tiga fitur berturut-turut berakhir tanpa catatan di sini.** Fitur 023
+(Gerbang 3, 10 September), 024 (Gerbang 4, 20 September), dan 019 (tugas
+selesai 21 September) seluruhnya lewat tanpa baris pada berkas ini, padahal
+kepalanya menyatakan ia diisi "pada akhir sebuah fitur". Ketiganya dicatat
+sekarang, terlambat, dengan keterlambatannya dinyatakan. Catatan yang hanya
+ditulis ketika tagihannya menyusut berhenti menjadi tagihan dan menjadi
+daftar kemenangan.
+
+#### C-01 ditinjau, dan alasannya masih berlaku
+
+Alasan tunggu berbunyi `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Ditinjau hari ini terhadap keadaan sesungguhnya:
+
+| Klausa | Keadaan 23 September 2026 | Masih berlaku? |
+|---|---|---|
+| menunggu fitur 020 | Belum memiliki `spec.md` sama sekali | Ya |
+| menuntut model sematan | Antarmuka `Penyemat` **sudah ada** (fitur 019 T-3), pelaksana tiruan ada; **pelaksana sungguhan dan bobotnya belum** | Ya, tetapi klausanya kini kurang tepat |
+| menuntut BT-29 | Fitur 025 belum dimulai; *gold set* BT-35 belum disusun | Ya |
+
+Klausa kedua yang perlu diperhatikan pada peninjauan berikutnya. Hari ini
+"model sematan" berarti dua hal yang berbeda nasibnya: **antarmukanya sudah
+berdiri, bobotnya belum diunduh.** Selama keduanya disebut satu nama, selesainya
+yang pertama akan terbaca seolah menutup keduanya — dan itu bentuk yang sama
+dengan tiga kekeliruan yang berkas ini sudah catat.
+
+Alasannya **tidak** saya ubah pada `daftar_pasal.py`: ia masih benar, dan
+mengubah untai alasan tanpa pasalnya berpindah adalah menyentuh gerbang tanpa
+gerbang berpindah. Yang dituntut berkas ini adalah peninjauan, dan peninjauan
+itu ada di atas.

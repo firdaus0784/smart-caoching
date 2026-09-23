@@ -5,7 +5,7 @@
 | Spec | Gerbang 1 lolos 20 September 2026 |
 | Plan | Gerbang 2 lolos 20 September 2026 |
 | Gerbang 3 | Lolos 20 September 2026 |
-| Status | **Sembilan dari sembilan tugas selesai — menunggu Gerbang 4** |
+| Status | **Gerbang 4 lolos** — 23 September 2026. Sembilan dari sembilan tugas selesai (KB-106) |
 | Kebutuhan | ADR-03 sisi semantik, ADR-05, ADR-12; BT-30; C-02, C-08, C-09, C-12 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum

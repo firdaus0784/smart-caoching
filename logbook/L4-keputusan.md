@@ -1658,3 +1658,22 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Melaporkan kedua keadaan pada percakapan saja tanpa mendaftarkan TK-59 — ditolak; laporan percakapan hilang, dan temuan ini persis jenis yang hilang selama enam bulan. Membiarkan TK-37 tetap "Selesai" — ditolak; ia menyatakan utang lunas yang tidak lunas, dan itu laporan palsu dalam bentuk paling tenang. |
 | Dampak | `docs/D00.md` 2.50 → 2.51, Bagian 7.12 bertambah TK-59, status TK-37 diajukan untuk ditinjau. Tidak ada kode berubah. `make check` lulus enam gerbang. **Yang menunggu putusan manusia:** Gerbang 4 fitur 019; Gerbang 4 fitur 023; TK-57; TK-59 beserta peninjauan TK-37; bentuk putaran ontologi berikutnya (KB-075). |
 | Pemutus | Agen untuk pendaftaran temuan. Seluruh perbaikannya menunggu pemegang gerbang |
+
+---
+
+## KB-106 · Gerbang 4 fitur 019 dan 023 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-09-23 |
+| Konteks | Pemegang Gerbang 1–4 meratifikasi Gerbang 4 bagi dua fitur sekaligus: **019** sumber vektor dan pemeringkat ulang, serta **023** lapisan HTTP. Fitur 023 telah menunggu ratifikasi sejak 10 September. |
+| Keputusan | **Gerbang 4 fitur 019 dan 023 lolos.** Keduanya dinyatakan selesai; baris status pada `plan.md` dan `tasks.md` masing-masing disesuaikan. **Dua puluh dari dua puluh lima fitur** kini lolos Gerbang 4. |
+| Keadaan yang diverifikasi sebelum dicatat | `make check` lulus enam gerbang pada commit yang memuat ratifikasi ini; `make compliance` **19 lulus, 0 gagal, 1 belum**; `periksa_status_gerbang` bersih. Ratifikasi dicatat atas keadaan yang diperiksa hari itu, bukan atas ingatan tentang keadaan sepekan lalu. |
+| Fitur 019 — yang dibawanya | Sisi semantik pengambilan hibrida berdiri: `Penyemat` abstrak beserta tiruan deterministik, `SumberVektor` sebagai pelaksana ketiga kontrak `SumberKandidat`, pencocokan dimensi saat penyusunan, jumlah segmen belum tersemat dibawa keluar, dan jalur mundur BT-30 yang **menyatakan dirinya** pada keluaran. Delapan mutasi `plan.md` Bagian 6.3 dijalankan; dua lubang nyata ditemukan dan ditutup sebelum seluruhnya menyala. |
+| Fitur 023 — yang dibawanya | Adaptor rute D-14 Bagian 3.2 di atas isi rute fitur 021: penentu identitas sebagai `Protocol`, gerbang peran pada setiap penangan, `docs_url` dan `openapi_url` dimatikan, dua rute percakapan. Delapan mutasi `plan.md` Bagian 7 dijalankan, seluruhnya menyala. |
+| Tagihan pasal tidak menyusut, dan itu dicatat | C-01 tetap satu-satunya yang `BELUM-DAPAT-DIPERIKSA`. Tidak satu pun dari kedua fitur menyentuh apa yang ditunggunya. Alasan tunggunya ditinjau pada `logbook/L8` dan **masih berlaku** — dengan satu catatan: klausa "menuntut model sematan" kini kurang tepat, sebab antarmukanya sudah berdiri sedangkan bobotnya belum diunduh, dan dua hal berbeda nasib yang disebut satu nama adalah bentuk kekeliruan yang L8 sudah catat tiga kali. |
+| Tiga fitur berakhir tanpa catatan L8, dicatat terlambat | Fitur 023, 024, dan 019 seluruhnya lewat tanpa baris pada `logbook/L8`, padahal kepalanya menyatakan ia diisi pada akhir tiap fitur. Ketiganya dicatat sekarang dengan keterlambatannya dinyatakan. Catatan yang hanya ditulis ketika tagihannya menyusut berhenti menjadi tagihan dan menjadi daftar kemenangan. |
+| Yang berubah pada keadaan proyek | Lima fitur tersisa: **013, 017, 018, 020, 025** — seluruhnya tertahan masukan dari luar, bukan oleh pekerjaan pemrograman. `perkakas/jalankan_lokal.py` belum dapat dihapus: `AGENTS.md` mensyaratkan 019, 020, **dan** 024 selesai, dan 020 belum dimulai. Dua dari tiga syarat kini terpenuhi. |
+| Alternatif | Mencatat ratifikasi tanpa menjalankan ulang `make check` lebih dulu — ditolak; ratifikasi adalah pernyataan tentang keadaan, dan pernyataan yang tidak diperiksa pada saat dinyatakan adalah pernyataan tentang ingatan. Melewatkan catatan L8 karena tagihannya tidak berubah — ditolak; justru tidak berubahnya yang wajib terbaca, dan berkas itu menyatakan pertambahan sebagai temuan. |
+| Dampak | Empat baris status pada `specs/019-*` dan `specs/023-*` disesuaikan; `logbook/L8` bertambah satu catatan beserta peninjauan C-01. Tidak ada kode berubah. **Yang masih menunggu putusan manusia:** TK-57, TK-59 beserta peninjauan TK-37, dan bentuk putaran ontologi berikutnya (KB-075). |
+| Pemutus | Pemegang Gerbang 1–4, 23 September 2026 |
