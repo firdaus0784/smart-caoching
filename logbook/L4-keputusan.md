@@ -1756,3 +1756,21 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis jalur penyematan lebih dulu lalu mengganti nama kolom belakangan — ditolak; kode baru akan ditulis atas nama lama lalu ikut diganti, sehingga satu tugas mengubah dua hal. Memakai `tambah_baris` telanjang bagi L2 — ditolak; `tambah_percobaan` menerima `Versi` bertipe justru agar bidangnya tidak luput karena lupa, dan L2 menuntut lima keterangan yang sama mudahnya terlupa. Menyatukan T-4 dan T-5 — ditolak; R-08 dan R-09 sifat atas **dua** penjalanan, dan uji atas satu penjalanan tidak dapat menyatakannya. |
 | Dampak | Berkas baru `specs/026-penyematan-korpus/plan.md`; `spec.md` berpindah ke Gerbang 1 lolos. Tidak ada kode ditulis, tidak ada ketergantungan berubah. `make check` lulus enam gerbang. **Menunggu Gerbang 2.** |
 | Pemutus | Gerbang 1 oleh pemegang Gerbang 1–4, 23 September 2026. Isi `plan.md` oleh agen; **Gerbang 2 menunggu manusia** |
+
+---
+
+## KB-111 · Gerbang 2 fitur 026 lolos; `tasks.md` tujuh tugas disusun
+
+| | |
+|---|---|
+| Tanggal | 2026-09-23 |
+| Konteks | Pesan sebelumnya menutup dengan kalimat tegas: *"Kalau disetujui, saya lanjut ke `tasks.md` (Gerbang 3)"*, beserta tiga hal yang layak diperiksa sebelum menyetujui. Pemegang Gerbang 1–4 menjawab **"lanjutkan"**. |
+| Keputusan | **Gerbang 2 fitur 026 lolos.** `tasks.md` disusun dengan tujuh tugas dan diajukan ke Gerbang 3. Tidak ada kode ditulis. |
+| **Dasar putusan dicatat apa adanya, sebab kata yang dipakai satu kata** | "Lanjutkan" menjawab pertanyaan bersyarat yang menyebut persetujuan sebagai syaratnya, sehingga dibaca sebagai persetujuan. Ini **berbeda** dari "lanjutkan gerbang 1" pada KB-109, yang memerintahkan pekerjaan gerbang dikerjakan dan bukan mengetuk palunya — di sana tidak ada pertanyaan bersyarat yang dijawab. Dasarnya ditulis di sini agar pembaca berikutnya dapat menilai sendiri, dan agar pemegang gerbang dapat membantahnya dengan satu kata bila bacaan ini keliru. |
+| Pemeriksa TK-58 menangkap kekeliruan saya sendiri, hari kedua ia ada | `tasks.md` ditulis menyatakan Gerbang 2 lolos sementara `plan.md` masih berbunyi "Menunggu Gerbang 2". `make check` merah pada V-01 **dan** V-03 dengan pesan yang menyebut persis keadaannya. Pemeriksa yang ditulis kemarin bagi kekeliruan orang lain menangkap kekeliruan penulisnya sendiri pada hari berikutnya — itu ukuran bahwa ia menjaga sesuatu, bukan menghias laporan. |
+| Bentuk `tasks.md` berubah dari fitur 019 | Fitur 019 memakai uraian prosa tanpa kotak centang; fitur ini memakai **kotak centang**, sebagaimana fitur 001 dan 023. Alasannya bukan selera: `periksa_status_gerbang` membaca kotak centang sebagai **sumber kebenaran ketiga** (KB-104), dan `tasks.md` tanpa kotak centang tidak terjangkau olehnya. Fitur 019 karena itu tidak terjaga pada sumbu tersebut, dan ketiadaan itu dinyatakan di sini alih-alih diperbaiki surut. |
+| T-1 memuat dua uji yang menjaga jebakan, bukan menjaga fitur | Sapuan yang menuntut nama sumber `"vektor"` **masih utuh pada 26 tempat**, dan sapuan yang menolak untai SQL menyebut nama kolom di luar tetapannya. Keduanya menjaga cara penggantian dilakukan, bukan perilaku sistem — dan keduanya ada justru karena pengukuran `plan.md` menemukan dua jebakan yang tidak terlihat dari membaca. |
+| T-1 juga menuntut jumlah uji sama persis sebelum dan sesudah | Bentuk yang sama dengan T-2 fitur 024: tugas yang mengubah **nama** wajib membuktikan ia tidak mengubah **perilaku**, dan jumlah uji yang bergeser adalah tanda bahwa sesuatu yang lain ikut berubah. |
+| Alternatif | Menulis `tasks.md` dengan status "Menunggu Gerbang 2 dan Gerbang 3" agar tidak perlu menafsirkan "lanjutkan" — ditolak; itu memindahkan keraguan ke dalam dokumen yang akan dibaca berbulan kemudian, sementara menuliskan dasar putusan di sini menempatkannya pada tempat yang memang menyimpan alasan. Mempertahankan bentuk prosa fitur 019 demi keseragaman — ditolak; keseragaman dengan bentuk yang tidak terjangkau pemeriksa bukan keuntungan. |
+| Dampak | Berkas baru `specs/026-penyematan-korpus/tasks.md`; `plan.md` berpindah ke Gerbang 2 lolos. Tidak ada kode ditulis. `make check` lulus enam gerbang sesudah ketidakselarasan status diluruskan. **Menunggu Gerbang 3.** |
+| Pemutus | Gerbang 2 oleh pemegang Gerbang 1–4 atas kata "lanjutkan" yang menjawab pertanyaan bersyarat; dasarnya tertulis di atas. Isi `tasks.md` oleh agen |
