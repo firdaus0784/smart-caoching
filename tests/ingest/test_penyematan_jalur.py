@@ -1,0 +1,216 @@
+"""Jalur penyematan korpus di atas peladen — T-4 fitur 026.
+
+R-01, R-03, R-04, R-05, R-06, R-07. Menuntut PostgreSQL; `make check` sudah
+menuntutnya sejak 12 September 2026, sehingga tidak ada jalur dilewati.
+
+**Urutan penjagaan yang diuji, bukan hanya hasilnya.** Penjagaan yang berjalan
+sesudah baris dibaca menghasilkan keluaran yang sama persis dengan yang
+berjalan sebelumnya — dan C-02 menolak yang kedua dengan kalimatnya sendiri:
+*"Pemisahan pada tingkat indeks, bukan penyaringan saat kueri."*
+"""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+
+import pytest
+from src.ingest.penyematan import sematkan_indeks
+from src.kamus.segmen import IndeksTujuan
+from src.llm.sematan import Penyemat, PenyematTiruan, VersiPenyemat
+from src.penyimpanan.kredensial_baku import PENJAWABAN, PENYEMATAN
+from src.penyimpanan.skema_indeks import (
+    KOLOM_VEKTOR_SEMATAN,
+    KOLOM_VERSI_SEMATAN,
+    SKEMA_INDEKS,
+    TABEL_SEGMEN,
+    GalatDimensiVektor,
+)
+from tests.konftes_asinkron import jalankan
+from tests.peladen import DIMENSI_UJI, psql, siapkan
+from tests.rag.pengambilan.test_kontrak_sumber import SambunganUji
+
+siapkan()
+
+SAAT = datetime(2026, 9, 23, 7, 30, 0, tzinfo=UTC)
+JAM = staticmethod(lambda: SAAT)
+
+
+def _kosongkan(tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> None:
+    psql("smart_coaching", "-c", f"DELETE FROM {SKEMA_INDEKS[tujuan]}.{TABEL_SEGMEN}")
+
+
+def _tanam(*segmen: tuple[str, str], tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> None:
+    """Tanam segmen **tanpa vektor** — keadaan awal jalur penyematan."""
+    skema = SKEMA_INDEKS[tujuan]
+    for id_segmen, teks in segmen:
+        psql(
+            "smart_coaching",
+            "-c",
+            f"INSERT INTO {skema}.{TABEL_SEGMEN} "
+            "(id_segmen, id_dokumen, teks, lisensi, anonimisasi_terverifikasi, "
+            "penanda_bagian) VALUES "
+            f"('{id_segmen}', 'DOK-1', '{teks}', 'terbuka', true, 'Pasal 1')",
+        )
+
+
+def _kolom(id_segmen: str, kolom: str, tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> str:
+    hasil = psql(
+        "smart_coaching",
+        "-c",
+        f"SELECT {kolom} FROM {SKEMA_INDEKS[tujuan]}.{TABEL_SEGMEN} "
+        f"WHERE id_segmen = '{id_segmen}'",
+    )
+    return hasil.stdout.strip()
+
+
+def _semat(**ganti: object):  # type: ignore[no-untyped-def]
+    bidang: dict[str, object] = {
+        "penyemat": PenyematTiruan(dimensi=DIMENSI_UJI),
+        "indeks_tujuan": IndeksTujuan.UTAMA,
+        "kredensial": PENYEMATAN,
+        "sekarang": lambda: SAAT,
+    }
+    bidang.update(ganti)
+    return jalankan(sematkan_indeks(SambunganUji(), **bidang))  # type: ignore[arg-type]
+
+
+# ── penjagaan 1: kredensial, sebelum satu baris pun dibaca ──────────
+
+
+class SambunganPencatat:
+    """Mencatat apakah ia disentuh sama sekali."""
+
+    def __init__(self) -> None:
+        self.dipanggil = 0
+
+    async def fetchrow(self, kueri: str, *argumen: object) -> object:
+        self.dipanggil += 1
+        raise AssertionError("peladen tidak boleh disentuh")
+
+    async def fetch(self, kueri: str, *argumen: object) -> object:
+        self.dipanggil += 1
+        raise AssertionError("peladen tidak boleh disentuh")
+
+    async def execute(self, kueri: str, *argumen: object) -> object:
+        self.dipanggil += 1
+        raise AssertionError("peladen tidak boleh disentuh")
+
+
+def test_kredensial_tanpa_hak_tulis_ditolak_sebelum_peladen_disentuh() -> None:
+    """**R-06, R-07, C-02, C-17.**
+
+    `PENJAWABAN` menjangkau kedua indeks untuk **dibaca** — itu yang membuat
+    uji ini berarti. Bila jalur ini memeriksa `boleh_baca_indeks`, ia lolos.
+    """
+    sambungan = SambunganPencatat()
+    with pytest.raises(PermissionError):
+        jalankan(
+            sematkan_indeks(
+                sambungan,  # type: ignore[arg-type]
+                penyemat=PenyematTiruan(dimensi=DIMENSI_UJI),
+                indeks_tujuan=IndeksTujuan.UTAMA,
+                kredensial=PENJAWABAN,
+                sekarang=lambda: SAAT,
+            )
+        )
+    assert sambungan.dipanggil == 0, "peladen disentuh sebelum kredensial diperiksa"
+
+
+# ── penjagaan 2: dimensi, sebelum satu baris pun ditulis ────────────
+
+
+def test_penyemat_berdimensi_lain_ditolak_tanpa_menulis() -> None:
+    """**R-03.** Ditolak sebelum satu baris pun ditulis, bukan pada baris
+    pertama yang gagal."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah menyusun rencana"))
+    with pytest.raises(GalatDimensiVektor):
+        _semat(penyemat=PenyematTiruan(dimensi=DIMENSI_UJI + 1))
+    assert _kolom("SEG-A", KOLOM_VEKTOR_SEMATAN) == "", "vektor tertulis meski ditolak"
+
+
+# ── jalur berjalan ──────────────────────────────────────────────────
+
+
+def test_segmen_tersemat_beserta_versi_modelnya() -> None:
+    """**R-01, R-02.** Vektor dan versi model tertulis bersama.
+
+    Versi yang tertulis belakangan pada langkah terpisah dapat tertinggal bila
+    penjalanan terputus di antaranya — dan baris yang bervektor tanpa versi
+    tidak dapat dibedakan dari baris yang disemat model tak dikenal.
+    """
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah menyusun rencana"), ("SEG-B", "supervisi akademik"))
+    hasil = _semat()
+
+    assert hasil.tersemat == 2
+    assert hasil.tersisa_tanpa_vektor == 0
+    assert hasil.versi_indeks == "utama-20260923T073000Z"
+    assert hasil.versi_penyemat == PenyematTiruan(dimensi=DIMENSI_UJI).versi
+    for id_segmen in ("SEG-A", "SEG-B"):
+        assert _kolom(id_segmen, KOLOM_VEKTOR_SEMATAN) != ""
+        assert _kolom(id_segmen, KOLOM_VERSI_SEMATAN) == "hash-sha256-1"
+
+
+def test_segmen_bertext_kosong_dilewati_dan_dihitung() -> None:
+    """**R-05.** Dilewati **dan dihitung**, bukan disemat menjadi vektor nol.
+
+    Vektor nol tidak menghasilkan galat; ia menghasilkan tetangga terdekat
+    yang salah, dan kesalahannya tidak pernah terlihat pada keluaran.
+    """
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"), ("SEG-KOSONG", "   "))
+    hasil = _semat()
+
+    assert hasil.tersemat == 1
+    assert hasil.dilewati_teks_kosong == 1
+    assert hasil.tersisa_tanpa_vektor == 1, "segmen kosong wajib tetap terhitung"
+    assert _kolom("SEG-KOSONG", KOLOM_VEKTOR_SEMATAN) == ""
+
+
+def test_indeks_kosong_selesai_tanpa_galat() -> None:
+    _kosongkan()
+    hasil = _semat()
+    assert (hasil.tersemat, hasil.dilewati_teks_kosong, hasil.tersisa_tanpa_vektor) == (0, 0, 0)
+
+
+def test_indeks_metadata_disemat_terpisah() -> None:
+    """**R-06.** Kedua indeks disemat terpisah — menyemat utama tidak
+    menyentuh metadata."""
+    _kosongkan(IndeksTujuan.UTAMA)
+    _kosongkan(IndeksTujuan.METADATA)
+    _tanam(("SEG-U", "segmen utama"), tujuan=IndeksTujuan.UTAMA)
+    _tanam(("SEG-M", "segmen metadata"), tujuan=IndeksTujuan.METADATA)
+
+    hasil = _semat(indeks_tujuan=IndeksTujuan.UTAMA)
+    assert hasil.tersemat == 1
+    assert hasil.versi_indeks.startswith("utama-")
+    assert _kolom("SEG-M", KOLOM_VEKTOR_SEMATAN, IndeksTujuan.METADATA) == ""
+
+
+# ── R-04: penyemat diserahkan pemanggil ─────────────────────────────
+
+
+def test_jalur_memakai_penyemat_yang_diserahkan_pemanggil() -> None:
+    """**R-04.** Bentuk uji yang sama dengan R-02 fitur 019 (KB-101): penyemat
+    yang **tidak dapat ditiru bawaan**, sehingga jalur yang menyusun
+    penyematnya sendiri menghasilkan keluaran yang berbeda."""
+
+    class PenyematLain(Penyemat):
+        @property
+        def versi(self) -> VersiPenyemat:
+            return VersiPenyemat(nama_model="penyemat-lain", versi_model="9.9")
+
+        @property
+        def dimensi(self) -> int:
+            return DIMENSI_UJI
+
+        async def sematkan(self, teks):  # type: ignore[no-untyped-def]
+            return [[0.5] * DIMENSI_UJI for _ in teks]
+
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"))
+    hasil = _semat(penyemat=PenyematLain())
+
+    assert hasil.versi_penyemat.nama_model == "penyemat-lain"
+    assert _kolom("SEG-A", KOLOM_VERSI_SEMATAN) == "9.9"

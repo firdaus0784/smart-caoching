@@ -26,11 +26,11 @@ from src.penyimpanan.kredensial import Kredensial
 
 PENJAWABAN = Kredensial(
     nama="penjawaban",
-    indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
+    indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}), tulis_indeks=frozenset(),
 )
 PEMANGGIL_LLM = Kredensial(
     nama="pemanggil_llm",
-    indeks=frozenset({IndeksTujuan.UTAMA}),
+    indeks=frozenset({IndeksTujuan.UTAMA}), tulis_indeks=frozenset(),
 )
 """
 

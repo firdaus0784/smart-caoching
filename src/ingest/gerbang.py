@@ -370,6 +370,7 @@ _KREDENSIAL_INGESTI = Kredensial(
     baca=frozenset(),
     tulis=frozenset({Area.KARANTINA}),
     indeks=frozenset(),
+    tulis_indeks=frozenset(),
 )
 """Kredensial jalur ingesti: menulis ke karantina, tidak membaca apa pun.
 
@@ -383,6 +384,7 @@ _KREDENSIAL_PENARIKAN = Kredensial(
     baca=frozenset({Area.KORPUS}),
     tulis=frozenset({Area.KARANTINA}),
     indeks=frozenset(),
+    tulis_indeks=frozenset(),
 )
 """Kredensial penarikan persetujuan: memindahkan dokumen keluar dari korpus.
 

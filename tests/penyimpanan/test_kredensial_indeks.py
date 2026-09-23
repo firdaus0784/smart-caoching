@@ -84,7 +84,13 @@ def test_himpunan_indeks_kosong_berarti_tidak_menjangkau_apa_pun() -> None:
     sama dengan himpunan `baca` kosong pada fitur 002, dan alasan yang sama:
     kekeliruan sebaliknya adalah cara paling sunyi meruntuhkan pemisahan.
     """
-    k = Kredensial(nama="uji", baca=frozenset(), tulis=frozenset(), indeks=frozenset())
+    k = Kredensial(
+        nama="uji",
+        baca=frozenset(),
+        tulis=frozenset(),
+        indeks=frozenset(),
+        tulis_indeks=frozenset(),
+    )
     assert not k.boleh_baca_indeks(IndeksTujuan.UTAMA)
     assert not k.boleh_baca_indeks(IndeksTujuan.METADATA)
 

@@ -24,6 +24,7 @@ PENJAWABAN = Kredensial(
     baca=frozenset({Area.KORPUS}),
     tulis=frozenset(),
     indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
+    tulis_indeks=frozenset(),
 )
 """Jalur penjawaban: membaca korpus, tidak menulis apa pun.
 
@@ -42,6 +43,7 @@ VERIFIKASI = Kredensial(
     baca=frozenset({Area.KARANTINA, Area.KORPUS}),
     tulis=frozenset({Area.KORPUS}),
     indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
+    tulis_indeks=frozenset(),
 )
 """Jalur verifikasi: satu-satunya yang menjangkau karantina.
 
@@ -56,6 +58,7 @@ PEMANGGIL_LLM = Kredensial(
     baca=frozenset({Area.KORPUS}),
     tulis=frozenset(),
     indeks=frozenset({IndeksTujuan.UTAMA}),
+    tulis_indeks=frozenset(),
 )
 """Pemanggil model: membaca korpus dan **hanya indeks utama**.
 
@@ -76,3 +79,26 @@ SELURUH_KREDENSIAL: tuple[Kredensial, ...] = (PENJAWABAN, VERIFIKASI, PEMANGGIL_
 """Dipakai uji untuk menyatakan sifat seluruh daftar. Kredensial keempat yang
 ditambahkan kelak wajib masuk ke sini, dan uji yang memeriksa daftar ini akan
 menangkapnya bila ia kelebihan kemampuan."""
+
+
+PENYEMATAN = Kredensial(
+    nama="penyematan",
+    baca=frozenset({Area.KORPUS}),
+    tulis=frozenset(),
+    indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
+    tulis_indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
+)
+"""Jalur penyematan korpus — fitur 026, TK-62.
+
+**Kredensial keempat, dan uraian bidang `indeks` sudah menantikannya.**
+
+Ia menjangkau **kedua** indeks untuk ditulis: R-06 fitur 026 menuntut keduanya
+disemat terpisah dengan kredensial masing-masing, dan indeks metadata yang
+tidak pernah tersemat adalah indeks yang sisi semantiknya mati diam-diam.
+
+`tulis` kosong, dan itu bukan kelalaian. Jalur ini menulis **vektor pada
+indeks**, bukan dokumen pada area; hak tulis area yang ikut diberikan adalah
+hak yang tidak diminta siapa pun. Karantina tidak dijangkau sama sekali —
+C-03, dan pemisahannya ditegakkan peladen lewat peran basis data, bukan oleh
+objek ini.
+"""

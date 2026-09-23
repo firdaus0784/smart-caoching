@@ -48,6 +48,24 @@ class Kredensial(BaseModel):
     longgar tanpa seorang pun memutuskannya.
     """
 
+    tulis_indeks: frozenset[IndeksTujuan]
+    """Indeks yang boleh **ditulis** — TK-62, C-02, C-17.
+
+    Terpisah dari `indeks`, dan pemisahan itu bukan kerapian. `indeks`
+    menyatakan apa yang boleh **dibaca**; jalur penjawaban menjangkau keduanya
+    untuk dibaca. Menyamakan keduanya akan memberi jalur penjawaban hak tulis
+    lewat pintu belakang, tanpa satu baris pun yang menyatakannya — dan C-17
+    bersandar tepat pada perbedaan itu.
+
+    Wajib, sama dengan `indeks`, dan dengan alasan yang sama: bidang berbawaan
+    akan diisi diam-diam oleh kredensial berikutnya dan mewarisi bawaan yang
+    longgar tanpa seorang pun memutuskannya.
+
+    Ketiga kredensial yang mendahului bidang ini memperoleh himpunan kosong —
+    sehingga ketiadaan hak tulis indeks kini **dinyatakan** alih-alih terjadi
+    karena tidak ada cara menyebutnya. Ketiadaan yang dinyatakan dapat diuji.
+    """
+
     def boleh_baca(self, area: Area) -> bool:
         return area in self.baca
 
@@ -61,3 +79,12 @@ class Kredensial(BaseModel):
         dijangkau kredensial tidak dapat dibaca oleh kekeliruan kueri mana pun.
         """
         return indeks in self.indeks
+
+    def boleh_tulis_indeks(self, indeks: IndeksTujuan) -> bool:
+        """Apakah kredensial ini boleh menulis ke sebuah indeks — TK-62.
+
+        Dipakai jalur penyematan sebelum menyentuh satu baris pun, bentuk yang
+        sama dengan `ambil_hibrida`: menyaring sesudah kueri berjalan
+        menghasilkan hasil yang sama sambil barisnya sudah tersentuh.
+        """
+        return indeks in self.tulis_indeks

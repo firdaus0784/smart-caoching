@@ -44,7 +44,18 @@ from typing import Final
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.kamus.segmen import IndeksTujuan
-from src.llm.sematan import VersiPenyemat
+from src.llm.sematan import Penyemat, VersiPenyemat
+from src.penyimpanan.kredensial import Kredensial
+from src.penyimpanan.sambungan import SambunganAktif
+from src.penyimpanan.skema_indeks import (
+    KOLOM_VEKTOR_SEMATAN,
+    KOLOM_VERSI_SEMATAN,
+    SKEMA_INDEKS,
+    TABEL_SEGMEN,
+    bilangan_dari_baris,
+    pastikan_dimensi_cocok,
+    untai_vektor,
+)
 
 BENTUK_WAKTU_VERSI: Final = "%Y%m%dT%H%M%SZ"
 """Cap waktu pada versi indeks, selalu UTC — KM-01.
@@ -107,3 +118,99 @@ class HasilPenyematan(BaseModel):
     """
     tersisa_tanpa_vektor: int = Field(ge=0)
     """Segmen yang masih belum tersemat sesudah penjalanan ini selesai."""
+
+
+SEGMEN_PER_KUMPULAN: Final = 64
+"""Berapa segmen disemat sekali jalan.
+
+**Bukan ambang.** Ia tidak menentukan jawaban apa pun — mengubahnya mengubah
+berapa kali peladen dihubungi, bukan segmen mana yang terpilih. Dinamai apa
+adanya justru agar ia tidak terbaca sebagai nilai yang C-16 jaga; nilai yang
+dinamai "ambang" tunduk pada prosedur kalibrasi BT-29, dan nilai ini tidak
+berhak atas perhatian itu.
+"""
+
+
+async def sematkan_indeks(
+    sambungan: SambunganAktif,
+    *,
+    penyemat: Penyemat,
+    indeks_tujuan: IndeksTujuan,
+    kredensial: Kredensial,
+    sekarang: Callable[[], datetime],
+) -> HasilPenyematan:
+    """Semat seluruh segmen yang belum bervektor pada satu indeks.
+
+    ## Urutan penjagaan menentukan, dan urutan yang salah tetap benar hasilnya
+
+    1. **Kredensial**, sebelum peladen disentuh sama sekali (R-06, R-07).
+    2. **Dimensi**, sebelum satu baris pun ditulis (R-03).
+    3. Baru membaca segmen ber-`vektor_sematan` NULL (R-01).
+
+    Penjagaan pertama memakai `boleh_tulis_indeks`, **bukan**
+    `boleh_baca_indeks` — jalur penjawaban menjangkau kedua indeks untuk
+    dibaca, dan menyamakan keduanya memberinya hak tulis lewat pintu belakang
+    (TK-62, C-17).
+
+    Bentuk yang sama dengan `ambil_hibrida`: menyaring sesudah kueri berjalan
+    menghasilkan keluaran yang sama persis sambil barisnya sudah terbaca, sudah
+    berada di memori, dan sudah memengaruhi waktu tanggap.
+    """
+    if not kredensial.boleh_tulis_indeks(indeks_tujuan):
+        raise PermissionError(
+            f"kredensial {kredensial.nama!r} tidak boleh menulis ke "
+            f"{indeks_tujuan.value} — penyematan menuntut hak tulis indeks, "
+            "dan hak baca tidak menggantikannya (C-17)"
+        )
+
+    versi = penyemat.versi
+    await pastikan_dimensi_cocok(
+        sambungan,
+        dimensi_model=penyemat.dimensi,
+        nama_model=versi.nama_model,
+        indeks_tujuan=indeks_tujuan,
+    )
+
+    skema = SKEMA_INDEKS[indeks_tujuan]
+    baris = await sambungan.fetch(
+        f"SELECT id_segmen, teks FROM {skema}.{TABEL_SEGMEN} "
+        f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NULL ORDER BY id_segmen"
+    )
+
+    menunggu = [(str(b["id_segmen"]), str(b["teks"])) for b in baris]
+    berisi = [(satu, teks) for satu, teks in menunggu if teks.strip()]
+    dilewati = len(menunggu) - len(berisi)
+
+    tersemat = 0
+    for awal in range(0, len(berisi), SEGMEN_PER_KUMPULAN):
+        kumpulan = berisi[awal : awal + SEGMEN_PER_KUMPULAN]
+        vektor = await penyemat.sematkan([teks for _, teks in kumpulan])
+        for (id_segmen, _), satu in zip(kumpulan, vektor, strict=True):
+            # Vektor dan versi model ditulis **satu pernyataan**. Versi yang
+            # ditulis belakangan dapat tertinggal bila penjalanan terputus di
+            # antaranya, dan baris bervektor tanpa versi tidak dapat dibedakan
+            # dari baris yang disemat model tak dikenal.
+            await sambungan.execute(
+                f"UPDATE {skema}.{TABEL_SEGMEN} "
+                f"SET {KOLOM_VEKTOR_SEMATAN} = $1::vector, {KOLOM_VERSI_SEMATAN} = $2 "
+                "WHERE id_segmen = $3",
+                untai_vektor(satu),
+                versi.versi_model,
+                id_segmen,
+            )
+            tersemat += 1
+
+    sisa = await sambungan.fetchrow(
+        f"SELECT count(*) AS jumlah FROM {skema}.{TABEL_SEGMEN} "
+        f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NULL"
+    )
+    return HasilPenyematan(
+        indeks_tujuan=indeks_tujuan,
+        versi_indeks=susun_versi_indeks(indeks_tujuan, sekarang=sekarang),
+        versi_penyemat=versi,
+        tersemat=tersemat,
+        dilewati_teks_kosong=dilewati,
+        tersisa_tanpa_vektor=bilangan_dari_baris(
+            sisa, "jumlah", f"tabel {skema}.{TABEL_SEGMEN} tidak dapat dihitung"
+        ),
+    )

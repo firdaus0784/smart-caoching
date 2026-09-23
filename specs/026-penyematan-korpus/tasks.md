@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-3 selesai; **T-4 tertahan TK-61** |
+| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-4 selesai; tiga tugas tersisa |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -100,16 +100,24 @@ Murni bentuk; tanpa peladen.
 
 Inti fitur. Menuntut peladen.
 
-- [ ] Uji: kredensial yang tidak menjangkau indeks sasaran ditolak **sebelum
-      satu baris pun dibaca**
-- [ ] Uji: penyemat berdimensi lain ditolak sebelum satu baris pun ditulis
-- [ ] Uji: segmen bertext kosong dilewati **dan dihitung**, bukan disemat
+- [x] Uji: kredensial yang tidak menjangkau indeks sasaran ditolak **sebelum
+      satu baris pun dibaca** — diuji dengan `PENJAWABAN`, yang menjangkau
+      kedua indeks untuk **dibaca**, sehingga jalur yang keliru memakai
+      `boleh_baca_indeks` tidak lolos
+- [x] Uji: penyemat berdimensi lain ditolak sebelum satu baris pun ditulis
+- [x] Uji: segmen bertext kosong dilewati **dan dihitung**, bukan disemat
       menjadi vektor nol
-- [ ] Uji: penyemat wajib diserahkan pemanggil — jalur ini tidak menyusun
-      penyematnya sendiri (bentuk uji R-02 fitur 019, KB-101)
-- [ ] Uji: `versi_model_sematan` tertulis bersama vektornya, satu baris satu
-      transaksi
-- [ ] `sematkan_indeks` dengan urutan penjagaan `plan.md` Bagian 3
+- [x] Uji: penyemat wajib diserahkan pemanggil — penyemat yang tidak dapat
+      ditiru bawaan, bentuk uji R-02 fitur 019 (KB-101)
+- [x] Uji: `versi_model_sematan` tertulis **satu pernyataan** bersama vektornya
+- [x] Uji: kedua indeks disemat terpisah; indeks kosong selesai tanpa galat
+- [x] `sematkan_indeks` dengan urutan penjagaan `plan.md` Bagian 3
+- [x] Enam mutasi dijalankan, **enam menyala** — termasuk M-1b, memakai
+      `boleh_baca_indeks` alih-alih `boleh_tulis_indeks`
+
+> **TK-62 diselesaikan lebih dulu**: `Kredensial` bertambah bidang wajib
+> `tulis_indeks` dan metode `boleh_tulis_indeks`; kredensial keempat
+> `PENYEMATAN` dibentuk. Lihat KB-116.
 
 ---
 

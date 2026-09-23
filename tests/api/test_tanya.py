@@ -211,6 +211,7 @@ KREDENSIAL = Kredensial(
     baca=frozenset({Area.KORPUS}),
     tulis=frozenset(),
     indeks=frozenset({IndeksTujuan.UTAMA}),
+    tulis_indeks=frozenset(),
 )
 
 
