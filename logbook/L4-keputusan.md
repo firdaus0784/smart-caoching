@@ -1793,3 +1793,22 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menambahkan `ALTER` hanya bagi lingkungan penelitian dan membiarkan DDL apa adanya — ditolak; berkas persiapan yang berbeda perilaku menurut umur basis datanya adalah berkas yang tidak dapat dipercaya di mana pun. Membiarkan kolom lama `vektor` berdampingan dengan yang baru — ditolak; dua kolom yang menyimpan hal yang sama akan berbeda isinya pada hari salah satunya lupa ditulis, dan yang lupa ditulis adalah yang tidak dibaca uji. Menyesuaikan angka 26 menjadi 30 agar uji hijau — ditolak tegas; itu menyesuaikan pengukuran kepada hasilnya. |
 | Dampak | `perkakas/basis_data/05-kolom-vektor.sql` bertambah blok migrasi idempoten; `src/rag/pengambilan/vektor.py` dua tetapan baru dan dua untai harfiah disatukan; empat berkas uji menyesuaikan nama kolom; berkas baru `tests/rag/pengambilan/test_nama_kolom_d04.py` dengan tujuh uji. `make check` lulus enam gerbang. Fitur 026: **1 dari 7 tugas**. |
 | Pemutus | Gerbang 3 oleh pemegang Gerbang 1–4 atas kata "lanjutkan" yang menjawab pertanyaan bersyarat; T-1 oleh agen di dalam batas `tasks.md` |
+
+---
+
+## KB-113 · T-2 fitur 026 — `tambah_versi_artefak`, dan satu uji yang lulus karena alasan yang bukan alasannya
+
+| | |
+|---|---|
+| Tanggal | 2026-09-23 |
+| Konteks | T-2: catatan versi artefak L2 bagi pembangunan indeks. Tidak menyentuh basis data sama sekali, sehingga dapat berdiri sebelum jalurnya ada. |
+| Keputusan | **T-2 selesai.** `src/logbook/artefak.py` baru memuat `VersiIndeks` dan `KomposisiSumber`; `src/logbook/penulis.py` bertambah `tambah_versi_artefak`. Keenam keterangan yang D-10 Bagian 4 tuntut wajib dan tanpa nilai baku. |
+| Bidangnya tidak dipilih di sini | D-10 Bagian 4 sudah menetapkan: *"Model sematan — nama dan versi"* dan *"Indeks — nomor versi, tanggal pembangunan, jumlah segmen, komposisi sumber"*. Modul ini memberi **bentuk**, bukan memilih isi. |
+| Nama model disimpan sebagai untai, bukan `VersiPenyemat` | `VersiPenyemat` tinggal di `src/llm/sematan.py`. `src/logbook/` lapisan terbuka yang diimpor lima lapisan lain; membuatnya bergantung pada `llm` menjadikan dua lapisan terbuka saling bergantung — arah yang `AGENTS.md` tidak nyatakan dan tidak perlu ada. Pemanggil di `src/ingest/` yang memetakannya, satu tempat. |
+| Komposisi dijaga tipenya, bukan diperiksa saat dibaca | Komposisi yang jumlahnya tidak sama dengan `jumlah_segmen` **tidak menghasilkan galat pada siapa pun**. Ia menghasilkan catatan percobaan yang dua angkanya bertentangan, dan yang membacanya tidak punya cara mengetahui mana yang benar. Label kembar ditolak dengan alasan sejajar: dua baris berlabel sama menjumlah benar sambil menyatakan dua hal tentang satu sumber. |
+| **Satu mutasi diam, dan sebabnya bentuk yang sudah dicatat KB-098** | Empat mutasi dijalankan. Tiga menyala. Yang diam: memberi `jumlah_segmen` nilai baku `0`. Uji "bidang wajib" menghapus bidang itu lalu menuntut `ValidationError` — dan galat **memang** terjadi, tetapi karena penjaga **komposisi** menyalak atas ketidakcocokan 3 ≠ 0, bukan karena bidangnya hilang. Ujinya lulus karena alasan yang bukan alasannya. |
+| Yang menutupnya | `pytest.raises(ValidationError)` telanjang diganti pemeriksaan **sebab**: galat bertipe `missing` wajib ada dan `loc`-nya wajib tepat bidang yang dihapus. Mutasi diulang — menyala. Ini kemunculan kedua bentuk KB-098 dalam dua pekan, dan keduanya pada uji yang tampak memadai saat ditulis. |
+| Pelajaran yang dipertegas | `pytest.raises(GalatTertentu)` tanpa memeriksa **isinya** menguji bahwa sesuatu gagal, bukan bahwa hal yang benar gagal. Pada model bervalidator jamak, hampir selalu ada penjaga kedua yang siap menyalak dan menyembunyikan lumpuhnya penjaga pertama. |
+| Alternatif | Memakai `tambah_baris` telanjang bagi L2 — ditolak; `tambah_percobaan` menerima `Versi` bertipe justru agar bidangnya tidak luput, dan L2 menuntut enam keterangan yang sama mudahnya terlupa. Membuat bentuk bagi kesepuluh artefak D-10 sekaligus — ditolak; bentuk yang dibuat sebelum ada yang mengisinya adalah bentuk yang ditebak, dan tebakan pada catatan penelitian berakhir pada kolom yang tidak pernah diisi. |
+| Dampak | Berkas baru `src/logbook/artefak.py` dan `tests/logbook/test_artefak.py` (16 uji); `penulis.py` bertambah satu fungsi. Tidak ada modul lain berubah. `make check` lulus enam gerbang. Fitur 026: **2 dari 7 tugas**. |
+| Pemutus | Agen, di dalam batas `tasks.md` T-2 |

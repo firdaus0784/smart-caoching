@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 selesai; enam tugas tersisa |
+| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 dan T-2 selesai; lima tugas tersisa |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -54,12 +54,16 @@ ditelusuri ke perubahan yang mana.
 Tidak menyentuh basis data sama sekali, sehingga dapat berdiri sebelum
 jalurnya ada.
 
-- [ ] Uji: bidang yang D-10 Bagian 4 tuntut bagi artefak `indeks` tidak dapat
-      luput — kekurangannya tertangkap **saat memanggil**, bukan saat membaca
-      berkas berbulan kemudian
-- [ ] Uji: baris tertulis ke `L2`, bukan `L1`
-- [ ] Uji: berkas hanya bertambah — tidak ada baris lama berubah
-- [ ] `tambah_versi_artefak` bertipe, sejajar `tambah_percobaan`
+- [x] Uji: bidang yang D-10 Bagian 4 tuntut bagi artefak `indeks` tidak dapat
+      luput — kekurangannya tertangkap **saat memanggil**, dan **sebabnya
+      diperiksa**, bukan hanya kejadiannya
+- [x] Uji: baris tertulis ke `L2`, bukan `L1`
+- [x] Uji: berkas hanya bertambah — tidak ada baris lama berubah
+- [x] Uji: komposisi sumber wajib menjumlah ke `jumlah_segmen`; label kembar
+      ditolak; waktu tanpa zona ditolak (KM-01)
+- [x] `tambah_versi_artefak` bertipe, sejajar `tambah_percobaan`
+- [x] Empat mutasi dijalankan; satu diam pada putaran pertama dan lubangnya
+      ditutup — lihat KB-113
 
 > Bukan `tambah_baris` telanjang. `tambah_percobaan` menerima `Versi` bertipe
 > justru agar kelima bidangnya tidak luput karena lupa, dan L2 menuntut lima

@@ -30,6 +30,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Final
 
+from src.logbook.artefak import KeteranganArtefak
 from src.logbook.versi import Versi
 
 BENTUK_WAKTU: Final = "dicatat_pada"
@@ -108,3 +109,17 @@ def tambah_percobaan(
             **versi.model_dump(),
         },
     )
+
+
+def tambah_versi_artefak(akar_logbook: Path, *, keterangan: KeteranganArtefak) -> None:
+    """Satu baris L2 — `docs/D10.md` Bagian 4.
+
+    `keterangan` bertipe, bukan pemetaan bebas, dengan alasan yang sama
+    dengan `tambah_percobaan` di atas: keterangan yang D-10 tuntut tidak dapat
+    luput karena lupa, sebab kekurangannya tertangkap **saat menyusun
+    keterangan** — sebelum satu baris pun ditulis.
+
+    Bentuknya tinggal di `src/logbook/artefak.py`, bukan di sini, sehingga
+    modul ini tetap hanya soal **menulis** dan bukan soal apa yang sah ditulis.
+    """
+    tambah_baris(akar_logbook, Buku.L2, keterangan.model_dump(mode="json"))
