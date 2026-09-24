@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-5 selesai; dua tugas tersisa |
+| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-6 selesai; satu tugas tersisa |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -151,11 +151,19 @@ uji atas satu penjalanan tidak dapat menyatakannya.
 
 **Kebutuhan:** `plan.md` Bagian 7.3.
 
-- [ ] Kesepuluh mutasi dijalankan
-- [ ] Yang tidak menyala **tetap dilaporkan beserta sebabnya**, bukan dihapus
-      dari daftar
-- [ ] **M-10 menyala** — ia M-7 fitur 019, yang di sana tidak dapat dipasang
-      sama sekali
+- [x] Kesepuluh mutasi dijalankan — putaran pertama: **sembilan menyala,
+      satu tidak dapat dipasang** (M-8)
+- [x] Yang tidak menyala **tetap dilaporkan beserta sebabnya**: M-8 tidak
+      dapat dipasang karena jalur penyematan **tidak pernah menulis baris
+      L2**. T-2 membangun penulisnya, T-4 membangun jalurnya, dan tidak satu
+      tugas pun menyambungkan keduanya — kelalaian penyusunan `tasks.md` ini
+      sendiri. R-02 belum terpenuhi sampai T-6
+- [x] Ditutup di dalam T-6 (preseden KB-101), beserta dua mutasi tambahan;
+      putaran kedua: **seluruhnya menyala**
+- [x] **M-10 menyala** — dengan satu koreksi atas rumusannya: M-7 fitur 019
+      sudah dapat dipasang sejak T-8 fitur 019 bagi **sisi pencarian**
+      (M-10b). Yang fitur ini tutup adalah **sisi pembentukan indeks**
+      (M-10a). `plan.md` merumuskan keduanya sebagai satu
 
 > Bila sebuah mutasi diam, yang **pertama** diperiksa: apakah mutasinya
 > terlalu lemah (M-3 fitur 024), atau apakah di seluruh rangkaian uji hanya

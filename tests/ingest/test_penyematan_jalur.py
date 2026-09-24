@@ -11,7 +11,10 @@ berjalan sebelumnya — dan C-02 menolak yang kedua dengan kalimatnya sendiri:
 
 from __future__ import annotations
 
+import json
+import tempfile
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 from src.ingest.penyematan import sematkan_indeks
@@ -32,7 +35,9 @@ from tests.rag.pengambilan.test_kontrak_sumber import SambunganUji
 siapkan()
 
 SAAT = datetime(2026, 9, 23, 7, 30, 0, tzinfo=UTC)
-JAM = staticmethod(lambda: SAAT)
+LOGBOOK_UJI = Path(tempfile.mkdtemp(prefix="logbook-uji-"))
+"""Akar logbook sementara. Uji **tidak pernah** menulis ke `logbook/`
+repositori — berkas itu tambah-saja, dan baris uji di sana tidak dapat dihapus."""
 
 
 def _kosongkan(tujuan: IndeksTujuan = IndeksTujuan.UTAMA) -> None:
@@ -69,6 +74,7 @@ def _semat(**ganti: object):  # type: ignore[no-untyped-def]
         "indeks_tujuan": IndeksTujuan.UTAMA,
         "kredensial": PENYEMATAN,
         "sekarang": lambda: SAAT,
+        "akar_logbook": LOGBOOK_UJI,
     }
     bidang.update(ganti)
     return jalankan(sematkan_indeks(SambunganUji(), **bidang))  # type: ignore[arg-type]
@@ -111,6 +117,7 @@ def test_kredensial_tanpa_hak_tulis_ditolak_sebelum_peladen_disentuh() -> None:
                 indeks_tujuan=IndeksTujuan.UTAMA,
                 kredensial=PENJAWABAN,
                 sekarang=lambda: SAAT,
+                akar_logbook=LOGBOOK_UJI,
             )
         )
     assert sambungan.dipanggil == 0, "peladen disentuh sebelum kredensial diperiksa"
@@ -310,3 +317,64 @@ def test_dua_model_berbeda_dengan_untai_versi_sama_tetap_terbedakan() -> None:
     _tanam(("SEG-B", "segmen baru"))
     with pytest.raises(ValueError, match="model-b/1.0"):
         _semat(penyemat=PenyematBerversi("model-b", "1.0"))
+
+
+# ── T-6: R-02 — setiap versi indeks yang diterbitkan tercatat pada L2 ─
+
+
+def test_setiap_pembangunan_menulis_satu_baris_l2(tmp_path: Path) -> None:
+    """**R-02, C-09.** Ditemukan pada T-6 karena mutasi M-8 **tidak dapat
+    dipasang**: T-2 membangun penulisnya, T-4 membangun jalurnya, dan tidak
+    satu tugas pun menyambungkan keduanya.
+
+    Sifat yang dijaga: **setiap versi indeks yang diterbitkan memiliki baris
+    L2.** Percobaan yang mengutip versi tanpa catatan adalah provenans yang
+    putus, dan itu lebih buruk daripada catatan yang berulang.
+    """
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"), ("SEG-B", "supervisi"))
+    hasil = _semat(akar_logbook=tmp_path)
+
+    baris = [
+        json.loads(x)
+        for x in (tmp_path / "L2-versi-artefak.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert len(baris) == 1
+    catatan = baris[0]
+    assert catatan["artefak"] == "indeks"
+    assert catatan["versi_indeks"] == hasil.versi_indeks
+    assert catatan["jumlah_segmen"] == 2
+    assert catatan["komposisi_sumber"] == [{"label": "terbuka", "jumlah": 2}]
+    assert catatan["nama_model_sematan"] == "penyemat-tiruan"
+    assert catatan["versi_model_sematan"] == "hash-sha256-1"
+
+
+def test_tanggal_pembangunan_dan_versi_indeks_dari_satu_saat(tmp_path: Path) -> None:
+    """Versi indeks dan tanggal pembangunan wajib dibaca dari **satu**
+    pemanggilan jam. Dua pemanggilan dapat jatuh pada detik berbeda, dan
+    catatan yang versinya berbunyi 07.30.00 sementara tanggalnya 07.30.01
+    menyatakan dua saat bagi satu peristiwa."""
+    detik = iter([datetime(2026, 9, 23, 7, 30, n, tzinfo=UTC) for n in range(10)])
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"))
+    hasil = _semat(akar_logbook=tmp_path, sekarang=lambda: next(detik))
+
+    catatan = json.loads((tmp_path / "L2-versi-artefak.jsonl").read_text(encoding="utf-8"))
+    assert hasil.versi_indeks == "utama-20260923T073000Z"
+    assert catatan["dibangun_pada"].startswith("2026-09-23T07:30:00"), catatan["dibangun_pada"]
+
+
+def test_jumlah_segmen_l2_menghitung_indeks_bukan_penjalanan(tmp_path: Path) -> None:
+    """D-10 Bagian 4 meminta **jumlah segmen indeks**. Penjalanan kedua yang
+    menyemat satu segmen baru atas indeks berisi dua mencatat tiga — bukan
+    satu, yang akan membuat indeks tampak menyusut."""
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"), ("SEG-B", "supervisi"))
+    _semat(akar_logbook=tmp_path)
+    _tanam(("SEG-C", "segmen baru"))
+    _semat(akar_logbook=tmp_path)
+
+    terakhir = json.loads(
+        (tmp_path / "L2-versi-artefak.jsonl").read_text(encoding="utf-8").splitlines()[-1]
+    )
+    assert terakhir["jumlah_segmen"] == 3

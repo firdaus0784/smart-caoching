@@ -39,12 +39,15 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.kamus.segmen import IndeksTujuan
 from src.llm.sematan import Penyemat, VersiPenyemat
+from src.logbook.artefak import KomposisiSumber, VersiIndeks
+from src.logbook.penulis import tambah_versi_artefak
 from src.penyimpanan.kredensial import Kredensial
 from src.penyimpanan.sambungan import SambunganAktif
 from src.penyimpanan.skema_indeks import (
@@ -153,6 +156,7 @@ async def sematkan_indeks(
     indeks_tujuan: IndeksTujuan,
     kredensial: Kredensial,
     sekarang: Callable[[], datetime],
+    akar_logbook: Path,
 ) -> HasilPenyematan:
     """Semat seluruh segmen yang belum bervektor pada satu indeks.
 
@@ -238,9 +242,49 @@ async def sematkan_indeks(
         f"SELECT count(*) AS jumlah FROM {skema}.{TABEL_SEGMEN} "
         f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NULL"
     )
+
+    # Satu pemanggilan jam bagi versi **dan** tanggal pembangunan. Dua
+    # pemanggilan dapat jatuh pada detik berbeda, dan catatan yang versinya
+    # berbunyi 07.30.00 sementara tanggalnya 07.30.01 menyatakan dua saat
+    # bagi satu peristiwa.
+    saat = sekarang()
+    versi_indeks = susun_versi_indeks(indeks_tujuan, sekarang=lambda: saat)
+
+    # R-02, C-09 — setiap versi indeks yang diterbitkan memiliki baris L2.
+    # Ditemukan pada T-6 karena mutasi M-8 **tidak dapat dipasang**: T-2
+    # membangun penulisnya, T-4 membangun jalur ini, dan tidak satu tugas pun
+    # menyambungkan keduanya. Penjalanan yang tidak menyemat apa pun tetap
+    # mencatat: versi yang dikutip percobaan tanpa baris L2 adalah provenans
+    # yang putus, dan itu lebih buruk daripada catatan yang berulang.
+    komposisi = await sambungan.fetch(
+        f"SELECT lisensi AS label, count(*) AS jumlah FROM {skema}.{TABEL_SEGMEN} "
+        f"WHERE {KOLOM_VEKTOR_SEMATAN} IS NOT NULL GROUP BY lisensi ORDER BY lisensi"
+    )
+    susunan = tuple(
+        KomposisiSumber(
+            label=str(b["label"]),
+            jumlah=bilangan_dari_baris(b, "jumlah", "komposisi tidak dapat dihitung"),
+        )
+        for b in komposisi
+    )
+    tambah_versi_artefak(
+        akar_logbook,
+        keterangan=VersiIndeks(
+            versi_indeks=versi_indeks,
+            dibangun_pada=saat.astimezone(UTC),
+            # Jumlah segmen **indeks**, bukan penjalanan — D-10 Bagian 4.
+            # Penjalanan kedua yang menyemat satu segmen atas indeks berisi
+            # dua mencatat tiga, bukan satu.
+            jumlah_segmen=sum(k.jumlah for k in susunan),
+            komposisi_sumber=susunan,
+            nama_model_sematan=versi.nama_model,
+            versi_model_sematan=versi.versi_model,
+        ),
+    )
+
     return HasilPenyematan(
         indeks_tujuan=indeks_tujuan,
-        versi_indeks=susun_versi_indeks(indeks_tujuan, sekarang=sekarang),
+        versi_indeks=versi_indeks,
         versi_penyemat=versi,
         tersemat=tersemat,
         dilewati_teks_kosong=dilewati,
