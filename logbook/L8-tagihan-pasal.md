@@ -317,3 +317,34 @@ Alasannya **tidak** saya ubah pada `daftar_pasal.py`: ia masih benar, dan
 mengubah untai alasan tanpa pasalnya berpindah adalah menyentuh gerbang tanpa
 gerbang berpindah. Yang dituntut berkas ini adalah peninjauan, dan peninjauan
 itu ada di atas.
+
+---
+
+### Fitur 026 — 24 September 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 019 dan 023. Tidak ada pasal berpindah,
+dan itu dicatat alih-alih dilewatkan.
+
+Fitur ini menguatkan dua pasal tanpa memindahkannya, sebab keduanya sudah
+LULUS: **C-09** memperoleh catatan versi bagi pembentukan indeks (L2), dan
+**C-17** memperoleh pernyataan tegas ketiadaan hak tulis indeks pada ketiga
+kredensial lama (`tulis_indeks=frozenset()`, TK-62). Pasal yang sudah lulus
+dapat menjadi lebih benar tanpa angkanya bergerak.
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu masih `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`.
+
+| Klausa | Keadaan 24 September 2026 | Masih berlaku? |
+|---|---|---|
+| menunggu fitur 020 | Belum memiliki `spec.md` | Ya |
+| menuntut model sematan | Antarmuka ada (019); **jalur penyematan korpus kini ada** (026); **bobot model sungguhan belum diunduh** | Ya — dan kini klausa itu berarti **hanya** bobotnya |
+| menuntut BT-29 | Fitur 025 belum dimulai; *gold set* BT-35 belum ada | Ya |
+
+Catatan L8 sebelumnya memperingatkan bahwa "model sematan" menyebut dua hal
+berbeda nasib. Sejak fitur 026, dua dari tiga hal yang dapat dimaksudkannya —
+antarmuka dan jalur penulisan — sudah berdiri. Yang tersisa satu, dan ia bukan
+pekerjaan pemrograman: mengunduh bobot model pada mesin penelitian dan menulis
+adaptor sungguhan di belakang `Penyemat`.

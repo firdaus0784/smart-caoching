@@ -1912,3 +1912,20 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menambah tugas T-8 terpisah bagi penyambungan L2 — ditolak; T-6 menuntut mutasi yang tidak dapat dipasang dilaporkan beserta sebabnya, dan preseden KB-101 menutup lubang yang sama bentuknya di dalam tugas yang menemukannya. Melewatkan penulisan L2 pada penjalanan tanpa perubahan — ditolak; versi yang diterbitkan tanpa catatan memutus provenans. Memberi `akar_logbook` nilai bawaan `logbook/` — ditolak tegas; uji yang lupa menyerahkannya akan menulis ke berkas tambah-saja repositori. |
 | Dampak | `src/ingest/penyematan.py`: `sematkan_indeks` menuntut `akar_logbook` dan menulis L2; tiga uji baru. `make check` lulus enam gerbang. Fitur 026: **6 dari 7 tugas**. |
 | Pemutus | Agen, di dalam batas `tasks.md` T-6 dan preseden KB-101 |
+
+---
+
+## KB-119 · T-7 fitur 026 — TK-57 dan TK-60 ditutup; fitur menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-09-24 |
+| Konteks | T-7: menutup kedua temuan yang melahirkan fitur ini, memperbarui kalimat yang menyatakan utangnya, dan mencatat akhir fitur pada L8. |
+| Keputusan | **T-7 selesai. Fitur 026 tujuh dari tujuh tugas — menunggu Gerbang 4.** TK-57 dan TK-60 **Selesai** pada D-00 2.58. |
+| Kalimat utang diperbarui pada hari utangnya lunas | Docstring `HasilSumber.versi_penyemat` sejak fitur 019 menyatakan *"setengah R-06 tetap belum terpenuhi"*. Kalimat itu kini berbunyi bahwa sisi pembentukan indeks ditutup fitur 026. Kalimat yang tertinggal sesudah utangnya lunas adalah kalimat yang dipercaya orang berikutnya — bentuk TK-58 pada tingkat docstring. |
+| TK-57 ditutup dengan bukti, bukan pernyataan | M-10a (versi penyemat tidak masuk keluaran pembentukan indeks) dan M-8 (baris L2 tidak ditulis) keduanya menyala. Catatan penutupannya juga menyebut bahwa fitur ini **sempat mengulang bentuk TK-57** pada kebutuhannya sendiri (KB-118) — penutupan yang menghapus riwayat kegagalannya bukan penutupan yang jujur. |
+| L8: tagihan tidak menyusut, dan C-01 ditinjau | 19 / 0 / 1, sama dengan dua fitur sebelumnya. Klausa "menuntut model sematan" pada C-01 kini berarti **hanya bobot model** — antarmuka dan jalur penulisannya sudah berdiri. Yang tersisa bukan pekerjaan pemrograman. |
+| Ringkasan fitur 026 dalam satu baris | Tujuh tugas, **empat temuan di luar rencana** (migrasi tabel lama pada T-1, sapuan yang menghitung dirinya pada T-1, TK-61 letak `SKEMA`, TK-62 hak tulis indeks), **satu lubang dalam rencana sendiri** (R-02 tidak tersambung sampai T-6), dan seluruhnya ditemukan dengan menjalankan — tidak satu pun dengan membaca. |
+| Dampak | `src/rag/pengambilan/kandidat.py` satu docstring; `docs/D00.md` 2.57 → 2.58; `logbook/L8` satu catatan; status `plan.md` dan `tasks.md` fitur 026. Tidak ada perilaku berubah. `make check` lulus enam gerbang. **Menunggu Gerbang 4.** |
+| Pemutus | Agen, di dalam batas `tasks.md` T-7. **Gerbang 4 menunggu pemegang gerbang** |
+| Alternatif | Membiarkan docstring `HasilSumber.versi_penyemat` apa adanya karena ia tidak mengubah perilaku — ditolak; ia menyatakan utang yang sudah lunas, dan pembaca berikutnya akan membangun sesuatu untuk melunasinya lagi. Menutup TK-57 tanpa menyebut bahwa fitur ini sempat mengulang bentuknya — ditolak; penutupan yang menghapus riwayat kegagalannya bukan penutupan yang jujur. **Baris ini ditambahkan sesudah baris Pemutus**, bukan disisipkan ke tempat semestinya: entri ini semula ditulis tanpa bidang `Alternatif` dan `make check` menolaknya. `logbook/` tambah-saja, termasuk untuk memperbaikinya — pola KB-058. |

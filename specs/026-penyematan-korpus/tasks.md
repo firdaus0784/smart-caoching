@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 23 September 2026 (KB-110) |
 | Plan | Gerbang 2 lolos 23 September 2026 (KB-111) |
-| Status | **Gerbang 3 lolos** — 23 September 2026 (KB-112). T-1 s.d. T-6 selesai; satu tugas tersisa |
+| Status | **Tujuh dari tujuh tugas selesai — menunggu Gerbang 4.** Gerbang 3 lolos KB-112 |
 | Kebutuhan | R-01 s.d. R-11; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -176,12 +176,12 @@ uji atas satu penjalanan tidak dapat menyatakannya.
 
 **Kebutuhan:** TK-57, TK-60.
 
-- [ ] Docstring `HasilSumber.versi_penyemat` diperbarui: setengah R-06 yang
+- [x] Docstring `HasilSumber.versi_penyemat` diperbarui: setengah R-06 yang
       dinyatakan terbuka di sana kini tertutup
-- [ ] TK-57 dan TK-60 berpindah ke **Selesai** pada `docs/D00.md` Bagian 7.12
-- [ ] `logbook/L8` bertambah catatan akhir fitur — **juga bila tagihan pasal
-      tidak menyusut**, sebab tidak menyusutnya yang wajib terbaca
-- [ ] Catatan keputusan pada `logbook/L4`
+- [x] TK-57 dan TK-60 berpindah ke **Selesai** pada `docs/D00.md` Bagian 7.12
+- [x] `logbook/L8` bertambah catatan akhir fitur — tagihan pasal **tidak**
+      menyusut, dan itu yang dicatat
+- [x] Catatan keputusan pada `logbook/L4`
 
 ---
 

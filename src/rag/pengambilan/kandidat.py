@@ -101,11 +101,16 @@ class HasilSumber(BaseModel):
     hanya muncul pada satu pesan galat — uji mutasi M-7 tidak dapat dipasang
     sama sekali karena tidak ada keluaran yang membawanya.
 
-    **Setengah R-06 tetap belum terpenuhi, dan itu dinyatakan di sini
-    alih-alih didiamkan.** R-06 berbunyi "setiap keluaran yang dipakai
-    **membentuk indeks**". Jalur pembentukan indeks belum ada pada fitur 019 —
-    vektor ditulis perkakas SQL, bukan kode — sehingga bidang ini menutup sisi
-    pencarian saja. Sisi penulisan menunggu fitur yang membangunnya.
+    **Bidang ini menutup sisi pencarian R-06; sisi pembentukan indeks ditutup
+    fitur 026.** R-06 berbunyi "setiap keluaran yang dipakai **membentuk
+    indeks**". Selama fitur 019 kalimat ini menyatakan setengahnya terbuka,
+    sebab vektor ditulis perkakas SQL, bukan kode (TK-57).
+
+    Sejak fitur 026, `src/ingest/penyematan.py` menulis `nama/versi` model pada
+    kolom `versi_model_sematan` setiap baris, dan satu baris L2 tiap
+    pembangunan indeks. Kalimat yang menyatakan sebuah utang wajib diperbarui
+    pada hari utangnya lunas — kalimat yang tertinggal adalah kalimat yang
+    dipercaya orang berikutnya.
     """
     segmen_tanpa_vektor: int | None = Field(default=None, ge=0)
     """Segmen yang ada pada indeks tetapi belum disematkan — T-6 fitur 019.
