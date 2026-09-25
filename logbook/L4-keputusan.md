@@ -2025,3 +2025,21 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyambungkan riwayat di dalam fitur 027 — ditolak; R-16 yang baru disetujui melarang perubahan backend, dan penyambungannya menuntut bidang permintaan baru yang harus ditulis ke D-14 lebih dulu. Riwayat sisi peramban lewat simpanan lokal — ditolak; ia bayangan FR-F09 yang menyimpan pertanyaan kepala sekolah di luar kendali KM-03, dan akan bertahan sesudah fitur sungguhannya ada. Menulis `plan.md` dengan dan tanpa riwayat sekaligus — ditolak; rancangan yang bercabang pada putusan yang belum diambil adalah dua rancangan setengah jadi. |
 | Dampak | `docs/D14.md` 0.5 → 0.6; `docs/D05.md` 0.1 → 0.2; `docs/D00.md` 2.61 → 2.62 dengan TK-65; `spec.md` fitur 027 memuat keputusan Gerbang 1 dan usulan perubahan. Tidak ada kode berubah. `make check` lulus enam gerbang. **`plan.md` menunggu putusan cakupan.** |
 | Pemutus | Gerbang 1 dan K-1, K-2 oleh pemegang Gerbang 1–4. **Cakupan R-11 menunggu manusia.** |
+
+---
+
+## KB-125 · Pilihan A: fitur 027 menjadi layar Tanya saja; fitur 028 disisipkan; `plan.md` disusun
+
+| | |
+|---|---|
+| Tanggal | 2026-09-25 |
+| Konteks | TK-65 membuat R-11 (riwayat) tidak dapat dipenuhi tanpa mengubah backend. Dua pilihan diajukan; pemegang Gerbang 1–4 menjawab **"A"**. |
+| Keputusan | **R-11 dikeluarkan dari fitur 027**; irisan menjadi layar S-09 Tanya saja. **Fitur 028 · Penyambungan riwayat percakapan** disisipkan sesudah 027. `plan.md` fitur 027 disusun dan diajukan ke Gerbang 2. D-12 naik ke 0.34, D-00 ke 2.63; jumlah fitur **28**. |
+| R-11 ditandai dikeluarkan, bukan dihapus | Nomornya dipertahankan beserta alasan dan rujukannya. Menghapus lalu menomori ulang akan menggeser seluruh ketertelusuran R-12 s.d. R-20 yang sudah dikutip `plan.md`, KB-123, dan KB-124. |
+| Tiga keputusan `plan.md` yang paling mudah salah | (1) **Asal yang sama, bukan CORS.** Peladen Vite meneruskan `/api` ke `make jalan`; CORS adalah perubahan backend yang R-16 larang. (2) **Service worker tidak pernah menembolok `/api/…`.** Jawaban lama yang tersaji dari tembolok melanggar C-07 dengan cara yang persis sama dengan riwayat yang menyimpan tanggapan — alasan D-14 Bagian 4.3 menyimpan pertanyaan saja. (3) **KL-E menyatakan "tersimpan" hanya bila memang tersimpan.** Simpanan lokal peramban dapat menolak ditulis; pernyataan aman yang tidak benar lebih buruk daripada tidak ada pernyataan. |
+| `make check` membaca `web/`, dengan bukti | V-01 menjalankan pemeriksaan tipe dan uji `web/`; V-04 membaca `package-lock.json`; V-03 menjaga keselarasan `kontrak.ts` dengan model `Tanggapan`; V-02 memperluas C-13 ke teks layar. Mutasi M-10, M-11, M-12 wajib menjatuhkan V-01, V-04, V-03 — gerbang yang tidak pernah merah atas kerusakan di `web/` tidak terbukti membacanya. Tanpa Node, gerbang **gagal**, bukan dilewati. |
+| Dua batas yang dinyatakan terbuka | **Cakupan uji `web/` tidak diukur** — pengukurnya paket di luar persetujuan KB-123. **Anggaran muat 150 KB terkompresi** penetapan tim tanpa dasar literatur, diturunkan dari anggapan laju 3G yang wajib diverifikasi di lokus pilot sebelum dipakai sebagai klaim. |
+| Playwright dipakai, tetapi tidak di dalam gerbang | Tersedia sebagai alat global lingkungan ini, bukan ketergantungan proyek. Dipakai sekali pada Gerbang 4 untuk bukti ujung ke ujung terhadap `make jalan`. Gerbang yang bergantung pada alat di luar daftar persetujuan adalah ketergantungan tersembunyi. |
+| Alternatif | Menambahkan `@vitest/coverage-v8` agar cakupan terukur — ditolak tanpa persetujuan C-12 baru; diajukan bila pemegang gerbang menghendaki. Menjalankan Playwright di dalam V-01 — ditolak, lihat di atas. Mengimpor bentuk kontrak dari backend lewat berkas skema yang dibangkitkan — ditolak; `docs_url` dan `openapi_url` sengaja dimatikan sejak fitur 023, dan menyalakannya perubahan backend. |
+| Dampak | `docs/D12.md` 0.33 → 0.34 dengan baris 027 disempitkan dan baris 028; `docs/D00.md` 2.62 → 2.63 dengan TK-65 menunjuk fitur 028; `spec.md` fitur 027 mencatat perubahan cakupan; berkas baru `plan.md`. Tidak ada kode ditulis. `make check` lulus enam gerbang. **Menunggu Gerbang 2.** |
+| Pemutus | Pilihan A oleh pemegang Gerbang 1–4. Isi `plan.md` oleh agen |
