@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | ADR-09; FR-F01, FR-F05, FR-F06, FR-F09, FR-F10, FR-F14; NFR-02, NFR-11, NFR-13, NFR-19; C-13, C-14, C-15, C-20 |
 | Dokumen terkait | D-05 Bagian 4, 6 (S-09), 7, 8, 10, 11 · D-07 Bagian 4 tahap 10 dan Bagian 7 · D-14 Bagian 4.1 dan 4.2 |
-| Status | **Menunggu Gerbang 1** — dua pertanyaan terbuka |
+| Status | **Gerbang 1 lolos** — 25 September 2026 (KB-124). **Usulan perubahan cakupan menunggu putusan (TK-65)** |
 
 ## Tujuan
 
@@ -81,29 +81,34 @@ bersama rutenya masing-masing.
 | KL-F Antrean kirim | **Tidak berlaku** — D-05 Bagian 8 menetapkan pertanyaan S-09 disimpan sebagai **draf**, bukan dikirim otomatis. Pertanyaan yang terkirim sendiri berjam-jam kemudian akan mengejutkan penanyanya |
 | KL-G Tidak ditemukan dasar | Susunan sama dengan jawaban normal; penanda "Tidak ditemukan dasar rujukan" |
 
-## Pertanyaan terbuka
+## Keputusan Gerbang 1
 
-Fitur dengan pertanyaan terbuka tidak diserahkan ke agen. Keduanya menuntut
-putusan Gerbang 1.
+Diputus pemegang Gerbang 1–4 pada 25 September 2026, keduanya mengikuti
+anjuran.
 
-**P-1 · Bentuk tanggapan riwayat percakapan tidak tertulis pada D-14.**
-D-14 Bagian 4 memuat bentuk `/tanya` (4.1) dan bentuk galat (4.2). Bentuk
-`GET /api/v1/percakapan` dan `/{id}` **hanya ada pada kode**
-(`src/api/percakapan.py`). C-20 menyatakan bentuk tanggapan mengikuti D-14;
-aplikasi web yang bersandar pada bentuk yang tidak tertulis bersandar pada
-sesuatu yang dapat berubah tanpa melewati dokumen mana pun.
-**Anjuran:** tuliskan bentuk yang sudah ada ke D-14 Bagian 4 sebagai 4.3 —
-mendokumentasikan, bukan mengubah — sebelum `plan.md`.
+**K-1 · Bentuk riwayat percakapan dituliskan ke D-14 Bagian 4.3.**
+Dikerjakan: D-14 naik ke 0.6. Bentuknya didokumentasikan apa adanya dari
+kode, tidak diubah.
 
-**P-2 · Mikrokopi tidak-ditemukan menjanjikan sesuatu yang tidak ada.**
-D-05 Bagian 10 menetapkan: *"Belum ada dokumen rujukan yang memuat jawaban
-ini. Berikut pertanyaan lain yang bisa saya jawab dengan dasar."* Kalimat
-kedua menjanjikan saran pertanyaan, sedangkan bentuk tanggapan D-14 tidak
-memuatnya dan C-20 melarang menambah bidang.
-**Anjuran:** pakai kalimat pertama saja, dan catat kalimat kedua sebagai butir
-terbuka D-05 yang menunggu bidangnya. Kalimat yang menjanjikan daftar lalu
-tidak diikuti daftar adalah persis jenis kekecewaan yang D-05 Bagian 10
-hendak cegah.
+**K-2 · Mikrokopi tidak-ditemukan memakai kalimat pertama D-05 Bagian 10
+saja.** Kalimat kedua dicatat sebagai BT-71 pada D-05, menunggu bidang saran
+pertanyaan yang menuntut persetujuan C-20.
+
+## Usulan perubahan sesudah Gerbang 1 — menunggu putusan
+
+**TK-65 ditemukan saat mengerjakan K-1: riwayat percakapan tidak pernah
+ditulis.** `Percakapan.catat` hanya dipanggil dari uji; penangan `/tanya`
+tidak mencatat giliran; bentuk permintaannya tidak memuat pengenal
+percakapan. Pada aplikasi yang berjalan, kedua rute riwayat selalu
+mengembalikan daftar kosong.
+
+R-11 karena itu **tidak dapat dipenuhi** tanpa mengubah backend, dan R-16
+melarangnya. `AGENTS.md` melarang mengubah `spec.md` saat implementasi tanpa
+persetujuan, sehingga R-11 **belum** diubah di atas. Usulan:
+
+- **R-11 dikeluarkan dari fitur 027** — irisan menjadi layar Tanya saja;
+- penyambungan riwayat menjadi baris pembangunan tersendiri, sebab ia
+  menuntut bidang permintaan baru yang harus ditulis ke D-14 lebih dulu.
 
 ## Ketertelusuran
 
