@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 23 September 2026, nol pertanyaan terbuka (KB-109) |
-| Status | **Tujuh dari tujuh tugas selesai — menunggu Gerbang 4.** Gerbang 3 lolos KB-112 |
+| Status | **Gerbang 4 lolos** — 25 September 2026 (KB-120). Gerbang 2 lolos KB-111 |
 | Kebutuhan | R-01 s.d. R-11 `spec.md`; C-02, C-03, C-09, C-12; TK-57, TK-60 |
 
 ## 1. Letak modul — diverifikasi dengan menjalankan pemeriksanya

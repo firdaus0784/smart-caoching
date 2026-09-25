@@ -5,8 +5,7 @@
 | Kebutuhan | R-06 fitur 019; C-09, C-02, C-03, C-12; ADR-05, ADR-12 |
 | Dokumen terkait | D-07 Bagian 3.3 dan 4.4, D-10 Bagian 3 dan 4, D-14 Bagian 5 |
 | Temuan asal | **TK-57** `docs/D00.md` Bagian 7.12 |
-| Status | **Gerbang 1 lolos** — 23 September 2026, nol pertanyaan terbuka (KB-110). Menunggu Gerbang 2 |
-
+| Status | **Gerbang 4 lolos** — 25 September 2026 (KB-120). Gerbang 1 lolos KB-110 |
 ## Tujuan
 
 Fitur 019 membangun sisi semantik **pembacaan**: `SumberVektor` mencari

@@ -1929,3 +1929,20 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `src/rag/pengambilan/kandidat.py` satu docstring; `docs/D00.md` 2.57 → 2.58; `logbook/L8` satu catatan; status `plan.md` dan `tasks.md` fitur 026. Tidak ada perilaku berubah. `make check` lulus enam gerbang. **Menunggu Gerbang 4.** |
 | Pemutus | Agen, di dalam batas `tasks.md` T-7. **Gerbang 4 menunggu pemegang gerbang** |
 | Alternatif | Membiarkan docstring `HasilSumber.versi_penyemat` apa adanya karena ia tidak mengubah perilaku — ditolak; ia menyatakan utang yang sudah lunas, dan pembaca berikutnya akan membangun sesuatu untuk melunasinya lagi. Menutup TK-57 tanpa menyebut bahwa fitur ini sempat mengulang bentuknya — ditolak; penutupan yang menghapus riwayat kegagalannya bukan penutupan yang jujur. **Baris ini ditambahkan sesudah baris Pemutus**, bukan disisipkan ke tempat semestinya: entri ini semula ditulis tanpa bidang `Alternatif` dan `make check` menolaknya. `logbook/` tambah-saja, termasuk untuk memperbaikinya — pola KB-058. |
+
+---
+
+## KB-120 · Gerbang 4 fitur 026 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-09-25 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"Gerbang 4 fitur 026 lolos"** — pernyataan tegas, bukan jawaban bersyarat, sehingga tidak ada penafsiran yang perlu dicatat. |
+| Keputusan | **Gerbang 4 fitur 026 lolos.** Baris status `spec.md`, `plan.md`, dan `tasks.md` disesuaikan. **Dua puluh satu dari dua puluh enam fitur** kini lolos Gerbang 4. |
+| Keadaan yang diverifikasi sebelum dicatat | Pohon kerja bersih; `make check` lulus enam gerbang; `make compliance` **19 lulus, 0 gagal, 1 belum**. Ratifikasi dicatat atas keadaan yang diperiksa hari ini, bukan atas ingatan tentang keadaan kemarin. |
+| Yang dibawa fitur ini | Jalur penyematan korpus di `src/ingest/penyematan.py`; nama kolom yang diluruskan ke D-04 beserta migrasi tabel lama; fakta fisik indeks yang pindah ke `src/penyimpanan/skema_indeks.py`; hak tulis indeks sebagai bidang wajib `Kredensial` dan kredensial keempat `PENYEMATAN`; catatan L2 tiap pembangunan indeks. **Empat temuan ditutup: TK-57, TK-60, TK-61, TK-62.** |
+| `spec.md` ikut disesuaikan | Baris statusnya masih berbunyi "Menunggu Gerbang 2". `periksa_status_gerbang` membandingkan `plan.md` dengan `tasks.md` saja, sehingga `spec.md` yang tertinggal tidak terjaring — batas pemeriksa yang dinyatakan di sini alih-alih diperluas diam-diam. |
+| Keadaan proyek sesudahnya | Lima fitur tersisa — 013, 017, 018, 020, 025 — seluruhnya tertahan masukan dari luar: tim frontend, korpus teranotasi dan ET-01, putusan ontologi, bobot model, *gold set* BT-35. **Tidak ada lagi baris pembangunan yang dapat dikerjakan agen sendirian.** |
+| Alternatif | Memperluas `periksa_status_gerbang` ke `spec.md` sekarang juga — ditolak untuk hari ini; ia perubahan pemeriksa, bukan pencatatan gerbang, dan menggabungkannya membuat commit ratifikasi memuat perubahan perilaku. Diajukan terpisah bila pemegang gerbang menghendaki. |
+| Dampak | Tiga baris status fitur 026. Tidak ada kode berubah. `make check` lulus enam gerbang. |
+| Pemutus | Pemegang Gerbang 1–4, 25 September 2026 |
