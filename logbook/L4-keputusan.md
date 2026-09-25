@@ -1946,3 +1946,23 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memperluas `periksa_status_gerbang` ke `spec.md` sekarang juga — ditolak untuk hari ini; ia perubahan pemeriksa, bukan pencatatan gerbang, dan menggabungkannya membuat commit ratifikasi memuat perubahan perilaku. Diajukan terpisah bila pemegang gerbang menghendaki. |
 | Dampak | Tiga baris status fitur 026. Tidak ada kode berubah. `make check` lulus enam gerbang. |
 | Pemutus | Pemegang Gerbang 1–4, 25 September 2026 |
+
+---
+
+## KB-121 · Kerangka dokumentasi teknis HKI, dan satu pernyataan keliru yang ia temukan
+
+| | |
+|---|---|
+| Tanggal | 2026-09-25 |
+| Konteks | Pemegang Gerbang 1–4 memerintahkan penyusunan kerangka dokumentasi teknis bagi Berkas HKI L10 dari D-04 dan D-07 — komponen #4, satu-satunya yang bahannya sudah lengkap. |
+| Keputusan | **Kerangka disusun** pada `docs/hki/dokumentasi-teknis.md`. L10 mencatat perpindahan keadaan komponen #4. Satu temuan didaftarkan: **TK-63**, beserta koreksi docstring yang keliru. |
+| Tempatnya di `docs/hki/`, bukan di `logbook/` | L10 tambah-saja, sedangkan dokumentasi teknis akan direvisi berulang sebelum pengajuan. Dokumen yang direvisi tidak boleh tinggal di berkas yang tidak dapat disunting. L10 mencatat **keadaan** komponen dan menunjuk berkasnya — sejajar dengan cara L10 dirancang sejak dibuka. |
+| Setiap komponen diberi penanda yang diperiksa ke kode | *Terbangun / Sebagian / Dirancang*. Dokumen ini akan dibaca pihak di luar tim; menyatakan komponen yang baru dirancang sebagai terbangun adalah pernyataan keliru kepada pihak luar. Hasil pemeriksaannya: dari sembilan wadah D-04, **satu terbangun**, enam sebagian, dua dirancang; dari sepuluh tahap D-07, **tiga terbangun**, lima sebagian, dua dirancang. |
+| Dua angka yang hampir keliru | Jumlah uji pertama terhitung **2.044** — salah, sebab peladen mati dan sebagian modul uji gagal dikumpulkan tanpa suara. Angka sebenarnya **2.176**. Dihitung ulang sebelum masuk dokumen untuk pihak luar; pengumpul uji yang gagal diam-diam adalah bentuk TA-01 pada tingkat penghitungan. |
+| Tanpa nama orang | Identitas pencipta dan pernyataan kepemilikan komponen #7, milik ketua peneliti. Dokumen teknis tidak memuat satu nama pun. |
+| **TK-63 — pernyataan keliru saya sendiri, dan ia sudah lolos Gerbang 4** | Docstring `PENYEMATAN` pada commit `8260eb6` menyatakan pemisahannya dari karantina *"ditegakkan peladen lewat peran basis data"*. Diperiksa sebelum dikutip ke dokumen HKI: hanya **empat** peran basis data yang ada, dan tidak satu pun untuk penyematan. Pemisahan jalur penyematan dijaga objek `Kredensial` saja. Kalimat itu ditulis dengan meniru bentuk keempat kredensial lain tanpa memeriksa apakah pasangannya ada — dan ia lolos T-4, T-6, T-7, serta Gerbang 4 fitur 026. |
+| Mengapa tidak satu pemeriksa pun menangkapnya | Pemeriksa membaca kode, bukan kebenaran klaim di dalam uraian. Uji penolakan peladen yang ada mencakup sepuluh arah bagi empat peran; peran yang tidak ada tidak memiliki uji yang dapat gagal. Yang menemukannya kebiasaan memeriksa setiap klaim sebelum dikutip untuk pihak luar — bukan mesin. |
+| Yang dikerjakan, dan yang tidak | Docstring **dikoreksi** — ia kode, bukan logbook, dan pernyataan keliru di dalam kode dibetulkan, bukan dibiarkan. Dokumentasi teknis menyatakan batasnya terbuka. Peran `peran_penyematan` **tidak** dibuat: ia menyentuh berkas persiapan fitur 024 dan permukaan C-03, sehingga menunggu putusan. |
+| Alternatif | Menaruh dokumentasi teknis di dalam L10 — ditolak; lihat di atas. Menyalin klaim D-04 apa adanya tanpa penanda keadaan — ditolak; D-04 menggambarkan rancangan, dan dokumen HKI menggambarkan ciptaan. Membiarkan docstring keliru sampai peran dibuat — ditolak tegas; pernyataan keliru yang dibiarkan sampai benar adalah pernyataan keliru sepanjang masa itu. |
+| Dampak | Berkas baru `docs/hki/dokumentasi-teknis.md`; `logbook/L10` satu baris riwayat; `src/penyimpanan/kredensial_baku.py` satu docstring dikoreksi; `docs/D00.md` 2.58 → 2.59 dengan TK-63. Tidak ada perilaku berubah. `make check` lulus enam gerbang. |
+| Pemutus | Agen atas perintah pemegang Gerbang 1–4. **TK-63 menunggu putusan.** |

@@ -99,6 +99,11 @@ tidak pernah tersemat adalah indeks yang sisi semantiknya mati diam-diam.
 `tulis` kosong, dan itu bukan kelalaian. Jalur ini menulis **vektor pada
 indeks**, bukan dokumen pada area; hak tulis area yang ikut diberikan adalah
 hak yang tidak diminta siapa pun. Karantina tidak dijangkau sama sekali —
-C-03, dan pemisahannya ditegakkan peladen lewat peran basis data, bukan oleh
-objek ini.
+C-03.
+
+**Batas yang dinyatakan terbuka (TK-63).** Pemisahan itu hari ini dijaga
+**objek ini saja**. Keempat kredensial lain memiliki pasangan peran basis data
+yang menolak akses terlarang di peladen; kredensial ini belum. Rumusan semula
+kalimat ini menyatakan pemisahannya ditegakkan peladen — dan itu keliru, sebab
+peran `peran_penyematan` tidak pernah dibuat. Dikoreksi 25 September 2026.
 """

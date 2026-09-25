@@ -78,3 +78,4 @@ Ia bahan bagi komponen 6, **bukan** komponen 6 itu sendiri.
 | Tanggal | Perubahan | Pemicu |
 |---|---|---|
 | 23 September 2026 | Berkas dibuka; keadaan ketujuh komponen dicatat apa adanya; keterlambatan pembukaan dinyatakan | TK-59, KB-107 |
+| 25 September 2026 | **Komponen 4 · Dokumentasi teknis** berpindah dari "bahannya sudah ada, belum dirangkum" ke **"kerangka disusun — menunggu tinjauan ketua peneliti"**. Berkasnya `docs/hki/dokumentasi-teknis.md`, disusun dari D-04 versi 0.8 dan D-07 versi 0.3. Setiap komponen diberi penanda *Terbangun / Sebagian / Dirancang* yang diperiksa terhadap kode pada commit `9c0b138`, bukan disalin dari rencana. Empat hal menunggu ketua peneliti: cakupan yang didaftarkan, nama ciptaan, diagram wadah yang tidak ada pada repositori, dan pemutakhiran penanda tepat sebelum pengajuan. Saat menyusunnya ditemukan **TK-63** | Perintah pemegang Gerbang 1–4; KB-121 |
