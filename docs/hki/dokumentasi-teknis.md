@@ -4,7 +4,7 @@
 |---|---|
 | Komponen Berkas HKI | **#4 Dokumentasi teknis** — `docs/D10.md` Bagian 10A, `logbook/L10-berkas-hki.md` |
 | Sumber bahan | `docs/D04.md` versi 0.8 (arsitektur) · `docs/D07.md` versi 0.3 (spesifikasi RAG) |
-| Keadaan kode yang digambarkan | Commit `9c0b138`, 25 September 2026 |
+| Keadaan kode yang digambarkan | Commit `9c0b138`, 25 September 2026; Bagian 3 dan 7 dimutakhirkan atas TK-63 dan TK-64 |
 | Status | **KERANGKA — menunggu tinjauan ketua peneliti** |
 | Disusun oleh | Agen pengembang, atas perintah pemegang Gerbang 1–4 |
 
@@ -83,7 +83,7 @@ Sumber: D-04 Bagian 5. Kolom keadaan diperiksa terhadap commit `9c0b138`.
 | Layanan NLP | Python | **Sebagian** | Praproses, OCR, dan deteksi data pribadi berpola terbangun (fitur 015); **model NER dan klasifikasi belum** (fitur 017) |
 | Layanan RAG | Python | **Sebagian** | Lihat Bagian 4 |
 | Pekerja latar | Python | **Sebagian** | Ingesti kanal dan penyematan korpus ada sebagai fungsi (fitur 002, 010, 026); **antrean tugas dan penjadwal belum** |
-| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Empat peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026) |
+| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026) |
 | Penyimpanan berkas | Sistem berkas, area karantina terpisah | **Sebagian** | Pemisahan area karantina dan korpus terbangun **pada basis data**; penyimpanan berkas asli pada sistem berkas belum |
 | Perangkat anotasi | Label Studio, dipasang mandiri | **Sebagian** | Pembacaan ekspor terbangun (fitur 016); pemasangan perangkatnya pekerjaan operasi |
 
@@ -169,11 +169,12 @@ menuntut penolakan:
 | Pemanggil model tidak menjangkau indeks metadata | C-02 |
 | Layanan penjawaban tidak menjangkau area karantina | C-03 |
 | Kunci pseudonim pada basis data terpisah, tidak terjangkau layanan aplikasi | C-05 |
-| Jalur penjawaban tanpa hak tulis | C-17 |
+| Jalur penjawaban tanpa hak tulis, termasuk hak tulis indeks | C-17 |
+| Jalur penyematan menulis dua kolom vektor saja; tidak menjangkau korpus, karantina, maupun basis data pseudonim | C-03, C-05 |
 
-**Satu batas dinyatakan terbuka:** jalur penyematan korpus (fitur 026) belum
-memiliki peran basis data sendiri, sehingga pemisahannya dari area karantina
-hari ini dijaga kode aplikasi saja, belum oleh peladen (TK-63).
+Setiap peran juga diuji **berjalan** dengan haknya sendiri, bukan hanya
+ditolak: pencarian vektor dan penyematan korpus masing-masing dijalankan
+tersambung sebagai peran produksinya (TK-63, TK-64).
 
 ---
 

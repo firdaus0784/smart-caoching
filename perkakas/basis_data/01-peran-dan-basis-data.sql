@@ -26,7 +26,8 @@ DO $$
 DECLARE nama text;
 BEGIN
   FOREACH nama IN ARRAY ARRAY['peran_penjawaban','peran_verifikasi',
-                              'peran_pemanggil_llm','peran_pseudonim'] LOOP
+                              'peran_pemanggil_llm','peran_pseudonim',
+                              'peran_penyematan'] LOOP
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
       EXECUTE format('CREATE ROLE %I LOGIN', nama);
     END IF;
@@ -49,7 +50,11 @@ REVOKE CONNECT ON DATABASE smart_coaching            FROM PUBLIC;
 REVOKE CONNECT ON DATABASE smart_coaching_pseudonim  FROM PUBLIC;
 
 GRANT CONNECT ON DATABASE smart_coaching
-  TO peran_penjawaban, peran_verifikasi, peran_pemanggil_llm;
+  TO peran_penjawaban, peran_verifikasi, peran_pemanggil_llm, peran_penyematan;
+
+-- `peran_penyematan` (fitur 026, TK-63) sengaja TIDAK diberi CONNECT ke basis
+-- data pseudonim. Jalur penyematan tidak membutuhkannya, dan C-05 menuntut
+-- kunci pseudonim tidak terjangkau dari layanan aplikasi mana pun.
 
 GRANT CONNECT ON DATABASE smart_coaching_pseudonim
   TO peran_pseudonim;

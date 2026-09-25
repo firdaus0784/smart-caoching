@@ -83,7 +83,7 @@ menangkapnya bila ia kelebihan kemampuan."""
 
 PENYEMATAN = Kredensial(
     nama="penyematan",
-    baca=frozenset({Area.KORPUS}),
+    baca=frozenset(),
     tulis=frozenset(),
     indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
     tulis_indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
@@ -101,9 +101,15 @@ indeks**, bukan dokumen pada area; hak tulis area yang ikut diberikan adalah
 hak yang tidak diminta siapa pun. Karantina tidak dijangkau sama sekali —
 C-03.
 
-**Batas yang dinyatakan terbuka (TK-63).** Pemisahan itu hari ini dijaga
-**objek ini saja**. Keempat kredensial lain memiliki pasangan peran basis data
-yang menolak akses terlarang di peladen; kredensial ini belum. Rumusan semula
-kalimat ini menyatakan pemisahannya ditegakkan peladen — dan itu keliru, sebab
-peran `peran_penyematan` tidak pernah dibuat. Dikoreksi 25 September 2026.
+**Pasangannya di peladen: `peran_penyematan` (TK-63).** Peran itu hanya boleh
+membaca kedua tabel indeks dan menulis **dua kolom** — vektor dan penanda
+modelnya. Ia tidak dapat menyunting teks segmen, menambah, atau menghapus
+segmen, dan tidak menjangkau korpus, karantina, maupun basis data pseudonim;
+seluruhnya diuji dengan penolakan peladen.
+
+`baca` karena itu **kosong**, bukan `KORPUS`: teks segmen dibaca dari tabel
+indeks, dan objek yang mengizinkan lebih daripada perannya adalah dua daftar
+yang bercerita berbeda. Rumusan kalimat ini sebelum 25 September 2026
+menyatakan pemisahannya ditegakkan peladen padahal peran itu belum ada —
+dikoreksi pada KB-121, dan kini benar pada KB-122.
 """

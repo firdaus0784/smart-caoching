@@ -30,6 +30,31 @@ GRANT USAGE ON SCHEMA karantina, korpus, indeks_utama, indeks_metadata
 -- Ketiadaan USAGE atas `indeks_metadata` adalah C-02 yang ditegakkan peladen.
 GRANT USAGE ON SCHEMA korpus, indeks_utama TO peran_pemanggil_llm;
 
+-- Jalur penyematan (fitur 026, TK-63): kedua indeks saja. Tanpa korpus —
+-- teks segmen dibaca dari tabel indeks, bukan dari dokumen korpus — dan
+-- tanpa karantina (C-03). Hak atas tabelnya diberikan per kolom pada
+-- 05-kolom-vektor.sql, sesudah tabelnya ada; `ALTER DEFAULT PRIVILEGES`
+-- sengaja tidak dipakai, sebab hak per kolom tidak dapat diwariskan.
+GRANT USAGE ON SCHEMA indeks_utama, indeks_metadata TO peran_penyematan;
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- TK-64 · USAGE pada `public` bagi peran yang memakai tipe `vector`
+--
+-- Ekstensi pgvector terpasang di skema `public`, dan baris REVOKE di atas
+-- mencabut seluruh hak `public` dari semua orang. Akibatnya peran penjawaban
+-- dan pemanggil model **tidak dapat memakai tipe `vector` sama sekali** —
+-- pencarian vektor fitur 019 gagal di produksi dengan
+-- `type "vector" does not exist`. Tidak ada uji yang menangkapnya, sebab
+-- seluruh uji vektor tersambung sebagai pengelola.
+--
+-- USAGE saja, tanpa CREATE. `public` tidak memuat satu relasi pun — hanya
+-- tipe, fungsi, dan operator ekstensi — sehingga hak ini tidak menjangkau
+-- data apa pun. Sifat itu dijaga uji: bila kelak ada tabel dibuat di
+-- `public`, uji merah.
+-- ─────────────────────────────────────────────────────────────────────────
+GRANT USAGE ON SCHEMA public
+  TO peran_penjawaban, peran_pemanggil_llm, peran_penyematan;
+
 -- ─────────────────────────────────────────────────────────────────────────
 -- HAK ATAS TABEL YANG BELUM ADA
 --

@@ -323,3 +323,48 @@ def test_sumber_tanpa_penyemat_membiarkan_versinya_kosong() -> None:
     terisi."""
     hasil = jalankan(SumberTiruan("bm25", {"SEG-A": 1.0}).cari("kueri", batas=5))
     assert hasil.versi_penyemat is None
+
+
+# ── TK-64: pencarian berjalan dengan peran produksi ─────────────────
+
+
+class SambunganPemanggilLlm(SambunganUji):
+    """Menyambung sebagai `peran_pemanggil_llm` — peran jalur yang menjawab."""
+
+    async def _dengan(self, nama: str, kueri: str, *argumen: object) -> object:
+        import asyncpg
+        from tests.peladen import HOST, PORT
+
+        sambungan = await asyncpg.connect(
+            host=HOST, port=int(PORT), user="peran_pemanggil_llm", database="smart_coaching"
+        )
+        try:
+            return await getattr(sambungan, nama)(kueri, *argumen)
+        finally:
+            await sambungan.close()
+
+
+def test_pencarian_berjalan_dengan_peran_pemanggil_llm() -> None:
+    """**TK-64 — uji yang semestinya ada sejak fitur 019.**
+
+    Seluruh uji sumber vektor tersambung sebagai pengelola, peran yang boleh
+    segalanya. Pada peran produksi, pencarian gagal dengan
+    `type "vector" does not exist`, sebab ekstensi terpasang di skema `public`
+    yang haknya dicabut dari semua orang. Fitur 019 lolos Gerbang 4 dengan
+    cacat itu, dan ia ditemukan bukan oleh uji fitur 019 melainkan saat
+    membuat peran penyematan pada TK-63.
+
+    Uji yang tersambung sebagai peran paling berkuasa membuktikan kueri benar,
+    bukan membuktikan sistem dapat menjalankannya.
+    """
+    _isi_korpus(PenyematTiruan(dimensi=DIMENSI_UJI))
+    sumber = jalankan(
+        SumberVektor.susun(
+            sambungan=SambunganPemanggilLlm(),
+            penyemat=PenyematTiruan(dimensi=DIMENSI_UJI),
+            indeks_tujuan=IndeksTujuan.UTAMA,
+            versi_indeks=VERSI_UJI,
+        )
+    )
+    hasil = jalankan(sumber.cari(KORPUS[0].teks, batas=5))
+    assert hasil.peringkat[0].id_segmen == KORPUS[0].id_segmen

@@ -71,7 +71,7 @@ menyapu berkas `*.sql` di sini dan menolak `\quit` yang kembali.
 Ditemukan pada T-9 fitur 019 dengan mencoba, bukan dengan membaca — dan
 penjagaan dimensi pada `05` sudah bocor sejak T-4 karenanya.
 
-## Empat peran, dan apa yang tidak dijangkaunya
+## Lima peran, dan apa yang tidak dijangkaunya
 
 | Peran | Menjangkau | **Tidak** menjangkau | Pasal |
 |---|---|---|---|
@@ -79,8 +79,16 @@ penjagaan dimensi pada `05` sudah bocor sejak T-4 karenanya.
 | `peran_verifikasi` | karantina dan korpus | basis data pseudonim | C-05 |
 | `peran_pemanggil_llm` | korpus, `indeks_utama` saja | **`indeks_metadata`** | C-02, FR-D06 |
 | `peran_pseudonim` | basis data pseudonim saja | seluruh data perilaku | C-05 |
+| `peran_penyematan` | kedua tabel indeks — baca; **dua kolom** vektor — tulis | korpus; karantina; basis data pseudonim; teks segmen; tambah atau hapus segmen | C-03, C-05, TK-63 |
 
 Kolom "tidak menjangkau" yang penting, bukan kolom sebelahnya.
+
+**Tipe `vector` menuntut USAGE pada skema `public` (TK-64).** Ekstensi
+terpasang di sana, dan `02-skema-dan-hak.sql` mencabut hak `public` dari
+semua orang. Tanpa pemberian USAGE, peran penjawaban dan pemanggil model
+gagal dengan `type "vector" does not exist` — dan uji yang tersambung
+sebagai pengelola tidak pernah melihatnya. USAGE saja, tanpa CREATE; `public`
+tidak memuat satu relasi pun, dan uji menjaga sifat itu.
 
 ## Dua baris yang paling mudah terlupa
 

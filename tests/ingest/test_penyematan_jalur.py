@@ -378,3 +378,48 @@ def test_jumlah_segmen_l2_menghitung_indeks_bukan_penjalanan(tmp_path: Path) -> 
         (tmp_path / "L2-versi-artefak.jsonl").read_text(encoding="utf-8").splitlines()[-1]
     )
     assert terakhir["jumlah_segmen"] == 3
+
+
+# ── TK-63: jalur berjalan dengan peran hak minimumnya sendiri ───────
+
+
+class SambunganPeranPenyematan(SambunganUji):
+    """Menyambung sebagai `peran_penyematan`, bukan sebagai pengelola."""
+
+    async def _dengan(self, nama: str, kueri: str, *argumen: object) -> object:
+        import asyncpg
+        from tests.peladen import HOST, PORT
+
+        sambungan = await asyncpg.connect(
+            host=HOST, port=int(PORT), user="peran_penyematan", database="smart_coaching"
+        )
+        try:
+            return await getattr(sambungan, nama)(kueri, *argumen)
+        finally:
+            await sambungan.close()
+
+
+def test_jalur_penuh_berjalan_dengan_peran_penyematan(tmp_path: Path) -> None:
+    """**TK-63.** Uji hak per perintah membuktikan apa yang ditolak dan
+    dibolehkan; uji ini membuktikan hak itu **cukup** bagi kode yang
+    sesungguhnya — pembacaan katalog, penjagaan R-09, penulisan dua kolom,
+    penghitungan komposisi.
+
+    Peran yang lolos seluruh uji penolakan tetapi tidak cukup menjalankan
+    jalurnya akan mendorong orang menjalankan penyematan dengan peran yang
+    lebih luas — dan `peran_verifikasi` menjangkau karantina.
+    """
+    _kosongkan()
+    _tanam(("SEG-A", "kepala sekolah"), ("SEG-B", "supervisi"))
+    hasil = jalankan(
+        sematkan_indeks(
+            SambunganPeranPenyematan(),
+            penyemat=PenyematTiruan(dimensi=DIMENSI_UJI),
+            indeks_tujuan=IndeksTujuan.UTAMA,
+            kredensial=PENYEMATAN,
+            sekarang=lambda: SAAT,
+            akar_logbook=tmp_path,
+        )
+    )
+    assert hasil.tersemat == 2
+    assert hasil.tersisa_tanpa_vektor == 0

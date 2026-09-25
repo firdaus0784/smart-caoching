@@ -145,3 +145,25 @@ BEGIN
     );
   END LOOP;
 END $$;
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- Hak `peran_penyematan` — fitur 026, TK-63
+--
+-- Jalur penyematan membaca segmen yang belum bervektor lalu menulis DUA kolom:
+-- vektornya dan penanda model yang menghasilkannya. Hak tulisnya diberikan
+-- PER KOLOM, bukan per tabel: peran ini tidak dapat menyunting teks segmen,
+-- lisensinya, maupun penanda bagiannya, tidak dapat menambah segmen, dan tidak
+-- dapat menghapusnya. Kekeliruan pada jalur penyematan karena itu tidak dapat
+-- mengubah isi yang dikutip sitasi.
+--
+-- Sebelum TK-63, kredensial `PENYEMATAN` tidak memiliki pasangan peran sama
+-- sekali, dan jalur ini hanya dapat dijalankan dengan peran yang jauh lebih
+-- luas — `peran_verifikasi` menjangkau karantina. Peran ini karena itu
+-- MENYEMPITKAN hak, bukan menambahnya.
+-- ─────────────────────────────────────────────────────────────────────────
+
+GRANT SELECT ON indeks_utama.segmen_teks, indeks_metadata.segmen_teks
+  TO peran_penyematan;
+GRANT UPDATE (vektor_sematan, versi_model_sematan)
+  ON indeks_utama.segmen_teks, indeks_metadata.segmen_teks
+  TO peran_penyematan;
