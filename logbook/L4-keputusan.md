@@ -2095,3 +2095,20 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `make check` lulus enam gerbang; 2209 uji terkumpul. Nol baris di `src/` (R-16). Fitur 027: **2 dari 8 tugas**. |
 | Pemutus | Persetujuan C-12 oleh pemegang Gerbang 1–4; T-2 oleh agen di dalam batas `tasks.md` |
 | Alternatif | Baris ini ditambahkan sesudah uji bentuk L4 menolak entri: labelnya tertulis "Alternatif ditolak", bukan "Alternatif". Baris di atas tidak disunting (pola KB-058). Isinya sama: `declare module 'react'` ditolak karena membuat React `any`. |
+
+## KB-129 · T-3 fitur 027 — kontrak, klien, dan dua penjaga keselarasan; TK-66 dicatat
+
+| | |
+|---|---|
+| Tanggal | 2026-09-27 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"lanjutkan t-3"**. Bentuk tanggapan `/api/v1/tanya` kini ditulis dua kali — model pydantic dan TypeScript — dan layar memanggil rute yang harus benar-benar dilayani peladen. |
+| Keputusan | **T-3 selesai.** `web/src/kontrak.ts` (tipe D-14 Bagian 4.1 dan `JenisGalat` bagi layar), `web/src/klien.ts` (`fetch` disuntikkan). Pemeriksa baru `perkakas/pemeriksa/kontrak_web.py` pada V-03 membandingkan nama bidang lima antarmuka dan nilai dua enum dengan modelnya, dua arah. `rute_terdaftar.py` kini juga menyapu `web/src`: setiap literal jalur API wajib rute yang **terpasang** pada aplikasi yang disusun `susun_aplikasi` — D-14 memuat 29 rute, peladen melayani tiga. |
+| Klien menolak bentuk yang tidak dikenali | Tanggapan 200 yang bidangnya kurang, lebih, bernilai enum asing, atau memuat sitasi `dicabut` menjadi galat sistem utuh, bukan ditampilkan separuh. Jawaban yang tampil tanpa sitasi karena satu bidang hilang adalah pelanggaran C-01 yang dibuat layar. |
+| Hasil galat tanpa status dan tanpa isi peladen | 401/403 → `tidak_berhak`; 400/413/422 → `pertanyaan_ditolak`; selebihnya → `sistem`; jaringan putus → `luring` (KL-E). Diuji bahwa hasilnya tidak memuat angka status maupun teks badan peladen (R-10). |
+| **TK-66 ditemukan** | Peladen fitur 023 mengembalikan galat `{"pesan": …}`, bukan bentuk D-14 Bagian 4.2 (`galat.kode`, `pesan_pengguna`, `id_jejak`). Tidak menghalangi T-3 — syarat berhenti `plan.md` menyangkut Bagian 4.1, yang cocok, dan layar tidak membaca badan galat. Perbaikannya perubahan backend yang R-16 larang; dicatat pada D-00 Bagian 7.12, anjuran diselesaikan bersama fitur 028. |
+| Tipe bidang tidak dibandingkan pemeriksa | Penerjemahan tipe pydantic ke TypeScript adalah pekerjaan pengurai, dan pengurai setengah jadi melaporkan bersih pada kasus yang tidak dikenalinya. Sisi tipe dijaga saat berjalan oleh `apakahTanggapan`, yang diuji `vitest` pada V-01. Antarmuka yang ditulis dengan bentuk tak dikenali dilaporkan **tidak ditemukan**, bukan dilewati. |
+| Uji | `tests/pemeriksa/test_kontrak_web.py` 8 uji; 5 uji baru pada `tests/perkakas/test_rute_terdaftar.py`; `web/src/klien.test.ts` 29 uji. Tiap uji kegagalan memeriksa bidang atau jalur yang disebut, bukan hanya jumlah temuan. |
+| Uji mutasi | **M-12**: `bagian` pada `Sitasi` di `kontrak.ts` diganti `pasal` → V-03 **merah**, menyebut kedua nama. Tambahan: `JALUR_TANYA` diganti `/api/v1/auth/masuk` (tercantum D-14, tidak terpasang) → V-03 **merah** pada baris 26. Keduanya dipulihkan dan dibandingkan byte demi byte. |
+| Alternatif | Membandingkan `kontrak.ts` dengan blok JSON D-14 alih-alih model — ditolak; model adalah yang dikirim peladen, dan pemeriksa C-20 sudah menjaga model terhadap D-14. Rantai dua pemeriksa itu menutup ketiganya. |
+| Dampak | Nol baris di `src/` (R-16). D-00 ke 2.64. Fitur 027: **3 dari 8 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md`; TK-66 menunggu putusan pemegang Gerbang 1–4 |

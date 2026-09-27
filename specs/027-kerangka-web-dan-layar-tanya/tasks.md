@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 dan T-2 selesai (KB-128); enam tugas tersisa |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-3 selesai (KB-129); lima tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -61,14 +61,14 @@ Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
 **Kebutuhan:** R-16, R-19; C-20; D-14 Bagian 4.1 dan 4.2.
 
-- [ ] Uji: `kontrak_web.py` menolak `kontrak.ts` yang nama bidangnya berbeda
+- [x] Uji: `kontrak_web.py` menolak `kontrak.ts` yang nama bidangnya berbeda
       dari model `Tanggapan` — bidang hilang, bidang lebih, bidang berganti nama
-- [ ] Uji: `rute_terdaftar.py` menolak jalur `/api/v1/…` pada `web/src` yang
+- [x] Uji: `rute_terdaftar.py` menolak jalur `/api/v1/…` pada `web/src` yang
       bukan rute terpasang — **terpasang**, bukan sekadar tercantum D-14
-- [ ] `web/src/kontrak.ts` — tipe tanggapan dan bentuk galat
-- [ ] `web/src/klien.ts` — `fetch` disuntikkan; galat HTTP dan jaringan
+- [x] `web/src/kontrak.ts` — tipe tanggapan dan bentuk galat
+- [x] `web/src/klien.ts` — `fetch` disuntikkan; galat HTTP dan jaringan
       dipetakan ke keadaan layar, **tidak pernah** ke teks yang menyebut status
-- [ ] Mutasi M-12: satu bidang `kontrak.ts` diganti nama → **V-03 merah**
+- [x] Mutasi M-12: satu bidang `kontrak.ts` diganti nama → **V-03 merah**
 
 ---
 

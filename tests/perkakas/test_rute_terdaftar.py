@@ -114,3 +114,57 @@ def test_temuan_menyebut_berkas_dan_barisnya(tmp_path: Path) -> None:
     (temuan,) = periksa_rute_terdaftar(akar)
     assert temuan.baris == 3
     assert temuan.berkas.name == "adaptor.py"
+
+
+# ------------------------------------------------- web/src — T-3 fitur 027, R-16
+
+
+def _web(tmp_path: Path, nama: str, isi: str) -> Path:
+    src = tmp_path / "web" / "src"
+    src.mkdir(parents=True, exist_ok=True)
+    (src / nama).write_text(isi, encoding="utf-8")
+    return tmp_path
+
+
+def test_web_memanggil_rute_terpasang_lulus(tmp_path: Path) -> None:
+    akar = _web(tmp_path, "klien.ts", 'export const JALUR = "/api/v1/tanya";\n')
+    assert periksa_rute_terdaftar(akar) == []
+
+
+def test_web_rute_bertemplat_dicocokkan_dengan_pola(tmp_path: Path) -> None:
+    akar = _web(tmp_path, "riwayat.ts", "const j = `/api/v1/percakapan/${id}`;\n")
+    assert periksa_rute_terdaftar(akar) == []
+
+
+def test_web_rute_tercantum_d14_tetapi_tidak_terpasang_ditolak(tmp_path: Path) -> None:
+    """**Terpasang**, bukan sekadar tercantum D-14.
+
+    `/api/v1/auth/masuk` ada pada `PETA_RUTE` dan pada D-14, tetapi peladen
+    belum melayaninya. Layar yang memanggilnya gagal di lapangan dengan 404 —
+    dan pemeriksa yang membandingkan dengan dokumen saja akan melaporkan bersih.
+    """
+    akar = _web(tmp_path, "masuk.ts", 'fetch("/api/v1/auth/masuk");\n')
+
+    temuan = periksa_rute_terdaftar(akar)
+
+    assert len(temuan) == 1
+    assert "/api/v1/auth/masuk" in temuan[0].pesan
+    assert "tidak terpasang" in temuan[0].pesan
+    assert temuan[0].baris == 1
+
+
+def test_web_rute_asing_ditolak_juga_pada_tsx(tmp_path: Path) -> None:
+    akar = _web(tmp_path, "Layar.tsx", "\nconst j = '/api/v1/rahasia';\n")
+
+    temuan = periksa_rute_terdaftar(akar)
+
+    assert len(temuan) == 1
+    assert "/api/v1/rahasia" in temuan[0].pesan
+    assert temuan[0].baris == 2
+
+
+def test_web_komentar_yang_menyebut_jalur_tidak_ditolak(tmp_path: Path) -> None:
+    # Sejajar pengecualian docstring pada sisi Python: melarang menjelaskan
+    # rute pada komentarnya sendiri akan membuat aturan ini dimatikan orang.
+    akar = _web(tmp_path, "klien.ts", "// memanggil POST /api/v1/rahasia kelak\n")
+    assert periksa_rute_terdaftar(akar) == []

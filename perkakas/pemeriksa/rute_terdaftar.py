@@ -28,6 +28,20 @@ Ia sengaja **tidak diklaim** memeriksa dekorator yang belum ada. Pemeriksa yang
 mengaku menjaga sesuatu yang belum ada terbaca lebih tebal daripada
 kenyataannya, dan itu bentuk laporan bersih yang tidak memeriksa apa pun.
 
+## `web/src` — T-3 fitur 027, R-16
+
+Sejak frontend ada, jalur API juga tertulis pada TypeScript. Aturannya lain:
+setiap untai berbentuk jalur pada `web/src/**/*.{ts,tsx}` wajib rute yang
+**terpasang** pada aplikasi — bukan sekadar tercantum pada D-14. D-14 memuat
+29 rute; peladen melayani tiga. Layar yang memanggil rute yang tercantum tetapi
+belum terpasang gagal di lapangan dengan 404, dan pemeriksa yang membandingkan
+dengan dokumen saja melaporkannya bersih.
+
+Rute terpasang dibaca dari aplikasi yang disusun `susun_aplikasi`, bukan dari
+tetapan: aplikasi itulah yang melayani permintaan. Jalur bertemplat
+(`${id}`) dicocokkan dengan pola (`{id}`) per ruas. Komentar tidak dibaca —
+yang dicari hanya literal untai.
+
 ## Batas yang diakui terbuka
 
 Jalur yang dirakit dari potongan — `f"{AWALAN}/tanya"` — lolos. Sama dengan
@@ -42,6 +56,8 @@ import re
 from pathlib import Path
 
 from perkakas.pemeriksa.ast_aturan import Temuan, berkas_python
+
+AKHIRAN_WEB = (".ts", ".tsx")
 
 BERKAS_PERAN = Path("src") / "api" / "peran.py"
 
@@ -60,7 +76,64 @@ def periksa_rute_terdaftar(akar: Path) -> list[Temuan]:
         if berkas.relative_to(akar) == BERKAS_PERAN:
             continue
         temuan.extend(_jalur_pada(berkas, akar))
+    temuan.extend(_periksa_web(akar))
     return temuan
+
+
+_LITERAL_WEB = re.compile(r"""(["'`])(/api/v\d+/[^"'`]*)\1""")
+_RUAS_PEUBAH = re.compile(r"\$\{[^}]*\}|\{[^}]*\}")
+
+
+def _periksa_web(akar: Path) -> list[Temuan]:
+    """Setiap jalur API pada `web/src` wajib rute terpasang — lihat uraian modul."""
+    src = akar / "web" / "src"
+    if not src.is_dir():
+        return []
+    temuan: list[Temuan] = []
+    terpasang: set[str] | None = None
+    for berkas in sorted(b for b in src.rglob("*") if b.suffix in AKHIRAN_WEB):
+        for nomor, baris in enumerate(berkas.read_text(encoding="utf-8").splitlines(), 1):
+            if baris.lstrip().startswith(("//", "*", "/*")):
+                continue
+            for cocok in _LITERAL_WEB.finditer(baris):
+                if terpasang is None:
+                    terpasang = _rute_terpasang()
+                jalur = cocok.group(2)
+                if _pola(jalur) not in terpasang:
+                    temuan.append(
+                        Temuan(
+                            berkas=berkas.relative_to(akar),
+                            baris=nomor,
+                            pesan=(
+                                f"jalur API {jalur!r} pada web/src tidak terpasang pada "
+                                "peladen — layar yang memanggilnya gagal di lapangan (R-16, AG-02)"
+                            ),
+                        )
+                    )
+    return temuan
+
+
+def _pola(jalur: str) -> str:
+    return _RUAS_PEUBAH.sub("{}", jalur)
+
+
+def _rute_terpasang() -> set[str]:
+    """Pola jalur yang dilayani aplikasi sungguhan, dengan kolaborator kosong.
+
+    Kolaboratornya tidak pernah dipanggil: yang dibaca hanya tabel rute.
+    """
+    from fastapi.routing import APIRoute
+    from src.api.aplikasi import susun_aplikasi
+
+    class _Kosong:
+        def peran(self, permintaan: object) -> object:
+            raise AssertionError("tidak dipanggil")
+
+        async def jawab(self, pertanyaan: str, **argumen: object) -> object:
+            raise AssertionError("tidak dipanggil")
+
+    aplikasi = susun_aplikasi(jalur=_Kosong(), identitas=_Kosong(), percakapan={})  # type: ignore[arg-type]
+    return {_pola(rute.path) for rute in aplikasi.routes if isinstance(rute, APIRoute)}
 
 
 def _jalur_pada(berkas: Path, akar: Path) -> list[Temuan]:

@@ -45,6 +45,7 @@ from perkakas.pemeriksa.konsistensi_dokumen import (
     periksa_konsistensi_dokumen,
     periksa_status_gerbang,
 )
+from perkakas.pemeriksa.kontrak_web import periksa_kontrak_web
 from perkakas.pemeriksa.perintah_selaras import periksa_perintah_selaras
 from perkakas.pemeriksa.placeholder import periksa_placeholder
 from perkakas.pemeriksa.rute_terdaftar import periksa_rute_terdaftar
@@ -165,6 +166,9 @@ def _v03(akar: Path) -> HasilGerbang:
         *periksa_arah_arsitektur(akar),
         *periksa_rute_terdaftar(akar),
         *periksa_hasil_jalur(akar),
+        # Fitur 027 (R-19): bentuk tanggapan ditulis dua kali, pada model dan
+        # pada `web/src/kontrak.ts`; hanyutnya menjatuhkan gerbang ini.
+        *periksa_kontrak_web(akar),
     ]
     return HasilGerbang("V-03", "ketertelusuran dan keselarasan dokumen", temuan)
 
