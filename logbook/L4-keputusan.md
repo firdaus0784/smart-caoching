@@ -2079,3 +2079,19 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mencatat versi dari KB-123 apa adanya lalu memasang dengan `--force` — ditolak; `--force` menulis pohon yang tidak dijamin konsisten, dan titik nol yang direkam dari pohon semacam itu merekam kebetulan. |
 | Dampak | Berkas baru `perkakas/pemeriksa/ketergantungan_npm.py`, `tests/pemeriksa/test_ketergantungan_npm.py` (11 uji), `web/package.json`, `web/package-lock.json`; `perkakas/pemeriksa/jalankan.py` (V-04); `ketergantungan-disetujui.toml`; `Makefile` (`setup`); `.gitignore`. Nol baris di `src/`. `make check` lulus enam gerbang. Fitur 027: **1 dari 8 tugas**. |
 | Pemutus | Gerbang 3 oleh pemegang Gerbang 1–4; T-1 oleh agen di dalam batas `tasks.md` dan persetujuan KB-123 |
+
+## KB-128 · Dua paket tipe React disetujui (C-12); T-2 fitur 027 — V-01 membaca `web/`
+
+| | |
+|---|---|
+| Tanggal | 2026-09-27 |
+| Konteks | T-2 berhenti pada syarat `tasks.md` "kedelapan paket menuntut paket tambahan". `tsc` mode ketat menolak uji asap: `TS7016 — Could not find a declaration file for module 'react'`. Tipe React 19 tidak dibawa paket `react`; ia tinggal di `@types/react` dan `@types/react-dom`. Keduanya luput dari daftar KB-123 — kelalaian agen saat menyusun daftar, dicatat terbuka. |
+| Keputusan | Pemegang Gerbang 1–4 menyatakan **"setuju lanjutkan-t2"**. `@types/react` 19.3.0 dan `@types/react-dom` 19.3.0 masuk `[npm].langsung`; lock bertambah tiga jalur, termasuk `csstype` 3.2.3 yang transitif. Lisensi ketiganya **MIT**, dibaca dari registri npm. Tidak ikut ke aplikasi pengguna — tipe dihapus saat build. |
+| Urutan | Dicoba lebih dulu di direktori coretan di luar repositori; tidak satu paket pun dipasang di `web/` sebelum persetujuan. Pekerjaan T-2 yang belum selesai diparkir di luar repositori alih-alih di-commit setengah jadi. Sesudah pemasangan, V-04 menangkap ketiga paket sebagai tak disetujui **sebelum** `ketergantungan-disetujui.toml` diperbarui — pemeriksa T-1 bekerja atas kasus nyata pertamanya. |
+| Alternatif ditolak | Menulis sendiri `declare module 'react'` — ditolak; React menjadi `any`, dan pemeriksaan tipe mode ketat tidak lagi memeriksa apa pun di bagian yang paling banyak dipakai. Laporan lulus yang tidak memeriksa adalah bentuk TA-01. |
+| T-2 | `periksa_web` pada `perkakas/pemeriksa/jalankan.py`, dipanggil V-01: `npm --prefix web run periksa` (`tsc --noEmit` lalu `vitest run`). Tanpa `web/node_modules` atau tanpa npm, V-01 **gagal** dengan pesan yang menyebut `make setup` — sejajar keputusan 12 September atas PostgreSQL. Pesan membawa baris sebab (`error TS…`, ringkasan `vitest`). Berkas baru `web/tsconfig.json` (mode ketat, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`), `web/vite.config.ts`, `web/src/asap.test.tsx`. |
+| Uji | `tests/pemeriksa/test_periksa_web.py`, 5 uji: tanpa npm, tanpa `node_modules`, `web/` benar lulus, galat tipe menjatuhkan (sebabnya `error TS2322` pada berkas yang benar), uji `web/` gagal menjatuhkan (sebabnya `1 failed`, tanpa galat tipe). Uji menjalankan npm sungguhan pada salinan `web/` di direktori sementara. |
+| Uji mutasi | **M-10**: uji asap di pohon repositori sendiri dibuat gagal → V-01 **merah**, dengan sebab `src/asap.test.tsx (1 test \| 1 failed)`. Dipulihkan dan dibandingkan byte demi byte dengan cadangan. |
+| Dampak | `make check` lulus enam gerbang; 2209 uji terkumpul. Nol baris di `src/` (R-16). Fitur 027: **2 dari 8 tugas**. |
+| Pemutus | Persetujuan C-12 oleh pemegang Gerbang 1–4; T-2 oleh agen di dalam batas `tasks.md` |
+| Alternatif | Baris ini ditambahkan sesudah uji bentuk L4 menolak entri: labelnya tertulis "Alternatif ditolak", bukan "Alternatif". Baris di atas tidak disunting (pola KB-058). Isinya sama: `declare module 'react'` ditolak karena membuat React `any`. |

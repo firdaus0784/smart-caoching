@@ -20,6 +20,8 @@ sekarang biayanya tidak sebanding dengan kerumitannya.
 
 from __future__ import annotations
 
+import re
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -60,8 +62,51 @@ class HasilGerbang:
         return not self.temuan
 
 
+_BARIS_SEBAB = re.compile(r"error TS\d+|\bFAIL\b|\d+ failed")
+
+
+def periksa_web(akar: Path, *, npm: str | None = None) -> list[Temuan]:
+    """Tipe dan uji `web/` — fitur 027 T-2, R-19.
+
+    Tanpa Node, gerbang **gagal**, bukan dilewati: sejajar keputusan 12
+    September atas PostgreSQL. Gerbang yang lulus tanpa melihat `web/` adalah
+    laporan palsu (TA-01), dan mesin tanpa Node tidak melihatnya.
+
+    Pesan membawa baris sebab — galat `tsc` atau ringkasan `vitest` — agar
+    yang membaca laporan tahu *mengapa* merah, bukan hanya bahwa merah.
+    """
+    web = akar / "web"
+    if not (web / "node_modules").is_dir():
+        return [Temuan(web, 0, "web/node_modules tidak ada — jalankan `make setup`")]
+    npm = npm or shutil.which("npm")
+    if npm is None:
+        return [
+            Temuan(
+                web,
+                0,
+                "npm tidak ditemukan — pasang Node.js 22 beserta npm, lalu jalankan `make setup`",
+            )
+        ]
+    try:
+        hasil = subprocess.run(
+            [npm, "--prefix", str(web), "run", "periksa"],
+            cwd=akar,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=600,
+        )
+    except subprocess.TimeoutExpired:
+        return [Temuan(web, 0, "pemeriksaan web/ melewati 600 detik dan dihentikan")]
+    if hasil.returncode == 0:
+        return []
+    baris = [b.strip() for b in (hasil.stdout + hasil.stderr).splitlines() if b.strip()]
+    sebab = [b for b in baris if _BARIS_SEBAB.search(b)][:5] or baris[-1:] or ["tanpa keluaran"]
+    return [Temuan(web, 0, "tipe atau uji web/ gagal: " + " | ".join(sebab))]
+
+
 def _v01(akar: Path) -> HasilGerbang:
-    """Seluruh uji lulus; cakupan tidak turun."""
+    """Seluruh uji lulus; cakupan tidak turun; `web/` lulus tipe dan ujinya."""
     hasil = subprocess.run(
         ["uv", "run", "pytest", "-q"],
         cwd=akar,
@@ -74,6 +119,9 @@ def _v01(akar: Path) -> HasilGerbang:
         ringkas = hasil.stdout.strip().splitlines()[-1:] or ["uji gagal"]
         temuan.append(Temuan(akar, 0, f"rangkaian uji gagal: {ringkas[0]}"))
     temuan.extend(periksa_cakupan(akar))
+    # `web/` sejak fitur 027 (R-19). Sebelumnya V-01 hanya menjalankan pytest,
+    # dan frontend akan lolos gerbang tanpa satu baris pun diperiksa.
+    temuan.extend(periksa_web(akar))
     return HasilGerbang("V-01", "seluruh uji lulus; cakupan tidak turun", temuan)
 
 

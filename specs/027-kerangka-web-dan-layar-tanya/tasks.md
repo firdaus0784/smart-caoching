@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 selesai; tujuh tugas tersisa |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 dan T-2 selesai (KB-128); enam tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -46,14 +46,14 @@ Tidak ada yang dipasang sebelum pemeriksanya ada — pelajaran KB-079 dan KB-083
 
 Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
-- [ ] `tsconfig.json` mode ketat; skrip `periksa` = `tsc --noEmit` lalu
+- [x] `tsconfig.json` mode ketat; skrip `periksa` = `tsc --noEmit` lalu
       `vitest run`
-- [ ] Satu uji asap `web/`
-- [ ] V-01 menjalankan `npm --prefix web run periksa`; tanpa Node, V-01
+- [x] Satu uji asap `web/`
+- [x] V-01 menjalankan `npm --prefix web run periksa`; tanpa Node, V-01
       **gagal** dengan pesan yang menyebut cara memperbaikinya
-- [ ] Uji atas V-01 sendiri: galat tipe di `web/` dan uji `web/` yang gagal
+- [x] Uji atas V-01 sendiri: galat tipe di `web/` dan uji `web/` yang gagal
       keduanya menjatuhkan V-01
-- [ ] Mutasi M-10: satu uji `web/` dibuat gagal → **V-01 merah**
+- [x] Mutasi M-10: satu uji `web/` dibuat gagal → **V-01 merah**
 
 ---
 
