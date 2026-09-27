@@ -36,6 +36,7 @@ from perkakas.pemeriksa.gerbang_v import (
 )
 from perkakas.pemeriksa.hasil_jalur import periksa_hasil_jalur
 from perkakas.pemeriksa.ketergantungan import periksa_ketergantungan
+from perkakas.pemeriksa.ketergantungan_npm import periksa_ketergantungan_npm
 from perkakas.pemeriksa.ketergantungan_sistem import periksa_ketergantungan_sistem
 from perkakas.pemeriksa.konsistensi_dokumen import (
     periksa_kode_menggantung,
@@ -132,7 +133,10 @@ def _v04(akar: Path) -> HasilGerbang:
     return HasilGerbang(
         "V-04",
         "tidak ada ketergantungan baru tanpa persetujuan",
-        [*periksa_ketergantungan(akar), *sistem.temuan],
+        # Paket npm `web/` sejak fitur 027 (KB-127). Sebelumnya V-04 tidak
+        # mengenal npm sama sekali, dan paket frontend akan lolos gerbang
+        # tanpa satu baris pun diperiksa.
+        [*periksa_ketergantungan(akar), *periksa_ketergantungan_npm(akar), *sistem.temuan],
         catatan="" if sistem.terperiksa else sistem.catatan,
     )
 

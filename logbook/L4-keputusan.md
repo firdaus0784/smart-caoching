@@ -2059,3 +2059,23 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menggabungkan T-1 dan T-2 — ditolak; keduanya menyentuh gerbang berbeda, dan kegagalan gabungan tidak dapat ditelusuri ke gerbang yang mana. Menaruh seluruh uji mutasi di T-7 saja — ditolak, lihat di atas. |
 | Dampak | Berkas baru `tasks.md`; status `spec.md` dan `plan.md`. `make check` lulus enam gerbang. **Menunggu Gerbang 3.** |
 | Pemutus | Gerbang 2 oleh pemegang Gerbang 1–4, 27 September 2026. Isi `tasks.md` oleh agen |
+
+---
+
+## KB-127 · Gerbang 3 fitur 027 lolos; T-1 — paket npm terpasang di bawah pemeriksanya
+
+| | |
+|---|---|
+| Tanggal | 2026-09-27 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"Gerbang 3 lolos"**. T-1: pemeriksa paket npm lebih dulu, baru paketnya. |
+| Keputusan | **Gerbang 3 fitur 027 lolos. T-1 selesai.** `perkakas/pemeriksa/ketergantungan_npm.py` baru dan tersambung ke V-04; delapan paket terpasang; `ketergantungan-disetujui.toml` memperoleh `[npm]` dan `[npm.terkunci]` (136 jalur). |
+| Kunci pembanding berupa jalur, bukan nama | `package-lock.json` dapat memuat satu paket dalam dua versi bersarang. Dikunci dengan nama, keduanya saling menimpa dan pergeseran salah satunya tidak terlihat. Diuji dengan pohon buatan yang memuat `esbuild` di puncak dan di bawah `vite`, lalu hanya salinan bersarangnya yang digeser. |
+| **Pemasangan pertama macet, dan sebabnya bukan paketnya** | npm 10.9.7 lingkungan ini gagal dengan galat internal `Cannot read properties of null (reading 'edgesOut')` di `#loadPeerSet`. Dilacak di direktori coretan di luar repositori, tanpa menyentuh proyek: tiap paket dipasang sendirian, lalu berpasangan. Pemicunya **`vitest` bersama `vite` 8.3.1** — macet pada `vitest` 5.0.0, 5.0.1, dan 4.1.0, juga dengan `--omit=peer`. npm 11 memasang `vitest` 5.0.1 tanpa masalah, sehingga cacatnya pada npm, bukan pada paket. |
+| Jalan keluar yang dipilih: `vitest` 5.0.2 | Rilis tambalan yang terbit sesudah KB-123 membaca versi, terpasang bersih dengan npm bawaan. Lisensinya tetap MIT, dibaca dari registri. KB-123 menyetujui **paket**, dengan versi dipatok saat pemasangan — sehingga ini di dalam persetujuan, dan dicatat karena berbeda dari angka yang tertulis di sana. |
+| Dua jalan keluar yang ditolak | **`--legacy-peer-deps`** memasang 81 paket tanpa galat — dan tanpa `@testing-library/dom`, yang dituntut `@testing-library/react` sebagai peer **wajib**. Uji komponen akan gagal saat impor; jalan pintas yang lulus sambil meninggalkan paket yang dibutuhkan adalah bentuk yang tidak boleh diambil. **Mengganti npm menjadi versi 11** — ditolak; `make setup` memakai npm lingkungan, dan alat yang berbeda antara pemasang dan pemeriksa adalah sumber hasil yang tidak dapat diulang. |
+| `@testing-library/dom` — paket yang tidak disebut KB-123 | Peer wajib `@testing-library/react` 16, dipasang otomatis oleh npm dan bertanda `peer: true` pada lock. Ia **transitif**, bukan paket langsung, sehingga berada di dalam aturan titik nol yang sama dengan paket transitif Python. Dicatat terbuka karena namanya tidak pernah disetujui secara tersendiri. |
+| Lisensi seluruh pohon, bukan hanya delapan paket | 136 entri; 89 MIT, 25 Apache-2.0, 2 BSD-2, 2 BSD-3, 2 ISC, 2 MIT-0, 1 BlueOak, 1 CC0, dan **12 MPL-2.0 — seluruhnya `lightningcss` beserta biner platformnya**, alat pemroses CSS `vite` 8 saat build. MPL-2.0 copyleft lemah per berkas. Yang ikut ke aplikasi pengguna hanya `react`, `react-dom`, dan `scheduler` — **ketiganya MIT**. Dicatat karena berkas HKI akan menanyakannya. |
+| Uji mutasi | M-11 (paket di luar persetujuan pada `package.json`) → V-04 **merah**. Versi `scheduler` digeser di dalam lock → V-04 **merah**. Keduanya dipulihkan dan dibandingkan byte demi byte dengan cadangan. |
+| Alternatif | Mencatat versi dari KB-123 apa adanya lalu memasang dengan `--force` — ditolak; `--force` menulis pohon yang tidak dijamin konsisten, dan titik nol yang direkam dari pohon semacam itu merekam kebetulan. |
+| Dampak | Berkas baru `perkakas/pemeriksa/ketergantungan_npm.py`, `tests/pemeriksa/test_ketergantungan_npm.py` (11 uji), `web/package.json`, `web/package-lock.json`; `perkakas/pemeriksa/jalankan.py` (V-04); `ketergantungan-disetujui.toml`; `Makefile` (`setup`); `.gitignore`. Nol baris di `src/`. `make check` lulus enam gerbang. Fitur 027: **1 dari 8 tugas**. |
+| Pemutus | Gerbang 3 oleh pemegang Gerbang 1–4; T-1 oleh agen di dalam batas `tasks.md` dan persetujuan KB-123 |

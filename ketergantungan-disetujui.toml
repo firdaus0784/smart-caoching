@@ -187,3 +187,175 @@ berkas_contoh = "tests/bahan/ekspor-label-studio-1.23.json"
 sidik = "sha256:0e8ebeeeafb5aa019c0d5f5daee5694cfd6a98d6cb776d89f0b25ca0adac89cb"
 lisensi = "Apache-2.0"
 catatan = "sidik berubah sekali pada KB-026; sidik lama tercatat pada logbook/L2"
+
+# ─────────────────────────────────────────────────────────────────────────
+# Paket npm bagi `web/` — fitur 027 T-1, persetujuan KB-123 (25 September 2026)
+#
+# Lisensi dibaca dari registri npm, bukan dari ingatan. Kunci pada
+# [npm.terkunci] adalah JALUR di dalam package-lock.json, bukan nama paket:
+# satu paket dapat hadir dalam dua versi bersarang, dan kunci nama akan
+# membuat keduanya saling menimpa.
+#
+# Yang ikut ke aplikasi pengguna hanya react, react-dom, dan scheduler —
+# ketiganya MIT. Selebihnya alat pengembangan.
+#
+# Tiga hal yang dicatat pada pemasangan (KB-127):
+# - vitest dipatok 5.0.2, bukan 5.0.1 yang dibaca KB-123. npm 10.9.7
+#   lingkungan ini macet (`edgesOut`) pada vitest 5.0.0, 5.0.1, dan 4.1.0
+#   bersama vite 8.3.1; rilis tambalan 5.0.2 terpasang bersih. Lisensi sama.
+# - @testing-library/dom masuk sebagai peer WAJIB @testing-library/react,
+#   dipasang otomatis oleh npm. Ia transitif, bukan paket langsung.
+# - lightningcss dan sebelas biner platformnya berlisensi MPL-2.0 (copyleft
+#   lemah, per berkas). Alat build vite 8 saja; tidak ikut ke aplikasi.
+# ─────────────────────────────────────────────────────────────────────────
+[npm]
+langsung = [
+    "react",                   # MIT
+    "react-dom",               # MIT
+    "typescript",              # Apache-2.0
+    "vite",                    # MIT
+    "@vitejs/plugin-react",    # MIT
+    "vitest",                  # MIT
+    "@testing-library/react",  # MIT
+    "jsdom",                   # MIT
+]
+
+# Pohon utuh package-lock.json saat pemasangan. Selisih apa pun — paket
+# masuk, paket hilang, versi bergeser — menjatuhkan V-04.
+[npm.terkunci]
+"@asamuzakjp/css-color" = "7.1.2"
+"@asamuzakjp/dom-selector" = "9.2.2"
+"@babel/code-frame" = "7.29.7"
+"@babel/helper-validator-identifier" = "7.29.7"
+"@babel/runtime" = "7.29.7"
+"@bramus/specificity" = "2.4.2"
+"@csstools/color-helpers" = "6.1.2"
+"@csstools/css-calc" = "3.4.1"
+"@csstools/css-color-parser" = "4.2.4"
+"@csstools/css-parser-algorithms" = "4.0.1"
+"@csstools/css-syntax-patches-for-csstree" = "1.1.14"
+"@csstools/css-tokenizer" = "4.0.2"
+"@exodus/bytes" = "1.16.0"
+"@jridgewell/resolve-uri" = "3.1.2"
+"@jridgewell/sourcemap-codec" = "1.6.0"
+"@jridgewell/trace-mapping" = "0.3.31"
+"@oxc-project/types" = "0.151.0"
+"@rolldown/binding-android-arm-eabi" = "1.2.11"
+"@rolldown/binding-android-arm64" = "1.2.11"
+"@rolldown/binding-darwin-arm64" = "1.2.11"
+"@rolldown/binding-darwin-x64" = "1.2.11"
+"@rolldown/binding-freebsd-x64" = "1.2.11"
+"@rolldown/binding-linux-arm-gnueabihf" = "1.2.11"
+"@rolldown/binding-linux-arm64-gnu" = "1.2.11"
+"@rolldown/binding-linux-arm64-musl" = "1.2.11"
+"@rolldown/binding-linux-ppc64-gnu" = "1.2.11"
+"@rolldown/binding-linux-s390x-gnu" = "1.2.11"
+"@rolldown/binding-linux-x64-gnu" = "1.2.11"
+"@rolldown/binding-linux-x64-musl" = "1.2.11"
+"@rolldown/binding-openharmony-arm64" = "1.2.11"
+"@rolldown/binding-win32-arm64-msvc" = "1.2.11"
+"@rolldown/binding-win32-x64-msvc" = "1.2.11"
+"@rolldown/pluginutils" = "1.0.1"
+"@testing-library/dom" = "10.4.2"
+"@testing-library/react" = "16.3.3"
+"@types/aria-query" = "5.0.4"
+"@types/chai" = "5.2.3"
+"@types/deep-eql" = "4.0.2"
+"@types/estree" = "1.0.9"
+"@typescript/typescript-aix-ppc64" = "7.0.2"
+"@typescript/typescript-darwin-arm64" = "7.0.2"
+"@typescript/typescript-darwin-x64" = "7.0.2"
+"@typescript/typescript-freebsd-arm64" = "7.0.2"
+"@typescript/typescript-freebsd-x64" = "7.0.2"
+"@typescript/typescript-linux-arm" = "7.0.2"
+"@typescript/typescript-linux-arm64" = "7.0.2"
+"@typescript/typescript-linux-loong64" = "7.0.2"
+"@typescript/typescript-linux-mips64el" = "7.0.2"
+"@typescript/typescript-linux-ppc64" = "7.0.2"
+"@typescript/typescript-linux-riscv64" = "7.0.2"
+"@typescript/typescript-linux-s390x" = "7.0.2"
+"@typescript/typescript-linux-x64" = "7.0.2"
+"@typescript/typescript-netbsd-arm64" = "7.0.2"
+"@typescript/typescript-netbsd-x64" = "7.0.2"
+"@typescript/typescript-openbsd-arm64" = "7.0.2"
+"@typescript/typescript-openbsd-x64" = "7.0.2"
+"@typescript/typescript-sunos-x64" = "7.0.2"
+"@typescript/typescript-win32-arm64" = "7.0.2"
+"@typescript/typescript-win32-x64" = "7.0.2"
+"@vitejs/plugin-react" = "6.1.1"
+"@vitest/mocker" = "5.0.2"
+"@vitest/spy" = "5.0.2"
+"ansi-regex" = "5.0.1"
+"ansi-styles" = "5.2.0"
+"aria-query" = "5.3.0"
+"assertion-error" = "2.0.1"
+"bidi-js" = "1.1.0"
+"chai" = "6.2.2"
+"css-tree" = "3.2.1"
+"data-urls" = "7.0.0"
+"data-urls/node_modules/whatwg-url" = "16.0.1"
+"decimal.js" = "10.6.0"
+"dequal" = "2.0.3"
+"detect-libc" = "2.1.2"
+"dom-accessibility-api" = "0.5.16"
+"entities" = "8.1.0"
+"es-module-lexer" = "2.3.2"
+"estree-walker" = "3.0.3"
+"expect-type" = "1.4.0"
+"fdir" = "6.5.0"
+"fsevents" = "2.3.3"
+"html-encoding-sniffer" = "7.0.0"
+"is-potential-custom-element-name" = "1.0.1"
+"js-tokens" = "4.0.0"
+"jsdom" = "30.1.1"
+"lightningcss" = "1.33.0"
+"lightningcss-android-arm64" = "1.33.0"
+"lightningcss-darwin-arm64" = "1.33.0"
+"lightningcss-darwin-x64" = "1.33.0"
+"lightningcss-freebsd-x64" = "1.33.0"
+"lightningcss-linux-arm-gnueabihf" = "1.33.0"
+"lightningcss-linux-arm64-gnu" = "1.33.0"
+"lightningcss-linux-arm64-musl" = "1.33.0"
+"lightningcss-linux-x64-gnu" = "1.33.0"
+"lightningcss-linux-x64-musl" = "1.33.0"
+"lightningcss-win32-arm64-msvc" = "1.33.0"
+"lightningcss-win32-x64-msvc" = "1.33.0"
+"lru-cache" = "11.5.3"
+"lz-string" = "1.5.0"
+"magic-string" = "1.4.2"
+"mdn-data" = "2.27.1"
+"nanoid" = "3.3.19"
+"obug" = "2.2.1"
+"parse5" = "8.0.1"
+"picocolors" = "1.1.1"
+"picomatch" = "4.0.7"
+"postcss" = "8.5.28"
+"pretty-format" = "27.5.1"
+"punycode" = "2.3.1"
+"react" = "19.3.0"
+"react-dom" = "19.3.0"
+"react-is" = "17.0.2"
+"require-from-string" = "2.0.2"
+"rolldown" = "1.2.11"
+"saxes" = "6.0.0"
+"scheduler" = "0.28.0"
+"source-map-js" = "1.2.1"
+"std-env" = "4.2.0"
+"tinybench" = "6.2.0"
+"tinyexec" = "1.3.1"
+"tinyglobby" = "0.2.17"
+"tldts" = "7.4.15"
+"tldts-core" = "7.4.15"
+"tough-cookie" = "6.0.2"
+"tr46" = "6.0.0"
+"typescript" = "7.0.2"
+"undici" = "8.11.2"
+"vite" = "8.3.1"
+"vitest" = "5.0.2"
+"w3c-xmlserializer" = "6.0.0"
+"webidl-conversions" = "8.0.1"
+"whatwg-mimetype" = "5.0.0"
+"whatwg-url" = "17.1.2"
+"why-is-node-running" = "3.2.2"
+"xml-name-validator" = "5.0.0"
+"xmlchars" = "2.2.0"

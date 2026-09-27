@@ -7,9 +7,13 @@ UV := uv
 
 .PHONY: setup test lint check compliance
 
-## setup — pasang ketergantungan sesuai uv.lock
+## setup — pasang ketergantungan sesuai uv.lock dan web/package-lock.json
+#
+# `npm ci`, bukan `npm install`: ia memasang persis isi lock dan gagal bila
+# package.json dan lock berselisih, alih-alih menulis ulang lock diam-diam.
 setup:
 	$(UV) sync
+	npm --prefix web ci --no-audit --no-fund
 
 ## test — seluruh uji
 #

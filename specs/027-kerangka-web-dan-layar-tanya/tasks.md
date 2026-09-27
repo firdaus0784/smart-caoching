@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Menunggu Gerbang 3** |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 selesai; tujuh tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -20,19 +20,23 @@ mana pun (R-16).
 
 Tidak ada yang dipasang sebelum pemeriksanya ada — pelajaran KB-079 dan KB-083.
 
-- [ ] Uji: `ketergantungan_npm.py` menolak ketergantungan langsung di luar
+- [x] Uji: `ketergantungan_npm.py` menolak ketergantungan langsung di luar
       `[npm].langsung`, dan menolak `package-lock.json` yang berbeda dari
-      `[npm.terkunci]` — paket masuk, paket hilang, versi bergeser
-- [ ] Uji: tanpa `web/package.json` sama sekali, pemeriksa **melapor**, bukan
+      `[npm.terkunci]` — paket masuk, paket hilang, versi bergeser, termasuk
+      **versi bersarang** (kunci berupa jalur di dalam lock, bukan nama)
+- [x] Uji: tanpa `web/package.json` sama sekali, pemeriksa **melapor**, bukan
       lulus diam-diam
-- [ ] `web/package.json` dengan kedelapan paket, versi dipatok persis
-- [ ] `npm install` sekali; bila kedelapannya menuntut paket tambahan di luar
-      pohon transitif: **berhenti** (`plan.md` Bagian 8)
-- [ ] `ketergantungan-disetujui.toml` bertambah `[npm]` dan `[npm.terkunci]`,
-      lisensi disalin dari KB-123
-- [ ] V-04 memanggil pemeriksa baru; `make setup` memasang `web/` dengan
-      `npm ci`; `web/node_modules/` masuk `.gitignore`
-- [ ] Mutasi M-11: paket di luar persetujuan ditambahkan → **V-04 merah**
+- [x] `web/package.json` dengan kedelapan paket, versi dipatok persis —
+      **`vitest` 5.0.2, bukan 5.0.1** (lihat KB-127)
+- [x] `npm install` sekali; **tidak ada paket langsung tambahan**.
+      `@testing-library/dom` masuk sebagai peer wajib yang dipasang otomatis —
+      transitif, dan dilaporkan terbuka
+- [x] `ketergantungan-disetujui.toml` bertambah `[npm]` dan `[npm.terkunci]`
+      (136 jalur), dibangkitkan dari lock yang sebenarnya
+- [x] V-04 memanggil pemeriksa baru; `make setup` memasang `web/` dengan
+      `npm ci`; `web/node_modules/` dan `web/dist/` masuk `.gitignore`
+- [x] Mutasi M-11: paket di luar persetujuan ditambahkan → **V-04 merah**;
+      ditambah mutasi versi bergeser di dalam lock → **V-04 merah**
 
 ---
 
