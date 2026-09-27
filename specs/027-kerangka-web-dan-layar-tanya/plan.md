@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 25 September 2026 (KB-124); cakupan disempitkan atas TK-65 (KB-125) |
-| Status | **Menunggu Gerbang 2** |
+| Status | **Gerbang 2 lolos** — 27 September 2026 (KB-126). Menunggu Gerbang 3 |
 | Kebutuhan | R-01 s.d. R-20 `spec.md` kecuali R-11; C-12, C-13, C-20 |
 
 ## 1. Letak dan batas

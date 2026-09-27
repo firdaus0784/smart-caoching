@@ -4,8 +4,7 @@
 |---|---|
 | Kebutuhan | ADR-09; FR-F01, FR-F05, FR-F06, FR-F10, FR-F14; NFR-02, NFR-11, NFR-13, NFR-19; C-13, C-14, C-15, C-20 |
 | Dokumen terkait | D-05 Bagian 4, 6 (S-09), 7, 8, 10, 11 · D-07 Bagian 4 tahap 10 dan Bagian 7 · D-14 Bagian 4.1 dan 4.2 |
-| Status | **Gerbang 1 lolos** — 25 September 2026 (KB-124). Cakupan disempitkan atas TK-65 (KB-125). Menunggu Gerbang 2 |
-
+| Status | **Gerbang 2 lolos** — 27 September 2026 (KB-126). Gerbang 1 lolos KB-124; cakupan disempitkan KB-125 |
 ## Tujuan
 
 Direktori `web/` belum ada. Sistem hanya dapat dicoba lewat `curl`, dan

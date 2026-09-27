@@ -2043,3 +2043,19 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menambahkan `@vitest/coverage-v8` agar cakupan terukur — ditolak tanpa persetujuan C-12 baru; diajukan bila pemegang gerbang menghendaki. Menjalankan Playwright di dalam V-01 — ditolak, lihat di atas. Mengimpor bentuk kontrak dari backend lewat berkas skema yang dibangkitkan — ditolak; `docs_url` dan `openapi_url` sengaja dimatikan sejak fitur 023, dan menyalakannya perubahan backend. |
 | Dampak | `docs/D12.md` 0.33 → 0.34 dengan baris 027 disempitkan dan baris 028; `docs/D00.md` 2.62 → 2.63 dengan TK-65 menunjuk fitur 028; `spec.md` fitur 027 mencatat perubahan cakupan; berkas baru `plan.md`. Tidak ada kode ditulis. `make check` lulus enam gerbang. **Menunggu Gerbang 2.** |
 | Pemutus | Pilihan A oleh pemegang Gerbang 1–4. Isi `plan.md` oleh agen |
+
+---
+
+## KB-126 · Gerbang 2 fitur 027 lolos; `tasks.md` delapan tugas
+
+| | |
+|---|---|
+| Tanggal | 2026-09-27 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"Gerbang 2 lolos"** — pernyataan tegas. |
+| Keputusan | **Gerbang 2 fitur 027 lolos.** `tasks.md` disusun dengan delapan tugas berkotak centang dan diajukan ke Gerbang 3. Tidak ada kode ditulis, tidak ada paket dipasang. |
+| Urutan yang paling menentukan | T-1 membangun pemeriksa paket npm **sebelum** memasang paketnya; T-2 membuat V-01 membaca `web/` **sebelum** layar ada. Keduanya agar setiap tugas sesudahnya berjalan di bawah gerbang yang sudah terbukti dapat merah — pelajaran KB-079, KB-083, dan TK-64. |
+| Setiap tugas memuat mutasinya sendiri | Bukan hanya T-7. Mutasi yang dijalankan pada tugas yang menulis kodenya menangkap lubang selagi konteksnya masih utuh; T-7 menjalankan ulang seluruhnya sebagai satu putaran. Bentuk yang terbukti pada fitur 026, ketika mutasi per tugas menemukan tiga lubang sebelum T-6. |
+| Kotak centang, bukan prosa | `periksa_status_gerbang` membaca kotak centang sebagai sumber kebenaran ketiga (KB-104). |
+| Alternatif | Menggabungkan T-1 dan T-2 — ditolak; keduanya menyentuh gerbang berbeda, dan kegagalan gabungan tidak dapat ditelusuri ke gerbang yang mana. Menaruh seluruh uji mutasi di T-7 saja — ditolak, lihat di atas. |
+| Dampak | Berkas baru `tasks.md`; status `spec.md` dan `plan.md`. `make check` lulus enam gerbang. **Menunggu Gerbang 3.** |
+| Pemutus | Gerbang 2 oleh pemegang Gerbang 1–4, 27 September 2026. Isi `tasks.md` oleh agen |
