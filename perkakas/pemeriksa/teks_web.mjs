@@ -8,11 +8,13 @@
 // pada `[npm.terkunci]` (KB-130). Pengurai sungguhan, bukan pola teks: pola
 // tidak dapat membedakan teks JSX dari perbandingan `a > b` atau tipe generik.
 //
-// Dua kumpulan:
-//   mikrokopi — seluruh untai pada `web/src/mikrokopi.ts` (Aturan 1)
-//   harfiah   — teks harfiah pada `.tsx` di luar uji (Aturan 2)
+// Tiga kumpulan:
+//   mikrokopi — seluruh untai pada `web/src/mikrokopi.ts` (C-13 Aturan 1)
+//   harfiah   — teks harfiah pada `.tsx` di luar uji (C-13 Aturan 2)
+//   pengenal  — nama pengenal pengikat pada `.ts`/`.tsx` di luar uji (C-14,
+//               C-15; sejak R-20 ditagih sesudah T-6, KB-133)
 
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -95,14 +97,75 @@ function teksTemplat(simpul) {
   return simpul.quasis.map((q) => q.value.cooked ?? q.value.raw).join(" … ");
 }
 
-const src = join(web, "src");
-const keluaran = { mikrokopi: [], harfiah: [], galat_urai: [] };
+/**
+ * Nama pengenal **pengikat** — sejajar `ast` Store pada pemeriksa Python C-14
+ * dan C-15: deklarasi, parameter, kunci objek, bidang antarmuka. Bukan
+ * rujukan ke nama milik pustaka, bukan komentar, bukan untai.
+ */
+function pengenalPengikat(program, catat) {
+  const pola = (p) => {
+    if (!p) return;
+    if (p.type === "Identifier") catat(p.name, p.start);
+    else if (p.type === "ObjectPattern")
+      for (const s of p.properties) pola(s.type === "RestElement" ? s.argument : s.value);
+    else if (p.type === "ArrayPattern") for (const e of p.elements) pola(e);
+    else if (p.type === "RestElement") pola(p.argument);
+    else if (p.type === "AssignmentPattern") pola(p.left);
+    else if (p.type === "TSParameterProperty") pola(p.parameter);
+  };
+  const kunci = (k) => {
+    if (!k) return;
+    if (k.type === "Identifier") catat(k.name, k.start);
+    else if (k.type === "Literal" && typeof k.value === "string") catat(k.value, k.start);
+  };
+  jalan(program, null, (simpul, induk) => {
+    switch (simpul.type) {
+      case "FunctionDeclaration":
+      case "FunctionExpression":
+      case "ArrowFunctionExpression":
+        if (simpul.id) catat(simpul.id.name, simpul.id.start);
+        for (const p of simpul.params) pola(p);
+        break;
+      case "ClassDeclaration":
+      case "ClassExpression":
+      case "TSInterfaceDeclaration":
+      case "TSTypeAliasDeclaration":
+      case "TSEnumDeclaration":
+        if (simpul.id) catat(simpul.id.name, simpul.id.start);
+        break;
+      case "VariableDeclarator":
+        pola(simpul.id);
+        break;
+      case "CatchClause":
+        pola(simpul.param);
+        break;
+      case "MethodDefinition":
+      case "PropertyDefinition":
+      case "TSPropertySignature":
+      case "TSMethodSignature":
+        if (!simpul.computed) kunci(simpul.key);
+        break;
+      case "TSEnumMember":
+        kunci(simpul.id);
+        break;
+      case "Property":
+        if (induk && induk.type === "ObjectExpression" && !simpul.computed) kunci(simpul.key);
+        break;
+    }
+    return true;
+  });
+}
 
-for (const berkas of berkasDi(src)) {
+const src = join(web, "src");
+const keluaran = { mikrokopi: [], harfiah: [], galat_urai: [], pengenal: [] };
+
+// `web/` tanpa `src/` menghasilkan kumpulan kosong; ketiadaan `mikrokopi.ts`
+// dilaporkan pemeriksa C-13 sendiri.
+for (const berkas of existsSync(src) ? berkasDi(src) : []) {
   const nama = relative(web, berkas);
+  if (!/\.tsx?$/.test(berkas) || /\.test\.tsx?$/.test(berkas)) continue;
   const adalahMikrokopi = nama === join("src", "mikrokopi.ts");
-  const adalahTsx = berkas.endsWith(".tsx") && !berkas.endsWith(".test.tsx");
-  if (!adalahMikrokopi && !adalahTsx) continue;
+  const adalahTsx = berkas.endsWith(".tsx");
 
   const sumber = readFileSync(berkas, "utf8");
   let program;
@@ -113,6 +176,12 @@ for (const berkas of berkasDi(src)) {
     continue;
   }
   const baris = pembuatBaris(sumber);
+
+  pengenalPengikat(program, (namaPengenal, posisi) =>
+    keluaran.pengenal.push({ berkas: nama, baris: baris(posisi), nama: namaPengenal }),
+  );
+
+  if (!adalahMikrokopi && !adalahTsx) continue;
 
   jalan(program, null, (simpul, induk) => {
     if (adalahMikrokopi) {

@@ -37,7 +37,10 @@ tanda tangan fungsi penyusun feed — bukan lewat sapuan nama.
 
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
+
+import pytest
 
 from perkakas.pemeriksa.ruang_lingkup import (
     BERKAS_MOBILE_NATIVE,
@@ -173,6 +176,13 @@ def test_pwa_tidak_menjadi_temuan(tmp_path: Path) -> None:
     """PWA adalah bentuk yang D-01 setujui; yang dilarang aplikasi native."""
     _tulis(tmp_path, "web/manifest.json", '{"name": "Smart-Coaching"}\n')
     _tulis(tmp_path, "web/package.json", '{"dependencies": {"react": "18.0.0"}}\n')
+    # Sejak fitur 027 `web/` dengan `package.json` dibaca pengurai TypeScript,
+    # yang menuntut `node_modules` — tanpanya C-14 gagal, dan itu benar
+    # (KB-133). Pohon uji ini karena itu membawanya.
+    modul = Path(__file__).resolve().parents[2] / "web" / "node_modules"
+    if not modul.is_dir() or shutil.which("node") is None:
+        pytest.skip("Node atau web/node_modules tidak ada — jalankan `make setup`")
+    (tmp_path / "web" / "node_modules").symlink_to(modul, target_is_directory=True)
     assert periksa_ruang_lingkup(tmp_path) == []
 
 

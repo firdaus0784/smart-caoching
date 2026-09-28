@@ -66,6 +66,7 @@ import re
 from pathlib import Path
 
 from perkakas.pemeriksa.ast_aturan import Temuan, berkas_python
+from perkakas.pemeriksa.pohon_web import nama_pada_web
 
 TERLARANG_LINGKUP: tuple[str, ...] = (
     # Baris 3 — personalisasi berbasis profil dan riwayat, sentiment
@@ -268,4 +269,25 @@ def _periksa_mobile_native(akar: Path) -> list[Temuan]:
 
 def periksa_ruang_lingkup(akar: Path) -> list[Temuan]:
     """Lima dari enam baris D-01 Bagian 4.2; baris gamifikasi dijaga C-15."""
-    return [*_periksa_python(akar), *_periksa_mobile_native(akar)]
+    return [*_periksa_python(akar), *_periksa_web(akar), *_periksa_mobile_native(akar)]
+
+
+def _periksa_web(akar: Path) -> list[Temuan]:
+    """Aturan 1 atas TypeScript, nama berkas, dan kelas CSS `web/` — R-20.
+
+    Aturan 2 (tanda tangan penyusun feed) tidak diterapkan di sini: penyusun
+    feed tinggal di `src/pengguna/`, dan layar hanya menampilkan. Sampai fitur
+    027 sumber TypeScript tidak dibaca sama sekali (KB-133).
+    """
+    nama, temuan = nama_pada_web(akar)
+    for berkas, baris, pengenal in nama:
+        kata = _melanggar(pengenal)
+        if kata:
+            temuan.append(
+                Temuan(
+                    berkas,
+                    baris,
+                    f"nama {pengenal!r} memuat {kata!r} — C-14, lihat docs/D01.md Bagian 4.2",
+                )
+            )
+    return temuan

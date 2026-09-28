@@ -72,14 +72,11 @@ diperiksa sama sekali" menjadi "diperiksa pada permukaan yang sudah ada".
 from __future__ import annotations
 
 import ast
-import json
 import re
-import shutil
-import subprocess
 from pathlib import Path
-from typing import Any
 
 from perkakas.pemeriksa.ast_aturan import Temuan, berkas_python
+from perkakas.pemeriksa.pohon_web import GalatPengumpulWeb, kumpulkan_teks_web
 
 DIPERIKSA = ("src", "web")
 """`perkakas/` memuat daftar kata terlarang ini sendiri; `tests/` memuat
@@ -307,48 +304,6 @@ def _periksa_panggilan(berkas: Path, simpul: ast.Call) -> list[Temuan]:
 
 
 BERKAS_MIKROKOPI = Path("web") / "src" / "mikrokopi.ts"
-PENGUMPUL_WEB = Path(__file__).with_name("teks_web.mjs")
-
-
-class GalatPengumpulWeb(Exception):
-    """Pengumpul teks `web/` tidak dapat dijalankan — gerbang gagal, bukan dilewati."""
-
-
-def kumpulkan_teks_web(akar: Path, *, node: str | None = None) -> dict[str, list[dict[str, Any]]]:
-    """Untai `mikrokopi.ts` dan teks harfiah `.tsx`, dibaca pengurai sungguhan.
-
-    Terpisah dari pemeriksaannya dengan alasan yang sama dengan
-    `untai_menghadap_pengguna`: uji dapat membuktikan pengumpulnya
-    **menemukan sesuatu**.
-    """
-    # Absolut: `createRequire` pada pengumpul menolak jalur relatif, dan
-    # `make check` memanggil dengan akar relatif (KB-130).
-    web = (akar / "web").resolve()
-    if not (web / "node_modules").is_dir():
-        raise GalatPengumpulWeb("web/node_modules tidak ada — jalankan `make setup`")
-    node = node or shutil.which("node")
-    if node is None:
-        raise GalatPengumpulWeb(
-            "node tidak ditemukan — pasang Node.js 22 beserta npm, lalu jalankan `make setup`"
-        )
-    try:
-        hasil = subprocess.run(
-            [node, str(PENGUMPUL_WEB), str(web)],
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=120,
-        )
-    except (OSError, subprocess.TimeoutExpired) as galat:
-        raise GalatPengumpulWeb(f"pengumpul teks web/ tidak dapat dijalankan: {galat}") from galat
-    if hasil.returncode != 0:
-        # Node menutup galat tak tertangkap dengan baris versinya; baris
-        # galatnya sendiri yang berguna bagi pembaca laporan.
-        baris = hasil.stderr.strip().splitlines()
-        sebab = next((b for b in baris if "Error" in b), (baris or ["tanpa keluaran"])[-1])
-        raise GalatPengumpulWeb(f"pengumpul teks web/ berhenti: {sebab}")
-    data: dict[str, list[dict[str, Any]]] = json.loads(hasil.stdout)
-    return data
 
 
 def periksa_bahasa_web(akar: Path, *, node: str | None = None) -> list[Temuan]:

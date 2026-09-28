@@ -30,6 +30,7 @@ import re
 from pathlib import Path
 
 from perkakas.pemeriksa.ast_aturan import Temuan, berkas_python
+from perkakas.pemeriksa.pohon_web import nama_pada_web
 
 # Dicocokkan terhadap nama pengenal yang sudah dinormalkan: huruf kecil,
 # garis bawah dan tanda hubung dibuang. Seluruhnya cukup panjang dan khas
@@ -125,4 +126,26 @@ def periksa_nama_terlarang(akar: Path) -> list[Temuan]:
                             "lihat docs/D04.md Bagian 9",
                         )
                     )
+    return temuan + _periksa_web(akar)
+
+
+def _periksa_web(akar: Path) -> list[Temuan]:
+    """TypeScript, nama berkas, dan kelas CSS pada `web/` — fitur 027, R-20.
+
+    Sampai fitur 027 `DIPERIKSA` memuat `web` tetapi `berkas_python` hanya
+    menemukan berkas Python di sana, sehingga seluruh sumber TypeScript lolos
+    tanpa dibaca (KB-133).
+    """
+    nama, temuan = nama_pada_web(akar)
+    for berkas, baris, pengenal in nama:
+        kata = _melanggar(pengenal)
+        if kata:
+            temuan.append(
+                Temuan(
+                    berkas,
+                    baris,
+                    f"nama {pengenal!r} memuat {kata!r} — C-15 melarang poin, lencana, "
+                    "papan peringkat, dan pertemanan, termasuk dalam bentuk kosong",
+                )
+            )
     return temuan
