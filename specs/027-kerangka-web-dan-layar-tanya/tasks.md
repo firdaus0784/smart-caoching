@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-3 selesai (KB-129); lima tugas tersisa |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-4 selesai (KB-130); empat tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -76,13 +76,13 @@ Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
 **Kebutuhan:** R-12; C-13; NFR-19; D-05 Bagian 10; K-2.
 
-- [ ] Uji: pemeriksa C-13 membaca tetapan `web/src/mikrokopi.ts` dan menolak
+- [x] Uji: pemeriksa C-13 membaca tetapan `web/src/mikrokopi.ts` dan menolak
       kalimat > 20 kata, tanda seru, kata terlarang, kode galat
-- [ ] Uji: aturan bentuk menolak teks harfiah pada berkas `.tsx` di luar
+- [x] Uji: aturan bentuk menolak teks harfiah pada berkas `.tsx` di luar
       `mikrokopi.ts`
-- [ ] `web/src/mikrokopi.ts` — tidak-ditemukan memakai **kalimat pertama saja**
+- [x] `web/src/mikrokopi.ts` — tidak-ditemukan memakai **kalimat pertama saja**
       (K-2, BT-71)
-- [ ] Mutasi M-8: teks harfiah disisipkan ke `.tsx` → **V-02 merah**
+- [x] Mutasi M-8: teks harfiah disisipkan ke `.tsx` → **V-02 merah**
 
 ---
 

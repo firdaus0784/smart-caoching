@@ -45,6 +45,21 @@ Yang dilarang singkatan **sistem**, bukan singkatan domain. Batas ini diakui
 terbuka: singkatan domain yang benar-benar asing tetap lolos, dan yang
 menangkapnya uji keterbacaan BT-20 bersama persona P1 dan P3 — bukan mesin.
 
+## `web/` — fitur 027 T-4
+
+Kedua aturan berlaku juga pada frontend, dengan bentuk yang sejajar.
+Aturan 1 membaca **setiap** untai pada `web/src/mikrokopi.ts` — seluruh isi
+berkas itu menghadap pengguna, sehingga kesepakatan awalan nama tidak
+dibutuhkan. Aturan 2 menolak teks harfiah pada `.tsx` di luar berkas itu:
+teks JSX, untai pada atribut yang dibaca pengguna (`aria-label`, `title`,
+`placeholder`, `alt`, …), untai sebagai anak JSX, dan untai berkalimat di
+mana pun pada berkas itu.
+
+Pohon sintaks dibaca `teks_web.mjs` dengan pengurai `rolldown` — bagian
+`vite` yang sudah terkunci — sebab pola teks tidak dapat membedakan teks JSX
+dari perbandingan `a > b`. Batasnya: untai satu kata di luar JSX lolos Aturan
+2, sebab ia tidak dapat dibedakan dari nilai enum seperti `"kuat"`.
+
 ## Batas lain yang diakui terbuka
 
 Pemeriksa membaca tetapan tingkat modul. Untai yang disusun saat jalan —
@@ -57,8 +72,12 @@ diperiksa sama sekali" menjadi "diperiksa pada permukaan yang sudah ada".
 from __future__ import annotations
 
 import ast
+import json
 import re
+import shutil
+import subprocess
 from pathlib import Path
+from typing import Any
 
 from perkakas.pemeriksa.ast_aturan import Temuan, berkas_python
 
@@ -287,9 +306,107 @@ def _periksa_panggilan(berkas: Path, simpul: ast.Call) -> list[Temuan]:
     return temuan
 
 
+BERKAS_MIKROKOPI = Path("web") / "src" / "mikrokopi.ts"
+PENGUMPUL_WEB = Path(__file__).with_name("teks_web.mjs")
+
+
+class GalatPengumpulWeb(Exception):
+    """Pengumpul teks `web/` tidak dapat dijalankan — gerbang gagal, bukan dilewati."""
+
+
+def kumpulkan_teks_web(akar: Path, *, node: str | None = None) -> dict[str, list[dict[str, Any]]]:
+    """Untai `mikrokopi.ts` dan teks harfiah `.tsx`, dibaca pengurai sungguhan.
+
+    Terpisah dari pemeriksaannya dengan alasan yang sama dengan
+    `untai_menghadap_pengguna`: uji dapat membuktikan pengumpulnya
+    **menemukan sesuatu**.
+    """
+    # Absolut: `createRequire` pada pengumpul menolak jalur relatif, dan
+    # `make check` memanggil dengan akar relatif (KB-130).
+    web = (akar / "web").resolve()
+    if not (web / "node_modules").is_dir():
+        raise GalatPengumpulWeb("web/node_modules tidak ada — jalankan `make setup`")
+    node = node or shutil.which("node")
+    if node is None:
+        raise GalatPengumpulWeb(
+            "node tidak ditemukan — pasang Node.js 22 beserta npm, lalu jalankan `make setup`"
+        )
+    try:
+        hasil = subprocess.run(
+            [node, str(PENGUMPUL_WEB), str(web)],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=120,
+        )
+    except (OSError, subprocess.TimeoutExpired) as galat:
+        raise GalatPengumpulWeb(f"pengumpul teks web/ tidak dapat dijalankan: {galat}") from galat
+    if hasil.returncode != 0:
+        # Node menutup galat tak tertangkap dengan baris versinya; baris
+        # galatnya sendiri yang berguna bagi pembaca laporan.
+        baris = hasil.stderr.strip().splitlines()
+        sebab = next((b for b in baris if "Error" in b), (baris or ["tanpa keluaran"])[-1])
+        raise GalatPengumpulWeb(f"pengumpul teks web/ berhenti: {sebab}")
+    data: dict[str, list[dict[str, Any]]] = json.loads(hasil.stdout)
+    return data
+
+
+def periksa_bahasa_web(akar: Path, *, node: str | None = None) -> list[Temuan]:
+    """C-13 atas `web/` — T-4 fitur 027, R-12.
+
+    Aturan 1 atas setiap untai `web/src/mikrokopi.ts`; Aturan 2 menolak teks
+    harfiah pada `.tsx` di luar berkas itu. Tanpa Node, **gagal** — sejajar
+    V-01: gerbang yang lulus tanpa melihat `web/` adalah laporan palsu.
+    """
+    web = akar / "web"
+    if not (web / "package.json").is_file():
+        return []
+    if not (akar / BERKAS_MIKROKOPI).is_file():
+        return [
+            Temuan(
+                BERKAS_MIKROKOPI,
+                0,
+                "mikrokopi.ts tidak ada — teks antarmuka tidak memiliki tempat yang dapat "
+                "diperiksa (C-13, R-12)",
+            )
+        ]
+    try:
+        data = kumpulkan_teks_web(akar, node=node)
+    except GalatPengumpulWeb as galat:
+        return [Temuan(web, 0, str(galat))]
+
+    temuan = [
+        Temuan(Path("web") / g["berkas"], 0, f"berkas tidak dapat diurai: {g['pesan']}")
+        for g in data["galat_urai"]
+    ]
+    if not data["mikrokopi"]:
+        temuan.append(
+            Temuan(
+                BERKAS_MIKROKOPI,
+                0,
+                "pengumpul tidak menemukan satu untai pun pada mikrokopi.ts — laporan bersih "
+                "atas nol untai adalah laporan palsu",
+            )
+        )
+    for butir in data["mikrokopi"]:
+        temuan += _periksa_isi(
+            Path("web") / butir["berkas"], butir["baris"], "mikrokopi", butir["teks"]
+        )
+    for butir in data["harfiah"]:
+        temuan.append(
+            Temuan(
+                Path("web") / butir["berkas"],
+                butir["baris"],
+                f"{butir['jenis']} {butir['teks']!r} ditulis harfiah — teks antarmuka wajib "
+                "berasal dari mikrokopi.ts (C-13, R-12)",
+            )
+        )
+    return temuan
+
+
 def periksa_bahasa_antarmuka(akar: Path) -> list[Temuan]:
-    """C-13 pada permukaan yang sudah ada. Bagian layar menunggu fitur 013."""
+    """C-13 pada `src/` dan, sejak fitur 027, pada `web/`."""
     temuan: list[Temuan] = []
     for berkas, baris, nama, teks in untai_menghadap_pengguna(akar):
         temuan += _periksa_isi(berkas, baris, nama, teks)
-    return temuan + _periksa_bentuk(akar)
+    return temuan + _periksa_bentuk(akar) + periksa_bahasa_web(akar)
