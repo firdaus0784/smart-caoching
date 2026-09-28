@@ -2223,3 +2223,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menandai aplikasi web **Terbangun** — ditolak; penanda itu berlaku bagi wadah, dan wadah aplikasi web baru memuat satu dari layar-layarnya. |
 | Dampak | Status tiga berkas fitur 027; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. Berikutnya menurut D-12: fitur 028, dimulai dari Gerbang 1. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-137 · Fitur 028 dibuka — `spec.md` menunggu Gerbang 1; TK-67 dan TK-68 didaftarkan
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Sesudah Gerbang 4 fitur 027, pemegang Gerbang 1–4 menyatakan **"lanjutkan"**. Menurut D-12 fitur berikutnya 028, penyambungan riwayat percakapan (TK-65). |
+| Keputusan | `specs/028-penyambungan-riwayat-percakapan/spec.md` disusun: sebelas kebutuhan dan **enam pertanyaan terbuka**, masing-masing dengan anjuran. Tidak ada `plan.md` maupun kode sebelum Gerbang 1. |
+| Dua temuan saat menyusun | **TK-67:** `GET /api/v1/percakapan` mengembalikan seluruh percakapan, bukan milik penanya seperti D-14 Bagian 4.3 nyatakan, dan penentu identitas hanya mengenal peran. Menyambungkan penulis tanpa menutup ini membangun kebocoran dengan sengaja. **TK-68:** `/tanya` tidak memeriksa data pribadi; NIK dalam pertanyaan sampai ke permintaan model. Keduanya didaftarkan pada D-00 2.65. |
+| Keputusan yang sengaja tidak diambil agen | Kepemilikan tanpa autentikasi (P-1), pembuat pengenal percakapan tanpa bidang tanggapan baru (P-2), penyimpanan tetap (P-3), TK-66 bersama (P-4), tempat riwayat pada layar (P-5), dan nasib pertanyaan berdata pribadi (P-6). Keenamnya mengubah apa yang dilihat pengguna, bentuk kontrak, atau hak akses. |
+| Kebutuhan yang ditetapkan tanpa pertanyaan | R-07 — jawaban tidak dipengaruhi giliran sebelumnya. Bukan pilihan desain melainkan C-14: jawaban yang menyesuaikan diri dengan riwayat pertanyaan seseorang adalah personalisasi berbasis riwayat. R-05 — hak tulis riwayat tidak diberikan kepada jalur penjawaban (C-17). |
+| Alternatif | Menulis `plan.md` dengan anjuran sebagai asumsi — ditolak; `AGENTS.md`: fitur dengan pertanyaan terbuka tidak diserahkan ke agen. |
+| Dampak | Berkas baru `specs/028-penyambungan-riwayat-percakapan/spec.md`; `docs/D00.md` 2.65. Nol baris kode. |
+| Pemutus | Agen menyusun; Gerbang 1 menunggu pemegang Gerbang 1–4 |
