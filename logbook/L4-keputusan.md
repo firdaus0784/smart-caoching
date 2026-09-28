@@ -2210,3 +2210,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menandai aplikasi web **Terbangun** — ditolak; belum lolos Gerbang 4. Membiarkan baris Layanan API — ditolak; ia pernyataan keliru kepada pihak luar. |
 | Dampak | `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`, status `plan.md` dan `tasks.md` fitur 027. Nol baris kode. |
 | Pemutus | Agen di dalam batas `tasks.md`; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-136 · Gerbang 4 fitur 027 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"Gerbang 4 fitur 027. lolos"**, atas bahan KB-134 dan KB-135: mutasi 14 dari 14 menyala, `src/` tanpa perubahan sejak Gerbang 3, bukti Playwright dengan empat tangkapan layar, `make check` lulus enam gerbang. |
+| Keputusan | **Gerbang 4 fitur 027 lolos.** Status `spec.md`, `plan.md`, dan `tasks.md` dimutakhirkan. Fitur lolos Gerbang 4 menjadi **22 dari 28**. |
+| Lima hal terbuka KB-135 | Pernyataan kelulusan tidak menyebut kelimanya satu per satu. Karena itu kelimanya **berlaku sebagaimana tertulis dan tidak dicatat sebagai diputus tersendiri**: penanda `di_luar_domain` (KB-130), pemakaian langsung `rolldown` (KB-130), pelonggaran CSP khusus peladen pengembangan (KB-132), dan anggaran muat 150 KB yang wajib diverifikasi di lokus pilot. **TK-66 tetap terbuka** pada D-00 Bagian 7.12, dengan anjuran diselesaikan bersama fitur 028. |
+| Dokumen HKI | `docs/hki/dokumentasi-teknis.md`: aplikasi web tetap **Sebagian** — layar Tanya lolos Gerbang 4, layar lain dan autentikasi belum. Keterangan "menunggu Gerbang 4" diganti tanggal kelulusannya; jumlah fitur lolos menjadi 22 dari 28. |
+| Alternatif | Menandai aplikasi web **Terbangun** — ditolak; penanda itu berlaku bagi wadah, dan wadah aplikasi web baru memuat satu dari layar-layarnya. |
+| Dampak | Status tiga berkas fitur 027; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. Berikutnya menurut D-12: fitur 028, dimulai dari Gerbang 1. |
+| Pemutus | Pemegang Gerbang 1–4 |

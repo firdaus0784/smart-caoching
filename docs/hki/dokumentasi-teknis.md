@@ -77,7 +77,7 @@ Sumber: D-04 Bagian 5. Kolom keadaan diperiksa terhadap commit `9c0b138`.
 
 | Wadah | Teknologi | Keadaan | Keterangan |
 |---|---|---|---|
-| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, **menunggu Gerbang 4**). Layar lain dan autentikasi belum (fitur 013, FR-A01); riwayat percakapan belum tersambung (fitur 028) |
+| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, lolos Gerbang 4 pada 28 September 2026). Layar lain dan autentikasi belum (fitur 013, FR-A01); riwayat percakapan belum tersambung (fitur 028) |
 | Panel internal | React | **Dirancang** | Belum ada kode |
 | Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Rute riwayat percakapan **terpasang tetapi riwayat tidak pernah ditulis** (TK-65, fitur 028) — baris ini sebelumnya menyatakannya terbangun, dan itu dikoreksi. Bentuk galat belum mengikuti D-14 Bagian 4.2 (TK-66). **Autentikasi belum ada** (FR-A01) |
 | Layanan NLP | Python | **Sebagian** | Praproses, OCR, dan deteksi data pribadi berpola terbangun (fitur 015); **model NER dan klasifikasi belum** (fitur 017) |
@@ -104,7 +104,7 @@ Sumber: D-07 Bagian 4. Sepuluh tahap; keadaan tiap tahap:
 | 7 | Penilaian kecukupan bukti | **Sebagian** | Logikanya terbangun; **ambangnya belum dikalibrasi** dan sengaja tidak diisi (C-16, fitur 025) |
 | 8 | Penyusunan jawaban oleh model bahasa | **Sebagian** | Pembungkus tunggal dan pencatatan versi terbangun (ADR-11); **adaptor penyedia sungguhan belum** (ADR-12) |
 | 9 | Validator sitasi | **Sebagian** | Enam dari sembilan pemeriksaan — lihat Bagian 5 |
-| 10 | Penyajian | **Sebagian** | Bentuk tanggapan D-14 terbangun; layar Tanya menampilkannya dengan penanda dasar rujukan sebelum isi (fitur 027, menunggu Gerbang 4) |
+| 10 | Penyajian | **Sebagian** | Bentuk tanggapan D-14 terbangun; layar Tanya menampilkannya dengan penanda dasar rujukan sebelum isi (fitur 027, lolos Gerbang 4) |
 
 ---
 
@@ -185,7 +185,7 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
 | Jumlah uji otomatis | 2.270 pada backend dan perkakas; 111 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 21 dari 28; fitur 027 menunggu Gerbang 4 |
+| Fitur lolos Gerbang 4 | 22 dari 28 |
 | Anggaran muat aplikasi web | 70.812 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,

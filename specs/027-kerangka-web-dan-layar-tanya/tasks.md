@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Delapan dari delapan tugas selesai — menunggu Gerbang 4.** Gerbang 3 lolos KB-127 |
+| Status | **Gerbang 4 lolos** — 28 September 2026. Delapan dari delapan tugas selesai (KB-136) |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
