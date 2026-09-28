@@ -33,7 +33,6 @@ export const MIKROKOPI = {
   keteranganBacaanLanjutan: "Bacaan ini tidak dipakai untuk menyusun jawaban.",
   judulCatatanKeberlakuan: "Catatan keberlakuan",
   penandaDiubah: "Sudah diubah",
-  labelRujukanPengganti: "Pengubahnya",
   bukaSumber: "Buka sumber",
 
   // K-2, BT-71: kalimat pertama D-05 Bagian 10 saja. Kalimat keduanya
@@ -90,6 +89,11 @@ export const PESAN_GALAT: Readonly<
     tidakTersimpan: "Pertanyaan belum dapat diproses. Tulis ulang dengan kalimat utuh.",
   },
 };
+
+/** Rujukan pengubah pada sitasi berstatus diubah — FR-F14. */
+export function teksPengganti(rujukan: string): string {
+  return `Pengubahnya: ${rujukan}`;
+}
 
 /** Satu baris sitasi — PK-03: nama dokumen · penerbit · tahun · bagian. */
 export function barisSitasi(judul: string, penerbit: string, tahun: number, bagian: string): string {

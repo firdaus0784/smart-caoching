@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-4 selesai (KB-130); empat tugas tersisa |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-5 selesai (KB-131); tiga tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -90,19 +90,19 @@ Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
 **Kebutuhan:** R-01 s.d. R-10.
 
-- [ ] Uji: penanda dasar rujukan tampil **sebelum** ringkasan, berupa teks
-- [ ] Uji: ringkasan paling banyak tiga butir
-- [ ] Uji: `tidak_ditemukan` dan `di_luar_domain` memakai **komponen yang sama**
+- [x] Uji: penanda dasar rujukan tampil **sebelum** ringkasan, berupa teks
+- [x] Uji: ringkasan paling banyak tiga butir
+- [x] Uji: `tidak_ditemukan` dan `di_luar_domain` memakai **komponen yang sama**
       dengan jawaban normal; penafian tampak pada ketiga keadaan
-- [ ] Uji: sitasi memuat judul, tahun, bagian; penanda keberlakuan bila bukan
+- [x] Uji: sitasi memuat judul, tahun, bagian; penanda keberlakuan bila bukan
       `berlaku`; `catatan_keberlakuan` bila terisi
-- [ ] Uji: bacaan lanjutan pada blok terpisah beserta keterangannya
-- [ ] Uji: KL-A kerangka, KL-B kosong pertama, KL-D galat tanpa kode, KL-E
+- [x] Uji: bacaan lanjutan pada blok terpisah beserta keterangannya
+- [x] Uji: KL-A kerangka, KL-B kosong pertama, KL-D galat tanpa kode, KL-E
       luring
-- [ ] Uji: draf pertanyaan bertahan sesudah kiriman gagal dan sesudah muat
+- [x] Uji: draf pertanyaan bertahan sesudah kiriman gagal dan sesudah muat
       ulang; KL-E menyatakan tersimpan **hanya bila simpanan lokal menerimanya**
-- [ ] Komponen layar dan `web/src/draf.ts`
-- [ ] Mutasi M-1 s.d. M-7 dan M-14
+- [x] Komponen layar dan `web/src/draf.ts`
+- [x] Mutasi M-1 s.d. M-7 dan M-14
 
 ---
 

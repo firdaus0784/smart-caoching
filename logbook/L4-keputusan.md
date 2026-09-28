@@ -2130,3 +2130,21 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | Berkas baru `web/src/mikrokopi.ts`, `perkakas/pemeriksa/teks_web.mjs`, `tests/pemeriksa/test_bahasa_web.py`; `perkakas/pemeriksa/bahasa_antarmuka.py` diubah. Nol baris di `src/`. Fitur 027: **4 dari 8 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md`; penanda `di_luar_domain` dan pemakaian langsung `rolldown` terbuka ditinjau pemegang Gerbang 1–4 |
 | Koreksi atas baris "Uji mutasi" di atas | Sebab C-11 ikut merah yang tertulis di sana **keliru**. PostgreSQL mati selama percobaan itu; sembilan modul uji gagal dikumpulkan dan cakupan terbaca 0,0. M-8 diulang dengan peladen hidup: V-02 merah **hanya** oleh C-13 pada `web/src/Mutasi.tsx:1`. Baris di atas tidak disunting (pola KB-058). Pelajarannya bentuk KB-098 pada laporan mutasi sendiri: sebab kemerahan diperiksa, bukan hanya warnanya. |
+
+## KB-131 · T-5 fitur 027 — layar S-09
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"lanjutkan t-5 dan terus lanjutkan"**. |
+| Keputusan | **T-5 selesai.** `web/src/tanya/LayarTanya.tsx` (keadaan KL-A, KL-B, KL-D, KL-E; kolaborator disuntikkan), `web/src/tanya/BlokJawaban.tsx` (**satu** komponen bagi keempat `status_dasar`, R-04), `web/src/draf.ts`, `web/src/main.tsx`, `web/index.html` minimal. Nol baris di `src/`. |
+| Urutan blok | Penanda dasar rujukan → ringkasan (dipotong tiga, lapisan kedua sesudah peladen) → penjelasan (K-2 bila `tidak_ditemukan` berpenjelasan kosong) → catatan keberlakuan → dasar rujukan → bacaan lanjutan (blok sendiri, dengan keterangan) → salin ringkasan → penafian, **selalu**. `klaim` dan `versi` tidak ditampilkan (TK-40). |
+| Draf | Ditulis tiap ketikan **dan ditulis ulang pada saat galat**; dihapus sesudah jawaban diterima. `simpanDraf` mengembalikan benar hanya bila teksnya **dapat dibaca kembali** — simpanan yang melempar galat maupun yang menerima tanpa menyimpan menghasilkan salah, dan layar lalu memakai bentuk pesan tanpa kata "tersimpan". Tanggapan tidak pernah disimpan (C-07). |
+| Temuan kecil di luar daftar tugas: tautan | `tautan` sitasi dan bacaan lanjutan hanya dipasang sebagai tautan bila berskema `http`/`https`. Tanpanya, nilai `javascript:` dari segmen yang disusupi menjadi tautan yang dapat diketuk — bentuk KD-07 pada lapisan layar. Diuji. |
+| Tombol coba lagi | Hanya pada `luring` dan `sistem`. `pertanyaan_ditolak` pulih dengan menulis ulang, dan kalimatnya menyebutnya; `tidak_berhak` tidak pulih dari layar ini. |
+| Uji | 25 uji layar, 7 uji draf; 63 uji `web/` seluruhnya. Uji ditulis dan dijalankan merah (impor komponen tak ada) sebelum komponennya. |
+| Uji mutasi | Seluruhnya **merah**: M-1 (penanda sesudah ringkasan), M-2 (penanda tanpa teks), M-3 (`tidak_ditemukan` sebagai galat), M-4 (penafian disembunyikan pada tidak-ditemukan), M-5 (bacaan lanjutan digabung ke dasar rujukan), M-6 (draf tidak ditulis saat galat), M-7 (kode status pada pesan galat — juga ditolak C-13 sebagai kode galat), M-14 (KL-E "tersimpan" saat simpanan menolak). Tiap mutasi dipulihkan dan dibandingkan byte demi byte oleh skripnya. |
+| Ukuran | `vite build` 71,3 KB terkompresi — di bawah anggaran 150 KB yang diperiksa mesin pada T-6. |
+| Alternatif | Dua komponen bagi jawaban dan tidak-ditemukan — ditolak; `plan.md` Bagian 4. Pustaka komponen — ditolak; KB-123. |
+| Pemutus | Agen di dalam batas `tasks.md` |
+| Dampak | Berkas baru `web/src/tanya/LayarTanya.tsx`, `web/src/tanya/BlokJawaban.tsx`, `web/src/tanya/LayarTanya.test.tsx`, `web/src/draf.ts`, `web/src/draf.test.ts`, `web/src/main.tsx`, `web/index.html`; `web/src/mikrokopi.ts` (label pengubah menjadi fungsi `teksPengganti`, agar `.tsx` tidak menulis tanda baca harfiah). Nol baris di `src/`. Fitur 027: **5 dari 8 tugas**. Baris ini ditambahkan sesudah uji bentuk L4 menolak entri tanpa bidang `Dampak`; baris di atas tidak disunting (pola KB-058). |
