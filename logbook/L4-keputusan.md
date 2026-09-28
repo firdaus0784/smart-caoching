@@ -2237,3 +2237,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis `plan.md` dengan anjuran sebagai asumsi — ditolak; `AGENTS.md`: fitur dengan pertanyaan terbuka tidak diserahkan ke agen. |
 | Dampak | Berkas baru `specs/028-penyambungan-riwayat-percakapan/spec.md`; `docs/D00.md` 2.65. Nol baris kode. |
 | Pemutus | Agen menyusun; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-138 · Gerbang 1 fitur 028 lolos — keenam pertanyaan pilihan A; `plan.md` diajukan
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"Gerbang 1 lolos, sesuai anjuran lanjutkan P-1, P-2, P-3, P-4, P-5, P-6"**. |
+| Keputusan | **Gerbang 1 fitur 028 lolos.** P-1: tempat kepemilikan dibangun, autentikasi kelak mengisinya. P-2: klien membangkitkan `id_percakapan` sebagai bidang **permintaan**; tanggapan tidak berubah. P-3: PostgreSQL dengan peran tambah-saja. P-4: TK-66 dikerjakan bersama. P-5: riwayat pada S-09. P-6: pertanyaan berdata pribadi ditolak sebelum jalur penjawab. Enam kebutuhan baru R-12 s.d. R-17 ditulis ke `spec.md`. |
+| Dokumen yang diubah atas putusan | **D-14 0.7:** bentuk permintaan `/tanya` pada akhir Bagian 4.1 (R-04 menuntutnya sebelum kode) dan aturan kepemilikan pada Bagian 4.3 — dengan catatan bahwa aturan itu belum ditegakkan kode sampai fitur 028 selesai. **D-05 0.3:** blok 9 dan 10 S-09, beserta larangan menampilkan jawaban lama. **D-00 2.66:** register, dan TK-66, TK-67, TK-68 mencatat putusannya. |
+| R-02 dirumuskan ulang | Rumusan semula menolak pula pengenal "yang tidak dikenal", padahal di bawah P-2 A pengenal yang belum dipakai membuka percakapan baru. Rumusan baru menolak hanya pengenal milik orang lain, dan menyatakan batasnya: penolakan itu mengungkap bahwa sebuah pengenal sudah dipakai, ditanggung keacakan UUID v4. |
+| **Pemeriksa C-20 menangkap penyuntingan D-14 sendiri** | Blok JSON permintaan semula diletakkan di **awal** Bagian 4.1, dan pemeriksa C-20 — yang membaca blok JSON pertama bagian itu — melaporkan bidang `Tanggapan` tidak sama dengan D-14. Pemeriksanya tidak diubah; blok permintaan dipindah ke akhir Bagian 4.1, sesudah bentuk tanggapan dan aturannya. |
+| `plan.md` diajukan | Sembilan tugas, empat belas mutasi, dan **tiga keputusan rancangan** yang tidak diputus `spec.md` maupun oleh agen: K-1 urutan daftar percakapan (anjuran: terbaru lebih dulu), K-2 daftar yang hanya berisi pengenal (anjuran: bentuk tidak diubah; layar membaca paling banyak sepuluh percakapan), K-3 kalimat penolakan data pribadi di layar (anjuran: kalimat `pertanyaan_ditolak` diperluas, layar tetap tidak membaca badan galat). |
+| Alternatif | Memutus K-1 s.d. K-3 sendiri karena anjurannya tampak jelas — ditolak; K-1 dan K-2 menyangkut kalimat D-14, K-3 menyangkut apa yang dibaca kepala sekolah. |
+| Dampak | `spec.md`, `plan.md` baru, D-14, D-05, D-00. Nol baris kode. |
+| Pemutus | Gerbang 1 oleh pemegang Gerbang 1–4; Gerbang 2 menunggu |

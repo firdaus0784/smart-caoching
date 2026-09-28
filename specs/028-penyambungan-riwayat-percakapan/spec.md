@@ -3,8 +3,8 @@
 | | |
 |---|---|
 | Kebutuhan | FR-F09; C-05, C-14, C-17, C-20; KM-01, KM-03; TK-65, TK-66, TK-67, TK-68 |
-| Dokumen terkait | D-14 Bagian 3.2, 4.1, 4.2, 4.3, 5 · D-05 S-09 · D-12 baris 028 |
-| Status | **Menunggu Gerbang 1** — enam pertanyaan terbuka |
+| Dokumen terkait | D-14 Bagian 3.2, 4.1, 4.2, 4.3, 5 (versi 0.7) · D-05 S-09 (versi 0.3) · D-12 baris 028 |
+| Status | **Gerbang 1 lolos** — 28 September 2026 (KB-138), keenam pertanyaan diputus sesuai anjuran |
 
 ## Tujuan
 
@@ -51,15 +51,16 @@ antara keduanya bukan keputusan pelaksana (P-6).
   `id_pesan`, tidak pernah tanggapannya (D-14 Bagian 4.3, C-07)
 - Penghapusan data pengguna (`DELETE /api/v1/saya/data`, NFR-09) — rute dan
   fiturnya sendiri
-- Rute baru maupun bidang tanggapan `/tanya` baru (AG-02, C-20) — kecuali
-  bila P-2 diputus lain
+- Rute baru maupun bidang tanggapan `/tanya` baru (AG-02, C-20). Bidang
+  **permintaan** `id_percakapan` ditambahkan, dan ditulis ke D-14 lebih dulu
+  (R-04, P-2)
 
 ## Kebutuhan (EARS)
 
 | ID | Kebutuhan |
 |---|---|
 | R-01 | **KETIKA** `POST /api/v1/tanya` menghasilkan tanggapan, sistem **HARUS** mencatat satu giliran — pertanyaan, `id_pesan`, dan waktu UTC — pada percakapan yang disebut permintaan (FR-F09, TK-65) |
-| R-02 | **KETIKA** permintaan menyebut percakapan milik pengguna lain atau yang tidak dikenal, sistem **HARUS** menolaknya dengan bentuk yang **sama** dengan percakapan yang tidak ada — penolakan tidak boleh membedakan "milik orang lain" dari "tidak ada" |
+| R-02 | **KETIKA** permintaan `/tanya` menyebut percakapan milik pengguna lain, sistem **HARUS** menolaknya dengan galat Bagian 4.2 `SUMBER_TIDAK_ADA`, status 404 — bentuk yang sama dengan membaca percakapan yang tidak dikenal. Pengenal yang belum pernah dipakai membuka percakapan baru. **Batas yang diakui:** karena pengenal baru diterima, penolakan ini mengungkap bahwa sebuah pengenal sudah dipakai; batas itu ditanggung keacakan UUID v4 (R-16) dan pengenal yang tidak pernah ditampilkan kepada pengguna lain |
 | R-03 | `GET /api/v1/percakapan` **HARUS** hanya mengembalikan percakapan milik penanya, dan `GET /api/v1/percakapan/{id}` **HARUS** menolak percakapan milik orang lain dengan bentuk yang sama dengan R-02 (D-14 Bagian 4.3, TK-67) |
 | R-04 | Bentuk permintaan `/tanya` **HARUS** ditulis ke D-14 **sebelum** kodenya diubah (D-12 baris 028) |
 | R-05 | Jalur penjawaban **TIDAK BOLEH** memperoleh hak tulis. Penulisan riwayat **HARUS** dilakukan lapisan HTTP sesudah tanggapan tersusun, dengan kredensial yang bukan milik jalur penjawaban (C-17) |
@@ -69,13 +70,35 @@ antara keduanya bukan keputusan pelaksana (P-6).
 | R-09 | Layar Tanya **HARUS** dapat melanjutkan percakapan: pertanyaan berikutnya menyebut percakapan yang sama, dan pertanyaan-pertanyaan sebelumnya pada percakapan itu tampak. Membuka pertanyaan lama **HARUS** berarti **bertanya ulang**, bukan menampilkan jawaban tersimpan (D-14 Bagian 4.3, C-07) |
 | R-10 | Seluruh teks layar baru **HARUS** lolos pemeriksa C-13 yang dibangun fitur 027 |
 | R-11 | `src/` di luar `src/api/` dan `src/penyimpanan/` **TIDAK BOLEH** berubah — terutama `src/rag/` dan `src/llm/` |
+| R-12 | Riwayat **HARUS** tersimpan pada PostgreSQL, pada tabel yang ditulis ke D-14 Bagian 5 lebih dulu. Peran basis data penulisnya **HANYA** boleh membaca dan menambah baris tabel riwayat — tanpa ubah, hapus, maupun kosongkan — dan penolakan itu **HARUS** diuji terhadap peladen (P-3, R-08) |
+| R-13 | Riwayat **HARUS** bertahan ketika peladen aplikasi dimulai ulang (P-3, FR-F09) |
+| R-14 | Seluruh galat ketiga rute terpasang **HARUS** berbentuk D-14 Bagian 4.2 — `galat.kode`, `pesan_pengguna`, `id_jejak`. `id_jejak` **HARUS** tercatat pada log operasional bersama rincian teknisnya, dan log itu **TIDAK BOLEH** memuat data pribadi (P-4, TK-66) |
+| R-15 | **KETIKA** pertanyaan memuat data pribadi berpola, `/tanya` **HARUS** menolaknya dengan galat `VALIDASI_GAGAL` **sebelum** jalur penjawab dipanggil. Pertanyaan itu **TIDAK BOLEH** sampai ke model, riwayat, maupun log, dan pesannya meminta pengguna menghapus nomor tersebut tanpa mengutipnya (P-6, TK-68, KM-03) |
+| R-16 | `id_percakapan` **HARUS** berbentuk UUID versi 4, dibangkitkan klien. Bentuk lain ditolak `VALIDASI_GAGAL`, sehingga pengenal yang mudah ditebak tidak dapat dipakai (P-2) |
+| R-17 | Penentu identitas **HARUS** mengembalikan pengenal pemilik berpseudonim di samping peran. Titik jalan pengembangan memakai **satu** pemilik tetap yang menyatakan dirinya sebagai pengembangan (P-1, TK-67) |
 
-Kebutuhan bagi P-3, P-4, dan P-6 ditambahkan sesudah putusannya.
+## Keputusan Gerbang 1
 
-## Pertanyaan terbuka
+Diputus pemegang Gerbang 1–4 pada 28 September 2026: **"Gerbang 1 lolos,
+sesuai anjuran"** bagi P-1 s.d. P-6 (KB-138). Keenamnya pilihan A.
 
-Fitur dengan pertanyaan terbuka tidak diserahkan ke agen. Keenamnya menuntut
-putusan Gerbang 1. Tiap pertanyaan disertai anjuran; anjuran bukan putusan.
+| | Putusan | Kebutuhan yang lahir |
+|---|---|---|
+| P-1 | Tempat kepemilikan dibangun sekarang; autentikasi kelak mengisinya | R-17 |
+| P-2 | Klien membangkitkan `id_percakapan` sebagai bidang permintaan | R-02, R-16; D-14 Bagian 4.1 |
+| P-3 | PostgreSQL, peran tambah-saja | R-12, R-13 |
+| P-4 | TK-66 dikerjakan bersama, seluruh rute terpasang | R-14 |
+| P-5 | Riwayat pada layar S-09 | R-09; D-05 S-09 |
+| P-6 | Pertanyaan berdata pribadi ditolak sebelum dijawab | R-15 |
+
+R-02 dirumuskan ulang saat putusan dicatat: rumusan semula menolak pula
+pengenal "yang tidak dikenal", padahal di bawah P-2 A pengenal yang belum
+dipakai justru membuka percakapan baru. Batas yang menyertainya dinyatakan
+pada barisnya.
+
+## Pertanyaan yang sudah diputus
+
+Disimpan apa adanya agar alasan tiap putusan tetap terbaca.
 
 **P-1 · Kepemilikan riwayat tanpa autentikasi (TK-67).**
 Riwayat per pengguna menuntut sistem tahu siapa penanyanya, dan FR-A01 belum
@@ -178,10 +201,15 @@ tidak terdeteksi (catatan cakupan FR-B04, BT-70).
 | R-09 | FR-F09; D-14 Bagian 4.3; C-07 |
 | R-10 | C-13; NFR-19 |
 | R-11 | C-17, C-18 |
+| R-12, R-13 | FR-F09; P-3; KM-02 |
+| R-14 | D-14 Bagian 4.2; TK-66 |
+| R-15 | KM-03; FR-B04; TK-68 |
+| R-16 | P-2 |
+| R-17 | FR-A01 di luar cakupan; C-05; TK-67 |
 
 ## Kriteria penerimaan
 
-- [ ] Keenam pertanyaan diputus pada Gerbang 1, dan kebutuhan bagi P-3, P-4,
+- [x] Keenam pertanyaan diputus pada Gerbang 1, dan kebutuhan bagi P-3, P-4,
       P-6 ditulis sebelum `plan.md`
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Kepemilikan diuji dengan dua pemilik: pemilik B tidak dapat membaca,
