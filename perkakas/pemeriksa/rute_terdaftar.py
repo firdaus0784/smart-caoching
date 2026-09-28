@@ -99,7 +99,7 @@ def _periksa_web(akar: Path) -> list[Temuan]:
                 if terpasang is None:
                     terpasang = _rute_terpasang()
                 jalur = cocok.group(2)
-                if _pola(jalur) not in terpasang:
+                if not _dilayani(_pola(jalur), terpasang):
                     temuan.append(
                         Temuan(
                             berkas=berkas.relative_to(akar),
@@ -115,6 +115,24 @@ def _periksa_web(akar: Path) -> list[Temuan]:
 
 def _pola(jalur: str) -> str:
     return _RUAS_PEUBAH.sub("{}", jalur)
+
+
+def _dilayani(jalur: str, terpasang: set[str]) -> bool:
+    """Cocok bila sama dengan salah satu pola, per ruas.
+
+    Ruas `{}` pada pola menerima satu ruas apa pun pada jalur — sehingga
+    `/api/v1/percakapan/abc` dilayani `/api/v1/percakapan/{id}` — tetapi
+    tidak melintasi garis miring. Ditemukan T-6: pencocokan sama-persis
+    menolak jalur konkret pada data uji yang sebenarnya terpasang (KB-132).
+    """
+    ruas = jalur.split("/")
+    for pola in terpasang:
+        ruas_pola = pola.split("/")
+        if len(ruas_pola) == len(ruas) and all(
+            p == r or (p == "{}" and r != "") for p, r in zip(ruas_pola, ruas, strict=True)
+        ):
+            return True
+    return False
 
 
 def _rute_terpasang() -> set[str]:

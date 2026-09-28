@@ -13,12 +13,13 @@ repositori sendiri tidak disentuh.
 
 from __future__ import annotations
 
+import os
 import shutil
 from pathlib import Path
 
 import pytest
 
-from perkakas.pemeriksa.jalankan import periksa_web
+from perkakas.pemeriksa.jalankan import periksa_anggaran_muat, periksa_web
 
 AKAR = Path(__file__).resolve().parents[2]
 WEB = AKAR / "web"
@@ -30,14 +31,78 @@ perlu_npm = pytest.mark.skipif(
 
 
 def _salin_web(tmp_path: Path) -> Path:
-    """Pohon `web/` minimal yang lulus: konfigurasi repositori dan uji asapnya."""
+    """Salinan `web/` repositori — sumber, uji, dan konfigurasinya.
+
+    Sejak T-6 V-01 juga menjalankan `vite build`, yang menuntut `index.html`
+    dan seluruh `src/`; salinan minimal yang dipakai sebelumnya tidak lagi
+    dapat dibangun.
+    """
     web = tmp_path / "web"
-    (web / "src").mkdir(parents=True)
-    for nama in ("package.json", "tsconfig.json", "vite.config.ts"):
+    web.mkdir()
+    for nama in ("package.json", "tsconfig.json", "vite.config.ts", "index.html"):
         shutil.copy(WEB / nama, web / nama)
-    shutil.copy(WEB / "src" / "asap.test.tsx", web / "src" / "asap.test.tsx")
+    shutil.copytree(WEB / "src", web / "src")
+    shutil.copytree(WEB / "public", web / "public")
     (web / "node_modules").symlink_to(WEB / "node_modules", target_is_directory=True)
     return tmp_path
+
+
+def _dist(tmp_path: Path, ukuran: dict[str, int]) -> Path:
+    """Hasil build buatan berisi bait acak — tidak termampatkan, sehingga
+    ukuran terkompresinya dapat diramalkan."""
+    dist = tmp_path / "dist"
+    for nama, jumlah in ukuran.items():
+        berkas = dist / nama
+        berkas.parent.mkdir(parents=True, exist_ok=True)
+        berkas.write_bytes(os.urandom(jumlah))
+    return dist
+
+
+# ── anggaran muat — T-6, R-14 ──────────────────────────────────────────
+
+
+def test_anggaran_muat_di_bawah_batas_lulus(tmp_path: Path) -> None:
+    dist = _dist(tmp_path, {"index.html": 500, "assets/index.js": 40_000})
+    assert periksa_anggaran_muat(dist, batas=60_000) == []
+
+
+def test_anggaran_muat_terlampaui_ditolak_dengan_ukurannya(tmp_path: Path) -> None:
+    dist = _dist(tmp_path, {"index.html": 500, "assets/index.js": 40_000, "assets/a.css": 30_000})
+
+    temuan = periksa_anggaran_muat(dist, batas=60_000)
+
+    assert len(temuan) == 1
+    assert "melampaui" in temuan[0].pesan
+    assert "60000" in temuan[0].pesan.replace(".", "").replace(" ", "")
+
+
+def test_anggaran_muat_menghitung_seluruh_berkas_bukan_satu(tmp_path: Path) -> None:
+    # Dua berkas yang masing-masing di bawah batas, bersama di atasnya.
+    dist = _dist(tmp_path, {"index.html": 100, "assets/a.js": 35_000, "assets/b.js": 35_000})
+    assert len(periksa_anggaran_muat(dist, batas=60_000)) == 1
+
+
+def test_anggaran_muat_tanpa_hasil_build_ditolak(tmp_path: Path) -> None:
+    temuan = periksa_anggaran_muat(tmp_path / "dist", batas=60_000)
+    assert len(temuan) == 1
+    assert "index.html" in temuan[0].pesan
+
+
+@perlu_npm
+def test_build_yang_gagal_menjatuhkan_v01(tmp_path: Path) -> None:
+    # `main.tsx` tidak diimpor uji mana pun, dan impor CSS lolos `tsc` lewat
+    # deklarasi `vite/client` — sehingga tipe dan uji lulus, dan yang
+    # menjatuhkan hanya build. Percobaan pertama merusak `index.html`, dan
+    # uji halaman yang lebih dulu merah: sebab yang salah.
+    akar = _salin_web(tmp_path)
+    main = akar / "web" / "src" / "main.tsx"
+    main.write_text(main.read_text(encoding="utf-8") + 'import "./tidak-ada.css";\n', "utf-8")
+
+    temuan = periksa_web(akar)
+
+    assert len(temuan) == 1
+    assert temuan[0].pesan.startswith("build web/ gagal")
+    assert "tidak-ada.css" in temuan[0].pesan
 
 
 def test_tanpa_npm_v01_gagal_dan_menyebut_cara_memperbaikinya(

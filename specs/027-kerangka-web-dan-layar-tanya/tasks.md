@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-5 selesai (KB-131); tiga tugas tersisa |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-6 selesai (KB-132); dua tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -110,16 +110,16 @@ Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
 **Kebutuhan:** R-13, R-14, R-15, R-17, R-18, R-20.
 
-- [ ] Uji: rasio kontras WCAG setiap pasangan token huruf-latar ≥ 4,5;
+- [x] Uji: rasio kontras WCAG setiap pasangan token huruf-latar ≥ 4,5;
       huruf dasar ≥ 16px; sasaran ketuk ≥ 44px
-- [ ] Uji: keputusan tembolok service worker — cangkang ditembolok,
+- [x] Uji: keputusan tembolok service worker — cangkang ditembolok,
       `/api/…` **tidak pernah**
-- [ ] Uji: `index.html` memuat CSP `'self'` dan tanpa URL pihak ketiga;
+- [x] Uji: `index.html` memuat CSP `'self'` dan tanpa URL pihak ketiga;
       sumber `web/src` tanpa URL mutlak
-- [ ] Uji: tanpa artefak autentikasi — tidak ada token maupun sandi disimpan
-- [ ] V-01 memeriksa anggaran muat 150 KB terkompresi atas hasil `vite build`
-- [ ] `gaya.css`, `manifest.webmanifest`, `sw.js`
-- [ ] Mutasi M-9 dan M-13
+- [x] Uji: tanpa artefak autentikasi — tidak ada token maupun sandi disimpan
+- [x] V-01 memeriksa anggaran muat 150 KB terkompresi atas hasil `vite build`
+- [x] `gaya.css`, `manifest.webmanifest`, `sw.js`
+- [x] Mutasi M-9 dan M-13
 
 ---
 

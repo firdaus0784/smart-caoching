@@ -10,7 +10,15 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import type { Simpanan } from "./draf";
+import "./gaya.css";
 import { LayarTanya } from "./tanya/LayarTanya";
+
+// Cangkang luring (R-15). Pendaftaran yang ditolak — peramban tanpa dukungan,
+// atau asal yang bukan `https` maupun `localhost` — tidak menjatuhkan layar;
+// yang hilang hanya kemampuan terbuka tanpa koneksi.
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+}
 
 /** `localStorage` dapat melempar galat saat sekadar diakses — mode pribadi
  * sebagian peramban. Layar tetap berjalan tanpa draf, dan tidak menyatakan

@@ -168,3 +168,19 @@ def test_web_komentar_yang_menyebut_jalur_tidak_ditolak(tmp_path: Path) -> None:
     # rute pada komentarnya sendiri akan membuat aturan ini dimatikan orang.
     akar = _web(tmp_path, "klien.ts", "// memanggil POST /api/v1/rahasia kelak\n")
     assert periksa_rute_terdaftar(akar) == []
+
+
+def test_web_jalur_konkret_dicocokkan_dengan_pola_ruas(tmp_path: Path) -> None:
+    """`/api/v1/percakapan/abc` dilayani pola `/api/v1/percakapan/{id}`.
+
+    Ditemukan T-6: pemeriksa T-3 hanya mencocokkan templat `${id}` dengan
+    `{id}`, sehingga jalur konkret pada data uji ditolak padahal terpasang.
+    """
+    akar = _web(tmp_path, "a.test.ts", 'const j = "/api/v1/percakapan/abc";\n')
+    assert periksa_rute_terdaftar(akar) == []
+
+
+def test_web_jalur_konkret_tidak_melintasi_ruas(tmp_path: Path) -> None:
+    # Pola satu ruas tidak boleh menelan dua ruas.
+    akar = _web(tmp_path, "a.ts", 'const j = "/api/v1/percakapan/abc/hapus";\n')
+    assert len(periksa_rute_terdaftar(akar)) == 1

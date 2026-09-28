@@ -20,6 +20,7 @@ sekarang biayanya tidak sebanding dengan kerumitannya.
 
 from __future__ import annotations
 
+import gzip
 import re
 import shutil
 import subprocess
@@ -99,11 +100,77 @@ def periksa_web(akar: Path, *, npm: str | None = None) -> list[Temuan]:
         )
     except subprocess.TimeoutExpired:
         return [Temuan(web, 0, "pemeriksaan web/ melewati 600 detik dan dihentikan")]
-    if hasil.returncode == 0:
+    if hasil.returncode != 0:
+        baris = [b.strip() for b in (hasil.stdout + hasil.stderr).splitlines() if b.strip()]
+        sebab = [b for b in baris if _BARIS_SEBAB.search(b)][:5] or baris[-1:] or ["tanpa keluaran"]
+        return [Temuan(web, 0, "tipe atau uji web/ gagal: " + " | ".join(sebab))]
+
+    # T-6, R-14: anggaran muat diperiksa atas hasil build sungguhan.
+    try:
+        build = subprocess.run(
+            [npm, "--prefix", str(web), "run", "build"],
+            cwd=akar,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=600,
+        )
+    except subprocess.TimeoutExpired:
+        return [Temuan(web, 0, "build web/ melewati 600 detik dan dihentikan")]
+    if build.returncode != 0:
+        keluaran = _ANSI.sub("", build.stdout + build.stderr)
+        baris_build = [b.strip() for b in keluaran.splitlines() if b.strip()]
+        # Vite menulis "error during build:", lalu "Build failed with N
+        # error", baru sebabnya — `[UNRESOLVED_IMPORT] Could not resolve …`.
+        sebab_build = [b for b in baris_build if _SEBAB_BUILD.search(b)][:3]
+        ringkas = " | ".join(sebab_build or baris_build[-1:] or ["tanpa keluaran"])
+        return [Temuan(web, 0, f"build web/ gagal: {ringkas}")]
+    return periksa_anggaran_muat(web / "dist")
+
+
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+_SEBAB_BUILD = re.compile(r"\[[A-Z_]+\]|Could not resolve|error TS\d+|SyntaxError")
+
+
+ANGGARAN_MUAT = 150 * 1024
+"""Anggaran muat awal, bait terkompresi — ukuran pengganti NFR-02 (R-14).
+
+**Penetapan tim tanpa dasar literatur** (SI-01 pilihan kedua), `plan.md`
+fitur 027 Bagian 5: diturunkan dari anggapan laju 3G sekitar 0,75 Mbit/s.
+Anggapan itu **wajib diverifikasi** terhadap sinyal di lokus pilot sebelum
+dipakai sebagai klaim kinerja.
+"""
+
+TINGKAT_MAMPAT = 6
+"""Tingkat gzip yang lazim dipakai peladen. Tingkat 9 menghasilkan angka lebih
+kecil daripada yang benar-benar dikirim, dan anggaran yang dihitung terlalu
+murah hati bukan anggaran."""
+
+
+def periksa_anggaran_muat(dist: Path, *, batas: int = ANGGARAN_MUAT) -> list[Temuan]:
+    """Jumlah ukuran terkompresi **seluruh** berkas hasil build ≤ batas.
+
+    Seluruhnya, bukan per berkas: dua berkas yang masing-masing di bawah batas
+    tetap dimuat bersama. Service worker dan manifes ikut dihitung — lebih
+    ketat daripada muat awal yang sebenarnya, dan kelonggaran yang keliru
+    arahnya lebih mahal daripada yang ketat.
+    """
+    if not (dist / "index.html").is_file():
+        return [Temuan(dist, 0, "hasil build tanpa index.html — anggaran muat tidak dapat diukur")]
+    total = sum(
+        len(gzip.compress(b.read_bytes(), compresslevel=TINGKAT_MAMPAT))
+        for b in sorted(dist.rglob("*"))
+        if b.is_file()
+    )
+    if total <= batas:
         return []
-    baris = [b.strip() for b in (hasil.stdout + hasil.stderr).splitlines() if b.strip()]
-    sebab = [b for b in baris if _BARIS_SEBAB.search(b)][:5] or baris[-1:] or ["tanpa keluaran"]
-    return [Temuan(web, 0, "tipe atau uji web/ gagal: " + " | ".join(sebab))]
+    return [
+        Temuan(
+            dist,
+            0,
+            f"muat awal {total} bait terkompresi melampaui anggaran {batas} bait (R-14, NFR-02)",
+        )
+    ]
 
 
 def _v01(akar: Path) -> HasilGerbang:

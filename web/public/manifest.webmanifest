@@ -1,0 +1,10 @@
+{
+  "name": "Smart-Coaching — Tanya",
+  "short_name": "Tanya",
+  "lang": "id",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f5",
+  "theme_color": "#1f5c4a"
+}

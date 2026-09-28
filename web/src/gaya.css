@@ -1,0 +1,276 @@
+/*
+ * Token dan gaya layar Tanya — T-6 fitur 027, R-13, D-05 Bagian 11.
+ *
+ * Seluruh warna tinggal sebagai token di bawah. Uji `halaman.test.ts`
+ * membaca setiap blok aturan, menyusun pasangan huruf-latar yang benar-benar
+ * dipakai, dan menghitung rasio kontras WCAG 2.1 tiap pasangan (AK-02, ≥ 4,5).
+ * Kontras dihitung, bukan dilihat.
+ *
+ * Tanpa fon jarak jauh (R-18): fon sistem, yang juga yang paling cepat
+ * termuat pada jaringan 3G.
+ *
+ * Tiap blok ditulis rata, tanpa blok bersarang, agar pembaca uji dapat
+ * menyusun pasangannya tanpa pengurai CSS.
+ */
+
+:root {
+  --latar-halaman: #f4f6f5;
+  --latar-permukaan: #ffffff;
+  --latar-tombol: #1f5c4a;
+  --latar-tombol-kedua: #e6ece9;
+  --latar-kuat: #d9efe4;
+  --latar-terbatas: #f6ead0;
+  --latar-tidak-ditemukan: #e8ebef;
+  --latar-luar: #ece8f1;
+  --latar-galat: #f9e3df;
+  --latar-kerangka: #e3e8e5;
+  --latar-keberlakuan: #fdf1dc;
+
+  --huruf-utama: #1c2420;
+  --huruf-redup: #46524c;
+  --huruf-tombol: #ffffff;
+  --huruf-tautan: #1b5689;
+  --huruf-keberlakuan: #6b3d00;
+
+  --garis: #c6cec9;
+  --fokus: #1b5689;
+
+  --ukuran-huruf-dasar: 1rem;
+  --ukuran-ketuk: 2.75rem;
+  --jarak: 1rem;
+  --lebar-baca: 40rem;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--ukuran-huruf-dasar);
+  line-height: 1.55;
+  color: var(--huruf-utama);
+  background: var(--latar-halaman);
+}
+
+.layar-tanya {
+  display: grid;
+  gap: var(--jarak);
+  max-width: var(--lebar-baca);
+  margin: 0 auto;
+  padding: var(--jarak);
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.isian-pertanyaan {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.isian-pertanyaan label {
+  font-weight: 600;
+}
+
+#petunjuk-pertanyaan {
+  margin: 0;
+  color: var(--huruf-redup);
+}
+
+textarea {
+  min-height: var(--ukuran-ketuk);
+  padding: 0.75rem;
+  font: inherit;
+  color: var(--huruf-utama);
+  background: var(--latar-permukaan);
+  border: 1px solid var(--garis);
+  border-radius: 0.375rem;
+  resize: vertical;
+}
+
+button {
+  min-height: var(--ukuran-ketuk);
+  min-width: var(--ukuran-ketuk);
+  padding: 0 1.25rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--huruf-tombol);
+  background: var(--latar-tombol);
+  border: 0;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  justify-self: start;
+}
+
+button:disabled {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+.tindakan button {
+  color: var(--huruf-utama);
+  background: var(--latar-tombol-kedua);
+}
+
+button:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 2px;
+}
+
+.kosong {
+  padding: var(--jarak);
+  color: var(--huruf-utama);
+  background: var(--latar-permukaan);
+  border-radius: 0.5rem;
+}
+
+.kosong p {
+  margin: 0;
+  color: var(--huruf-redup);
+}
+
+.blok-jawaban {
+  display: grid;
+  gap: 1.25rem;
+  padding: var(--jarak);
+  color: var(--huruf-utama);
+  background: var(--latar-permukaan);
+  border-radius: 0.5rem;
+}
+
+.blok-jawaban p,
+.blok-jawaban ol,
+.blok-jawaban ul {
+  margin: 0;
+}
+
+.penanda {
+  justify-self: start;
+  padding: 0.375rem 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.penanda[data-status="kuat"] {
+  color: var(--huruf-utama);
+  background: var(--latar-kuat);
+}
+
+.penanda[data-status="terbatas"] {
+  color: var(--huruf-utama);
+  background: var(--latar-terbatas);
+}
+
+.penanda[data-status="tidak_ditemukan"] {
+  color: var(--huruf-utama);
+  background: var(--latar-tidak-ditemukan);
+}
+
+.penanda[data-status="di_luar_domain"] {
+  color: var(--huruf-utama);
+  background: var(--latar-luar);
+}
+
+.catatan-keberlakuan {
+  padding: 0.75rem;
+  color: var(--huruf-keberlakuan);
+  background: var(--latar-keberlakuan);
+  border-radius: 0.375rem;
+}
+
+.sitasi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--garis);
+}
+
+.penanda-keberlakuan {
+  padding: 0 0.5rem;
+  font-weight: 600;
+  color: var(--huruf-keberlakuan);
+  background: var(--latar-keberlakuan);
+  border-radius: 0.25rem;
+}
+
+a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ukuran-ketuk);
+  color: var(--huruf-tautan);
+}
+
+.tindakan {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.penafian {
+  padding-top: 0.75rem;
+  color: var(--huruf-redup);
+  border-top: 1px solid var(--garis);
+}
+
+.galat {
+  display: grid;
+  gap: 0.75rem;
+  padding: var(--jarak);
+  color: var(--huruf-utama);
+  background: var(--latar-galat);
+  border-radius: 0.5rem;
+}
+
+.galat p {
+  margin: 0;
+}
+
+.kerangka {
+  display: grid;
+  gap: 0.75rem;
+  padding: var(--jarak);
+  background: var(--latar-permukaan);
+  border-radius: 0.5rem;
+}
+
+.kerangka-penanda {
+  width: 10rem;
+  height: 1.75rem;
+  background: var(--latar-kerangka);
+  border-radius: 999px;
+}
+
+.kerangka-baris {
+  height: 1rem;
+  background: var(--latar-kerangka);
+  border-radius: 0.25rem;
+}
+
+.kerangka-baris.pendek {
+  width: 60%;
+}
+
+.tersembunyi {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
