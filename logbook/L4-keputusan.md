@@ -2252,3 +2252,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memutus K-1 s.d. K-3 sendiri karena anjurannya tampak jelas — ditolak; K-1 dan K-2 menyangkut kalimat D-14, K-3 menyangkut apa yang dibaca kepala sekolah. |
 | Dampak | `spec.md`, `plan.md` baru, D-14, D-05, D-00. Nol baris kode. |
 | Pemutus | Gerbang 1 oleh pemegang Gerbang 1–4; Gerbang 2 menunggu |
+
+## KB-139 · Gerbang 2 fitur 028 lolos; `tasks.md` diajukan
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"lanjutkan sesuai anjuran K-2, K-2 dan K-3 sekaligus"** atas `plan.md` fitur 028. |
+| Keputusan | **Gerbang 2 fitur 028 lolos**, dengan ketiga keputusan rancangan sesuai anjuran: K-1 daftar percakapan terbaru lebih dulu; K-2 bentuk daftar tidak diubah, layar membaca paling banyak sepuluh percakapan; K-3 kalimat `pertanyaan_ditolak` diperluas agar benar pula bagi penolakan data pribadi. |
+| **Tafsiran yang dicatat** | Pernyataannya menyebut K-2 dua kali dan tidak menyebut K-1. Dibaca sebagai K-1, K-2, dan K-3, sebab "sekaligus" menunjuk ketiganya dan ketiganya satu-satunya keputusan yang diajukan. Tafsiran ini dinyatakan pada laporan kepada pemegang gerbang; bila keliru, K-1 dibuka ulang sebelum T-1 berjalan, sebab T-1 yang menuliskannya ke D-14. |
+| `tasks.md` diajukan | Sembilan tugas mengikuti `plan.md` Bagian 9. Tiap tugas memuat uji yang ditulis lebih dulu; mutasi dibagi ke tugas yang membangun penangkapnya. |
+| Alternatif | Menahan Gerbang 2 sampai K-1 disebut tegas — ditolak; anjuran K-1 hanya memperjelas kalimat D-14 tanpa mengubah bentuk tanggapan, dan tafsirannya dapat dikoreksi sebelum ada kode. |
+| Dampak | `plan.md` dan `spec.md` fitur 028 (status), `tasks.md` baru. Nol baris kode. |
+| Pemutus | Gerbang 2 oleh pemegang Gerbang 1–4; Gerbang 3 menunggu |
+| Penegasan tafsiran | Pemegang gerbang menambahkan **"koreksi K-1 juga"** sesudah laporan yang menyatakan tafsiran di atas. Dibaca sebagai penegasan bahwa K-1 turut diputus sesuai anjuran. Tafsiran baris "Tafsiran yang dicatat" karena itu terkonfirmasi; baris itu tidak disunting (pola KB-058). |

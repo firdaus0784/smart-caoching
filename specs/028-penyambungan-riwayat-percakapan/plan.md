@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 28 September 2026 (KB-138), P-1 s.d. P-6 pilihan A |
-| Status | **Menunggu Gerbang 2** — tiga keputusan rancangan diajukan (Bagian 6) |
+| Status | **Gerbang 2 lolos** — 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran. Menunggu Gerbang 3 atas `tasks.md` |
 | Kebutuhan | R-01 s.d. R-17 `spec.md`; C-05, C-13, C-14, C-17, C-20 |
 
 ## 1. Letak dan batas
@@ -134,9 +134,14 @@ Pemeriksa C-13 Aturan 2 saat ini mengenal `_galat()` dan `content["pesan"]`
 sebagai jalan keluar. Keduanya diganti bentuk baru, dan pemeriksanya ikut
 dimutakhirkan — tanpanya pesan baru lolos C-13 tanpa dibaca (bentuk KB-133).
 
-## 6. Keputusan rancangan yang diajukan pada Gerbang 2
+## 6. Keputusan rancangan Gerbang 2
 
-Tiga hal tidak diputus `spec.md` dan tidak saya putus sendiri.
+**Diputus 28 September 2026 (KB-139): ketiganya sesuai anjuran.** Pernyataan
+pemegang gerbang berbunyi *"sesuai anjuran K-2, K-2 dan K-3 sekaligus"*;
+dibaca sebagai K-1, K-2, dan K-3, sebab K-2 tertulis dua kali dan "sekaligus"
+menunjuk ketiganya. Tafsiran itu dicatat pada KB-139 agar dapat dikoreksi.
+
+Uraian semula disimpan di bawah.
 
 **K-1 · Urutan daftar percakapan.** D-14 Bagian 4.3 menulis daftar
 "terurut", dan kode mengurutkannya menurut pengenal. Pengenal kini UUID acak,
