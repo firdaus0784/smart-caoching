@@ -4,7 +4,7 @@
 |---|---|
 | Komponen Berkas HKI | **#4 Dokumentasi teknis** — `docs/D10.md` Bagian 10A, `logbook/L10-berkas-hki.md` |
 | Sumber bahan | `docs/D04.md` versi 0.8 (arsitektur) · `docs/D07.md` versi 0.3 (spesifikasi RAG) |
-| Keadaan kode yang digambarkan | Commit `9c0b138`, 25 September 2026; Bagian 3 dan 7 dimutakhirkan atas TK-63 dan TK-64 |
+| Keadaan kode yang digambarkan | Commit `8737068`, 28 September 2026; Bagian 3, 4, 8, dan 9 dimutakhirkan atas fitur 027 (T-8). Sebelumnya commit `9c0b138`, 25 September 2026, atas TK-63 dan TK-64 |
 | Status | **KERANGKA — menunggu tinjauan ketua peneliti** |
 | Disusun oleh | Agen pengembang, atas perintah pemegang Gerbang 1–4 |
 
@@ -77,9 +77,9 @@ Sumber: D-04 Bagian 5. Kolom keadaan diperiksa terhadap commit `9c0b138`.
 
 | Wadah | Teknologi | Keadaan | Keterangan |
 |---|---|---|---|
-| Aplikasi web | React + TypeScript, PWA | **Dirancang** | Direktori `web/` belum berisi berkas (fitur 013) |
+| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, **menunggu Gerbang 4**). Layar lain dan autentikasi belum (fitur 013, FR-A01); riwayat percakapan belum tersambung (fitur 028) |
 | Panel internal | React | **Dirancang** | Belum ada kode |
-| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` dan riwayat percakapan terbangun (fitur 021, 023); **autentikasi belum ada** (FR-A01) |
+| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Rute riwayat percakapan **terpasang tetapi riwayat tidak pernah ditulis** (TK-65, fitur 028) — baris ini sebelumnya menyatakannya terbangun, dan itu dikoreksi. Bentuk galat belum mengikuti D-14 Bagian 4.2 (TK-66). **Autentikasi belum ada** (FR-A01) |
 | Layanan NLP | Python | **Sebagian** | Praproses, OCR, dan deteksi data pribadi berpola terbangun (fitur 015); **model NER dan klasifikasi belum** (fitur 017) |
 | Layanan RAG | Python | **Sebagian** | Lihat Bagian 4 |
 | Pekerja latar | Python | **Sebagian** | Ingesti kanal dan penyematan korpus ada sebagai fungsi (fitur 002, 010, 026); **antrean tugas dan penjadwal belum** |
@@ -104,7 +104,7 @@ Sumber: D-07 Bagian 4. Sepuluh tahap; keadaan tiap tahap:
 | 7 | Penilaian kecukupan bukti | **Sebagian** | Logikanya terbangun; **ambangnya belum dikalibrasi** dan sengaja tidak diisi (C-16, fitur 025) |
 | 8 | Penyusunan jawaban oleh model bahasa | **Sebagian** | Pembungkus tunggal dan pencatatan versi terbangun (ADR-11); **adaptor penyedia sungguhan belum** (ADR-12) |
 | 9 | Validator sitasi | **Sebagian** | Enam dari sembilan pemeriksaan — lihat Bagian 5 |
-| 10 | Penyajian | **Sebagian** | Bentuk tanggapan D-14 terbangun; tampilan menunggu `web/` |
+| 10 | Penyajian | **Sebagian** | Bentuk tanggapan D-14 terbangun; layar Tanya menampilkannya dengan penanda dasar rujukan sebelum isi (fitur 027, menunggu Gerbang 4) |
 
 ---
 
@@ -180,12 +180,13 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 
 ## 8. Mutu dan verifikasi
 
-| Ukuran | Keadaan commit `9c0b138` |
+| Ukuran | Keadaan commit `8737068` |
 |---|---|
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
-| Jumlah uji otomatis | 2.176 |
-| Fitur lolos Gerbang 4 | 21 dari 26 |
+| Jumlah uji otomatis | 2.270 pada backend dan perkakas; 111 pada aplikasi web |
+| Fitur lolos Gerbang 4 | 21 dari 28; fitur 027 menunggu Gerbang 4 |
+| Anggaran muat aplikasi web | 70.812 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,
 rancangan, daftar tugas, verifikasi) dan uji mutasi yang dilaporkan apa
@@ -200,7 +201,8 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 
 | Hal | Menunggu |
 |---|---|
-| Antarmuka pengguna dan panel internal | Tim antarmuka (fitur 013) |
+| Layar selain Tanya, dan panel internal | Tim antarmuka (fitur 013) |
+| Penyambungan riwayat percakapan | Fitur 028 (TK-65) |
 | Model NER dan klasifikasi | Korpus teranotasi dan izin etik ET-01 (fitur 017) |
 | Isi ontologi | Putusan putaran pengisian (fitur 018) |
 | VS-03, VS-05, VS-07 | Bobot model dan kalibrasi (fitur 020) |
@@ -219,5 +221,5 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 3. **Diagram.** D-04 Bagian 5 merujuk diagram wadah yang tidak ada pada
    repositori. Diagram perlu dibuat sebelum dokumen ini final.
 4. **Pemutakhiran penanda keadaan** tepat sebelum pengajuan — penanda di atas
-   berlaku untuk commit `9c0b138` dan akan usang begitu fitur berikutnya
+   berlaku untuk commit `8737068` dan akan usang begitu fitur berikutnya
    selesai.

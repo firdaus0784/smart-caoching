@@ -348,3 +348,51 @@ berbeda nasib. Sejak fitur 026, dua dari tiga hal yang dapat dimaksudkannya —
 antarmuka dan jalur penulisan — sudah berdiri. Yang tersisa satu, dan ia bukan
 pekerjaan pemrograman: mengunduh bobot model pada mesin penelitian dan menulis
 adaptor sungguhan di belakang `Penyemat`.
+
+---
+
+### Fitur 027 — 28 September 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 026. Tidak ada pasal berpindah, dan itu
+dicatat alih-alih dilewatkan.
+
+Fitur ini tidak memindahkan pasal, tetapi **memperluas tiga pasal yang sudah
+lulus ke permukaan yang sebelumnya tidak diperiksa**:
+
+| Pasal | Sebelum fitur 027 | Sesudahnya |
+|---|---|---|
+| C-13 | Tetapan Python di `src/`; bagian layar tercatat "menunggu fitur 013" pada catatan 3 September di atas | Juga setiap untai `web/src/mikrokopi.ts`, dan teks harfiah pada `.tsx` ditolak |
+| C-14 | `DIPERIKSA` memuat `web`, tetapi hanya berkas Python yang dibaca | Juga pengenal TypeScript, nama berkas `web/`, dan kelas CSS |
+| C-15 | Sama dengan C-14 | Sama dengan C-14 |
+
+Baris kedua dan ketiga adalah temuan, bukan kemajuan biasa (KB-133). Kedua
+pasal dilaporkan LULUS sejak `web/` ada **tanpa pernah membaca satu baris
+TypeScript**. Nama direktori tercantum pada daftar yang diperiksa, dan justru
+itu yang membuat celahnya tidak terlihat. Bentuknya sama dengan tiga
+kekeliruan pada catatan C-13 di atas — pernyataan yang tampak terpenuhi
+karena tidak ada mekanisme yang menagihnya — dan ia ditemukan dengan cara
+yang sama: memeriksa apa yang benar-benar dibaca pemeriksa, bukan apa yang
+dicantumkan.
+
+**Tabel "yang tetap tidak terjaga" pada catatan C-13, 3 September**, berubah
+satu baris: "Mikrokopi pada layar `web/` — menunggu fitur 013" kini terjaga
+bagi layar Tanya. Tiga baris lainnya tetap berlaku: untai yang disusun saat
+jalan, keterbacaan sesungguhnya (BT-20), dan singkatan domain.
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu masih `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`.
+
+| Klausa | Keadaan 28 September 2026 | Masih berlaku? |
+|---|---|---|
+| menunggu fitur 020 | Belum memiliki `spec.md` | Ya |
+| menuntut model sematan | Hanya bobot model yang tersisa (lihat catatan fitur 026) | Ya |
+| menuntut BT-29 | Fitur 025 belum dimulai; *gold set* BT-35 belum ada | Ya |
+
+Fitur 027 tidak menyentuh apa pun yang C-01 tunggu. Layar Tanya
+**menampilkan** sitasi yang diterimanya, tetapi tidak memverifikasinya —
+verifikasi terhadap segmen tetap tugas validator di belakang peladen, dan
+layar yang tampak memperlihatkan sitasi tidak boleh dibaca sebagai C-01
+terpenuhi.

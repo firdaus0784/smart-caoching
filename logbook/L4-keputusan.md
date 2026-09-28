@@ -2196,3 +2196,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memasukkan Playwright ke `make check` — ditolak; `plan.md` Bagian 6.2, alat di luar daftar persetujuan. Memalsukan backend yang menjawab `kuat` di `perkakas/` — ditolak; itu mengarang jawaban sistem, dan tiruan di lapisan peramban lebih jujur tentang apa yang dibuktikannya: tampilan, bukan penjawaban. |
 | Dampak | Berkas baru pada `specs/027-kerangka-web-dan-layar-tanya/bukti/` (skrip dan empat PNG); diubah `web/src/gaya.css`, `web/src/tanya/BlokJawaban.tsx`. Nol baris di `src/`. Fitur 027: **7 dari 8 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-135 · T-8 fitur 027 — penutupan; fitur menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Lanjutan perintah **"lanjutkan t-5 dan terus lanjutkan"**. T-8 menutup fitur: catatan L8, dokumentasi teknis HKI, dan catatan keputusan ini. |
+| Keputusan | **T-8 selesai; delapan dari delapan tugas fitur 027 selesai — menunggu Gerbang 4.** `logbook/L8`: tagihan tidak menyusut (19 / 0 / 1), dicatat; tiga pasal lulus diperluas ke `web/` (C-13, C-14, C-15), dua di antaranya sebagai temuan KB-133; alasan tunggu C-01 ditinjau dan masih berlaku. `docs/hki/dokumentasi-teknis.md`: "Aplikasi web" berpindah dari **Dirancang** ke **Sebagian**, bukan Terbangun, sebab penanda itu menuntut lolos Gerbang 4. |
+| Koreksi pada dokumen HKI di luar baris yang diminta | Baris "Layanan API" menyatakan riwayat percakapan **terbangun**. Itu keliru sejak ditulis: rutenya terpasang, tetapi riwayat tidak pernah ditulis (TK-65). Dikoreksi, dengan koreksinya dinyatakan pada baris itu, dan TK-66 (bentuk galat) ditambahkan. Dokumen yang akan dibaca pihak luar tidak boleh menyatakan lebih dari yang ada. |
+| Bahan Gerbang 4 | Mutasi M-1 s.d. M-14 **14 dari 14 menyala** (KB-134); `src/` tanpa perubahan sejak Gerbang 3; bukti Playwright dengan empat tangkapan layar pada `specs/027-kerangka-web-dan-layar-tanya/bukti/`, satu di antaranya memakai tanggapan tiruan dan dinyatakan; `make check` lulus enam gerbang; 111 uji web dan 2.270 uji Python. |
+| Terbuka bagi pemegang Gerbang 4 | (1) Penanda `di_luar_domain`: "Di luar cakupan layanan ini" (KB-130). (2) Pemakaian langsung `rolldown` yang transitif sebagai pengurai pemeriksa (KB-130). (3) Pelonggaran CSP `'unsafe-inline'` khusus peladen pengembangan 127.0.0.1 (KB-132). (4) TK-66, bentuk galat peladen. (5) Anggaran muat 150 KB tetap penetapan tim tanpa dasar literatur, wajib diverifikasi di lokus pilot. |
+| Alternatif | Menandai aplikasi web **Terbangun** — ditolak; belum lolos Gerbang 4. Membiarkan baris Layanan API — ditolak; ia pernyataan keliru kepada pihak luar. |
+| Dampak | `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`, status `plan.md` dan `tasks.md` fitur 027. Nol baris kode. |
+| Pemutus | Agen di dalam batas `tasks.md`; Gerbang 4 menunggu pemegang Gerbang 1–4 |

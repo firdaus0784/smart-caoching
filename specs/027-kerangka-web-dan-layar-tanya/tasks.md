@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-7 selesai (KB-134); satu tugas tersisa |
+| Status | **Delapan dari delapan tugas selesai — menunggu Gerbang 4.** Gerbang 3 lolos KB-127 |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -137,10 +137,10 @@ Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
 ## T-8 · Penutupan
 
-- [ ] `logbook/L8` catatan akhir fitur — juga bila tagihan pasal tidak menyusut
-- [ ] `docs/hki/dokumentasi-teknis.md`: wadah "Aplikasi web" berpindah dari
+- [x] `logbook/L8` catatan akhir fitur — juga bila tagihan pasal tidak menyusut
+- [x] `docs/hki/dokumentasi-teknis.md`: wadah "Aplikasi web" berpindah dari
       *Dirancang* ke keadaan yang sebenarnya
-- [ ] Catatan keputusan pada `logbook/L4`
+- [x] Catatan keputusan pada `logbook/L4`
 
 ---
 
