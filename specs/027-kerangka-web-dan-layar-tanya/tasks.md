@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 25 September 2026 (KB-124); cakupan disempitkan (KB-125) |
 | Plan | Gerbang 2 lolos 27 September 2026 (KB-126) |
-| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-6 selesai (KB-132); dua tugas tersisa |
+| Status | **Gerbang 3 lolos** — 27 September 2026 (KB-127). T-1 s.d. T-7 selesai (KB-134); satu tugas tersisa |
 | Kebutuhan | R-01 s.d. R-20 kecuali R-11; C-12, C-13, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu. `make check` lulus sebelum
@@ -127,11 +127,11 @@ Gerbang berdiri sebelum isinya ada, sehingga M-10 dapat dipasang sejak hari ini.
 
 **Kebutuhan:** `plan.md` Bagian 6.
 
-- [ ] M-1 s.d. M-14 dijalankan sebagai satu putaran; yang tidak menyala
+- [x] M-1 s.d. M-14 dijalankan sebagai satu putaran; yang tidak menyala
       **dilaporkan beserta sebabnya**
-- [ ] Layar dibuka dengan Playwright global terhadap `make jalan`;
+- [x] Layar dibuka dengan Playwright global terhadap `make jalan`;
       tangkapan layar keadaan normal, tidak-ditemukan, dan luring disimpan
-- [ ] `git diff --stat` atas `src/` sejak Gerbang 3: **kosong**
+- [x] `git diff --stat` atas `src/` sejak Gerbang 3: **kosong**
 
 ---
 

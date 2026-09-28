@@ -2181,3 +2181,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Sapuan pola teks atas sumber TypeScript — ditolak; tidak dapat membedakan pengenal dari komentar dan untai, dan komentar yang menjelaskan larangan (`tanpa poin`) akan menyalak. Menyalin pengumpul ke tiap pemeriksa — ditolak; tiga salinan akan berselisih. |
 | Dampak | Berkas baru `perkakas/pemeriksa/pohon_web.py`, `tests/pemeriksa/test_lingkup_web.py`; diubah `perkakas/pemeriksa/teks_web.mjs`, `bahasa_antarmuka.py`, `nama_terlarang.py`, `ruang_lingkup.py`, `tests/pemeriksa/test_ruang_lingkup.py`. Nol baris di `src/`. Klaim R-20 pada commit T-6 baru benar sesudah commit ini. |
 | Pemutus | Agen; celah pemeriksa pada lingkup fitur 027 (R-19, R-20) |
+
+## KB-134 · T-7 fitur 027 — putaran mutasi lengkap dan bukti ujung ke ujung
+
+| | |
+|---|---|
+| Tanggal | 2026-09-28 |
+| Konteks | Lanjutan perintah **"lanjutkan t-5 dan terus lanjutkan"**. T-7 menuntut M-1 s.d. M-14 sebagai satu putaran, bukti layar dengan Playwright global terhadap `make jalan`, dan `src/` yang tidak berubah sejak Gerbang 3. |
+| Keputusan | **T-7 selesai.** Putaran mutasi: **14 dari 14 menyala**, tanpa satu pun yang tidak menyala. M-1 s.d. M-7, M-9, M-13, M-14 ditangkap `vitest`; M-8 oleh **V-02** penuh (C-13, `LayarTanya.tsx:71`); M-10 oleh **V-01** penuh; M-11 oleh **V-04** penuh (`left-pad` di luar `[npm].langsung`); M-12 oleh **V-03** penuh (kedua nama bidang disebut). Putaran diulang atas kode akhir sesudah perbaikan tampilan; hasilnya sama. Tiap berkas dipulihkan dan dibandingkan byte demi byte. |
+| `src/` sejak Gerbang 3 | `git diff --stat 1c9e55a^ HEAD -- src/` **kosong** — nol berkas. Commit `1c9e55a` adalah yang mencatat Gerbang 3 pada `tasks.md`. R-16 terpenuhi dan diperiksa, bukan dijanjikan. |
+| Bukti ujung ke ujung | `specs/027-kerangka-web-dan-layar-tanya/bukti/ujung_ke_ujung.mjs`, Playwright global 1.56.1, lebar 360px, halaman dilayani dari **hasil build** (`vite preview`) sehingga CSP ketat ikut teruji. Tujuh pemeriksaan lulus, **tanpa pelanggaran CSP maupun galat halaman**. Empat tangkapan layar disimpan di folder itu. |
+| **Satu keadaan memakai tanggapan tiruan, dinyatakan terang** | `tidak-ditemukan.png` jawaban **sungguhan** dari `make jalan` lewat penerusan `/api`. `normal-tiruan.png` memakai tanggapan **tiruan** yang disisipkan pada lapisan jaringan peramban, sebab backend dengan korpus kosong hanya dapat menjawab `tidak_ditemukan`. Tanggapan tiruannya menyatakan dirinya pada penjelasan dan judul dokumennya. `luring.png` dan `luring-muat-ulang.png`: koneksi diputus sesudah service worker mengendalikan halaman; KL-E tampil dengan "tersimpan sebagai draf", lalu halaman dimuat ulang **tanpa koneksi** — cangkang terbuka dari tembolok dan draf pertanyaan kembali pada isian (R-15, R-09). |
+| Perbaikan tampilan dari tangkapan layar | Daftar dasar rujukan menjorok 40 piksel oleh gaya bawaan `ul`, dan penanda dua baris berbentuk kapsul janggal. Diperbaiki pada `gaya.css` dan satu kelas pada `BlokJawaban.tsx`; uji kontras dan sasaran ketuk tetap lulus. |
+| Alternatif | Memasukkan Playwright ke `make check` — ditolak; `plan.md` Bagian 6.2, alat di luar daftar persetujuan. Memalsukan backend yang menjawab `kuat` di `perkakas/` — ditolak; itu mengarang jawaban sistem, dan tiruan di lapisan peramban lebih jujur tentang apa yang dibuktikannya: tampilan, bukan penjawaban. |
+| Dampak | Berkas baru pada `specs/027-kerangka-web-dan-layar-tanya/bukti/` (skrip dan empat PNG); diubah `web/src/gaya.css`, `web/src/tanya/BlokJawaban.tsx`. Nol baris di `src/`. Fitur 027: **7 dari 8 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md` |

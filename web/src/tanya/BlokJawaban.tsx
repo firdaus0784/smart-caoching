@@ -87,7 +87,7 @@ export function BlokJawaban({ tanggapan, salin }: PropertiBlokJawaban) {
       {tanggapan.sitasi.length > 0 && (
         <section data-testid="dasar-rujukan">
           <h2>{MIKROKOPI.judulDasarRujukan}</h2>
-          <ul>
+          <ul className="daftar-sitasi">
             {tanggapan.sitasi.map((s) => {
               const tautan = tautanAman(s.tautan);
               return (
