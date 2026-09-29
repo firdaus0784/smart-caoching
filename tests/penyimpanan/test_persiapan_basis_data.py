@@ -54,6 +54,7 @@ def basis_data_siap() -> None:
         "peran_pemanggil_llm",
         "peran_pseudonim",
         "peran_penyematan",
+        "peran_riwayat",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -94,6 +95,12 @@ def basis_data_siap() -> None:
         f"dimensi={DIMENSI_UJI}",
         "-f",
         str(BERKAS / "05-kolom-vektor.sql"),
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
+    # Riwayat percakapan (fitur 028) memakai DDL sungguhan `06-riwayat.sql`.
+    hasil = _psql(
+        PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "06-riwayat.sql")
     )
     assert hasil.returncode == 0, hasil.stderr
 
@@ -182,6 +189,78 @@ DITOLAK = [
         "create table public.titipan (a int)",
         "USAGE pada public tidak disertai CREATE (TK-64)",
     ),
+    # ── Riwayat percakapan — fitur 028, R-05, R-08, R-12 ────────────────
+    # Tambah-saja ditegakkan peladen: peran penulisnya tidak dapat mengubah,
+    # menghapus, maupun mengosongkan baris — termasuk memindahkan pemilik.
+    *[
+        (
+            "peran_riwayat",
+            "smart_coaching",
+            kueri,
+            f"R-08 — riwayat tambah-saja ({kueri.split()[0]} {tabel})",
+        )
+        for tabel in ("riwayat.percakapan", "riwayat.giliran")
+        for kueri in (
+            f"update {tabel} set id_percakapan = id_percakapan where false",
+            f"delete from {tabel} where false",
+            f"truncate {tabel}",
+        )
+    ],
+    (
+        "peran_riwayat",
+        "smart_coaching",
+        "update riwayat.percakapan set pemilik = 'lain' where false",
+        "R-02 — pemilik percakapan tidak dapat dipindahkan",
+    ),
+    (
+        "peran_riwayat",
+        "smart_coaching",
+        "create table riwayat.titipan (a int)",
+        "peran riwayat tanpa CREATE pada skemanya",
+    ),
+    (
+        "peran_riwayat",
+        "smart_coaching",
+        "select * from karantina.dokumen_sumber",
+        "C-03 — penulis riwayat tidak menjangkau karantina",
+    ),
+    (
+        "peran_riwayat",
+        "smart_coaching",
+        "select * from korpus.dokumen_sumber",
+        "hak minimum — penulis riwayat tidak membaca korpus",
+    ),
+    (
+        "peran_riwayat",
+        "smart_coaching_pseudonim",
+        "select 1",
+        "C-05 — penulis riwayat tidak menyambung basis data pseudonim",
+    ),
+    (
+        "peran_penjawaban",
+        "smart_coaching",
+        "select * from riwayat.giliran",
+        "R-05, R-07 — jalur penjawaban tidak membaca riwayat",
+    ),
+    (
+        "peran_penjawaban",
+        "smart_coaching",
+        "insert into riwayat.percakapan (id_percakapan, pemilik, dibuat_pada) "
+        "values (gen_random_uuid(), 'x', now())",
+        "C-17 — jalur penjawaban tanpa hak tulis riwayat",
+    ),
+    (
+        "peran_pemanggil_llm",
+        "smart_coaching",
+        "select * from riwayat.giliran",
+        "hak minimum — riwayat tidak pernah masuk permintaan model",
+    ),
+    (
+        "peran_penyematan",
+        "smart_coaching",
+        "select * from riwayat.giliran",
+        "hak minimum — penyematan tidak membaca riwayat",
+    ),
 ]
 
 DIBOLEHKAN = [
@@ -212,6 +291,20 @@ DIBOLEHKAN = [
     ("peran_penjawaban", "smart_coaching", "select '[1,2]'::vector <=> '[1,3]'::vector"),
     ("peran_pemanggil_llm", "smart_coaching", "select '[1,2]'::vector <=> '[1,3]'::vector"),
     ("peran_penyematan", "smart_coaching", "select '[1,2]'::vector <=> '[1,3]'::vector"),
+    # Fitur 028 — peran riwayat **berjalan**, bukan hanya ditolak (TK-64):
+    # membuka percakapan, termasuk bentuk `ON CONFLICT DO NOTHING` yang
+    # dipakai penyimpan, menambah giliran, lalu membacanya.
+    (
+        "peran_riwayat",
+        "smart_coaching",
+        "insert into riwayat.percakapan (id_percakapan, pemilik, dibuat_pada) values "
+        "('11111111-1111-4111-8111-111111111111', 'pseudonim-uji', now()) "
+        "on conflict (id_percakapan) do nothing; "
+        "insert into riwayat.giliran (id_percakapan, pertanyaan, id_pesan, waktu) values "
+        "('11111111-1111-4111-8111-111111111111', 'Bagaimana supervisi?', 'pesan-1', now()); "
+        "select p.pemilik, g.nomor from riwayat.percakapan p "
+        "join riwayat.giliran g using (id_percakapan)",
+    ),
 ]
 
 
@@ -313,6 +406,45 @@ def test_tidak_ada_lagi_quit_sebagai_jalur_gagal() -> None:
         "`\\quit` keluar dengan status 0 dan argumennya diabaikan — pakai "
         f"`RAISE EXCEPTION` di dalam blok DO sebagai jalur gagal: {tersangka}"
     )
+
+
+def test_hak_peran_riwayat_persis_baca_dan_tambah(basis_data_siap: None) -> None:
+    """R-08, R-12 — himpunan hak dibaca dari katalog, bukan dicoba satu per satu.
+
+    Uji penolakan di atas mencoba `UPDATE`, `DELETE`, dan `TRUNCATE`. Hak lain
+    — `TRIGGER`, `REFERENCES` — tidak dicoba di sana, dan pemicu yang dapat
+    dipasang peran penulis adalah jalan memutar menuju pengubahan baris.
+    """
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select table_name || ':' || string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where grantee = 'peran_riwayat' and table_schema = 'riwayat' "
+        "group by table_name order by table_name",
+    )
+    assert hasil.stdout.split() == ["giliran:INSERT,SELECT", "percakapan:INSERT,SELECT"]
+
+
+def test_giliran_menolak_pertanyaan_kosong_dan_percakapan_tak_ada(basis_data_siap: None) -> None:
+    """Batasan tabel sebagai lapis kedua sesudah model `Giliran`."""
+    kosong = _psql(
+        "peran_riwayat",
+        "smart_coaching",
+        "-c",
+        "insert into riwayat.giliran (id_percakapan, pertanyaan, id_pesan, waktu) values "
+        "('11111111-1111-4111-8111-111111111111', '', 'p', now())",
+    )
+    assert "violates check constraint" in kosong.stderr
+    yatim = _psql(
+        "peran_riwayat",
+        "smart_coaching",
+        "-c",
+        "insert into riwayat.giliran (id_percakapan, pertanyaan, id_pesan, waktu) values "
+        "('22222222-2222-4222-8222-222222222222', 'x', 'p', now())",
+    )
+    assert "violates foreign key constraint" in yatim.stderr
 
 
 def test_skema_public_tidak_memuat_relasi_apa_pun(basis_data_siap: None) -> None:

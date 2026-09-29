@@ -17,6 +17,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 02-skema-d
 psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 03-basis-data-pseudonim.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 04-tabel-dokumen.sql
 psql -U <superuser> -d smart_coaching -v dimensi=<N> -v ON_ERROR_STOP=1 -f 05-kolom-vektor.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 06-riwayat.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -28,6 +29,17 @@ lingkungan sungguhan. Angkanya harus sama dengan `Penyemat.dimensi`;
 Sandi tiap peran ditetapkan terpisah dan **tidak pernah** masuk repositori
 (V-06). Setel lewat `ALTER ROLE <peran> PASSWORD ...` pada lingkungan
 masing-masing.
+
+## Riwayat percakapan — tambah-saja ditegakkan peladen (fitur 028)
+
+`06-riwayat.sql` memberi `peran_riwayat` **hanya** `SELECT` dan `INSERT` atas
+`riwayat.percakapan` dan `riwayat.giliran`. Tanpa `UPDATE`, sehingga pemilik
+percakapan tidak dapat dipindahkan; tanpa `DELETE` dan `TRUNCATE`, sehingga
+giliran yang tercatat tidak dapat hilang lewat aplikasi. Jalur penjawaban
+tidak diberi `USAGE` atas skema `riwayat` sama sekali (C-17, R-07).
+
+Kolom `giliran.nomor` berbentuk identitas; `INSERT` atasnya tidak menuntut hak
+atas urutannya, sehingga hak itu sengaja tidak diberikan.
 
 ## Ekstensi pgvector — batas kode dan operasi
 

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 selesai; delapan tugas tersisa |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 dan T-2 selesai (KB-141); tujuh tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -34,17 +34,17 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-05, R-08, R-12.
 
-- [ ] Uji lebih dulu pada `tests/penyimpanan/test_persiapan_basis_data.py`:
+- [x] Uji lebih dulu pada `tests/penyimpanan/test_persiapan_basis_data.py`:
       `peran_riwayat` **ditolak** `UPDATE`, `DELETE`, `TRUNCATE` atas kedua
       tabel; `peran_penjawaban` **ditolak** membaca maupun menulis skema
       `riwayat` — setiap penolakan menuntut `permission denied` pada stderr
-- [ ] Uji `peran_riwayat` **berjalan**: menambah percakapan dan giliran, lalu
+- [x] Uji `peran_riwayat` **berjalan**: menambah percakapan dan giliran, lalu
       membacanya, tersambung sebagai peran itu sendiri (TK-64)
-- [ ] `01-peran-dan-basis-data.sql`: `peran_riwayat`, `CONNECT` ke basis data
+- [x] `01-peran-dan-basis-data.sql`: `peran_riwayat`, `CONNECT` ke basis data
       perilaku saja — tidak ke basis data pseudonim
-- [ ] `06-riwayat.sql` baru: skema, dua tabel, hak `SELECT` dan `INSERT` saja;
+- [x] `06-riwayat.sql` baru: skema, dua tabel, hak `SELECT` dan `INSERT` saja;
       `README.md` memuat urutan jalannya
-- [ ] Mutasi M-6 dan M-7 pada berkas SQL, dengan basis data dibangun ulang
+- [x] Mutasi M-6 dan M-7 pada berkas SQL, dengan basis data dibangun ulang
       — bukan `REVOKE` pada basis data yang disiapkan ulang (pelajaran TK-64)
 
 ---

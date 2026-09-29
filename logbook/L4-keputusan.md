@@ -2278,3 +2278,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menghapus `pesan` dari D-04 — ditolak; memutus rancangan audit yang bukan milik pelaksana. Menunda T-1 sampai TK-69 diputus — ditolak; fitur 028 tidak membangun `pesan`, sehingga putusannya tidak menghalangi tugas mana pun di sini. |
 | Dampak | D-14 0.8, D-04 0.9, D-00 2.67; status tiga berkas fitur 028. Nol baris kode. Fitur 028: **1 dari 9 tugas**. |
 | Pemutus | Gerbang 3 oleh pemegang Gerbang 1–4; T-1 oleh agen; TK-69 menunggu pemegang Gerbang 1–4 |
+
+## KB-141 · T-2 fitur 028 — peladen menegakkan riwayat tambah-saja
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"lanjutkan T-2"**. |
+| Keputusan | **T-2 selesai.** `perkakas/basis_data/06-riwayat.sql` baru: skema `riwayat`, tabel `percakapan` dan `giliran` sesuai D-14 Bagian 5.1, batasan tak-kosong dan kunci asing. `peran_riwayat` ditambahkan pada `01`, dengan `CONNECT` ke basis data perilaku saja — tidak ke basis data pseudonim (C-05). Hak atas kedua tabel **hanya `SELECT` dan `INSERT`**. |
+| Uji, ditulis dan dijalankan merah lebih dulu | Pada `tests/penyimpanan/test_persiapan_basis_data.py`, 15 baris penolakan baru — tiap penolakan menuntut `permission denied`: `UPDATE`, `DELETE`, `TRUNCATE` atas kedua tabel, pemindahan pemilik, `CREATE` pada skema, karantina, korpus, basis data pseudonim; `peran_penjawaban` membaca maupun menulis riwayat; `peran_pemanggil_llm` dan `peran_penyematan` membaca riwayat. Satu baris **berjalan**: membuka percakapan dengan `ON CONFLICT DO NOTHING`, menambah giliran, dan membacanya sebagai `peran_riwayat` sendiri (TK-64). Himpunan hak dibaca dari katalog dan wajib **persis** `INSERT,SELECT` — menutup `TRIGGER` dan `REFERENCES`, yang tidak dicoba uji penolakan. Batasan tabel diuji dengan sebabnya (`violates check constraint`, `violates foreign key constraint`). |
+| Satu butir `plan.md` tidak dikerjakan, dengan sebab | `plan.md` Bagian 3 menyebut `USAGE` atas urutan `nomor`. Uji berjalan membuktikan `INSERT` pada kolom identitas tidak menuntutnya, sehingga hak itu **tidak diberikan**. Hak yang tidak diperlukan tidak diberikan hanya karena tertulis pada rancangan. |
+| Uji mutasi pada berkas SQL, basis data dibangun ulang | **M-6** (`UPDATE` diberikan kepada `peran_riwayat`) → empat uji merah, termasuk pemindahan pemilik dan himpunan hak. **M-7** (`USAGE` dan `SELECT, INSERT` riwayat diberikan kepada `peran_penjawaban`) → dua uji merah (R-05, C-17). Keduanya dipasang pada berkas lalu fixture membangun basis data dari nol — bukan `REVOKE` pada basis data yang disiapkan ulang (pelajaran TK-64). Dipulihkan byte demi byte. |
+| Alternatif | Hak tambah-saja lewat pemicu yang menolak `UPDATE` — ditolak; pemicu dapat dilepas pemiliknya, sedangkan hak yang tidak pernah diberikan tidak dapat dipakai. |
+| Dampak | `06-riwayat.sql` baru; `01-peran-dan-basis-data.sql`, `README.md`, `tests/peladen.py` (`siapkan` menjalankan `06`), `tests/penyimpanan/test_persiapan_basis_data.py`. Nol baris di `src/`. Fitur 028: **2 dari 9 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md` |
