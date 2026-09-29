@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-3 selesai (KB-142); enam tugas tersisa |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-4 selesai (KB-143); lima tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -69,11 +69,11 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-06, R-17; P-1.
 
-- [ ] Uji: `Identitas(peran, pemilik)` beku; pemilik kosong ditolak
-- [ ] `src/api/identitas.py`; `PenentuIdentitas.identitas()` menggantikan
+- [x] Uji: `Identitas(peran, pemilik)` beku; pemilik kosong ditolak
+- [x] `src/api/identitas.py`; `PenentuIdentitas.identitas()` menggantikan
       `.peran()` — seluruh pemanggil dan uji `tests/api/` dimutakhirkan tanpa
       melonggarkan satu pernyataan pun
-- [ ] `perkakas/jalankan_lokal.py`: pemilik tetap `pengembangan-pemilik-tunggal`;
+- [x] `perkakas/jalankan_lokal.py`: pemilik tetap `pengembangan-pemilik-tunggal`;
       uji bahwa ia tetap tidak terjangkau dari `src/`
 
 ---

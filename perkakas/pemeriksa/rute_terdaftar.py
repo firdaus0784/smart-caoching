@@ -144,7 +144,7 @@ def _rute_terpasang() -> set[str]:
     from src.api.aplikasi import susun_aplikasi
 
     class _Kosong:
-        def peran(self, permintaan: object) -> object:
+        def identitas(self, permintaan: object) -> object:
             raise AssertionError("tidak dipanggil")
 
         async def jawab(self, pertanyaan: str, **argumen: object) -> object:

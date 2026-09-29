@@ -27,6 +27,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from src.api.aplikasi import PenentuIdentitas, susun_aplikasi
+from src.api.identitas import Identitas
 from src.api.peran import PETA_RUTE, Peran
 from src.api.tanya import AlasanBerhenti, HasilTanya
 from src.rag.jawaban.tanggapan import StatusDasar, Tanggapan, Versi
@@ -62,11 +63,11 @@ class JalurPalsu:
 class IdentitasTetap:
     """Penentu identitas paling sederhana yang memenuhi `PenentuIdentitas`."""
 
-    def __init__(self, peran: Peran) -> None:
-        self._peran = peran
+    def __init__(self, peran: Peran, pemilik: str = "ps_uji_a") -> None:
+        self._identitas = Identitas(peran=peran, pemilik=pemilik)
 
-    def peran(self, _permintaan: object) -> Peran:
-        return self._peran
+    def identitas(self, _permintaan: object) -> Identitas:
+        return self._identitas
 
 
 def _aplikasi(

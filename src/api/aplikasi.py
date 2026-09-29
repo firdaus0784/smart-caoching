@@ -55,11 +55,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from src.api.identitas import PenentuIdentitas
 from src.api.peran import (
     POLA_DAFTAR_PERCAKAPAN,
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
-    Peran,
     boleh,
 )
 from src.api.percakapan import Percakapan
@@ -79,17 +79,6 @@ RUTE_TANYA = POLA_TANYA
 RUTE_DAFTAR_PERCAKAPAN = POLA_DAFTAR_PERCAKAPAN
 RUTE_SATU_PERCAKAPAN = POLA_SATU_PERCAKAPAN
 """Diambil dari `src/api/peran.py`, tidak ditulis ulang — lihat uraian modul."""
-
-
-@runtime_checkable
-class PenentuIdentitas(Protocol):
-    """Pengubah permintaan menjadi peran — satu-satunya kemampuan yang dituntut.
-
-    `Protocol`, bukan kelas: fitur autentikasi kelak mengisinya tanpa menyentuh
-    berkas ini.
-    """
-
-    def peran(self, permintaan: Request) -> Peran: ...
 
 
 @runtime_checkable
@@ -134,7 +123,7 @@ def susun_aplikasi(
 
     def _tolak_bila_tidak_berhak(permintaan: Request, pola: str) -> JSONResponse | None:
         """R-01 — dipanggil **sebelum** apa pun yang lain pada tiap penangan."""
-        if not boleh(identitas.peran(permintaan), permintaan.method, pola):
+        if not boleh(identitas.identitas(permintaan).peran, permintaan.method, pola):
             return _galat(403, PESAN_TIDAK_BERHAK)
         return None
 

@@ -2307,3 +2307,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memeriksa pemilik dengan dua kueri terpisah — ditolak; di antara keduanya pemilik lain dapat membuka percakapan yang sama. |
 | Dampak | Berkas baru `src/penyimpanan/riwayat.py`, `tests/penyimpanan/test_riwayat.py`. `src/rag/`, `src/llm/` tidak berubah. Fitur 028: **3 dari 9 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md`; penyimpangan `KredensialRiwayat` terbuka ditinjau pemegang Gerbang 1–4 |
+
+## KB-143 · T-4 fitur 028 — identitas membawa pemilik
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Lanjutan perintah **"lanjutkan T-3 dan selanjutnya"**. |
+| Keputusan | **T-4 selesai.** `src/api/identitas.py` baru: `Identitas(peran, pemilik)` beku dan menolak bidang tambahan; protokol `PenentuIdentitas` pindah ke sini dengan satu metode `identitas()`, menggantikan `peran()`. `aplikasi.py` membaca peran dari identitas. `perkakas/jalankan_lokal.py`: satu pemilik tetap `pengembangan-pemilik-tunggal` (R-17). |
+| Penjagaan tambahan di luar daftar tugas | Pemilik yang berpola data pribadi FR-B04 — NIK, nomor telepon, dan empat pola lain — ditolak saat `Identitas` dibentuk, dengan pesan yang menyebut jenisnya tanpa mengulang nilainya. Pseudonim yang ternyata NIK adalah identitas langsung yang menyamar (R-06, C-05). **Batasnya dinyatakan pada kode:** surel dan nama orang tidak terdeteksi (BT-70). |
+| Uji | `tests/api/test_identitas.py` 9 uji, merah lebih dulu. Pada `tests/api/test_aplikasi.py` yang berubah **hanya penentu tiruannya** (`IdentitasTetap` kini mengembalikan `Identitas`); tidak satu pernyataan pun disentuh. 547 uji `tests/api`, `tests/perkakas`, `tests/pemeriksa` lulus. |
+| Alternatif | Metode kedua `pemilik()` di samping `peran()` — ditolak; dua pemanggilan dapat menghasilkan peran dan pemilik dari dua keadaan berbeda, sedangkan satu objek beku tidak. |
+| Dampak | Berkas baru `src/api/identitas.py`, `tests/api/test_identitas.py`; diubah `src/api/aplikasi.py`, `perkakas/jalankan_lokal.py`, `perkakas/pemeriksa/rute_terdaftar.py` (tiruan penyusun), `tests/api/test_aplikasi.py` (tiruan). `src/rag/`, `src/llm/` tidak berubah. Fitur 028: **4 dari 9 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md` |
+| Tambahan sesudah `make check` pertama | Aturan lintas modul `tests/tata_kelola/test_galat_tidak_membocorkan.py` menolak `identitas.py`: modul yang menolak data pribadi wajib menyetel `hide_input_in_errors=True` sebagai baris tersendiri pada `model_config`. Setelannya sudah ada, tetapi ditulis satu baris dengan setelan lain sehingga tidak terbaca pola aturannya. Ditulis ulang dalam bentuk baku modul lain, dengan alasannya. Aturan tidak diubah. |

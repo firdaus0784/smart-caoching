@@ -51,6 +51,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from src.api.aplikasi import susun_aplikasi
+from src.api.identitas import Identitas
 from src.api.peran import Peran
 from src.api.tanya import AlasanBerhenti, HasilTanya
 from src.rag.jawaban.tanggapan import StatusDasar, Tanggapan, Versi
@@ -92,12 +93,20 @@ class PenjawabBelumSiap:
         )
 
 
-class IdentitasPengembangan:
-    """Setiap pemanggil diperlakukan sebagai kepala sekolah — **tanpa
-    autentikasi apa pun**. Lihat bahaya pada uraian modul."""
+PEMILIK_PENGEMBANGAN = "pengembangan-pemilik-tunggal"
+"""Satu pemilik tetap bagi seluruh pemanggil — R-17 fitur 028.
 
-    def peran(self, _permintaan: Request) -> Peran:
-        return Peran.PENGGUNA
+Menyatakan dirinya, sama dengan penanda versi `pengembangan`: riwayat yang
+tercatat dengan pemilik ini tidak dapat tertukar dengan riwayat sungguhan.
+"""
+
+
+class IdentitasPengembangan:
+    """Setiap pemanggil diperlakukan sebagai kepala sekolah yang **sama** —
+    **tanpa autentikasi apa pun**. Lihat bahaya pada uraian modul."""
+
+    def identitas(self, _permintaan: Request) -> Identitas:
+        return Identitas(peran=Peran.PENGGUNA, pemilik=PEMILIK_PENGEMBANGAN)
 
 
 def periksa_alamat(alamat: str) -> None:
