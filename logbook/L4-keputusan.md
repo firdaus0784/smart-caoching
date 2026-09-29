@@ -2266,3 +2266,15 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `plan.md` dan `spec.md` fitur 028 (status), `tasks.md` baru. Nol baris kode. |
 | Pemutus | Gerbang 2 oleh pemegang Gerbang 1–4; Gerbang 3 menunggu |
 | Penegasan tafsiran | Pemegang gerbang menambahkan **"koreksi K-1 juga"** sesudah laporan yang menyatakan tafsiran di atas. Dibaca sebagai penegasan bahwa K-1 turut diputus sesuai anjuran. Tafsiran baris "Tafsiran yang dicatat" karena itu terkonfirmasi; baris itu tidak disunting (pola KB-058). |
+
+## KB-140 · Gerbang 3 fitur 028 lolos; T-1 — kontrak lebih dulu, dan TK-69
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"lanjutkan — Gerbang 3 lolos untuk mulai T-1"** (pesan yang memuat kutipan laporan sebelumnya; dibaca sebagai kelulusan Gerbang 3). |
+| Keputusan | **Gerbang 3 fitur 028 lolos. T-1 selesai.** D-14 0.8: Bagian 5.1 memperoleh enam baris `percakapan.*` dan `giliran.*` beserta aturannya; Bagian 4.3 menetapkan daftar percakapan terbaru lebih dulu menurut `dibuat_pada` (K-1). Bentuk tanggapan tidak berubah; pemeriksa C-20 tetap lulus. |
+| **TK-69 ditemukan, dan sengaja tidak ditutup** | D-04 Bagian 7.4 — pemilik model data rinci — mendefinisikan `percakapan` / `pesan` dengan `id_pengguna` dan `isi` tanggapan. Itu bertentangan dengan D-14 Bagian 4.3 (tanggapan tidak disimpan pada riwayat, C-07) dan R-06 fitur 028 (pemilik berupa pseudonim, C-05), dua keputusan yang sudah lolos gerbang. Langkah pertama yang terpikir adalah menyelaraskan baris itu seluruhnya. Ditolak sesudah dibaca ulang: `pesan` dan `sitasi_pesan` mungkin dimaksudkan bagi **audit** (MK-07 audit cakupan sitasi, KT-06 penelusuran versi), dan menyimpan jawaban untuk audit berbeda dari menampilkannya ulang. Yang dikerjakan: D-04 0.9 menambahkan `percakapan` dan `giliran` sebagaimana dibangun, membiarkan `pesan` berdiri dengan catatan selisihnya, dan TK-69 didaftarkan **terbuka** pada D-00 2.67. |
+| Alternatif | Menghapus `pesan` dari D-04 — ditolak; memutus rancangan audit yang bukan milik pelaksana. Menunda T-1 sampai TK-69 diputus — ditolak; fitur 028 tidak membangun `pesan`, sehingga putusannya tidak menghalangi tugas mana pun di sini. |
+| Dampak | D-14 0.8, D-04 0.9, D-00 2.67; status tiga berkas fitur 028. Nol baris kode. Fitur 028: **1 dari 9 tugas**. |
+| Pemutus | Gerbang 3 oleh pemegang Gerbang 1–4; T-1 oleh agen; TK-69 menunggu pemegang Gerbang 1–4 |

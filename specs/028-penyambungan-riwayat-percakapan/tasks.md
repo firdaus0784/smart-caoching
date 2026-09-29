@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Menunggu Gerbang 3** |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 selesai; delapan tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -19,13 +19,13 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-04, R-12; K-1.
 
-- [ ] D-14 Bagian 5: tabel `riwayat.percakapan` dan `riwayat.giliran` beserta
+- [x] D-14 Bagian 5: tabel `riwayat.percakapan` dan `riwayat.giliran` beserta
       aturan bidangnya — pemilik berupa pseudonim (C-05), waktu UTC (KM-01),
       tambah-saja (KM-02)
-- [ ] D-14 Bagian 4.3: "terurut" diperjelas menjadi **terbaru lebih dulu
+- [x] D-14 Bagian 4.3: "terurut" diperjelas menjadi **terbaru lebih dulu
       menurut waktu dibuat** (K-1); bentuk tanggapan tidak berubah
-- [ ] D-14 naik ke 0.8; register D-00
-- [ ] Pemeriksa C-20 tetap lulus — blok JSON pertama Bagian 4.1 tetap bentuk
+- [x] D-14 naik ke 0.8; register D-00
+- [x] Pemeriksa C-20 tetap lulus — blok JSON pertama Bagian 4.1 tetap bentuk
       tanggapan
 
 ---

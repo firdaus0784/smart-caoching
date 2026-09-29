@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 28 September 2026 (KB-138), P-1 s.d. P-6 pilihan A |
-| Status | **Gerbang 2 lolos** — 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran. Menunggu Gerbang 3 atas `tasks.md` |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). Gerbang 2 lolos KB-139; K-1, K-2, K-3 sesuai anjuran |
 | Kebutuhan | R-01 s.d. R-17 `spec.md`; C-05, C-13, C-14, C-17, C-20 |
 
 ## 1. Letak dan batas

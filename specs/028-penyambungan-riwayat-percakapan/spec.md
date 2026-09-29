@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F09; C-05, C-14, C-17, C-20; KM-01, KM-03; TK-65, TK-66, TK-67, TK-68 |
 | Dokumen terkait | D-14 Bagian 3.2, 4.1, 4.2, 4.3, 5 (versi 0.7) · D-05 S-09 (versi 0.3) · D-12 baris 028 |
-| Status | **Gerbang 2 lolos** — 28 September 2026 (KB-139). Gerbang 1 lolos KB-138 |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). Gerbang 1 lolos KB-138; Gerbang 2 lolos KB-139 |
 
 ## Tujuan
 
