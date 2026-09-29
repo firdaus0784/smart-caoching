@@ -2321,3 +2321,19 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | Berkas baru `src/api/identitas.py`, `tests/api/test_identitas.py`; diubah `src/api/aplikasi.py`, `perkakas/jalankan_lokal.py`, `perkakas/pemeriksa/rute_terdaftar.py` (tiruan penyusun), `tests/api/test_aplikasi.py` (tiruan). `src/rag/`, `src/llm/` tidak berubah. Fitur 028: **4 dari 9 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md` |
 | Tambahan sesudah `make check` pertama | Aturan lintas modul `tests/tata_kelola/test_galat_tidak_membocorkan.py` menolak `identitas.py`: modul yang menolak data pribadi wajib menyetel `hide_input_in_errors=True` sebagai baris tersendiri pada `model_config`. Setelannya sudah ada, tetapi ditulis satu baris dengan setelan lain sehingga tidak terbaca pola aturannya. Ditulis ulang dalam bentuk baku modul lain, dengan alasannya. Aturan tidak diubah. |
+
+## KB-144 · T-5 fitur 028 — bentuk galat D-14 Bagian 4.2 dan log operasional (TK-66)
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Lanjutan perintah **"lanjutkan T-3 dan selanjutnya"**. P-4 Gerbang 1: TK-66 dikerjakan bersama fitur 028. |
+| Keputusan | **T-5 selesai.** Seluruh galat ketiga rute terpasang kini `{"galat": {"kode", "pesan_pengguna", "id_jejak"}}`: 403 `TIDAK_BERWENANG`, 400 `VALIDASI_GAGAL`, 404 `SUMBER_TIDAK_ADA`, dan dua penangan pengecualian baru — `GalatLayananModel` menjadi 503 `LAYANAN_MODEL_GAGAL` dengan `id_jejak` miliknya sendiri, selebihnya 500 `GALAT_INTERNAL` dengan `PESAN_GANGGUAN`. Sebelumnya galat tak tertangani dijawab teks polos "Internal Server Error". |
+| **Tipe bentuk galat dipakai ulang, tidak ditulis ulang** | `plan.md` Bagian 5 menyebut `src/api/galat.py` memuat `KodeGalat`. Ternyata `KodeGalat` dan `TanggapanGalat` sudah ada pada `src/llm/galat.py` sejak fitur 001, beserta penolakan kalimat lebih dari 20 kata. **BT-69** merencanakan pemindahannya ke modul bersama pada fitur 009, dan itu tidak pernah terjadi. Memindahkannya sekarang mengubah `src/llm/` (R-11 melarang); menulisnya ulang mengulang `IndeksTujuan` yang pernah tertulis dua kali. `src/api/galat.py` karena itu hanya memuat `tanggapan_galat` dan logger, dan memakai tipe yang ada lewat tepi `api → llm` yang sah. **BT-69 tetap terbuka.** |
+| Log operasional | Logger `smart_coaching.operasional`, satu baris per galat: `id_jejak`, kode, status, rute, dan **nama kelas** sebab. Pesan pengecualian tidak pernah ditulis — ia dapat memuat pertanyaan. Diuji dengan pengecualian yang pesannya memuat NIK: tidak ada pada tanggapan maupun log. |
+| Pemeriksa C-13 | Aturan 2 kini mengenal `tanggapan_galat()` — argumen posisional untai **dan** kata kunci `pesan_pengguna=` harfiah ditolak. Tanpanya pesan pada jalan keluar baru lolos C-13 tanpa dibaca (bentuk KB-133). Uji penjaga jumlah untai naik dari 12 ke 13 karena `PESAN_GANGGUAN`, dengan nama pesan itu dituntut tegas. |
+| Uji | `tests/api/test_galat_http.py` 11 uji dan 3 uji pemeriksa baru, merah lebih dulu. Pada `tests/api/test_aplikasi.py` empat pembacaan `json()["pesan"]` menjadi `json()["galat"]["pesan_pengguna"]` — letak pesannya yang berubah, pernyataannya (≤ 20 kata, tanpa istilah teknis) tidak. |
+| Uji mutasi | **M-8** (badan kembali `{"pesan"}`) → 13 uji merah. **M-9** (`id_jejak` tidak ditulis ke log) → uji jejak merah. Dipulihkan byte demi byte. |
+| Alternatif | Menulis `KodeGalat` kedua pada `src/api/` sesuai rancangan — ditolak; lihat baris di atas. |
+| Dampak | Berkas baru `src/api/galat.py`, `tests/api/test_galat_http.py`; diubah `src/api/aplikasi.py`, `perkakas/pemeriksa/bahasa_antarmuka.py`, `tests/api/test_aplikasi.py`, `tests/pemeriksa/test_bahasa_antarmuka.py`. `src/rag/`, `src/llm/` tidak berubah. Layar web tidak terdampak: ia memetakan status HTTP tanpa membaca badan. Fitur 028: **5 dari 9 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md` |

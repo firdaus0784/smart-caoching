@@ -55,6 +55,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from src.api.galat import tanggapan_galat
 from src.api.identitas import PenentuIdentitas
 from src.api.peran import (
     POLA_DAFTAR_PERCAKAPAN,
@@ -64,10 +65,12 @@ from src.api.peran import (
 )
 from src.api.percakapan import Percakapan
 from src.api.tanya import HasilTanya
+from src.llm.galat import GalatLayananModel, KodeGalat
 
 PESAN_TIDAK_BERHAK = "Akun Anda tidak dapat membuka bagian ini."
 PESAN_TIDAK_LENGKAP = "Pertanyaan belum lengkap. Tulis ulang dengan kalimat utuh."
 PESAN_TIDAK_ADA = "Percakapan yang Anda cari tidak ditemukan."
+PESAN_GANGGUAN = "Ada gangguan di sistem kami. Coba lagi sebentar lagi."
 """Pesan tetap — C-13 dan R-06: ≤ 20 kata, tanpa istilah teknis, tanpa kode.
 
 Ketiganya tidak memuat kembali nilai yang ditolak. Pesan yang mengutip
@@ -100,10 +103,6 @@ class PermintaanTanya(BaseModel):
     pertanyaan: str = Field(min_length=1)
 
 
-def _galat(status: int, pesan: str) -> JSONResponse:
-    return JSONResponse(status_code=status, content={"pesan": pesan})
-
-
 def susun_aplikasi(
     *,
     jalur: JalurPenjawab,
@@ -121,10 +120,31 @@ def susun_aplikasi(
         openapi_url=None,
     )
 
+    # TK-66, R-14: galat yang lolos penangan tetap berbentuk D-14 Bagian 4.2.
+    # Tanpanya FastAPI menjawab teks polos "Internal Server Error" — bentuk
+    # yang layar harus tebak, dan bentuk yang D-05 Bagian 10 larang.
+    @aplikasi.exception_handler(GalatLayananModel)
+    async def _layanan_model_gagal(permintaan: Request, galat: Exception) -> JSONResponse:
+        jejak = galat.id_jejak if isinstance(galat, GalatLayananModel) else None
+        return tanggapan_galat(
+            503,
+            KodeGalat.LAYANAN_MODEL_GAGAL,
+            GalatLayananModel.PESAN_PENGGUNA,
+            rute=permintaan.url.path,
+            sebab=galat,
+            id_jejak=jejak,
+        )
+
+    @aplikasi.exception_handler(Exception)
+    async def _galat_internal(permintaan: Request, galat: Exception) -> JSONResponse:
+        return tanggapan_galat(
+            500, KodeGalat.GALAT_INTERNAL, PESAN_GANGGUAN, rute=permintaan.url.path, sebab=galat
+        )
+
     def _tolak_bila_tidak_berhak(permintaan: Request, pola: str) -> JSONResponse | None:
         """R-01 — dipanggil **sebelum** apa pun yang lain pada tiap penangan."""
         if not boleh(identitas.identitas(permintaan).peran, permintaan.method, pola):
-            return _galat(403, PESAN_TIDAK_BERHAK)
+            return tanggapan_galat(403, KodeGalat.TIDAK_BERWENANG, PESAN_TIDAK_BERHAK, rute=pola)
         return None
 
     @aplikasi.post(RUTE_TANYA)
@@ -135,9 +155,13 @@ def susun_aplikasi(
         try:
             badan = PermintaanTanya.model_validate(await permintaan.json())
         except (ValidationError, ValueError):
-            return _galat(400, PESAN_TIDAK_LENGKAP)
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_TIDAK_LENGKAP, rute=RUTE_TANYA
+            )
         if not badan.pertanyaan.strip():
-            return _galat(400, PESAN_TIDAK_LENGKAP)
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_TIDAK_LENGKAP, rute=RUTE_TANYA
+            )
 
         hasil = await jalur.jawab(badan.pertanyaan)
         # R-03: tertahan atau tidak, bentuk dan statusnya sama. D-14
@@ -160,7 +184,9 @@ def susun_aplikasi(
             return ditolak
         satu = percakapan.get(id)
         if satu is None:
-            return _galat(404, PESAN_TIDAK_ADA)
+            return tanggapan_galat(
+                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_TIDAK_ADA, rute=RUTE_SATU_PERCAKAPAN
+            )
         # R-05: `Giliran` tidak memiliki bidang tanggapan, dan bentuk itu yang
         # menjaga C-07 — tanggapan yang tersimpan menua.
         return JSONResponse(

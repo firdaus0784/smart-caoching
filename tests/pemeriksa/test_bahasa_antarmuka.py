@@ -78,7 +78,9 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
     assert "PESAN_DI_LUAR_DOMAIN" in nama
     assert "PESAN_TIDAK_BERHAK" in nama
     assert "PESAN_PENGGUNA" in nama, "atribut kelas terlewat — lihat _tetapan"
-    assert len(ditemukan) == 12, f"{len(ditemukan)} untai terbaca, seharusnya 12"
+    # 13 sejak fitur 028 T-5: `PESAN_GANGGUAN` bagi galat `GALAT_INTERNAL`.
+    assert "PESAN_GANGGUAN" in nama
+    assert len(ditemukan) == 13, f"{len(ditemukan)} untai terbaca, seharusnya 13"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────
@@ -239,3 +241,42 @@ def test_tetapan_huruf_campuran_tetap_diperiksa(tmp_path: Path) -> None:
     """
     _tulis(tmp_path, "src/x.py", 'PESAN_Pengguna = "Permintaan Anda gagal."\n')
     assert any("gagal" in t.pesan for t in periksa_bahasa_antarmuka(tmp_path))
+
+
+# ── Jalan keluar bentuk D-14 4.2 — fitur 028 T-5, KB-144 ──────────────
+# Tanpa aturan di bawah, pesan pada jalan keluar baru lolos C-13 tanpa dibaca:
+# bentuk KB-133, pemeriksa yang tampak menjaga sesuatu yang tidak dibacanya.
+
+
+def test_tanggapan_galat_dengan_untai_harfiah_menjadi_temuan(tmp_path: Path) -> None:
+    _tulis(
+        tmp_path,
+        "src/x.py",
+        "def f():\n    return tanggapan_galat(400, KodeGalat.VALIDASI_GAGAL, "
+        '"Permintaan tidak sah.", rute="/a")\n',
+    )
+    temuan = periksa_bahasa_antarmuka(tmp_path)
+    assert any("tanggapan_galat() menerima untai harfiah" in t.pesan for t in temuan), temuan
+
+
+def test_tanggapan_galat_dengan_kata_kunci_harfiah_menjadi_temuan(tmp_path: Path) -> None:
+    _tulis(
+        tmp_path,
+        "src/x.py",
+        "def f():\n    return tanggapan_galat(400, KodeGalat.VALIDASI_GAGAL, "
+        'pesan_pengguna="Permintaan tidak sah.", rute="/a")\n',
+    )
+    temuan = periksa_bahasa_antarmuka(tmp_path)
+    assert any("pesan_pengguna" in t.pesan for t in temuan), temuan
+
+
+def test_tanggapan_galat_menunjuk_tetapan_diterima(tmp_path: Path) -> None:
+    """`rute=` untai harfiah sah — ia bukan teks bagi pengguna."""
+    _tulis(
+        tmp_path,
+        "src/x.py",
+        'PESAN_TIDAK_SAH = "Permintaan belum lengkap."\n'
+        "def f():\n    return tanggapan_galat(400, KodeGalat.VALIDASI_GAGAL, "
+        'PESAN_TIDAK_SAH, rute="/api/a")\n',
+    )
+    assert periksa_bahasa_antarmuka(tmp_path) == []

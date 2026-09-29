@@ -145,7 +145,11 @@ def test_jalur_tidak_tersentuh_ketika_peran_ditolak() -> None:
 def test_pesan_tolakan_peran_ringkas_dan_tanpa_istilah_teknis() -> None:
     """R-06."""
     aplikasi, _ = _aplikasi(peran=Peran.ANOTATOR)
-    pesan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "x y z"}).json()["pesan"]
+    pesan = (
+        TestClient(aplikasi)
+        .post("/api/v1/tanya", json={"pertanyaan": "x y z"})
+        .json()["galat"]["pesan_pengguna"]
+    )
     assert len(pesan.split()) <= 20
     for istilah in ("403", "forbidden", "role", "endpoint", "HTTP"):
         assert istilah.lower() not in pesan.lower()
@@ -188,7 +192,7 @@ def test_pertanyaan_kosong_ditolak_dengan_pesan_ringkas() -> None:
     aplikasi, jalur = _aplikasi()
     tanggapan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "   "})
     assert tanggapan.status_code == 400
-    assert len(tanggapan.json()["pesan"].split()) <= 20
+    assert len(tanggapan.json()["galat"]["pesan_pengguna"].split()) <= 20
     assert jalur.jumlah_panggilan == 0
 
 
@@ -257,14 +261,14 @@ def test_gerbang_peran_berlaku_pada_setiap_penangan() -> None:
     for jalur in ("/api/v1/percakapan", "/api/v1/percakapan/c1"):
         tanggapan = klien.get(jalur)
         assert tanggapan.status_code == 403, jalur
-        assert len(tanggapan.json()["pesan"].split()) <= 20
+        assert len(tanggapan.json()["galat"]["pesan_pengguna"].split()) <= 20
 
 
 def test_percakapan_tak_dikenal_ditolak() -> None:
     aplikasi, _ = _aplikasi(percakapan=_percakapan_contoh())
     tanggapan = TestClient(aplikasi).get("/api/v1/percakapan/tidak-ada")
     assert tanggapan.status_code == 404
-    assert len(tanggapan.json()["pesan"].split()) <= 20
+    assert len(tanggapan.json()["galat"]["pesan_pengguna"].split()) <= 20
 
 
 # ── Bentuk yang menegakkan R-04 pada tingkat tipe ───────────────────

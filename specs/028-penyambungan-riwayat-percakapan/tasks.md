@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-4 selesai (KB-143); lima tugas tersisa |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-5 selesai (KB-144); empat tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -82,18 +82,18 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-14; TK-66.
 
-- [ ] Uji lebih dulu: setiap galat ketiga rute berbentuk
+- [x] Uji lebih dulu: setiap galat ketiga rute berbentuk
       `{"galat": {"kode", "pesan_pengguna", "id_jejak"}}` dengan kode dan
       status tabel `plan.md` Bagian 5; galat tak tertangani menjadi
       `GALAT_INTERNAL`; `GalatLayananModel` menjadi `LAYANAN_MODEL_GAGAL`
-- [ ] Uji: `id_jejak` yang sama muncul pada tanggapan dan pada log operasional;
+- [x] Uji: `id_jejak` yang sama muncul pada tanggapan dan pada log operasional;
       log tidak memuat pertanyaan maupun pesan pengecualian — hanya nama
       kelasnya
-- [ ] `src/api/galat.py`: `KodeGalat` tujuh nilai D-14; penyusun badan galat
-- [ ] Pemeriksa C-13 Aturan 2 mengenal jalan keluar baru; uji bahwa untai
+- [x] `src/api/galat.py`: `KodeGalat` tujuh nilai D-14; penyusun badan galat
+- [x] Pemeriksa C-13 Aturan 2 mengenal jalan keluar baru; uji bahwa untai
       harfiah pada jalan keluar baru **ditolak** — tanpanya pesan baru lolos
       C-13 tanpa dibaca (KB-133)
-- [ ] Mutasi M-8 dan M-9
+- [x] Mutasi M-8 dan M-9
 
 ---
 

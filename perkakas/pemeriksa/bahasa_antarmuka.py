@@ -118,8 +118,15 @@ SINGKATAN_SISTEM = (
 """Singkatan yang pembacanya tidak wajib tahu. Singkatan domain — RKAS, BOS,
 SPJ, EDS, ANBK — sengaja tidak di sini."""
 
-FUNGSI_JALAN_KELUAR = ("_galat",)
-"""Fungsi yang isinya menjadi badan tanggapan bagi pengguna."""
+FUNGSI_JALAN_KELUAR = ("_galat", "tanggapan_galat")
+"""Fungsi yang isinya menjadi badan tanggapan bagi pengguna.
+
+`tanggapan_galat` ditambahkan fitur 028 (KB-144) bersama bentuk galat D-14
+Bagian 4.2. Jalan keluar yang tidak terdaftar di sini lolos Aturan 2 tanpa
+dibaca — bentuk KB-133."""
+
+KATA_KUNCI_PESAN = "pesan_pengguna"
+"""Argumen kata kunci jalan keluar yang isinya ditayangkan — D-14 Bagian 4.2."""
 
 KUNCI_PESAN = "pesan"
 """Kunci pada `content=` yang isinya ditayangkan. D-14 Bagian 4."""
@@ -274,6 +281,21 @@ def _periksa_panggilan(berkas: Path, simpul: ast.Call) -> list[Temuan]:
     nama = simpul.func.id if isinstance(simpul.func, ast.Name) else ""
 
     if nama in FUNGSI_JALAN_KELUAR:
+        for kata_kunci in simpul.keywords:
+            isi = kata_kunci.value
+            if (
+                kata_kunci.arg == KATA_KUNCI_PESAN
+                and isinstance(isi, ast.Constant)
+                and isinstance(isi.value, str)
+            ):
+                temuan.append(
+                    Temuan(
+                        berkas,
+                        isi.lineno,
+                        f"{nama}({KATA_KUNCI_PESAN}=...) menerima untai harfiah — wajib "
+                        f"menunjuk tetapan ber-awalan {AWALAN_MENGHADAP_PENGGUNA[0]} (C-13)",
+                    )
+                )
         for argumen in simpul.args:
             if isinstance(argumen, ast.Constant) and isinstance(argumen.value, str):
                 temuan.append(
