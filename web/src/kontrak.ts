@@ -76,6 +76,33 @@ export type JenisGalat =
   /** KL-D — selebihnya, termasuk tanggapan yang bentuknya tidak dikenali. */
   | "sistem";
 
+/**
+ * Riwayat percakapan — D-14 Bagian 4.3, fitur 028.
+ *
+ * `Giliran` **tanpa tanggapan, dengan sengaja**: jawaban yang tersimpan menua,
+ * dan jawaban lama yang ditampilkan ulang melanggar C-07. Membuka riwayat
+ * berarti bertanya ulang. Nama bidangnya dijaga pemeriksa kontrak V-03
+ * terhadap model `Giliran` pada `src/api/percakapan.py`.
+ */
+export interface Giliran {
+  readonly pertanyaan: string;
+  readonly id_pesan: string;
+  readonly waktu: string;
+}
+
+export interface SatuPercakapan {
+  readonly id_percakapan: string;
+  readonly giliran: readonly Giliran[];
+}
+
+export type HasilDaftar =
+  | { readonly jenis: "daftar"; readonly percakapan: readonly string[] }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilBaca =
+  | { readonly jenis: "percakapan"; readonly percakapan: SatuPercakapan }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
 export type HasilTanya =
   | { readonly jenis: "jawaban"; readonly tanggapan: Tanggapan }
   | { readonly jenis: "galat"; readonly galat: JenisGalat };

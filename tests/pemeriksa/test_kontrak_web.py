@@ -120,3 +120,35 @@ def test_pohon_tanpa_web_tidak_diperiksa(tmp_path: Path) -> None:
     # Akar tiruan uji V-03 yang lain tidak memuat `web/`. Pohon repositori
     # sendiri selalu memuatnya, dan uji pertama di atas menjaga sisi itu.
     assert periksa_kontrak_web(tmp_path) == []
+
+
+def test_bidang_giliran_berganti_nama_ditolak(tmp_path: Path) -> None:
+    """Fitur 028: bentuk riwayat D-14 Bagian 4.3 juga ditulis dua kali."""
+    isi = _nyata().replace(
+        "  readonly id_pesan: string;\n  readonly waktu: string;",
+        "  readonly id_pesan: string;\n  readonly saat: string;",
+        1,
+    )
+    assert isi != _nyata()
+
+    temuan = periksa_kontrak_web(_akar(tmp_path, isi))
+    pesan = " | ".join(t.pesan for t in temuan)
+
+    assert "Giliran" in pesan
+    assert "'waktu'" in pesan
+    assert "'saat'" in pesan
+
+
+def test_giliran_dengan_bidang_tanggapan_ditolak(tmp_path: Path) -> None:
+    """C-07: giliran yang membawa jawaban lama adalah pintu yang D-14 tutup."""
+    isi = _nyata().replace(
+        "  readonly waktu: string;\n}",
+        "  readonly waktu: string;\n  readonly tanggapan: string;\n}",
+        1,
+    )
+    assert isi != _nyata()
+
+    pesan = " | ".join(t.pesan for t in periksa_kontrak_web(_akar(tmp_path, isi)))
+
+    assert "Giliran" in pesan
+    assert "'tanggapan'" in pesan

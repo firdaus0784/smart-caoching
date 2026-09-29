@@ -11,13 +11,15 @@
  * `BlokJawaban` yang sama (R-04). KL-C dan KL-F tidak berlaku (`spec.md`).
  */
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { bacaDraf, hapusDraf, simpanDraf, type Simpanan } from "../draf";
-import { tanya, type Pemanggil } from "../klien";
-import type { JenisGalat, Tanggapan } from "../kontrak";
+import { bacaPercakapan, tanya, type Pemanggil } from "../klien";
+import type { Giliran, JenisGalat, Tanggapan } from "../kontrak";
 import { MIKROKOPI, PESAN_GALAT } from "../mikrokopi";
+import { jadikanAktif, percakapanAktif, percakapanBaru } from "../percakapan";
 import { BlokJawaban } from "./BlokJawaban";
+import { PercakapanTerdahulu, PertanyaanSebelumnya } from "./RiwayatPercakapan";
 
 type Keadaan =
   | { readonly jenis: "kosong" }
@@ -39,6 +41,41 @@ export interface PropertiLayarTanya {
 export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
   const [pertanyaan, setPertanyaan] = useState(() => bacaDraf(simpanan));
   const [keadaan, setKeadaan] = useState<Keadaan>({ jenis: "kosong" });
+  const [idPercakapan, setIdPercakapan] = useState(() => percakapanAktif(simpanan));
+  const [giliran, setGiliran] = useState<readonly Giliran[]>([]);
+  const [muatUlang, setMuatUlang] = useState(0);
+  const isian = useRef<HTMLTextAreaElement>(null);
+
+  // Blok 9: pertanyaan percakapan aktif — saat dibuka, sesudah muat ulang
+  // halaman, dan sesudah tiap jawaban. Galat memuatnya tidak menjatuhkan
+  // layar; bloknya sekadar tidak tampil.
+  useEffect(() => {
+    let berlaku = true;
+    void bacaPercakapan(idPercakapan, pemanggil).then((hasil) => {
+      if (berlaku) setGiliran(hasil.jenis === "percakapan" ? hasil.percakapan.giliran : []);
+    });
+    return () => {
+      berlaku = false;
+    };
+  }, [idPercakapan, muatUlang, pemanggil]);
+
+  function pilihPertanyaanLama(teks: string) {
+    // Mengisi, tidak mengirim: pengguna yang memutuskan bertanya ulang.
+    ubah(teks);
+    isian.current?.focus();
+  }
+
+  function mulaiPercakapanBaru() {
+    setIdPercakapan(percakapanBaru(simpanan));
+    setGiliran([]);
+    setKeadaan({ jenis: "kosong" });
+  }
+
+  function bukaPercakapan(id: string) {
+    jadikanAktif(simpanan, id);
+    setIdPercakapan(id);
+    setKeadaan({ jenis: "kosong" });
+  }
 
   function ubah(teks: string) {
     setPertanyaan(teks);
@@ -49,10 +86,11 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
     const teks = pertanyaan.trim();
     if (teks === "" || keadaan.jenis === "memuat") return;
     setKeadaan({ jenis: "memuat" });
-    const hasil = await tanya(teks, pemanggil);
+    const hasil = await tanya(teks, idPercakapan, pemanggil);
     if (hasil.jenis === "jawaban") {
       hapusDraf(simpanan);
       setKeadaan({ jenis: "jawaban", tanggapan: hasil.tanggapan });
+      setMuatUlang((n) => n + 1);
       return;
     }
     // R-09: draf ditulis ulang pada saat galat, dan "tersimpan" hanya
@@ -77,6 +115,7 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
           aria-describedby="petunjuk-pertanyaan"
           id="pertanyaan"
           onChange={(e) => ubah(e.target.value)}
+          ref={isian}
           rows={3}
           value={pertanyaan}
         />
@@ -122,6 +161,21 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
       )}
 
       {keadaan.jenis === "jawaban" && <BlokJawaban salin={salin} tanggapan={keadaan.tanggapan} />}
+
+      <PertanyaanSebelumnya giliran={giliran} pilih={pilihPertanyaanLama} />
+
+      {(giliran.length > 0 || keadaan.jenis === "jawaban") && (
+        <button className="tombol-kedua" onClick={mulaiPercakapanBaru} type="button">
+          {MIKROKOPI.tombolPercakapanBaru}
+        </button>
+      )}
+
+      <PercakapanTerdahulu
+        aktif={idPercakapan}
+        buka={bukaPercakapan}
+        key={idPercakapan}
+        pemanggil={pemanggil}
+      />
     </main>
   );
 }

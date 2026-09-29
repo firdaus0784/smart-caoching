@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-6 selesai (KB-145); tiga tugas tersisa |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-7 selesai (KB-146); dua tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -123,22 +123,22 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-09, R-10; K-2, K-3; D-05 S-09 blok 9 dan 10.
 
-- [ ] Uji lebih dulu: permintaan membawa `id_percakapan` yang sama sepanjang
+- [x] Uji lebih dulu: permintaan membawa `id_percakapan` yang sama sepanjang
       percakapan dan sesudah muat ulang; "Percakapan baru" membangkitkan yang
       baru
-- [ ] Uji: blok 9 memuat pertanyaan percakapan aktif **tanpa jawaban**; blok 10
+- [x] Uji: blok 9 memuat pertanyaan percakapan aktif **tanpa jawaban**; blok 10
       memuat pertanyaan pertama paling banyak sepuluh percakapan terbaru,
       dimuat saat blok dibuka (K-2)
-- [ ] Uji: mengetuk pertanyaan lama mengisi isian dan **tidak** mengirim
-- [ ] Uji: kalimat `pertanyaan_ditolak` baru (K-3); layar tetap tidak membaca
+- [x] Uji: mengetuk pertanyaan lama mengisi isian dan **tidak** mengirim
+- [x] Uji: kalimat `pertanyaan_ditolak` baru (K-3); layar tetap tidak membaca
       badan galat
-- [ ] `kontrak.ts` memperoleh `Giliran` dan bentuk kedua rute riwayat;
+- [x] `kontrak.ts` memperoleh `Giliran` dan bentuk kedua rute riwayat;
       `kontrak_web.py` membandingkannya dengan model Python
-- [ ] `percakapan.ts`, komponen blok 9 dan 10, `mikrokopi.ts`; uji
+- [x] `percakapan.ts`, komponen blok 9 dan 10, `mikrokopi.ts`; uji
       `halaman.test.ts` tentang simpanan lokal diperluas ke kunci kedua
       secara tegas
-- [ ] Anggaran muat tetap ≤ 150 KB
-- [ ] Mutasi M-12 dan M-13
+- [x] Anggaran muat tetap ≤ 150 KB
+- [x] Mutasi M-12 dan M-13
 
 ---
 

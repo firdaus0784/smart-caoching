@@ -173,11 +173,18 @@ describe("tanpa artefak autentikasi", () => {
     }
   });
 
-  test("simpanan lokal hanya ditulis draf.ts, dan hanya draf pertanyaan", () => {
+  test("simpanan lokal hanya ditulis draf.ts dan percakapan.ts, masing-masing satu kunci", () => {
+    // Fitur 028 menambah kunci kedua secara tegas: pengenal percakapan aktif.
+    // Ia bukan token — mengetahuinya tidak memberi akses (R-02 fitur 028).
     const menulis = Object.entries(SUMBER).filter(([, isi]) => /\.setItem\(/.test(isi));
-    expect(menulis.map(([b]) => b)).toEqual(["./draf.ts"]);
-    const kunci = [...(menulis[0]?.[1] ?? "").matchAll(/"(smart-coaching:[^"]+)"/g)].map((m) => m[1]);
-    expect(kunci).toEqual(["smart-coaching:draf-tanya"]);
+    expect(menulis.map(([b]) => b).sort()).toEqual(["./draf.ts", "./percakapan.ts"]);
+    const kunci = Object.fromEntries(
+      menulis.map(([b, isi]) => [b, [...isi.matchAll(/"(smart-coaching:[^"]+)"/g)].map((m) => m[1])]),
+    );
+    expect(kunci).toEqual({
+      "./draf.ts": ["smart-coaching:draf-tanya"],
+      "./percakapan.ts": ["smart-coaching:percakapan-aktif"],
+    });
   });
 });
 

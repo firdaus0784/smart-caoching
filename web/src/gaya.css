@@ -279,3 +279,40 @@ a {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Riwayat — D-05 S-09 blok 9 dan 10, fitur 028. */
+
+.riwayat {
+  display: grid;
+  gap: 0.5rem;
+  padding: var(--jarak);
+  color: var(--huruf-utama);
+  background: var(--latar-permukaan);
+  border-radius: 0.5rem;
+}
+
+.keterangan {
+  margin: 0;
+  color: var(--huruf-redup);
+}
+
+.daftar-riwayat {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tombol-kedua,
+.butir-riwayat {
+  color: var(--huruf-utama);
+  background: var(--latar-tombol-kedua);
+}
+
+.butir-riwayat {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-weight: 400;
+  text-align: left;
+}

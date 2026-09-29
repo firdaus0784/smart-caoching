@@ -35,6 +35,7 @@ from enum import Enum
 from pathlib import Path
 
 from pydantic import BaseModel
+from src.api.percakapan import Giliran
 from src.kamus.segmen import StatusKeberlakuan
 from src.rag.jawaban.tanggapan import (
     BacaanLanjutan,
@@ -49,7 +50,15 @@ from perkakas.pemeriksa.ast_aturan import Temuan
 
 BERKAS_KONTRAK = Path("web") / "src" / "kontrak.ts"
 
-MODEL: tuple[type[BaseModel], ...] = (Tanggapan, Versi, KlaimTampil, Sitasi, BacaanLanjutan)
+MODEL: tuple[type[BaseModel], ...] = (
+    Tanggapan,
+    Versi,
+    KlaimTampil,
+    Sitasi,
+    BacaanLanjutan,
+    # Fitur 028: bentuk riwayat D-14 Bagian 4.3 — giliran tanpa tanggapan (C-07).
+    Giliran,
+)
 ENUM: tuple[type[Enum], ...] = (StatusDasar, StatusKeberlakuan)
 
 _ANTARMUKA = re.compile(r"^export interface (\w+) \{\n(.*?)^\}", re.MULTILINE | re.DOTALL)

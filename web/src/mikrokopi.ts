@@ -44,6 +44,16 @@ export const MIKROKOPI = {
   salinTidakBisa: "Ringkasan tidak dapat disalin di peramban ini.",
 
   tombolCobaLagi: "Coba lagi",
+
+  // D-05 S-09 blok 9 dan 10 — fitur 028. Jawaban lama tidak pernah tampil:
+  // regulasi yang menjadi dasarnya dapat dicabut sesudahnya (C-07).
+  judulPertanyaanSebelumnya: "Pertanyaan sebelumnya",
+  keteranganPertanyaanSebelumnya: "Ketuk pertanyaan untuk menanyakannya lagi. Jawaban lama tidak disimpan.",
+  tombolPercakapanBaru: "Percakapan baru",
+  judulPercakapanTerdahulu: "Percakapan terdahulu",
+  tombolTampilkanTerdahulu: "Tampilkan percakapan terdahulu",
+  terdahuluKosong: "Belum ada percakapan terdahulu.",
+  terdahuluTidakTermuat: "Percakapan terdahulu belum dapat dimuat.",
 } as const;
 
 /**
@@ -84,9 +94,11 @@ export const PESAN_GALAT: Readonly<
     tersimpan: "Akun Anda tidak dapat membuka bagian ini.",
     tidakTersimpan: "Akun Anda tidak dapat membuka bagian ini.",
   },
+  // K-3 fitur 028: benar bagi kalimat yang tidak utuh maupun pertanyaan yang
+  // memuat nomor pribadi — layar tidak membaca badan galat (R-10 fitur 027).
   pertanyaan_ditolak: {
-    tersimpan: "Pertanyaan belum dapat diproses. Tulis ulang dengan kalimat utuh.",
-    tidakTersimpan: "Pertanyaan belum dapat diproses. Tulis ulang dengan kalimat utuh.",
+    tersimpan: "Pertanyaan belum dapat diproses. Pastikan kalimatnya utuh dan tanpa nomor pribadi.",
+    tidakTersimpan: "Pertanyaan belum dapat diproses. Pastikan kalimatnya utuh dan tanpa nomor pribadi.",
   },
 };
 

@@ -1,7 +1,16 @@
 import { describe, expect, test } from "vitest";
 
-import { JALUR_TANYA, tanya, type Pemanggil } from "./klien";
+import {
+  JALUR_PERCAKAPAN,
+  JALUR_TANYA,
+  bacaPercakapan,
+  daftarPercakapan,
+  tanya,
+  type Pemanggil,
+} from "./klien";
 import type { Tanggapan } from "./kontrak";
+
+const ID = "3f1c9a2e-7b4d-4c1e-9a0f-2d6b8e5c1a47";
 
 const TANGGAPAN: Tanggapan = {
   id_pesan: "pesan-1",
@@ -39,14 +48,16 @@ describe("permintaan", () => {
       return new Response(JSON.stringify(TANGGAPAN), { status: 200 });
     };
 
-    await tanya("Bagaimana menyusun jadwal supervisi?", pemanggil);
+    await tanya("Bagaimana menyusun jadwal supervisi?", ID, pemanggil);
 
     expect(tercatat).toHaveLength(1);
     expect(tercatat[0]?.jalur).toBe(JALUR_TANYA);
     expect(tercatat[0]?.init?.method).toBe("POST");
-    // R-16: badan permintaan tidak bertambah bidang; R-17: tanpa token.
+    // R-17 fitur 027: tanpa token.
+    // D-14 Bagian 4.1 sejak fitur 028: pertanyaan dan pengenal percakapan.
     expect(JSON.parse(String(tercatat[0]?.init?.body))).toEqual({
       pertanyaan: "Bagaimana menyusun jadwal supervisi?",
+      id_percakapan: ID,
     });
     expect(JSON.stringify(tercatat[0]?.init?.headers ?? {})).not.toMatch(/authorization/i);
   });
@@ -54,7 +65,7 @@ describe("permintaan", () => {
 
 describe("tanggapan sah", () => {
   test("tanggapan 200 berbentuk D-14 menjadi jawaban", async () => {
-    const hasil = await tanya("x", balasan(200, TANGGAPAN));
+    const hasil = await tanya("x", ID, balasan(200, TANGGAPAN));
     expect(hasil).toEqual({ jenis: "jawaban", tanggapan: TANGGAPAN });
   });
 
@@ -67,7 +78,7 @@ describe("tanggapan sah", () => {
       sitasi: [],
       penjelasan: "",
     };
-    const hasil = await tanya("x", balasan(200, tidakDitemukan));
+    const hasil = await tanya("x", ID, balasan(200, tidakDitemukan));
     expect(hasil.jenis).toBe("jawaban");
   });
 });
@@ -84,12 +95,12 @@ describe("galat dipetakan ke keadaan layar", () => {
     [500, "sistem"],
     [503, "sistem"],
   ] as const)("status %i menjadi %s", async (status, jenis) => {
-    const hasil = await tanya("x", balasan(status, { pesan: "rincian peladen" }));
+    const hasil = await tanya("x", ID, balasan(status, { pesan: "rincian peladen" }));
     expect(hasil).toEqual({ jenis: "galat", galat: jenis });
   });
 
   test("hasil galat tidak membawa status maupun isi badan peladen (R-10)", async () => {
-    const hasil = await tanya("x", balasan(500, { pesan: "Traceback GALAT_INTERNAL" }));
+    const hasil = await tanya("x", ID, balasan(500, { pesan: "Traceback GALAT_INTERNAL" }));
     const teks = JSON.stringify(hasil);
     expect(teks).not.toContain("500");
     expect(teks).not.toContain("Traceback");
@@ -100,12 +111,12 @@ describe("galat dipetakan ke keadaan layar", () => {
     const putus: Pemanggil = async () => {
       throw new TypeError("Failed to fetch");
     };
-    expect(await tanya("x", putus)).toEqual({ jenis: "galat", galat: "luring" });
+    expect(await tanya("x", ID, putus)).toEqual({ jenis: "galat", galat: "luring" });
   });
 
   test("badan 200 yang bukan JSON menjadi galat sistem", async () => {
     const rusak: Pemanggil = async () => new Response("<html>", { status: 200 });
-    expect(await tanya("x", rusak)).toEqual({ jenis: "galat", galat: "sistem" });
+    expect(await tanya("x", ID, rusak)).toEqual({ jenis: "galat", galat: "sistem" });
   });
 });
 
@@ -115,17 +126,17 @@ describe("bentuk 200 yang tidak dikenali ditolak, bukan ditampilkan separuh", ()
   test.each(bidang)("tanpa bidang %s menjadi galat sistem", async (nama) => {
     const kurang: Record<string, unknown> = { ...TANGGAPAN };
     delete kurang[nama];
-    expect(await tanya("x", balasan(200, kurang))).toEqual({ jenis: "galat", galat: "sistem" });
+    expect(await tanya("x", ID, balasan(200, kurang))).toEqual({ jenis: "galat", galat: "sistem" });
   });
 
   test("bidang tambahan menjadi galat sistem (C-20)", async () => {
     const lebih = { ...TANGGAPAN, skor_keyakinan: 0.9 };
-    expect(await tanya("x", balasan(200, lebih))).toEqual({ jenis: "galat", galat: "sistem" });
+    expect(await tanya("x", ID, balasan(200, lebih))).toEqual({ jenis: "galat", galat: "sistem" });
   });
 
   test("status_dasar di luar keempat nilai menjadi galat sistem", async () => {
     const asing = { ...TANGGAPAN, status_dasar: "lemah" };
-    expect(await tanya("x", balasan(200, asing))).toEqual({ jenis: "galat", galat: "sistem" });
+    expect(await tanya("x", ID, balasan(200, asing))).toEqual({ jenis: "galat", galat: "sistem" });
   });
 
   test("sitasi berstatus dicabut menjadi galat sistem (C-07)", async () => {
@@ -133,14 +144,81 @@ describe("bentuk 200 yang tidak dikenali ditolak, bukan ditampilkan separuh", ()
       ...TANGGAPAN,
       sitasi: [{ ...TANGGAPAN.sitasi[0], status_keberlakuan: "dicabut" }],
     };
-    expect(await tanya("x", balasan(200, dicabut))).toEqual({ jenis: "galat", galat: "sistem" });
+    expect(await tanya("x", ID, balasan(200, dicabut))).toEqual({ jenis: "galat", galat: "sistem" });
   });
 
   test("sitasi tanpa bagian menjadi galat sistem (FR-F11)", async () => {
     const tanpaBagian = { ...TANGGAPAN, sitasi: [{ ...TANGGAPAN.sitasi[0], bagian: undefined }] };
-    expect(await tanya("x", balasan(200, tanpaBagian))).toEqual({
+    expect(await tanya("x", ID, balasan(200, tanpaBagian))).toEqual({
       jenis: "galat",
       galat: "sistem",
     });
+  });
+});
+
+// ── Riwayat — fitur 028 T-7 ─────────────────────────────────────────────
+
+describe("riwayat percakapan", () => {
+  const GILIRAN = { pertanyaan: "Bagaimana supervisi?", id_pesan: "p1", waktu: "2026-09-29T07:30:00Z" };
+
+  test("daftar membaca jalur percakapan dengan GET", async () => {
+    const tercatat: { jalur: string; init: RequestInit | undefined }[] = [];
+    const pemanggil: Pemanggil = async (jalur, init) => {
+      tercatat.push({ jalur, init });
+      return new Response(JSON.stringify({ percakapan: [ID] }), { status: 200 });
+    };
+    expect(await daftarPercakapan(pemanggil)).toEqual({ jenis: "daftar", percakapan: [ID] });
+    expect(tercatat[0]?.jalur).toBe(JALUR_PERCAKAPAN);
+    expect(tercatat[0]?.init?.method ?? "GET").toBe("GET");
+  });
+
+  test("satu percakapan dibaca pada jalur bertemplat", async () => {
+    let jalurDiminta = "";
+    const pemanggil: Pemanggil = async (jalur) => {
+      jalurDiminta = jalur;
+      return new Response(JSON.stringify({ id_percakapan: ID, giliran: [GILIRAN] }), {
+        status: 200,
+      });
+    };
+    expect(await bacaPercakapan(ID, pemanggil)).toEqual({
+      jenis: "percakapan",
+      percakapan: { id_percakapan: ID, giliran: [GILIRAN] },
+    });
+    expect(jalurDiminta).toBe(`${JALUR_PERCAKAPAN}/${ID}`);
+  });
+
+  test("giliran yang membawa tanggapan ditolak (C-07)", async () => {
+    const dengan = { id_percakapan: ID, giliran: [{ ...GILIRAN, tanggapan: { isi: "lama" } }] };
+    expect(await bacaPercakapan(ID, balasan(200, dengan))).toEqual({
+      jenis: "galat",
+      galat: "sistem",
+    });
+  });
+
+  test.each([
+    [{ percakapan: "bukan larik" }],
+    [{ percakapan: [ID], tambahan: 1 }],
+    [{ percakapan: [1] }],
+  ])("daftar berbentuk asing ditolak: %j", async (badan) => {
+    expect(await daftarPercakapan(balasan(200, badan))).toEqual({ jenis: "galat", galat: "sistem" });
+  });
+
+  test("galat dan jaringan putus dipetakan seperti /tanya", async () => {
+    expect(await daftarPercakapan(balasan(403, {}))).toEqual({ jenis: "galat", galat: "tidak_berhak" });
+    expect(await bacaPercakapan(ID, balasan(404, {}))).toEqual({ jenis: "galat", galat: "sistem" });
+    const putus: Pemanggil = async () => {
+      throw new TypeError("Failed to fetch");
+    };
+    expect(await daftarPercakapan(putus)).toEqual({ jenis: "galat", galat: "luring" });
+  });
+
+  test("pengenal dikodekan pada jalur", async () => {
+    let jalurDiminta = "";
+    const pemanggil: Pemanggil = async (jalur) => {
+      jalurDiminta = jalur;
+      return new Response("{}", { status: 404 });
+    };
+    await bacaPercakapan("a/b", pemanggil);
+    expect(jalurDiminta).toBe(`${JALUR_PERCAKAPAN}/a%2Fb`);
   });
 });

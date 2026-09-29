@@ -16,14 +16,18 @@
  */
 
 import type {
+  HasilBaca,
+  HasilDaftar,
   HasilTanya,
   JenisGalat,
+  SatuPercakapan,
   StatusDasar,
   StatusKeberlakuan,
   Tanggapan,
 } from "./kontrak";
 
 export const JALUR_TANYA = "/api/v1/tanya";
+export const JALUR_PERCAKAPAN = "/api/v1/percakapan";
 
 export type Pemanggil = (jalur: string, init?: RequestInit) => Promise<Response>;
 
@@ -37,30 +41,67 @@ const STATUS_DASAR: readonly StatusDasar[] = [
 /** `dicabut` sengaja tidak ada: sitasi berstatus dicabut tidak pernah sah (C-07). */
 const STATUS_SITASI_SAH: readonly StatusKeberlakuan[] = ["berlaku", "diubah"];
 
-export async function tanya(pertanyaan: string, pemanggil: Pemanggil): Promise<HasilTanya> {
+/** Satu permintaan: badan JSON bila berhasil, atau jenis galat bagi layar.
+ * Status HTTP dan isi badan galat tidak pernah keluar dari sini (R-10). */
+async function ambil(
+  pemanggil: Pemanggil,
+  jalur: string,
+  init?: RequestInit,
+): Promise<{ readonly badan: unknown } | { readonly galat: JenisGalat }> {
   let jawaban: Response;
   try {
     // Tanpa tajuk autentikasi dan tanpa token: identitas ditentukan backend (R-17).
-    jawaban = await pemanggil(JALUR_TANYA, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pertanyaan }),
-    });
+    jawaban = await pemanggil(jalur, init);
   } catch {
-    return galat("luring");
+    return { galat: "luring" };
   }
-
-  if (!jawaban.ok) {
-    return galat(petakanStatus(jawaban.status));
-  }
-
-  let badan: unknown;
+  if (!jawaban.ok) return { galat: petakanStatus(jawaban.status) };
   try {
-    badan = await jawaban.json();
+    return { badan: await jawaban.json() };
   } catch {
-    return galat("sistem");
+    return { galat: "sistem" };
   }
-  return apakahTanggapan(badan) ? { jenis: "jawaban", tanggapan: badan } : galat("sistem");
+}
+
+export async function tanya(
+  pertanyaan: string,
+  idPercakapan: string,
+  pemanggil: Pemanggil,
+): Promise<HasilTanya> {
+  // D-14 Bagian 4.1 sejak fitur 028: pengenal percakapan dibangkitkan klien.
+  const hasil = await ambil(pemanggil, JALUR_TANYA, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pertanyaan, id_percakapan: idPercakapan }),
+  });
+  if ("galat" in hasil) return galat(hasil.galat);
+  return apakahTanggapan(hasil.badan)
+    ? { jenis: "jawaban", tanggapan: hasil.badan }
+    : galat("sistem");
+}
+
+/** `GET /api/v1/percakapan` — pengenal milik penanya, terbaru lebih dulu. */
+export async function daftarPercakapan(pemanggil: Pemanggil): Promise<HasilDaftar> {
+  const hasil = await ambil(pemanggil, JALUR_PERCAKAPAN, { method: "GET" });
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  const badan = hasil.badan;
+  return objekBerkunci(badan, ["percakapan"]) && larikDari(badan["percakapan"], untai)
+    ? { jenis: "daftar", percakapan: badan["percakapan"] as string[] }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+/** `GET /api/v1/percakapan/{id}` — giliran **tanpa jawaban** (C-07). */
+export async function bacaPercakapan(
+  idPercakapan: string,
+  pemanggil: Pemanggil,
+): Promise<HasilBaca> {
+  const hasil = await ambil(pemanggil, `${JALUR_PERCAKAPAN}/${encodeURIComponent(idPercakapan)}`, {
+    method: "GET",
+  });
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  return apakahSatuPercakapan(hasil.badan)
+    ? { jenis: "percakapan", percakapan: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
 }
 
 function galat(jenis: JenisGalat): HasilTanya {
@@ -165,5 +206,23 @@ export function apakahTanggapan(nilai: unknown): nilai is Tanggapan {
     untai(nilai["penafian"]) &&
     nilai["penafian"].trim() !== "" &&
     apakahVersi(nilai["versi"])
+  );
+}
+
+function apakahGiliran(nilai: unknown): boolean {
+  // Kunci persis: giliran yang membawa bidang tanggapan ditolak utuh (C-07).
+  return (
+    objekBerkunci(nilai, ["pertanyaan", "id_pesan", "waktu"]) &&
+    untai(nilai["pertanyaan"]) &&
+    untai(nilai["id_pesan"]) &&
+    untai(nilai["waktu"])
+  );
+}
+
+function apakahSatuPercakapan(nilai: unknown): nilai is SatuPercakapan {
+  return (
+    objekBerkunci(nilai, ["id_percakapan", "giliran"]) &&
+    untai(nilai["id_percakapan"]) &&
+    larikDari(nilai["giliran"], apakahGiliran)
   );
 }

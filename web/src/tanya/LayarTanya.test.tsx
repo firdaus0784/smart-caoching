@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-import type { Pemanggil } from "../klien";
+import { JALUR_PERCAKAPAN, JALUR_TANYA, type Pemanggil } from "../klien";
 import type { Tanggapan } from "../kontrak";
 import { bacaDraf, type Simpanan } from "../draf";
 import { MIKROKOPI, PENANDA_DASAR, PESAN_GALAT } from "../mikrokopi";
@@ -76,12 +76,33 @@ const putus: Pemanggil = async () => {
   throw new TypeError("Failed to fetch");
 };
 
+/** Peladen riwayat kosong — fitur 028. Uji fitur 027 menghitung panggilan
+ * `POST /tanya` saja; permintaan riwayat dilayani terpisah agar hitungan itu
+ * tetap berarti hal yang sama. */
+const riwayatKosong: Pemanggil = async (jalur) =>
+  new Response(
+    JSON.stringify(
+      jalur === JALUR_PERCAKAPAN
+        ? { percakapan: [] }
+        : { id_percakapan: decodeURIComponent(jalur.split("/").pop() ?? ""), giliran: [] },
+    ),
+    { status: 200 },
+  );
+
+function gabung(tanyaPalsu: Pemanggil, riwayatPalsu: Pemanggil): Pemanggil {
+  return (jalur, init) =>
+    jalur.startsWith(JALUR_PERCAKAPAN) ? riwayatPalsu(jalur, init) : tanyaPalsu(jalur, init);
+}
+
 function pasang(
   pemanggil: Pemanggil,
   simpanan: Simpanan | null = simpananPeta(),
   salin: (teks: string) => Promise<void> = async () => undefined,
+  riwayat: Pemanggil = riwayatKosong,
 ) {
-  return render(<LayarTanya pemanggil={pemanggil} simpanan={simpanan} salin={salin} />);
+  return render(
+    <LayarTanya pemanggil={gabung(pemanggil, riwayat)} simpanan={simpanan} salin={salin} />,
+  );
 }
 
 function ketik(teks: string): void {
@@ -382,4 +403,172 @@ describe("draf pertanyaan", () => {
       "Pertanyaan",
     );
   });
+});
+
+// ── Riwayat — fitur 028 T-7, R-09, D-05 S-09 blok 9 dan 10 ──────────────
+
+const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+/** Peladen tiruan berkeadaan: mencatat giliran per percakapan seperti
+ * `/tanya` fitur 028, dan melayani kedua rute riwayat dari catatan itu. */
+function peladenPalsu(awal: [string, string][] = []) {
+  const catatan = new Map<string, { pertanyaan: string; id_pesan: string; waktu: string }[]>();
+  const urutan: string[] = [];
+  const kiriman: { pertanyaan: string; id_percakapan: string }[] = [];
+  const bacaan: string[] = [];
+  let nomor = 0;
+  const tambah = (id: string, pertanyaan: string) => {
+    if (!catatan.has(id)) {
+      catatan.set(id, []);
+      urutan.unshift(id);
+    }
+    nomor += 1;
+    catatan.get(id)?.push({ pertanyaan, id_pesan: `pesan-${nomor}`, waktu: "2026-09-29T07:30:00Z" });
+    return `pesan-${nomor}`;
+  };
+  for (const [id, pertanyaan] of awal) tambah(id, pertanyaan);
+  const json = (badan: unknown) => new Response(JSON.stringify(badan), { status: 200 });
+  const pemanggil: Pemanggil = async (jalur, init) => {
+    if (jalur === JALUR_TANYA) {
+      const badan = JSON.parse(String(init?.body)) as { pertanyaan: string; id_percakapan: string };
+      kiriman.push(badan);
+      return json({ ...DASAR, id_pesan: tambah(badan.id_percakapan, badan.pertanyaan) });
+    }
+    if (jalur === JALUR_PERCAKAPAN) return json({ percakapan: [...urutan] });
+    const id = decodeURIComponent(jalur.slice(JALUR_PERCAKAPAN.length + 1));
+    bacaan.push(id);
+    return json({ id_percakapan: id, giliran: catatan.get(id) ?? [] });
+  };
+  return { pemanggil, kiriman, bacaan };
+}
+
+function pasangPeladen(peladen: ReturnType<typeof peladenPalsu>, simpanan: Simpanan = simpananPeta()) {
+  return render(
+    <LayarTanya pemanggil={peladen.pemanggil} simpanan={simpanan} salin={async () => undefined} />,
+  );
+}
+
+async function kirimDanTunggu(teks: string): Promise<void> {
+  ketik(teks);
+  kirim();
+  await screen.findByTestId("blok-jawaban");
+}
+
+describe("melanjutkan percakapan", () => {
+  test("pengenal UUID v4 yang sama sepanjang percakapan dan sesudah muat ulang", async () => {
+    const peladen = peladenPalsu();
+    const simpanan = simpananPeta();
+    const pertama = pasangPeladen(peladen, simpanan);
+    await kirimDanTunggu("Pertanyaan pertama");
+    await kirimDanTunggu("Pertanyaan kedua");
+    pertama.unmount();
+
+    pasangPeladen(peladen, simpanan);
+    await kirimDanTunggu("Pertanyaan sesudah muat ulang");
+
+    const pengenal = peladen.kiriman.map((k) => k.id_percakapan);
+    expect(pengenal).toHaveLength(3);
+    expect(new Set(pengenal).size).toBe(1);
+    expect(pengenal[0]).toMatch(UUID_V4);
+  });
+
+  test("percakapan baru membangkitkan pengenal baru dan mengosongkan blok 9", async () => {
+    const peladen = peladenPalsu();
+    pasangPeladen(peladen);
+    await kirimDanTunggu("Pertanyaan lama");
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolPercakapanBaru }));
+    expect(screen.queryByTestId("pertanyaan-sebelumnya")).toBeNull();
+    await kirimDanTunggu("Pertanyaan baru");
+
+    const [lama, baru] = peladen.kiriman.map((k) => k.id_percakapan);
+    expect(baru).not.toBe(lama);
+    expect(baru).toMatch(UUID_V4);
+  });
+
+  test("blok 9 memuat pertanyaan percakapan aktif tanpa jawabannya", async () => {
+    const peladen = peladenPalsu();
+    pasangPeladen(peladen);
+    await kirimDanTunggu("Pertanyaan pertama");
+    await kirimDanTunggu("Pertanyaan kedua");
+
+    const blok = await screen.findByTestId("pertanyaan-sebelumnya");
+    await within(blok).findByText("Pertanyaan kedua");
+    expect(within(blok).getByText("Pertanyaan pertama")).toBeTruthy();
+    expect(within(blok).getByText(MIKROKOPI.keteranganPertanyaanSebelumnya)).toBeTruthy();
+    // C-07: tidak ada isi jawaban pada blok riwayat.
+    expect(blok.textContent).not.toContain(DASAR.penjelasan);
+    expect(blok.textContent).not.toContain(DASAR.ringkasan_tindakan[0]);
+  });
+
+  test("mengetuk pertanyaan lama mengisi isian dan tidak mengirim", async () => {
+    const peladen = peladenPalsu();
+    pasangPeladen(peladen);
+    await kirimDanTunggu("Bagaimana menyusun jadwal supervisi?");
+    ketik("");
+    const blok = await screen.findByTestId("pertanyaan-sebelumnya");
+    const terkirim = peladen.kiriman.length;
+
+    fireEvent.click(
+      await within(blok).findByRole("button", { name: "Bagaimana menyusun jadwal supervisi?" }),
+    );
+
+    expect((screen.getByLabelText(MIKROKOPI.labelPertanyaan) as HTMLTextAreaElement).value).toBe(
+      "Bagaimana menyusun jadwal supervisi?",
+    );
+    // Pengiriman bersifat asinkron: pemeriksaan seketika akan lulus pula pada
+    // layar yang mengirim sesudah satu putaran. Antrean dituntaskan dulu —
+    // ditemukan saat mutasi M-12 pertama tidak menyala (KB-146).
+    await new Promise((selesai) => setTimeout(selesai, 20));
+    expect(peladen.kiriman).toHaveLength(terkirim);
+  });
+});
+
+describe("percakapan terdahulu — blok 10, K-2", () => {
+  const TERDAHULU: [string, string][] = Array.from({ length: 12 }, (_, i) => [
+    `00000000-0000-4000-8000-${String(i).padStart(12, "0")}`,
+    `Pertanyaan ke-${i}`,
+  ]);
+
+  test("dimuat saat dibuka saja, paling banyak sepuluh, berupa pertanyaan pertamanya", async () => {
+    const peladen = peladenPalsu(TERDAHULU);
+    pasangPeladen(peladen);
+    await screen.findByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu });
+    const sebelum = peladen.bacaan.filter((id) => id.startsWith("00000000")).length;
+    expect(sebelum).toBe(0);
+
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu }));
+    const blok = await screen.findByTestId("percakapan-terdahulu");
+    await within(blok).findByText("Pertanyaan ke-11");
+
+    expect(within(blok).getAllByRole("button")).toHaveLength(10);
+    expect(within(blok).queryByText("Pertanyaan ke-1")).toBeNull();
+    expect(peladen.bacaan.filter((id) => id.startsWith("00000000")).length).toBe(10);
+  });
+
+  test("membuka percakapan terdahulu menjadikannya aktif", async () => {
+    const peladen = peladenPalsu(TERDAHULU.slice(0, 2));
+    pasangPeladen(peladen);
+    fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu }));
+    fireEvent.click(await screen.findByRole("button", { name: "Pertanyaan ke-0" }));
+
+    const blok = await screen.findByTestId("pertanyaan-sebelumnya");
+    expect(await within(blok).findByText("Pertanyaan ke-0")).toBeTruthy();
+    await kirimDanTunggu("Lanjutan");
+    expect(peladen.kiriman.at(-1)?.id_percakapan).toBe(TERDAHULU[0]?.[0]);
+  });
+
+  test("tanpa percakapan terdahulu dinyatakan", async () => {
+    pasangPeladen(peladenPalsu());
+    fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu }));
+    expect(await screen.findByText(MIKROKOPI.terdahuluKosong)).toBeTruthy();
+  });
+});
+
+test("K-3: penolakan pertanyaan benar pula bagi nomor pribadi", async () => {
+  pasang(balasan(400, {}));
+  ketik("NIK 3201234567890123");
+  kirim();
+  const teks = (await screen.findByRole("alert")).textContent ?? "";
+  expect(teks).toContain(PESAN_GALAT.pertanyaan_ditolak.tersimpan);
+  expect(PESAN_GALAT.pertanyaan_ditolak.tersimpan).toContain("nomor pribadi");
 });
