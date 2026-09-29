@@ -2292,3 +2292,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Hak tambah-saja lewat pemicu yang menolak `UPDATE` — ditolak; pemicu dapat dilepas pemiliknya, sedangkan hak yang tidak pernah diberikan tidak dapat dipakai. |
 | Dampak | `06-riwayat.sql` baru; `01-peran-dan-basis-data.sql`, `README.md`, `tests/peladen.py` (`siapkan` menjalankan `06`), `tests/penyimpanan/test_persiapan_basis_data.py`. Nol baris di `src/`. Fitur 028: **2 dari 9 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-142 · T-3 fitur 028 — penyimpan riwayat, dua pelaksana, satu uji
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"lanjutkan T-3 dan selanjutnya, laksanakan task selanjutnya setelah task selesai"**. |
+| Keputusan | **T-3 selesai.** `src/penyimpanan/riwayat.py`: protokol `PenyimpanRiwayat` (`catat`, `daftar`, `baca`), `RiwayatMemori`, `RiwayatPostgres`, `PercakapanTidakAda`, `BarisGiliran`. Satu himpunan uji dijalankan atas kedua pelaksana; `RiwayatPostgres` tersambung sebagai `peran_riwayat` sendiri. |
+| Kepemilikan atomik tanpa transaksi | `SambunganAktif` tidak menyediakan transaksi. Membuka percakapan, memeriksa pemilik, dan menambah giliran karenanya satu pernyataan SQL berantai `WITH`: baris yang baru disisipkan dan baris yang sudah ada digabung, sebab potret pernyataan tidak melihat sisipannya sendiri. Bila pemiliknya bukan pemanggil, tidak ada yang ditulis. |
+| **Satu butir `tasks.md` tidak dikerjakan, dengan sebab** | `tasks.md` menyebut `KredensialRiwayat`. Tidak dibuat: pemisahan riwayat ditegakkan peran basis data (T-2), dan tipe kredensial Python yang tidak menegakkan apa pun hanya penanda — bentuk yang `pseudonim.py` sendiri tolak. Penggantinya tetapan `PERAN_RIWAYAT`, dengan uji bahwa peran itu ada pada kedua berkas SQL. |
+| Uji | `tests/penyimpanan/test_riwayat.py` 26 uji, merah lebih dulu: urutan giliran, daftar milik pemilik terbaru lebih dulu, pemilik lain tidak dapat menulis **dan tidak ada yang tertulis**, penolakan "milik orang lain" dan "tidak dikenal" sama jenis dan pesannya, waktu percakapan dari giliran pertama, isian kosong dan waktu tanpa zona ditolak tanpa menulis. R-13: penyimpan kedua dengan sambungan baru membaca yang ditulis penyimpan pertama; pasangannya menyatakan pelaksana memori **tidak** memenuhi R-13. Permukaan persis tiga metode. |
+| Uji mutasi | Pemeriksaan pemilik pada SQL dilumpuhkan → uji pemilik lain merah pada `[postgres]` saja; pada pelaksana memori → merah pada `[memori]` saja. Keduanya dipulihkan byte demi byte. |
+| Alternatif | Memeriksa pemilik dengan dua kueri terpisah — ditolak; di antara keduanya pemilik lain dapat membuka percakapan yang sama. |
+| Dampak | Berkas baru `src/penyimpanan/riwayat.py`, `tests/penyimpanan/test_riwayat.py`. `src/rag/`, `src/llm/` tidak berubah. Fitur 028: **3 dari 9 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md`; penyimpangan `KredensialRiwayat` terbuka ditinjau pemegang Gerbang 1–4 |

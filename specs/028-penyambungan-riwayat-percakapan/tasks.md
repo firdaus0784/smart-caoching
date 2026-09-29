@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 dan T-2 selesai (KB-141); tujuh tugas tersisa |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-3 selesai (KB-142); enam tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -53,15 +53,15 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-02, R-08, R-12, R-13.
 
-- [ ] Satu himpunan uji perilaku, dijalankan atas `RiwayatMemori` **dan**
+- [x] Satu himpunan uji perilaku, dijalankan atas `RiwayatMemori` **dan**
       `RiwayatPostgres`: mencatat, membaca, daftar terbaru lebih dulu,
       pemilik ditetapkan sekali, `BukanPemilik` bagi pemilik lain tanpa
       menulis giliran
-- [ ] Uji R-13: dua `RiwayatPostgres` dengan sambungan berbeda — yang kedua
+- [x] Uji R-13: dua `RiwayatPostgres` dengan sambungan berbeda — yang kedua
       membaca giliran yang ditulis yang pertama
-- [ ] `src/penyimpanan/riwayat.py`: `PenyimpanRiwayat`, kedua pelaksana,
+- [x] `src/penyimpanan/riwayat.py`: `PenyimpanRiwayat`, kedua pelaksana,
       `KredensialRiwayat`; tanpa impor `src/api/` maupun `src/nlp/`
-- [ ] Permukaan tanpa metode ubah maupun hapus — diuji atas atribut kelasnya
+- [x] Permukaan tanpa metode ubah maupun hapus — diuji atas atribut kelasnya
 
 ---
 
