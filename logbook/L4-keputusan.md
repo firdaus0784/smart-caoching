@@ -2386,3 +2386,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengecualikan 404 pada skrip bukti sebagai "sesuai kontrak" — ditolak; galat yang dikecualikan tanpa dilacak adalah galat yang tidak pernah diperbaiki. |
 | Dampak | Berkas baru pada `specs/028-penyambungan-riwayat-percakapan/bukti/` (skrip dan tiga PNG); diubah `web/src/percakapan.ts`, `web/src/tanya/LayarTanya.tsx`, dan ujinya. Nol baris di `src/`. 139 uji `web/`. Fitur 028: **8 dari 9 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-148 · T-9 fitur 028 — penutupan; fitur menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Lanjutan perintah **"lanjutkan T-3 dan selanjutnya"**. T-9 menutup fitur: temuan pada D-00, catatan batas D-14, L8, dokumen HKI, dan catatan ini. |
+| Keputusan | **T-9 selesai; sembilan dari sembilan tugas fitur 028 selesai — menunggu Gerbang 4.** D-00 2.68: **TK-65, TK-66, TK-67, TK-68 selesai**, masing-masing dengan bukti mutasinya. D-14 0.9: catatan batas Bagian 4.3 menyatakan kepemilikan dan pencatatan kini ditegakkan kode, dengan keadaan sebelumnya tetap dicatat. L8: tagihan tidak menyusut (19 / 0 / 1); empat pasal lulus dikuatkan, dua ditegakkan peladen. Dokumen HKI: baris Layanan API dan Basis data dimutakhirkan dengan penanda **menunggu Gerbang 4**, bukan Terbangun. |
+| Bahan Gerbang 4 | Mutasi M-1 s.d. M-14 **14 dari 14** (KB-147); `src/rag/` dan `src/llm/` nol berkas berubah sejak Gerbang 3; bukti Playwright tiga tangkapan layar dan R-13 ujung ke ujung; `make check` lulus enam gerbang; 2.347 uji Python dan 139 uji web. |
+| Terbuka bagi pemegang Gerbang 4 | (1) `dapat_ditulis()` ditambahkan pada protokol penyimpan (KB-145). (2) `KredensialRiwayat` tidak dibuat; `PERAN_RIWAYAT` penggantinya (KB-142). (3) `KodeGalat` dipakai ulang dari `src/llm/`; **BT-69 tetap terbuka** (KB-144). (4) **TK-69** — tabel `pesan` pada D-04 — menunggu putusan (KB-140). (5) Bila pencatatan riwayat gagal, jawaban tidak dikirim (`GALAT_INTERNAL`) — dipilih demi R-01 (KB-145). (6) Autentikasi (FR-A01) tetap belum ada; aplikasi tetap tidak layak dihadapkan ke jaringan publik. |
+| Alternatif | Menandai Layanan API **Terbangun** — ditolak; autentikasi belum ada, dan fitur 028 belum lolos Gerbang 4. |
+| Dampak | `docs/D00.md`, `docs/D14.md`, `docs/hki/dokumentasi-teknis.md`, `logbook/L8-tagihan-pasal.md`, status `plan.md` dan `tasks.md` fitur 028. Nol baris kode. |
+| Pemutus | Agen di dalam batas `tasks.md`; Gerbang 4 menunggu pemegang Gerbang 1–4 |

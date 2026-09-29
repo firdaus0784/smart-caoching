@@ -396,3 +396,34 @@ Fitur 027 tidak menyentuh apa pun yang C-01 tunggu. Layar Tanya
 verifikasi terhadap segmen tetap tugas validator di belakang peladen, dan
 layar yang tampak memperlihatkan sitasi tidak boleh dibaca sebagai C-01
 terpenuhi.
+
+---
+
+### Fitur 028 — 29 September 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 027. Tidak ada pasal berpindah, dan itu
+dicatat alih-alih dilewatkan.
+
+Fitur ini menguatkan empat pasal yang sudah lulus, dan dua di antaranya kini
+**ditegakkan peladen basis data**, bukan hanya oleh kode:
+
+| Pasal | Yang bertambah pada fitur 028 |
+|---|---|
+| C-05 | Pemilik riwayat berupa pseudonim; `peran_riwayat` tidak dapat menyambung basis data pseudonim — diuji terhadap peladen dengan sebab `permission denied`. `Identitas` menolak pemilik berpola NIK atau telepon |
+| C-07 | Riwayat menyimpan rujukan `id_pesan`, tidak pernah tanggapan; layar dan klien menolak giliran yang membawa bidang tanggapan; pemeriksa kontrak V-03 kini membandingkan `Giliran` |
+| C-13 | Aturan 2 mengenal jalan keluar galat baru `tanggapan_galat()`, termasuk kata kunci `pesan_pengguna` — tanpanya pesan baru lolos tanpa dibaca |
+| C-17 | Jalur penjawaban tidak diberi `USAGE` atas skema `riwayat`: tidak menulis dan tidak membaca. Penulisan riwayat oleh lapisan HTTP dengan peran tersendiri yang hanya dapat menambah |
+
+Satu kebutuhan yang tidak berupa pasal tetapi dekat dengannya: **C-14** —
+jawaban tidak dipengaruhi riwayat. Diuji bahwa jalur penjawab menerima
+pertanyaan saja, dan mutasi M-11 yang meneruskan riwayat ke jalur menjadi
+merah.
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu masih `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Tidak satu klausanya berubah sejak catatan fitur 027: fitur 020
+belum memiliki `spec.md`, bobot model penyemat belum diunduh, dan fitur 025
+belum dimulai. Fitur 028 tidak menyentuh apa pun yang C-01 tunggu — riwayat
+menyimpan pertanyaan, bukan klaim.

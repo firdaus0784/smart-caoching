@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-8 selesai (KB-147); satu tugas tersisa |
+| Status | **Sembilan dari sembilan tugas selesai — menunggu Gerbang 4.** Gerbang 3 lolos KB-140 |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -157,11 +157,11 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 ## T-9 · Penutupan
 
-- [ ] D-00: TK-65, TK-66, TK-67, TK-68 ditutup dengan bukti mutasinya
-- [ ] D-14 Bagian 4.3: catatan "belum ditegakkan kode" dimutakhirkan
-- [ ] `logbook/L8` catatan akhir fitur — juga bila tagihan pasal tidak menyusut
-- [ ] `docs/hki/dokumentasi-teknis.md`: baris "Layanan API" dan "Basis data"
-- [ ] Catatan keputusan pada `logbook/L4`
+- [x] D-00: TK-65, TK-66, TK-67, TK-68 ditutup dengan bukti mutasinya
+- [x] D-14 Bagian 4.3: catatan "belum ditegakkan kode" dimutakhirkan
+- [x] `logbook/L8` catatan akhir fitur — juga bila tagihan pasal tidak menyusut
+- [x] `docs/hki/dokumentasi-teknis.md`: baris "Layanan API" dan "Basis data"
+- [x] Catatan keputusan pada `logbook/L4`
 
 ---
 
