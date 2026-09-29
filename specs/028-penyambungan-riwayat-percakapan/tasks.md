@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 28 September 2026 (KB-138) |
 | Plan | Gerbang 2 lolos 28 September 2026 (KB-139); K-1, K-2, K-3 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-5 selesai (KB-144); empat tugas tersisa |
+| Status | **Gerbang 3 lolos** — 29 September 2026 (KB-140). T-1 s.d. T-6 selesai (KB-145); tiga tugas tersisa |
 | Kebutuhan | R-01 s.d. R-17; C-05, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -101,21 +101,21 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-01, R-02, R-03, R-07, R-15, R-16; TK-65, TK-67, TK-68.
 
-- [ ] Uji dua identitas: B tidak dapat membaca daftar A, membaca percakapan A,
+- [x] Uji dua identitas: B tidak dapat membaca daftar A, membaca percakapan A,
       menulis ke percakapan A, maupun membedakan percakapan A dari yang tidak
       ada — ketiga tanggapan penolakan **sama persis** kecuali `id_jejak`
-- [ ] Uji: pertanyaan berdata pribadi → 400 `VALIDASI_GAGAL`, **nol** panggilan
+- [x] Uji: pertanyaan berdata pribadi → 400 `VALIDASI_GAGAL`, **nol** panggilan
       jalur, nol giliran, dan tidak ada pada log; pesannya tidak mengutip nomor
-- [ ] Uji: `id_percakapan` bukan UUID v4 → 400; bidang tambahan → 400
-- [ ] Uji: jawaban tercatat sebagai giliran dengan `id_pesan` tanggapannya;
+- [x] Uji: `id_percakapan` bukan UUID v4 → 400; bidang tambahan → 400
+- [x] Uji: jawaban tercatat sebagai giliran dengan `id_pesan` tanggapannya;
       `jalur.jawab` dipanggil hanya dengan pertanyaan — tanpa giliran
       sebelumnya (R-07, C-14)
-- [ ] `PermintaanTanya` memperoleh `id_percakapan`; `susun_aplikasi` menerima
+- [x] `PermintaanTanya` memperoleh `id_percakapan`; `susun_aplikasi` menerima
       `PenyimpanRiwayat`; rute riwayat tersaring pemilik
-- [ ] Docstring `src/api/percakapan.py` "di memori … menunggu penggerak
+- [x] Docstring `src/api/percakapan.py` "di memori … menunggu penggerak
       PostgreSQL" dimutakhirkan — kalimat yang tertinggal sesudah utangnya
       lunas adalah kalimat yang dipercaya orang berikutnya
-- [ ] Mutasi M-1 s.d. M-5, M-10, M-11, M-14
+- [x] Mutasi M-1 s.d. M-5, M-10, M-11, M-14
 
 ---
 

@@ -39,10 +39,14 @@ Sama dengan `Peristiwa` fitur 012: yang tidak ada tidak dapat terisi. Pemilik
 percakapan adalah kunci penyimpanannya, dan pemetaan itu tinggal di
 `src/penyimpanan/` bersama kunci pseudonim yang C-05 pisahkan.
 
-## Batas yang diakui terbuka
+## Penyimpanannya bukan di sini (fitur 028)
 
-Di memori. Penyimpanan tetapnya menunggu penggerak PostgreSQL (C-12,
-`usulan-ketergantungan.md` Bagian 9.3), dan itu bukan pekerjaan fitur ini.
+Modul ini semula juga memuat kelas `Percakapan`, penyimpan di memori tanpa
+pemilik, dengan catatan *"penyimpanan tetapnya menunggu penggerak
+PostgreSQL"*. Penggerak itu ada sejak fitur 024, dan fitur 028 memindahkan
+penyimpanan ke `src/penyimpanan/riwayat.py` — dengan pemilik berpseudonim dan
+tambah-saja yang ditegakkan peladen. Yang tinggal di sini hanya bentuk dan
+validasi giliran, sebab `src/penyimpanan/` tidak boleh mengimpor `src/nlp/`.
 """
 
 from __future__ import annotations
@@ -113,43 +117,20 @@ class Giliran(BaseModel):
         return nilai
 
 
-class Percakapan:
-    """Satu sesi. Tambah saja, sengaja tanpa metode menyunting maupun menghapus."""
+def giliran_sah(*, pertanyaan: str, id_pesan: str, waktu: datetime) -> Giliran:
+    """Bentuk satu giliran yang layak disimpan — R-13, KM-03.
 
-    def __init__(self, id_percakapan: str) -> None:
-        if not id_percakapan.strip():
-            raise GalatPercakapan("percakapan tanpa pengenal tidak dapat dilanjutkan")
-        self._id = id_percakapan
-        self._giliran: list[Giliran] = []
-
-    @property
-    def id_percakapan(self) -> str:
-        return self._id
-
-    @property
-    def giliran(self) -> tuple[Giliran, ...]:
-        """Salinan beku.
-
-        Daftar yang dikembalikan apa adanya dapat ditambahi maupun dikosongkan
-        pemanggil, dan sifat tambah-saja kemudian hanya berlaku bagi yang sopan.
-        """
-        return tuple(self._giliran)
-
-    def catat(self, *, pertanyaan: str, id_pesan: str, waktu: datetime) -> None:
-        """Tambahkan satu giliran — R-13.
-
-        Seluruh pemeriksaan berjalan **sebelum** baris ditambahkan. Galat yang
-        tetap menulis barisnya membocorkan justru yang dilarangnya.
-        """
-        try:
-            giliran = Giliran(pertanyaan=pertanyaan, id_pesan=id_pesan, waktu=waktu)
-        except ValidationError as sebab:
-            # Rantai sebabnya **diputus** (`from None`): `ValidationError`
-            # pydantic membawa keterangan tentang muatan yang baru ditolak, dan
-            # jejak tumpukan yang mengulangnya memindahkan kebocoran dari
-            # riwayat ke log. Bentuk yang sama dengan gerbang telemetri (012).
-            raise GalatPercakapan(_pesan(sebab)) from None
-        self._giliran.append(giliran)
+    Seluruh pemeriksaan berjalan **sebelum** penyimpan dipanggil. Galat yang
+    tetap menulis barisnya membocorkan justru yang dilarangnya.
+    """
+    try:
+        return Giliran(pertanyaan=pertanyaan, id_pesan=id_pesan, waktu=waktu)
+    except ValidationError as sebab:
+        # Rantai sebabnya **diputus** (`from None`): `ValidationError`
+        # pydantic membawa keterangan tentang muatan yang baru ditolak, dan
+        # jejak tumpukan yang mengulangnya memindahkan kebocoran dari
+        # riwayat ke log. Bentuk yang sama dengan gerbang telemetri (012).
+        raise GalatPercakapan(_pesan(sebab)) from None
 
 
 def _pesan(sebab: ValidationError) -> str:

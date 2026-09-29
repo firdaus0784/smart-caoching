@@ -79,8 +79,10 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
     assert "PESAN_TIDAK_BERHAK" in nama
     assert "PESAN_PENGGUNA" in nama, "atribut kelas terlewat — lihat _tetapan"
     # 13 sejak fitur 028 T-5: `PESAN_GANGGUAN` bagi galat `GALAT_INTERNAL`.
+    # 14 sejak T-6: `PESAN_DATA_PRIBADI` bagi pertanyaan berdata pribadi (R-15).
     assert "PESAN_GANGGUAN" in nama
-    assert len(ditemukan) == 13, f"{len(ditemukan)} untai terbaca, seharusnya 13"
+    assert "PESAN_DATA_PRIBADI" in nama
+    assert len(ditemukan) == 14, f"{len(ditemukan)} untai terbaca, seharusnya 14"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

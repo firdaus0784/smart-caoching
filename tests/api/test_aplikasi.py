@@ -21,6 +21,7 @@ memanggil aplikasi di dalam proses yang sama.
 
 from __future__ import annotations
 
+import uuid
 from datetime import UTC, datetime
 
 import pytest
@@ -30,7 +31,14 @@ from src.api.aplikasi import PenentuIdentitas, susun_aplikasi
 from src.api.identitas import Identitas
 from src.api.peran import PETA_RUTE, Peran
 from src.api.tanya import AlasanBerhenti, HasilTanya
+from src.penyimpanan.riwayat import RiwayatMemori
 from src.rag.jawaban.tanggapan import StatusDasar, Tanggapan, Versi
+from tests.konftes_asinkron import jalankan
+
+ID_PERCAKAPAN = "3f1c9a2e-7b4d-4c1e-9a0f-2d6b8e5c1a47"
+"""UUID versi 4 sah (R-16). Tiap permintaan membawanya, agar penolakan yang
+diuji di berkas ini tetap karena sebab yang dinamai ujinya — bukan karena
+bidang wajib yang hilang (KB-098)."""
 
 VERSI = Versi(model="uji-1", indeks="uji-1", kode="uji-1")
 PENAFIAN = "Jawaban ini bukan pengganti keputusan Anda sebagai kepala sekolah."
@@ -74,13 +82,13 @@ def _aplikasi(
     *,
     hasil: HasilTanya | None = None,
     peran: Peran = Peran.PENGGUNA,
-    percakapan: dict[str, object] | None = None,
+    riwayat: RiwayatMemori | None = None,
 ) -> tuple[FastAPI, JalurPalsu]:
     jalur = JalurPalsu(hasil or HasilTanya(tanggapan=_tanggapan()))
     aplikasi = susun_aplikasi(
         jalur=jalur,
         identitas=IdentitasTetap(peran),
-        percakapan=percakapan if percakapan is not None else {},
+        riwayat=riwayat if riwayat is not None else RiwayatMemori(),
     )
     return aplikasi, jalur
 
@@ -91,7 +99,9 @@ def _aplikasi(
 def test_aplikasi_tanpa_penentu_identitas_gagal_disusun() -> None:
     """R-04. Bukan ditolak saat jalan — tidak dapat disusun sama sekali."""
     with pytest.raises(TypeError):
-        susun_aplikasi(jalur=JalurPalsu(HasilTanya(tanggapan=_tanggapan())), percakapan={})  # type: ignore[call-arg]
+        susun_aplikasi(
+            jalur=JalurPalsu(HasilTanya(tanggapan=_tanggapan())), riwayat=RiwayatMemori()
+        )  # type: ignore[call-arg]
 
 
 def test_rute_bawaan_kerangka_seluruhnya_mati() -> None:
@@ -127,7 +137,9 @@ def test_setiap_rute_terdaftar_ada_pada_peta_rute_d14() -> None:
 def test_peran_tidak_berhak_ditolak() -> None:
     """R-01."""
     aplikasi, _ = _aplikasi(peran=Peran.ANOTATOR)
-    tanggapan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?"})
+    tanggapan = TestClient(aplikasi).post(
+        "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Apa itu RKAS?"}
+    )
     assert tanggapan.status_code == 403
 
 
@@ -138,7 +150,9 @@ def test_jalur_tidak_tersentuh_ketika_peran_ditolak() -> None:
     seluruh uji lain: tanggapannya tetap 403.
     """
     aplikasi, jalur = _aplikasi(peran=Peran.ANOTATOR)
-    TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?"})
+    TestClient(aplikasi).post(
+        "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Apa itu RKAS?"}
+    )
     assert jalur.jumlah_panggilan == 0
 
 
@@ -147,7 +161,7 @@ def test_pesan_tolakan_peran_ringkas_dan_tanpa_istilah_teknis() -> None:
     aplikasi, _ = _aplikasi(peran=Peran.ANOTATOR)
     pesan = (
         TestClient(aplikasi)
-        .post("/api/v1/tanya", json={"pertanyaan": "x y z"})
+        .post("/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "x y z"})
         .json()["galat"]["pesan_pengguna"]
     )
     assert len(pesan.split()) <= 20
@@ -161,7 +175,11 @@ def test_pesan_tolakan_peran_ringkas_dan_tanpa_istilah_teknis() -> None:
 def test_jawaban_sah_dikembalikan_utuh() -> None:
     """R-02. Tanpa satu bidang pun berubah."""
     aplikasi, jalur = _aplikasi()
-    isi = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?"}).json()
+    isi = (
+        TestClient(aplikasi)
+        .post("/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Apa itu RKAS?"})
+        .json()
+    )
     assert isi["id_pesan"] == "p1"
     assert isi["status_dasar"] == "kuat"
     assert isi["penafian"] == PENAFIAN
@@ -182,7 +200,9 @@ def test_jalur_berhenti_tanpa_jawaban_tetap_200() -> None:
         alasan_berhenti=AlasanBerhenti.BUKTI_TIDAK_CUKUP,
     )
     aplikasi, _ = _aplikasi(hasil=hasil)
-    tanggapan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?"})
+    tanggapan = TestClient(aplikasi).post(
+        "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Apa itu RKAS?"}
+    )
     assert tanggapan.status_code == 200
     assert tanggapan.json()["status_dasar"] == "tidak_ditemukan"
 
@@ -190,7 +210,9 @@ def test_jalur_berhenti_tanpa_jawaban_tetap_200() -> None:
 def test_pertanyaan_kosong_ditolak_dengan_pesan_ringkas() -> None:
     """R-06."""
     aplikasi, jalur = _aplikasi()
-    tanggapan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "   "})
+    tanggapan = TestClient(aplikasi).post(
+        "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "   "}
+    )
     assert tanggapan.status_code == 400
     assert len(tanggapan.json()["galat"]["pesan_pengguna"].split()) <= 20
     assert jalur.jumlah_panggilan == 0
@@ -208,7 +230,8 @@ def test_pesan_galat_tidak_memuat_kembali_nilai_yang_ditolak() -> None:
     aplikasi, _ = _aplikasi()
     rahasia = "0812RAHASIA9988"
     tanggapan = TestClient(aplikasi).post(
-        "/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?", "nomor": rahasia}
+        "/api/v1/tanya",
+        json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Apa itu RKAS?", "nomor": rahasia},
     )
     assert tanggapan.status_code == 400
     assert rahasia not in tanggapan.text
@@ -218,7 +241,8 @@ def test_bidang_tambahan_pada_permintaan_ditolak() -> None:
     """Bentuk berpagar pada permintaan, bukan hanya pada tanggapan."""
     aplikasi, jalur = _aplikasi()
     tanggapan = TestClient(aplikasi).post(
-        "/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?", "peran": "admin"}
+        "/api/v1/tanya",
+        json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Apa itu RKAS?", "peran": "admin"},
     )
     assert tanggapan.status_code == 400
     assert jalur.jumlah_panggilan == 0
@@ -227,24 +251,30 @@ def test_bidang_tambahan_pada_permintaan_ditolak() -> None:
 # ── B-2 · riwayat percakapan ────────────────────────────────────────
 
 
-def _percakapan_contoh() -> dict[str, object]:
-    from src.api.percakapan import Percakapan
-
-    percakapan = Percakapan("c1")
-    percakapan.catat(pertanyaan="Apa itu RKAS?", id_pesan="p1", waktu=datetime.now(UTC))
-    return {"c1": percakapan}
+def _percakapan_contoh() -> RiwayatMemori:
+    riwayat = RiwayatMemori()
+    jalankan(
+        riwayat.catat(
+            pemilik="ps_uji_a",
+            id_percakapan=uuid.UUID(ID_PERCAKAPAN),
+            pertanyaan="Apa itu RKAS?",
+            id_pesan="p1",
+            waktu=datetime.now(UTC),
+        )
+    )
+    return riwayat
 
 
 def test_daftar_percakapan_dikembalikan() -> None:
-    aplikasi, _ = _aplikasi(percakapan=_percakapan_contoh())
+    aplikasi, _ = _aplikasi(riwayat=_percakapan_contoh())
     isi = TestClient(aplikasi).get("/api/v1/percakapan").json()
-    assert isi["percakapan"] == ["c1"]
+    assert isi["percakapan"] == [ID_PERCAKAPAN]
 
 
 def test_giliran_dikembalikan_tanpa_bidang_tanggapan() -> None:
     """R-05. `Giliran` memang tidak memilikinya, dan itu yang menjaga C-07."""
-    aplikasi, _ = _aplikasi(percakapan=_percakapan_contoh())
-    isi = TestClient(aplikasi).get("/api/v1/percakapan/c1").json()
+    aplikasi, _ = _aplikasi(riwayat=_percakapan_contoh())
+    isi = TestClient(aplikasi).get(f"/api/v1/percakapan/{ID_PERCAKAPAN}").json()
     assert isi["giliran"][0]["pertanyaan"] == "Apa itu RKAS?"
     assert "tanggapan" not in isi["giliran"][0]
 
@@ -256,16 +286,16 @@ def test_gerbang_peran_berlaku_pada_setiap_penangan() -> None:
     percakapan tidak tersentuh satu uji pun, sehingga gerbang yang dihapus dari
     keduanya akan lolos seluruh uji lain.
     """
-    aplikasi, _ = _aplikasi(peran=Peran.ANOTATOR, percakapan=_percakapan_contoh())
+    aplikasi, _ = _aplikasi(peran=Peran.ANOTATOR, riwayat=_percakapan_contoh())
     klien = TestClient(aplikasi)
-    for jalur in ("/api/v1/percakapan", "/api/v1/percakapan/c1"):
+    for jalur in ("/api/v1/percakapan", f"/api/v1/percakapan/{ID_PERCAKAPAN}"):
         tanggapan = klien.get(jalur)
         assert tanggapan.status_code == 403, jalur
         assert len(tanggapan.json()["galat"]["pesan_pengguna"].split()) <= 20
 
 
 def test_percakapan_tak_dikenal_ditolak() -> None:
-    aplikasi, _ = _aplikasi(percakapan=_percakapan_contoh())
+    aplikasi, _ = _aplikasi(riwayat=_percakapan_contoh())
     tanggapan = TestClient(aplikasi).get("/api/v1/percakapan/tidak-ada")
     assert tanggapan.status_code == 404
     assert len(tanggapan.json()["galat"]["pesan_pengguna"].split()) <= 20

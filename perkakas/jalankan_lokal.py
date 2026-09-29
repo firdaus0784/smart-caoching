@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import uuid
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -54,6 +55,12 @@ from src.api.aplikasi import susun_aplikasi
 from src.api.identitas import Identitas
 from src.api.peran import Peran
 from src.api.tanya import AlasanBerhenti, HasilTanya
+from src.penyimpanan.riwayat import (
+    PERAN_RIWAYAT,
+    PenyimpanRiwayat,
+    RiwayatMemori,
+    RiwayatPostgres,
+)
 from src.rag.jawaban.tanggapan import StatusDasar, Tanggapan, Versi
 
 ALAMAT_AMAN = "127.0.0.1"
@@ -84,7 +91,7 @@ class PenjawabBelumSiap:
     async def jawab(self, pertanyaan: str, **_: Any) -> HasilTanya:
         return HasilTanya(
             tanggapan=Tanggapan(
-                id_pesan="pengembangan",
+                id_pesan=f"pengembangan-{uuid.uuid4().hex[:12]}",
                 status_dasar=StatusDasar.TIDAK_DITEMUKAN,
                 penafian=PENAFIAN,
                 versi=VERSI_PENGEMBANGAN,
@@ -126,12 +133,50 @@ def periksa_alamat(alamat: str) -> None:
         raise SystemExit(2)
 
 
-def susun_untuk_pengembangan() -> FastAPI:
-    """Rakit aplikasi dengan pengganti pengembangan."""
+class SambunganPerKueri:
+    """Satu sambungan baru per kueri, sebagai `peran_riwayat` — pengembangan saja.
+
+    Memenuhi `SambunganAktif` tanpa kolam sambungan: sederhana, dan cukup bagi
+    satu pengembang pada mesinnya sendiri. Sandi tidak pernah ditulis di sini;
+    `asyncpg` membacanya dari lingkungan (`PGPASSWORD`) bila peladen memintanya.
+    """
+
+    def __init__(self, host: str, porta: int) -> None:
+        self._host = host
+        self._porta = porta
+
+    async def _dengan(self, nama: str, kueri: str, *argumen: object) -> Any:
+        import asyncpg  # type: ignore[import-untyped]
+
+        sambungan = await asyncpg.connect(
+            host=self._host, port=self._porta, user=PERAN_RIWAYAT, database="smart_coaching"
+        )
+        try:
+            return await getattr(sambungan, nama)(kueri, *argumen)
+        finally:
+            await sambungan.close()
+
+    async def fetchrow(self, kueri: str, *argumen: object) -> Any:
+        return await self._dengan("fetchrow", kueri, *argumen)
+
+    async def fetch(self, kueri: str, *argumen: object) -> Any:
+        return await self._dengan("fetch", kueri, *argumen)
+
+    async def execute(self, kueri: str, *argumen: object) -> Any:
+        return await self._dengan("execute", kueri, *argumen)
+
+
+def susun_untuk_pengembangan(riwayat: PenyimpanRiwayat | None = None) -> FastAPI:
+    """Rakit aplikasi dengan pengganti pengembangan.
+
+    Riwayat bawaannya di memori — hilang saat dimatikan, dan keluaran `main`
+    menyatakannya. `--riwayat postgres` memakai PostgreSQL sebagai
+    `peran_riwayat` (fitur 028).
+    """
     return susun_aplikasi(
         jalur=PenjawabBelumSiap(),
         identitas=IdentitasPengembangan(),
-        percakapan={},
+        riwayat=riwayat if riwayat is not None else RiwayatMemori(),
     )
 
 
@@ -141,21 +186,37 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
     )
     penghurai.add_argument("--alamat", default=ALAMAT_AMAN)
     penghurai.add_argument("--porta", type=int, default=8000)
+    penghurai.add_argument("--riwayat", choices=("memori", "postgres"), default="memori")
     argumen = penghurai.parse_args()
 
     periksa_alamat(argumen.alamat)
 
+    import os
+
     import uvicorn
+
+    riwayat: PenyimpanRiwayat
+    if argumen.riwayat == "postgres":
+        riwayat = RiwayatPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN), int(os.environ.get("PGPORT", "5432"))
+            )
+        )
+        keterangan_riwayat = "PostgreSQL sebagai peran_riwayat — bertahan saat dimatikan."
+    else:
+        riwayat = RiwayatMemori()
+        keterangan_riwayat = "di memori — HILANG saat dimatikan (--riwayat postgres)."
 
     print(
         "\n  Smart-Coaching — mode pengembangan\n"
         f"  Alamat   : http://{argumen.alamat}:{argumen.porta}\n"
-        '  Coba     : POST /api/v1/tanya  {"pertanyaan": "..."}\n'
+        '  Coba     : POST /api/v1/tanya  {"pertanyaan": "...", "id_percakapan": "<uuid4>"}\n'
+        f"  Riwayat  : {keterangan_riwayat}\n"
+        f"  Pemilik  : {PEMILIK_PENGEMBANGAN} — satu pemilik bagi semua pemanggil.\n"
         "\n"
-        "  Tanpa autentikasi. Tanpa penyimpanan bertahan — data hilang saat\n"
-        "  dimatikan. Jawaban selalu 'tidak ditemukan' karena korpus kosong.\n"
+        "  Tanpa autentikasi. Jawaban selalu 'tidak ditemukan' karena korpus kosong.\n"
     )
-    uvicorn.run(susun_untuk_pengembangan(), host=argumen.alamat, port=argumen.porta)
+    uvicorn.run(susun_untuk_pengembangan(riwayat), host=argumen.alamat, port=argumen.porta)
 
 
 if __name__ == "__main__":  # pragma: no cover

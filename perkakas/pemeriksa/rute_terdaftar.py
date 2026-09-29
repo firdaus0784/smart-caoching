@@ -150,7 +150,9 @@ def _rute_terpasang() -> set[str]:
         async def jawab(self, pertanyaan: str, **argumen: object) -> object:
             raise AssertionError("tidak dipanggil")
 
-    aplikasi = susun_aplikasi(jalur=_Kosong(), identitas=_Kosong(), percakapan={})  # type: ignore[arg-type]
+    from src.penyimpanan.riwayat import RiwayatMemori
+
+    aplikasi = susun_aplikasi(jalur=_Kosong(), identitas=_Kosong(), riwayat=RiwayatMemori())  # type: ignore[arg-type]
     return {_pola(rute.path) for rute in aplikasi.routes if isinstance(rute, APIRoute)}
 
 

@@ -49,28 +49,34 @@ bukan pada satu di antaranya saja.
 
 from __future__ import annotations
 
+import uuid
+from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import Any, Protocol, runtime_checkable
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from src.api.galat import tanggapan_galat
-from src.api.identitas import PenentuIdentitas
+from src.api.identitas import Identitas, PenentuIdentitas
 from src.api.peran import (
     POLA_DAFTAR_PERCAKAPAN,
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
     boleh,
 )
-from src.api.percakapan import Percakapan
+from src.api.percakapan import Giliran, giliran_sah
 from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
+from src.nlp.anonimisasi.pola import periksa_data_pribadi
+from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
 
 PESAN_TIDAK_BERHAK = "Akun Anda tidak dapat membuka bagian ini."
 PESAN_TIDAK_LENGKAP = "Pertanyaan belum lengkap. Tulis ulang dengan kalimat utuh."
 PESAN_TIDAK_ADA = "Percakapan yang Anda cari tidak ditemukan."
 PESAN_GANGGUAN = "Ada gangguan di sistem kami. Coba lagi sebentar lagi."
+PESAN_DATA_PRIBADI = "Pertanyaan memuat nomor pribadi. Hapus nomor itu, lalu kirim ulang."
 """Pesan tetap — C-13 dan R-06: ≤ 20 kata, tanpa istilah teknis, tanpa kode.
 
 Ketiganya tidak memuat kembali nilai yang ditolak. Pesan yang mengutip
@@ -98,20 +104,41 @@ class PermintaanTanya(BaseModel):
     yang, bila diterima, akan membuat pemanggil menentukan penjaganya sendiri.
     """
 
-    model_config = ConfigDict(frozen=True, extra="forbid", hide_input_in_errors=True)
+    model_config = ConfigDict(
+        frozen=True,
+        extra="forbid",
+        # Pertanyaan berdata pribadi ditolak pada modul ini (R-15). Tanpa
+        # setelan ini pesan `ValidationError` menyalin masukannya — KB-049.
+        hide_input_in_errors=True,
+    )
 
     pertanyaan: str = Field(min_length=1)
+    id_percakapan: uuid.UUID
+    """Dibangkitkan klien — D-14 Bagian 4.1, P-2 fitur 028. Peladen tidak dapat
+    mengembalikan pengenal yang ia buat tanpa menambah bidang tanggapan (C-20)."""
+
+    @field_validator("id_percakapan")
+    @classmethod
+    def _uuid_versi_4(cls, nilai: uuid.UUID) -> uuid.UUID:
+        """R-16: pengenal yang mudah ditebak — `1`, UUID berbasis waktu — ditolak.
+        Keacakan UUID versi 4 yang menanggung batas R-02."""
+        if nilai.version != 4 or nilai.variant != uuid.RFC_4122:
+            raise ValueError("id_percakapan wajib UUID versi 4")
+        return nilai
 
 
 def susun_aplikasi(
     *,
     jalur: JalurPenjawab,
     identitas: PenentuIdentitas,
-    percakapan: dict[str, Percakapan],
+    riwayat: PenyimpanRiwayat,
+    sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
-    """Susun peladen — R-04, R-07.
+    """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
 
     `identitas` **tanpa nilai baku**, disengaja; lihat uraian modul.
+    `riwayat` juga tanpa nilai baku: penyimpan yang diam-diam jatuh ke memori
+    adalah riwayat yang hilang saat peladen dimulai ulang tanpa ada yang tahu.
     """
     aplikasi = FastAPI(
         title="Smart-Coaching Adaptif",
@@ -141,17 +168,25 @@ def susun_aplikasi(
             500, KodeGalat.GALAT_INTERNAL, PESAN_GANGGUAN, rute=permintaan.url.path, sebab=galat
         )
 
-    def _tolak_bila_tidak_berhak(permintaan: Request, pola: str) -> JSONResponse | None:
-        """R-01 — dipanggil **sebelum** apa pun yang lain pada tiap penangan."""
-        if not boleh(identitas.identitas(permintaan).peran, permintaan.method, pola):
+    def _identitas_atau_tolak(permintaan: Request, pola: str) -> Identitas | JSONResponse:
+        """R-01 — dipanggil **sebelum** apa pun yang lain pada tiap penangan.
+
+        Identitas dibaca sekali: peran dan pemilik dari satu keadaan yang sama.
+        """
+        siapa = identitas.identitas(permintaan)
+        if not boleh(siapa.peran, permintaan.method, pola):
             return tanggapan_galat(403, KodeGalat.TIDAK_BERWENANG, PESAN_TIDAK_BERHAK, rute=pola)
-        return None
+        return siapa
+
+    def _tidak_ada(pola: str) -> JSONResponse:
+        """R-02, R-03: satu bentuk bagi "tidak dikenal" dan "milik orang lain"."""
+        return tanggapan_galat(404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_TIDAK_ADA, rute=pola)
 
     @aplikasi.post(RUTE_TANYA)
     async def tanya(permintaan: Request) -> JSONResponse:
-        ditolak = _tolak_bila_tidak_berhak(permintaan, RUTE_TANYA)
-        if ditolak is not None:
-            return ditolak
+        siapa = _identitas_atau_tolak(permintaan, RUTE_TANYA)
+        if isinstance(siapa, JSONResponse):
+            return siapa
         try:
             badan = PermintaanTanya.model_validate(await permintaan.json())
         except (ValidationError, ValueError):
@@ -162,9 +197,40 @@ def susun_aplikasi(
             return tanggapan_galat(
                 400, KodeGalat.VALIDASI_GAGAL, PESAN_TIDAK_LENGKAP, rute=RUTE_TANYA
             )
+        # R-15, TK-68: sebelum jalur penjawab — pertanyaan berdata pribadi
+        # tidak sampai ke model, riwayat, maupun log. Pesannya tidak mengutip.
+        if periksa_data_pribadi(badan.pertanyaan):
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_DATA_PRIBADI, rute=RUTE_TANYA
+            )
+        # R-02: pemilik diperiksa sebelum jawaban disusun, agar model tidak
+        # dipanggil bagi percakapan milik orang lain.
+        if not await riwayat.dapat_ditulis(
+            pemilik=siapa.pemilik, id_percakapan=badan.id_percakapan
+        ):
+            return _tidak_ada(RUTE_TANYA)
 
+        # R-07, C-14: jalur menerima pertanyaan saja — tanpa giliran sebelumnya.
         hasil = await jalur.jawab(badan.pertanyaan)
-        # R-03: tertahan atau tidak, bentuk dan statusnya sama. D-14
+
+        # R-01, TK-65: giliran dicatat sesudah tanggapan tersusun, oleh lapisan
+        # ini — jalur penjawaban tidak memegang hak tulis (R-05, C-17).
+        giliran = giliran_sah(
+            pertanyaan=badan.pertanyaan, id_pesan=hasil.tanggapan.id_pesan, waktu=sekarang()
+        )
+        try:
+            await riwayat.catat(
+                pemilik=siapa.pemilik,
+                id_percakapan=badan.id_percakapan,
+                pertanyaan=giliran.pertanyaan,
+                id_pesan=giliran.id_pesan,
+                waktu=giliran.waktu,
+            )
+        except PercakapanTidakAda:
+            # Pemilik lain membuka percakapan yang sama di antara pemeriksaan
+            # dan pencatatan. Jawabannya tidak dikirim: ia tidak tercatat.
+            return _tidak_ada(RUTE_TANYA)
+        # R-03 fitur 023: tertahan atau tidak, bentuk dan statusnya sama. D-14
         # menetapkan `tidak_ditemukan` memakai bentuk jawaban yang sah, dan
         # status galat akan membuat layar menampilkannya sebagai kegagalan
         # sistem — D-02 titik kritis T3 menuntut sebaliknya.
@@ -172,28 +238,36 @@ def susun_aplikasi(
 
     @aplikasi.get(RUTE_DAFTAR_PERCAKAPAN)
     async def daftar_percakapan(permintaan: Request) -> JSONResponse:
-        ditolak = _tolak_bila_tidak_berhak(permintaan, RUTE_DAFTAR_PERCAKAPAN)
-        if ditolak is not None:
-            return ditolak
-        return JSONResponse(status_code=200, content={"percakapan": sorted(percakapan)})
+        siapa = _identitas_atau_tolak(permintaan, RUTE_DAFTAR_PERCAKAPAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        # TK-67: milik penanya saja, terbaru lebih dulu (D-14 Bagian 4.3).
+        milik = await riwayat.daftar(pemilik=siapa.pemilik)
+        return JSONResponse(status_code=200, content={"percakapan": [str(i) for i in milik]})
 
     @aplikasi.get(RUTE_SATU_PERCAKAPAN)
     async def satu_percakapan(permintaan: Request, id: str) -> JSONResponse:
-        ditolak = _tolak_bila_tidak_berhak(permintaan, RUTE_SATU_PERCAKAPAN)
-        if ditolak is not None:
-            return ditolak
-        satu = percakapan.get(id)
-        if satu is None:
-            return tanggapan_galat(
-                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_TIDAK_ADA, rute=RUTE_SATU_PERCAKAPAN
-            )
-        # R-05: `Giliran` tidak memiliki bidang tanggapan, dan bentuk itu yang
-        # menjaga C-07 — tanggapan yang tersimpan menua.
+        siapa = _identitas_atau_tolak(permintaan, RUTE_SATU_PERCAKAPAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            id_percakapan = uuid.UUID(id)
+            baris = await riwayat.baca(pemilik=siapa.pemilik, id_percakapan=id_percakapan)
+        except (ValueError, PercakapanTidakAda):
+            # Bukan UUID, tidak dikenal, dan milik orang lain: satu bentuk.
+            return _tidak_ada(RUTE_SATU_PERCAKAPAN)
+        # R-05 fitur 023: `Giliran` tidak memiliki bidang tanggapan, dan bentuk
+        # itu yang menjaga C-07 — tanggapan yang tersimpan menua.
         return JSONResponse(
             status_code=200,
             content={
-                "id_percakapan": satu.id_percakapan,
-                "giliran": [g.model_dump(mode="json") for g in satu.giliran],
+                "id_percakapan": str(id_percakapan),
+                "giliran": [
+                    Giliran(pertanyaan=b.pertanyaan, id_pesan=b.id_pesan, waktu=b.waktu).model_dump(
+                        mode="json"
+                    )
+                    for b in baris
+                ],
             },
         )
 

@@ -30,7 +30,7 @@ keduanya memberi tahu penebak bahwa tebakannya mengenai sesuatu.
 
 ## Tambah-saja
 
-Permukaannya tiga: `catat`, `daftar`, `baca`. Tidak ada yang mengubah maupun
+Permukaannya empat: `catat`, `daftar`, `baca`, `dapat_ditulis`. Tidak ada yang mengubah maupun
 menghapus — dan pada PostgreSQL ketiadaan itu ditegakkan peladen: `peran_riwayat`
 hanya diberi `SELECT` dan `INSERT` (T-2). Penarikan data pengguna (NFR-09)
 kelak menjadi tindakan tersendiri dengan peran tersendiri.
@@ -91,6 +91,16 @@ class PenyimpanRiwayat(Protocol):
         """Giliran satu percakapan milik `pemilik`, berurutan."""
         ...
 
+    async def dapat_ditulis(self, *, pemilik: str, id_percakapan: uuid.UUID) -> bool:
+        """Belum dikenal, atau milik `pemilik`. Membaca saja; tidak membuka apa pun.
+
+        Ditambahkan T-6 (KB-145): pemilik diperiksa **sebelum** jalur penjawab
+        dipanggil, sehingga jawaban tidak disusun — dan model tidak dipanggil —
+        bagi percakapan milik orang lain. `catat` tetap memeriksa ulang secara
+        atomik; pemeriksaan ini bukan penjagaan terakhir.
+        """
+        ...
+
 
 def _periksa(pemilik: str, pertanyaan: str, id_pesan: str, waktu: datetime) -> None:
     for nama, nilai in (("pemilik", pemilik), ("pertanyaan", pertanyaan), ("id_pesan", id_pesan)):
@@ -146,6 +156,10 @@ class RiwayatMemori:
         if satu is None or satu.pemilik != pemilik:
             raise PercakapanTidakAda
         return tuple(satu.giliran)
+
+    async def dapat_ditulis(self, *, pemilik: str, id_percakapan: uuid.UUID) -> bool:
+        satu = self._percakapan.get(id_percakapan)
+        return satu is None or satu.pemilik == pemilik
 
 
 _CATAT: Final = """
@@ -207,6 +221,12 @@ class RiwayatPostgres:
             pemilik,
         )
         return tuple(uuid.UUID(str(b["id_percakapan"])) for b in baris)
+
+    async def dapat_ditulis(self, *, pemilik: str, id_percakapan: uuid.UUID) -> bool:
+        baris = await self._sambungan.fetchrow(
+            "SELECT pemilik FROM riwayat.percakapan WHERE id_percakapan = $1", id_percakapan
+        )
+        return baris is None or baris["pemilik"] == pemilik
 
     async def baca(self, *, pemilik: str, id_percakapan: uuid.UUID) -> tuple[BarisGiliran, ...]:
         # Pemilik dan keberadaan diperiksa dalam satu kueri, sehingga

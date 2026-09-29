@@ -28,7 +28,14 @@ from src.api.galat import LOG_OPERASIONAL
 from src.api.peran import Peran
 from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel
-from tests.api.test_aplikasi import IdentitasTetap, JalurPalsu, _aplikasi, _tanggapan
+from src.penyimpanan.riwayat import RiwayatMemori
+from tests.api.test_aplikasi import (
+    ID_PERCAKAPAN,
+    IdentitasTetap,
+    JalurPalsu,
+    _aplikasi,
+    _tanggapan,
+)
 
 POLA_JEJAK = re.compile(r"^trc_[0-9a-f]{12}$")
 RAHASIA = "NIK saya 3201234567890123 tolong dicek"
@@ -44,7 +51,7 @@ class JalurRusak:
 
 def _klien_rusak(galat: Exception) -> TestClient:
     aplikasi = susun_aplikasi(
-        jalur=JalurRusak(galat), identitas=IdentitasTetap(Peran.PENGGUNA), percakapan={}
+        jalur=JalurRusak(galat), identitas=IdentitasTetap(Peran.PENGGUNA), riwayat=RiwayatMemori()
     )
     return TestClient(aplikasi, raise_server_exceptions=False)
 
@@ -64,7 +71,7 @@ def _galat(tanggapan: object) -> dict[str, str]:
         (
             "post",
             "/api/v1/tanya",
-            {"pertanyaan": "x"},
+            {"pertanyaan": "x", "id_percakapan": ID_PERCAKAPAN},
             Peran.ANOTATOR,
             403,
             "TIDAK_BERWENANG",
@@ -82,7 +89,7 @@ def _galat(tanggapan: object) -> dict[str, str]:
         (
             "post",
             "/api/v1/tanya",
-            {"pertanyaan": "   "},
+            {"pertanyaan": "   ", "id_percakapan": ID_PERCAKAPAN},
             Peran.PENGGUNA,
             400,
             "VALIDASI_GAGAL",
@@ -91,7 +98,7 @@ def _galat(tanggapan: object) -> dict[str, str]:
         (
             "post",
             "/api/v1/tanya",
-            {"tanya": "x"},
+            {"tanya": "x", "id_percakapan": ID_PERCAKAPAN},
             Peran.PENGGUNA,
             400,
             "VALIDASI_GAGAL",
@@ -132,7 +139,8 @@ def test_galat_tak_tertangani_menjadi_galat_internal_tanpa_rincian(
 ) -> None:
     with caplog.at_level(logging.WARNING, logger=LOG_OPERASIONAL.name):
         tanggapan = _klien_rusak(RuntimeError(RAHASIA)).post(
-            "/api/v1/tanya", json={"pertanyaan": "Bagaimana supervisi?"}
+            "/api/v1/tanya",
+            json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Bagaimana supervisi?"},
         )
 
     assert tanggapan.status_code == 500
@@ -146,7 +154,7 @@ def test_galat_tak_tertangani_menjadi_galat_internal_tanpa_rincian(
 def test_penyedia_model_gagal_menjadi_layanan_model_gagal() -> None:
     sebab = TimeoutError("penyedia-x lambat")
     tanggapan = _klien_rusak(GalatLayananModel(sebab)).post(
-        "/api/v1/tanya", json={"pertanyaan": "Bagaimana supervisi?"}
+        "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Bagaimana supervisi?"}
     )
 
     assert tanggapan.status_code == 503
@@ -162,7 +170,9 @@ def test_penyedia_model_gagal_menjadi_layanan_model_gagal() -> None:
 def test_id_jejak_sama_pada_tanggapan_dan_log(caplog: pytest.LogCaptureFixture) -> None:
     aplikasi, _ = _aplikasi(peran=Peran.ANOTATOR)
     with caplog.at_level(logging.WARNING, logger=LOG_OPERASIONAL.name):
-        tanggapan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "x"})
+        tanggapan = TestClient(aplikasi).post(
+            "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "x"}
+        )
 
     id_jejak = _galat(tanggapan)["id_jejak"]
     catatan = [r.getMessage() for r in caplog.records if r.name == LOG_OPERASIONAL.name]
@@ -174,9 +184,16 @@ def test_id_jejak_sama_pada_tanggapan_dan_log(caplog: pytest.LogCaptureFixture) 
 
 def test_log_hanya_nama_kelas_sebab_bukan_pesannya(caplog: pytest.LogCaptureFixture) -> None:
     """Pesan pengecualian dapat memuat pertanyaan — termasuk yang berdata
-    pribadi. Yang ditulis ke log hanya nama kelasnya."""
+    pribadi. Yang ditulis ke log hanya nama kelasnya.
+
+    Pertanyaannya sendiri netral: sejak T-6 pertanyaan ber-NIK ditolak sebelum
+    jalur dipanggil, sehingga pengecualiannya tidak akan pernah terjadi dan
+    uji ini akan menguji hal lain. NIK-nya tinggal pada pesan pengecualian."""
     with caplog.at_level(logging.WARNING, logger=LOG_OPERASIONAL.name):
-        _klien_rusak(RuntimeError(RAHASIA)).post("/api/v1/tanya", json={"pertanyaan": RAHASIA})
+        _klien_rusak(RuntimeError(RAHASIA)).post(
+            "/api/v1/tanya",
+            json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "Bagaimana supervisi?"},
+        )
 
     teks = "\n".join(r.getMessage() for r in caplog.records)
     assert "RuntimeError" in teks
@@ -195,7 +212,9 @@ def test_setiap_galat_membangkitkan_id_jejak_baru() -> None:
 def test_jawaban_sah_tidak_berbentuk_galat() -> None:
     """Pasangan: `tidak_ditemukan` tetap jawaban 200, bukan galat (R-03 fitur 023)."""
     aplikasi, _ = _aplikasi(hasil=HasilTanya(tanggapan=_tanggapan()))
-    tanggapan = TestClient(aplikasi).post("/api/v1/tanya", json={"pertanyaan": "x"})
+    tanggapan = TestClient(aplikasi).post(
+        "/api/v1/tanya", json={"id_percakapan": ID_PERCAKAPAN, "pertanyaan": "x"}
+    )
     assert tanggapan.status_code == 200
     assert "galat" not in tanggapan.json()
     assert JalurPalsu  # dipakai bersama berkas uji aplikasi

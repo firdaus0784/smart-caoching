@@ -33,6 +33,7 @@ jalur penuh dirakit.
 
 from __future__ import annotations
 
+import uuid
 from pathlib import Path
 
 import pytest
@@ -71,7 +72,10 @@ def test_alamat_mesin_sendiri_diterima() -> None:
 
 def test_aplikasi_dapat_disusun_dan_menjawab() -> None:
     klien = TestClient(susun_untuk_pengembangan())
-    tanggapan = klien.post("/api/v1/tanya", json={"pertanyaan": "Bagaimana menyusun RKAS?"})
+    tanggapan = klien.post(
+        "/api/v1/tanya",
+        json={"id_percakapan": str(uuid.uuid4()), "pertanyaan": "Bagaimana menyusun RKAS?"},
+    )
     assert tanggapan.status_code == 200
     assert tanggapan.json()["status_dasar"] == "tidak_ditemukan"
 
@@ -85,7 +89,10 @@ def test_jawaban_menyatakan_sebab_belum_menjawab() -> None:
 
 def test_penafian_selalu_ada_pada_jawaban() -> None:
     klien = TestClient(susun_untuk_pengembangan())
-    isi = klien.post("/api/v1/tanya", json={"pertanyaan": "Apa itu akreditasi?"}).json()
+    isi = klien.post(
+        "/api/v1/tanya",
+        json={"id_percakapan": str(uuid.uuid4()), "pertanyaan": "Apa itu akreditasi?"},
+    ).json()
     assert isi["penafian"].strip()
 
 
@@ -100,7 +107,9 @@ def test_versi_menyatakan_dirinya_pengembangan() -> None:
     """Jawaban membawa penanda versinya. Yang keluar dari titik jalan ini
     wajib terbaca sebagai pengembangan, bukan sebagai jawaban sungguhan."""
     klien = TestClient(susun_untuk_pengembangan())
-    versi = klien.post("/api/v1/tanya", json={"pertanyaan": "Apa itu RKAS?"}).json()["versi"]
+    versi = klien.post(
+        "/api/v1/tanya", json={"id_percakapan": str(uuid.uuid4()), "pertanyaan": "Apa itu RKAS?"}
+    ).json()["versi"]
     assert "pengembangan" in " ".join(str(n) for n in versi.values()).lower()
 
 

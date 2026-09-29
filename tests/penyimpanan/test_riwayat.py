@@ -197,6 +197,20 @@ def test_waktu_tanpa_zona_ditolak(riwayat: PenyimpanRiwayat) -> None:
         _catat(riwayat, _pemilik(), uuid.uuid4(), waktu=datetime(2026, 9, 29, 7, 30))
 
 
+def test_dapat_ditulis_bagi_baru_dan_milik_sendiri_bukan_milik_orang_lain(
+    riwayat: PenyimpanRiwayat,
+) -> None:
+    """T-6: pemeriksaan sebelum jawaban disusun. Pengenal baru membuka
+    percakapan (P-2), sehingga `True`; milik orang lain `False`."""
+    a, b, p = _pemilik(), _pemilik(), uuid.uuid4()
+    assert jalankan(riwayat.dapat_ditulis(pemilik=a, id_percakapan=p)) is True
+    _catat(riwayat, a, p)
+    assert jalankan(riwayat.dapat_ditulis(pemilik=a, id_percakapan=p)) is True
+    assert jalankan(riwayat.dapat_ditulis(pemilik=b, id_percakapan=p)) is False
+    # Membaca tidak meninggalkan jejak: percakapan tetap milik A seorang.
+    assert jalankan(riwayat.daftar(pemilik=b)) == ()
+
+
 # ── khusus PostgreSQL ───────────────────────────────────────────────────
 
 
@@ -231,7 +245,9 @@ def test_memori_tidak_bertahan_dan_itu_dinyatakan() -> None:
 def test_permukaan_tanpa_ubah_maupun_hapus(kelas: type) -> None:
     """R-08. Yang tidak disediakan tidak dapat dipanggil karena lupa."""
     publik = {n for n in dir(kelas) if not n.startswith("_")}
-    assert publik == {"catat", "daftar", "baca"}
+    # `dapat_ditulis` ditambahkan T-6 (KB-145): pemilik diperiksa **sebelum**
+    # jalur penjawab dipanggil. Ia membaca, tidak mengubah.
+    assert publik == {"catat", "daftar", "baca", "dapat_ditulis"}
 
 
 def test_peran_riwayat_ada_pada_berkas_sql() -> None:
