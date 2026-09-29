@@ -41,7 +41,11 @@ export interface PropertiLayarTanya {
 export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
   const [pertanyaan, setPertanyaan] = useState(() => bacaDraf(simpanan));
   const [keadaan, setKeadaan] = useState<Keadaan>({ jenis: "kosong" });
-  const [idPercakapan, setIdPercakapan] = useState(() => percakapanAktif(simpanan));
+  const [awal] = useState(() => percakapanAktif(simpanan));
+  const [idPercakapan, setIdPercakapan] = useState(awal.id);
+  // Percakapan yang baru dibangkitkan pasti belum dikenal peladen; riwayatnya
+  // baru dibaca sesudah pertanyaan pertamanya (T-8, KB-147).
+  const [dikenalPeladen, setDikenalPeladen] = useState(!awal.baru);
   const [giliran, setGiliran] = useState<readonly Giliran[]>([]);
   const [muatUlang, setMuatUlang] = useState(0);
   const isian = useRef<HTMLTextAreaElement>(null);
@@ -50,6 +54,7 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
   // halaman, dan sesudah tiap jawaban. Galat memuatnya tidak menjatuhkan
   // layar; bloknya sekadar tidak tampil.
   useEffect(() => {
+    if (!dikenalPeladen) return undefined;
     let berlaku = true;
     void bacaPercakapan(idPercakapan, pemanggil).then((hasil) => {
       if (berlaku) setGiliran(hasil.jenis === "percakapan" ? hasil.percakapan.giliran : []);
@@ -57,7 +62,7 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
     return () => {
       berlaku = false;
     };
-  }, [idPercakapan, muatUlang, pemanggil]);
+  }, [idPercakapan, muatUlang, pemanggil, dikenalPeladen]);
 
   function pilihPertanyaanLama(teks: string) {
     // Mengisi, tidak mengirim: pengguna yang memutuskan bertanya ulang.
@@ -67,6 +72,7 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
 
   function mulaiPercakapanBaru() {
     setIdPercakapan(percakapanBaru(simpanan));
+    setDikenalPeladen(false);
     setGiliran([]);
     setKeadaan({ jenis: "kosong" });
   }
@@ -74,6 +80,7 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
   function bukaPercakapan(id: string) {
     jadikanAktif(simpanan, id);
     setIdPercakapan(id);
+    setDikenalPeladen(true);
     setKeadaan({ jenis: "kosong" });
   }
 
@@ -90,6 +97,7 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
     if (hasil.jenis === "jawaban") {
       hapusDraf(simpanan);
       setKeadaan({ jenis: "jawaban", tanggapan: hasil.tanggapan });
+      setDikenalPeladen(true);
       setMuatUlang((n) => n + 1);
       return;
     }

@@ -2372,3 +2372,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Blok 9 dari catatan peramban alih-alih dibaca dari peladen — ditolak; dua sumber riwayat akan berselisih, dan yang di peramban tidak tahu pemiliknya. |
 | Dampak | Berkas baru `web/src/percakapan.ts`, `web/src/percakapan.test.ts`, `web/src/tanya/RiwayatPercakapan.tsx`; diubah `kontrak.ts`, `klien.ts`, `mikrokopi.ts`, `LayarTanya.tsx`, `gaya.css`, uji-uji web, `perkakas/pemeriksa/kontrak_web.py`, `tests/pemeriksa/test_kontrak_web.py`. Nol baris di `src/`. Fitur 028: **7 dari 9 tugas**. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-147 · T-8 fitur 028 — putaran mutasi, bukti ujung ke ujung, dan satu temuan
+
+| | |
+|---|---|
+| Tanggal | 2026-09-29 |
+| Konteks | Lanjutan perintah **"lanjutkan T-3 dan selanjutnya"**. |
+| Keputusan | **T-8 selesai.** Putaran mutasi M-1 s.d. M-14: **14 dari 14 menyala**, diulang atas kode akhir sesudah temuan di bawah dengan hasil sama. M-6 dan M-7 dipasang pada berkas SQL dengan basis data dibangun ulang; M-12 dengan `vitest`; M-13 dengan **V-03** penuh; selebihnya dengan uji `tests/api` dan penyimpan. Pulih byte demi byte. `git diff` atas `src/rag/` dan `src/llm/` sejak commit Gerbang 3 `bae2dc6`: **nol berkas** (R-11). |
+| Bukti ujung ke ujung | `specs/028-penyambungan-riwayat-percakapan/bukti/ujung_ke_ujung.mjs`, Playwright global, terhadap `make jalan --riwayat postgres` lewat hasil build: sepuluh pemeriksaan lulus tanpa pelanggaran CSP — satu pengenal bagi dua pertanyaan, blok 9 dibaca dari peladen sesudah muat ulang dan tanpa isi jawaban, ketuk mengisi tanpa mengirim, percakapan baru, blok 10 memuat pertanyaan pertama percakapan lama, membuka percakapan lama melanjutkannya, K-3 atas pertanyaan ber-NIK. Tiga tangkapan layar. **R-13 ujung ke ujung**: tujuh percakapan dibaca, proses peladen dimatikan, proses baru dinyalakan — tujuh percakapan yang **sama persis**. Seluruh jawaban sungguhan dari korpus kosong (`tidak_ditemukan`); yang dibuktikan riwayatnya. |
+| **Temuan dari bukti: permintaan yang pasti 404** | Putaran pertama Playwright mencatat dua galat konsol 404. Dilacak ke jalurnya, bukan dikecualikan: layar meminta riwayat bagi pengenal yang **baru ia bangkitkan** — pada kunjungan pertama dan sesudah "Percakapan baru" — dan peladen menjawab "tidak dikenal" sesuai kontrak. Layar menanganinya sebagai daftar kosong, tetapi itu permintaan sia-sia pada jaringan 3G yang pasti gagal. `percakapanAktif` kini melaporkan apakah pengenal baru dibangkitkan, dan layar baru membaca riwayat sesudah pertanyaan pertama. Tiga uji baru, merah lebih dulu; putaran Playwright kedua: **nol respons 404**. |
+| Dua kekeliruan saya saat membuktikan R-13 | `pkill -f` dan `pgrep -f` dengan pola nama modul ikut mengenai shell yang menjalankannya, sebab pola itu ada pada baris perintah shell sendiri. Percobaan pertama menghasilkan daftar "sebelum" yang kosong karena peladen sudah mati lebih dulu — tidak dipakai sebagai bukti. Diulang dengan urutan bersih dan pola `[p]ython…` yang tidak cocok dengan dirinya sendiri. |
+| Alternatif | Mengecualikan 404 pada skrip bukti sebagai "sesuai kontrak" — ditolak; galat yang dikecualikan tanpa dilacak adalah galat yang tidak pernah diperbaiki. |
+| Dampak | Berkas baru pada `specs/028-penyambungan-riwayat-percakapan/bukti/` (skrip dan tiga PNG); diubah `web/src/percakapan.ts`, `web/src/tanya/LayarTanya.tsx`, dan ujinya. Nol baris di `src/`. 139 uji `web/`. Fitur 028: **8 dari 9 tugas**. |
+| Pemutus | Agen di dalam batas `tasks.md` |

@@ -31,7 +31,17 @@ export function percakapanBaru(simpanan: Simpanan | null): string {
   return id;
 }
 
-export function percakapanAktif(simpanan: Simpanan | null): string {
+/**
+ * Pengenal aktif, dan apakah ia **baru** dibangkitkan.
+ *
+ * `baru` memberi tahu layar bahwa peladen pasti belum mengenalnya, sehingga
+ * riwayatnya tidak perlu diminta — permintaan yang pasti dijawab 404 adalah
+ * permintaan sia-sia pada jaringan 3G (T-8, KB-147).
+ */
+export function percakapanAktif(simpanan: Simpanan | null): {
+  readonly id: string;
+  readonly baru: boolean;
+} {
   let tersimpan: string | null = null;
   try {
     tersimpan = simpanan?.getItem(KUNCI) ?? null;
@@ -40,7 +50,9 @@ export function percakapanAktif(simpanan: Simpanan | null): string {
   }
   // Nilai tersimpan yang bukan UUID v4 — disunting tangan, atau dari versi
   // lain — diganti, bukan dikirim: peladen akan menolaknya (R-16).
-  return tersimpan !== null && UUID_V4.test(tersimpan) ? tersimpan : percakapanBaru(simpanan);
+  return tersimpan !== null && UUID_V4.test(tersimpan)
+    ? { id: tersimpan, baru: false }
+    : { id: percakapanBaru(simpanan), baru: true };
 }
 
 /** Dipakai layar ketika pengguna membuka percakapan terdahulu. */

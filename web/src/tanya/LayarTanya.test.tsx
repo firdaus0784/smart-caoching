@@ -523,6 +523,45 @@ describe("melanjutkan percakapan", () => {
   });
 });
 
+describe("tidak meminta riwayat yang pasti belum ada — T-8", () => {
+  // Ditemukan pada bukti Playwright: layar meminta riwayat bagi pengenal
+  // yang baru ia bangkitkan, dan peladen menjawab 404 — permintaan sia-sia
+  // pada jaringan 3G yang pasti gagal (KB-147).
+  test("kunjungan pertama tidak membaca percakapan aktif", async () => {
+    const peladen = peladenPalsu();
+    pasangPeladen(peladen);
+    await screen.findByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu });
+    await new Promise((selesai) => setTimeout(selesai, 20));
+    expect(peladen.bacaan).toEqual([]);
+  });
+
+  test("percakapan baru tidak dibaca sebelum pertanyaan pertamanya", async () => {
+    const peladen = peladenPalsu();
+    pasangPeladen(peladen);
+    await kirimDanTunggu("Pertanyaan lama");
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolPercakapanBaru }));
+    await new Promise((selesai) => setTimeout(selesai, 20));
+    const baca = peladen.bacaan.length;
+    await kirimDanTunggu("Pertanyaan pertama percakapan baru");
+    const baru = peladen.kiriman.at(-1)?.id_percakapan;
+    expect(peladen.bacaan.slice(0, baca)).not.toContain(baru);
+    expect(peladen.bacaan).toContain(baru);
+  });
+
+  test("percakapan tersimpan tetap dibaca sesudah muat ulang", async () => {
+    const peladen = peladenPalsu();
+    const simpanan = simpananPeta();
+    const pertama = pasangPeladen(peladen, simpanan);
+    await kirimDanTunggu("Pertanyaan sebelum muat ulang");
+    pertama.unmount();
+    const sebelum = peladen.bacaan.length;
+
+    pasangPeladen(peladen, simpanan);
+    await screen.findByTestId("pertanyaan-sebelumnya");
+    expect(peladen.bacaan.length).toBeGreaterThan(sebelum);
+  });
+});
+
 describe("percakapan terdahulu — blok 10, K-2", () => {
   const TERDAHULU: [string, string][] = Array.from({ length: 12 }, (_, i) => [
     `00000000-0000-4000-8000-${String(i).padStart(12, "0")}`,

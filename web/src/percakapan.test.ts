@@ -26,31 +26,37 @@ const menolak: Simpanan = {
 
 describe("pengenal percakapan aktif — R-09, R-16", () => {
   test("dibangkitkan sebagai UUID versi 4", () => {
-    expect(percakapanAktif(simpananPeta())).toMatch(UUID_V4);
+    expect(percakapanAktif(simpananPeta()).id).toMatch(UUID_V4);
   });
 
   test("bertahan pada simpanan yang sama — percakapan berlanjut sesudah muat ulang", () => {
     const s = simpananPeta();
-    expect(percakapanAktif(s)).toBe(percakapanAktif(s));
+    const pertama = percakapanAktif(s);
+    const kedua = percakapanAktif(s);
+    expect(kedua.id).toBe(pertama.id);
+    expect(pertama.baru).toBe(true);
+    expect(kedua.baru).toBe(false);
   });
 
   test("percakapan baru mengganti yang aktif", () => {
     const s = simpananPeta();
-    const lama = percakapanAktif(s);
+    const lama = percakapanAktif(s).id;
     const baru = percakapanBaru(s);
     expect(baru).not.toBe(lama);
     expect(baru).toMatch(UUID_V4);
-    expect(percakapanAktif(s)).toBe(baru);
+    expect(percakapanAktif(s)).toEqual({ id: baru, baru: false });
   });
 
   test("pengenal tersimpan yang bukan UUID v4 diganti, tidak dipakai", () => {
     const s = simpananPeta();
     s.setItem("smart-coaching:percakapan-aktif", "1");
-    expect(percakapanAktif(s)).toMatch(UUID_V4);
+    const aktif = percakapanAktif(s);
+    expect(aktif.id).toMatch(UUID_V4);
+    expect(aktif.baru).toBe(true);
   });
 
   test("simpanan yang menolak tidak menjatuhkan apa pun", () => {
-    expect(percakapanAktif(menolak)).toMatch(UUID_V4);
-    expect(percakapanAktif(null)).toMatch(UUID_V4);
+    expect(percakapanAktif(menolak).id).toMatch(UUID_V4);
+    expect(percakapanAktif(null).id).toMatch(UUID_V4);
   });
 });
