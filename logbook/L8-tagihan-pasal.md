@@ -427,3 +427,29 @@ dan BT-29"`. Tidak satu klausanya berubah sejak catatan fitur 027: fitur 020
 belum memiliki `spec.md`, bobot model penyemat belum diunduh, dan fitur 025
 belum dimulai. Fitur 028 tidak menyentuh apa pun yang C-01 tunggu — riwayat
 menyimpan pertanyaan, bukan klaim.
+
+### Fitur 029 — 1 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 028. Tidak ada pasal berpindah, dan itu
+dicatat alih-alih dilewatkan.
+
+Fitur ini menguatkan tiga pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 029 |
+|---|---|
+| C-05 | Akun berpseudonim (TK-70 selesai): basis data perilaku tidak menyimpan nama, nomor induk, maupun surel siapa pun. Pseudonim acak huruf saja — heksadesimal ditolak karena dapat berpola rekening (KB-158). `peran_autentikasi` dan `peran_pengelola_akun` ditolak peladen menyambung basis data pseudonim, dengan sebab `permission denied`; mutasi M-8 menyala |
+| C-13 | Lima kalimat peladen dan tiga belas kalimat layar baru melewati pemeriksa; kawat sandung naik ke 17 dengan nama disebut tegas |
+| C-17 | Rute masuk menulis sesi, tetapi bukan jalur penjawaban: `jalur.jawab` tetap tanpa kredensial tulis, dan `src/rag/` serta `src/llm/` nol baris berubah sejak Gerbang 3 |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu masih `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 029 tidak menyentuh apa pun yang C-01 tunggu.
+
+**Koreksi atas baris C-13 di atas**, ditambahkan sebelum commit sesudah
+dihitung ulang dari selisih kode: kalimat peladen baru berjumlah **tiga**
+(`PESAN_BELUM_MASUK`, `PESAN_MASUK_DITOLAK`, `PESAN_MASUK_TIDAK_LENGKAP`),
+bukan lima; kalimat layar baru berjumlah **enam belas** (empat belas kunci
+`MIKROKOPI` dan dua bentuk `PESAN_GALAT.belum_masuk`), bukan tiga belas.
+Baris di atas tidak disunting.

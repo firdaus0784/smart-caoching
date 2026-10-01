@@ -77,13 +77,13 @@ Sumber: D-04 Bagian 5. Kolom keadaan diperiksa terhadap commit `9c0b138`.
 
 | Wadah | Teknologi | Keadaan | Keterangan |
 |---|---|---|---|
-| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, lolos Gerbang 4 pada 28 September 2026). Layar lain dan autentikasi belum (fitur 013, FR-A01); riwayat percakapan belum tersambung (fitur 028) |
+| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, lolos Gerbang 4 pada 28 September 2026). Riwayat percakapan tersambung (fitur 028). Layar S-01 Masuk dan tombol Keluar terbangun (fitur 029, **menunggu Gerbang 4**). Layar lain belum (fitur 013) |
 | Panel internal | React | **Dirancang** | Belum ada kode |
-| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Riwayat percakapan kini tercatat dan tersaring pemilik berpseudonim; pertanyaan berdata pribadi ditolak sebelum dijawab; galat berbentuk D-14 Bagian 4.2 (fitur 028, lolos Gerbang 4 pada 1 Oktober 2026). **Autentikasi belum ada** (FR-A01): pemilik ditentukan penentu identitas yang kelak diisi autentikasi |
+| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Riwayat percakapan kini tercatat dan tersaring pemilik berpseudonim; pertanyaan berdata pribadi ditolak sebelum dijawab; galat berbentuk D-14 Bagian 4.2 (fitur 028, lolos Gerbang 4 pada 1 Oktober 2026). Autentikasi terbangun (FR-A01, fitur 029, **menunggu Gerbang 4**): akun berpseudonim buatan tim, sandi `scrypt`, sesi di peladen yang dapat dicabut, kuki `HttpOnly`/`Secure`/`SameSite=Strict`; tanpa sesi sah setiap rute menjawab 401 |
 | Layanan NLP | Python | **Sebagian** | Praproses, OCR, dan deteksi data pribadi berpola terbangun (fitur 015); **model NER dan klasifikasi belum** (fitur 017) |
 | Layanan RAG | Python | **Sebagian** | Lihat Bagian 4 |
 | Pekerja latar | Python | **Sebagian** | Ingesti kanal dan penyematan korpus ada sebagai fungsi (fitur 002, 010, 026); **antrean tugas dan penjadwal belum** |
-| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026). Peran keenam `peran_riwayat` — hanya membaca dan menambah riwayat — dibangun fitur 028, lolos Gerbang 4 pada 1 Oktober 2026 |
+| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026). Peran keenam `peran_riwayat` — hanya membaca dan menambah riwayat — dibangun fitur 028, lolos Gerbang 4 pada 1 Oktober 2026. Peran ketujuh dan kedelapan — `peran_autentikasi` dan `peran_pengelola_akun`, dipisah dengan hak per kolom — dibangun fitur 029, **menunggu Gerbang 4** |
 | Penyimpanan berkas | Sistem berkas, area karantina terpisah | **Sebagian** | Pemisahan area karantina dan korpus terbangun **pada basis data**; penyimpanan berkas asli pada sistem berkas belum |
 | Perangkat anotasi | Label Studio, dipasang mandiri | **Sebagian** | Pembacaan ekspor terbangun (fitur 016); pemasangan perangkatnya pekerjaan operasi |
 
@@ -185,7 +185,7 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
 | Jumlah uji otomatis | 2.347 pada backend dan perkakas; 139 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 23 dari 28 |
+| Fitur lolos Gerbang 4 | 23 dari 29 (fitur 029 menunggu Gerbang 4) |
 | Anggaran muat aplikasi web | 70.812 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,

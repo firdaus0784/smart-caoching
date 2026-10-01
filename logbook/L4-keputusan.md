@@ -2566,3 +2566,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menambah rute "siapa saya" untuk memeriksa sesi saat dibuka — ditolak, AG-02. Membuka S-01 juga saat luring — ditolak; pengguna yang sinyalnya putus kehilangan kemampuan menulis draf yang fitur 027 janjikan. Menyimpan nama pengguna terakhir di peramban demi kenyamanan — ditolak; peramban sekolah dipakai bergantian, dan nama akun adalah separuh kredensial. |
 | Dampak | `web/src/` (Aplikasi, masuk/LayarMasuk, klien, kontrak, mikrokopi, percakapan, LayarTanya, main, gaya.css), uji web, `perkakas/pemeriksa/rute_terdaftar.py`, `tests/perkakas/test_rute_terdaftar.py`. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-162 · T-9 fitur 029 — putaran mutasi, bukti, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-9 `tasks.md`, plan Bagian 12. |
+| Keputusan | **Sembilan dari sembilan tugas fitur 029 selesai — menunggu Gerbang 4.** Putaran mutasi M-1 s.d. M-15 sebagai satu putaran: **15 dari 15 menyala**; berkas dipulihkan dan diperiksa tanpa sisa. Bukti Playwright terhadap `make jalan` bersesi dan akun buatan `perkakas.akun` dengan parameter scrypt **sungguhan**: 15 pemeriksaan lulus, empat tangkapan layar pada `specs/029-autentikasi-dan-sesi/bukti/`. `git diff --stat` atas `src/rag/` dan `src/llm/` sejak Gerbang 3: **kosong**. D-00 2.72: **TK-70 selesai**. L8: tagihan tidak menyusut (19 / 0 / 1). Dokumen HKI: Layanan API, Aplikasi web, dan Basis data dimutakhirkan dengan penanda **menunggu Gerbang 4**. |
+| **Yang diverifikasi, bukan diandaikan** | Plan Bagian 12.2 menetapkan bahwa bila peramban menolak kuki `__Host-` `Secure` pada `http://127.0.0.1`, pekerjaan berhenti. **Chromium menerimanya**: kuki terpasang dengan `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`; `document.cookie` tidak memuatnya. Kuki yang disalin sebelum keluar dijawab 200 sebelum keluar dan **401 sesudahnya**. Simpanan lokal kosong sesudah keluar. |
+| Sandi bukti | Akun bukti dibuat lewat perkakas; sandinya hanya diteruskan ke skrip lewat lingkungan dan berkas sementara di luar repositori yang dihapus sesudahnya — tidak masuk repositori, log, maupun tangkapan layar (isian sandi kosong pada gambar). |
+| Terbuka bagi pemegang Gerbang 4 | (1) Pembatasan laju per alamat jaringan tidak dibangun — penahanan per akun saja, sesuai OWASP; BT-60 tetap terbuka. (2) Angka penahanan, garam, dan semafor adalah **penetapan tim tanpa dasar literatur**; NIST SP 800-63B dan RFC 7914 tidak terbaca dari lingkungan ini. (3) Rute `/saya/*` dan pengisian `id_pengguna` fitur 022 dengan pseudonim menunggu fitur 013. (4) Kunci sesi pada tangkapan layar tidak tampil; uji kuki dijalankan pada Chromium saja, bukan Firefox maupun Safari. (5) Penerbitan sertifikat TLS dan peladen balik termasuk penyebaran D-09 — `Secure` menuntut HTTPS di luar mesin sendiri. |
+| Alternatif | Menandai fitur selesai tanpa bukti peramban — ditolak; atribut kuki yang diuji lewat `TestClient` membuktikan apa yang peladen kirim, bukan apa yang peramban terima. |
+| Dampak | `docs/D00.md`, `docs/hki/dokumentasi-teknis.md`, `logbook/L8-tagihan-pasal.md`, status `tasks.md`, bukti baru. Nol baris kode. |
+| Pemutus | Agen di dalam batas `tasks.md`; Gerbang 4 menunggu pemegang Gerbang 1–4 |

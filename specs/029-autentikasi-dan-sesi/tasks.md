@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 1 Oktober 2026 (KB-151); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 1 Oktober 2026 (KB-153); K-1 s.d. K-7 dan angka P-4 sesuai anjuran |
-| Status | **Gerbang 3 lolos** — 1 Oktober 2026 (KB-154). Pelaksanaan berjalan |
+| Status | **Gerbang 3 lolos** — 1 Oktober 2026 (KB-154). Sembilan dari sembilan tugas selesai — **menunggu Gerbang 4** (KB-162) |
 | Kebutuhan | R-01 s.d. R-10; FR-A01; NFR-05, NFR-06, NFR-08; KA-01, KA-03; C-05, C-13, C-17, C-20; TK-70 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -165,13 +165,13 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** plan Bagian 12.
 
-- [ ] M-1 s.d. M-15 sebagai satu putaran; yang tidak menyala **dilaporkan
+- [x] M-1 s.d. M-15 sebagai satu putaran; yang tidak menyala **dilaporkan
       beserta sebabnya**
-- [ ] Playwright global terhadap `make jalan`: buat akun lewat perkakas, masuk,
+- [x] Playwright global terhadap `make jalan`: buat akun lewat perkakas, masuk,
       bertanya, muat ulang, keluar, kuki lama ditolak. Kuki `__Host-` `Secure`
       pada `http://127.0.0.1` **diverifikasi**, tidak diandaikan
-- [ ] `git diff --stat` atas `src/rag/` dan `src/llm/` sejak Gerbang 3: **kosong**
-- [ ] D-00: TK-70 ditutup dengan buktinya; `logbook/L8`; dokumen HKI; L4
+- [x] `git diff --stat` atas `src/rag/` dan `src/llm/` sejak Gerbang 3: **kosong**
+- [x] D-00: TK-70 ditutup dengan buktinya; `logbook/L8`; dokumen HKI; L4
 
 ---
 
