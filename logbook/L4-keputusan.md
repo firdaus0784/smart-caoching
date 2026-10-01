@@ -2461,3 +2461,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Bertanya ulang sebelum menyusun `tasks.md` — ditolak; menyusun tugas tidak mengubah apa pun yang tidak dapat diubah, sedangkan kode tetap tertahan Gerbang 3. |
 | Dampak | Status `plan.md`; berkas baru `tasks.md`. Nol baris kode. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-154 · Gerbang 3 fitur 029 lolos; T-1 kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | Sesudah KB-153 pemegang gerbang menjawab "lanjutkan" sekali lagi. Agen sudah menyatakan kata itu **tidak** akan ditafsirkan sebagai izin menulis kode, sehingga ditanyakan tegas; jawabannya **"Gerbang 3 lolos"**. |
+| Keputusan | **Gerbang 3 fitur 029 lolos.** T-1 selesai: D-14 0.10 (Bagian 4.4 autentikasi; Bagian 5.1 akun dan sesi; BT-59 ditetapkan), D-04 0.10 (baris `pengguna` dan `sesi`; arti `peta_pseudonim.id_pengguna`), D-05 0.4 (S-01 dan tombol Keluar), D-00 2.71. |
+| **Temuan** | Baris `peta_pseudonim` D-04 merujuk "Bagian 11", yang berjudul *Kinerja, Ketahanan, dan Pemantauan* dan tidak menyebut pseudonim sekali pun — diperiksa, bukan diduga. Diganti KA-03 (Bagian 10). |
+| Alternatif | Menafsirkan "lanjutkan" kedua sebagai Gerbang 3 — ditolak; agen sudah menyatakan sebaliknya, dan izin menulis kode tidak ditebak. |
+| Dampak | Empat dokumen; status `tasks.md`. Nol baris kode. Bentuk tanggapan `/tanya` tidak berubah. |
+| Pemutus | Pemegang Gerbang 1–4 (Gerbang 3); agen di dalam batas `tasks.md` (T-1) |

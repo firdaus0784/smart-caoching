@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 1 Oktober 2026 (KB-151); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 1 Oktober 2026 (KB-153); K-1 s.d. K-7 dan angka P-4 sesuai anjuran |
-| Status | **Menunggu Gerbang 3** |
+| Status | **Gerbang 3 lolos** — 1 Oktober 2026 (KB-154). Pelaksanaan berjalan |
 | Kebutuhan | R-01 s.d. R-10; FR-A01; NFR-05, NFR-06, NFR-08; KA-01, KA-03; C-05, C-13, C-17, C-20; TK-70 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -19,17 +19,17 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-02; K-1, K-2; P-6.
 
-- [ ] D-14 Bagian 4.4 baru: bentuk `POST /api/v1/auth/masuk` dan
+- [x] D-14 Bagian 4.4 baru: bentuk `POST /api/v1/auth/masuk` dan
       `/auth/keluar` — permintaan, 204 tanpa badan, kuki, 400 dan 401;
       syarat `Content-Type: application/json` pada rute pengubah keadaan (K-4)
-- [ ] D-14 Bagian 5.1: `pengguna.turunan_sandi`, `pengguna.gagal_beruntun`,
+- [x] D-14 Bagian 5.1: `pengguna.turunan_sandi`, `pengguna.gagal_beruntun`,
       `pengguna.ditahan_sampai`, `sesi.*`; `pengguna.id` berupa nama pengguna
       buatan tim yang tidak mengidentifikasi; `pseudonim` terpisah darinya (K-1)
-- [ ] D-04 Bagian 7.1: baris `pengguna` dan `sesi`; arti
+- [x] D-04 Bagian 7.1: baris `pengguna` dan `sesi`; arti
       `peta_pseudonim.id_pengguna` di bawah P-1 A (K-2)
-- [ ] D-05: S-01 — bidang, keadaan galat dan luring, mikrokopi; tombol Keluar
+- [x] D-05: S-01 — bidang, keadaan galat dan luring, mikrokopi; tombol Keluar
       pada S-09
-- [ ] Register D-00; pemeriksa C-20 tetap lulus — blok JSON pertama Bagian 4.1
+- [x] Register D-00; pemeriksa C-20 tetap lulus — blok JSON pertama Bagian 4.1
       tetap bentuk tanggapan `/tanya`
 
 ---

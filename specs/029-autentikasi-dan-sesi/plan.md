@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 1 Oktober 2026 (KB-151); P-1 s.d. P-7 sesuai anjuran |
-| Status | **Gerbang 2 lolos** — 1 Oktober 2026 (KB-153); K-1 s.d. K-7 dan angka P-4 sesuai anjuran |
+| Status | **Gerbang 3 lolos** — 1 Oktober 2026 (KB-154). Gerbang 2 lolos KB-153; K-1 s.d. K-7 dan angka P-4 sesuai anjuran |
 | Kebutuhan | R-01 s.d. R-10 `spec.md`; FR-A01; NFR-05, NFR-06, NFR-08; KA-01, KA-03; C-05, C-13, C-17, C-20; TK-70 |
 
 ## 1. Letak dan batas
