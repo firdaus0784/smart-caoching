@@ -3,7 +3,9 @@
 -- Mewujudkan Keputusan Gerbang 1 nomor 1 dan nomor 2:
 --   satu peladen, DUA basis data, dan pemisahan lewat skema SEKALIGUS pengguna.
 --
--- Empat peran, mencerminkan `src/penyimpanan/kredensial_baku.py` satu lawan satu.
+-- Peran yang berpasangan dengan `src/penyimpanan/kredensial_baku.py` mencerminkannya
+-- satu lawan satu; `peran_riwayat`, `peran_autentikasi`, dan `peran_pengelola_akun`
+-- dipakai lewat tetapan namanya pada modul penyimpannya sendiri.
 -- Bila berkas itu berubah, berkas ini wajib ikut berubah — dua daftar yang
 -- bercerita berbeda adalah cacat, dan yang salah justru daftar yang dibaca orang.
 
@@ -27,7 +29,8 @@ DECLARE nama text;
 BEGIN
   FOREACH nama IN ARRAY ARRAY['peran_penjawaban','peran_verifikasi',
                               'peran_pemanggil_llm','peran_pseudonim',
-                              'peran_penyematan','peran_riwayat'] LOOP
+                              'peran_penyematan','peran_riwayat',
+                              'peran_autentikasi','peran_pengelola_akun'] LOOP
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
       EXECUTE format('CREATE ROLE %I LOGIN', nama);
     END IF;
@@ -51,7 +54,7 @@ REVOKE CONNECT ON DATABASE smart_coaching_pseudonim  FROM PUBLIC;
 
 GRANT CONNECT ON DATABASE smart_coaching
   TO peran_penjawaban, peran_verifikasi, peran_pemanggil_llm, peran_penyematan,
-     peran_riwayat;
+     peran_riwayat, peran_autentikasi, peran_pengelola_akun;
 
 -- `peran_penyematan` (fitur 026, TK-63) sengaja TIDAK diberi CONNECT ke basis
 -- data pseudonim. Jalur penyematan tidak membutuhkannya, dan C-05 menuntut
@@ -59,6 +62,11 @@ GRANT CONNECT ON DATABASE smart_coaching
 --
 -- `peran_riwayat` (fitur 028) sama: riwayat menyimpan pemilik berupa
 -- pseudonim, dan penulisnya tidak membutuhkan pemetaan ke identitas (C-05).
+--
+-- `peran_autentikasi` dan `peran_pengelola_akun` (fitur 029) sama pula.
+-- Akun berpseudonim (P-1 A) berarti layanan aplikasi tidak pernah perlu tahu
+-- siapa orangnya — hanya akunnya. Perkakas tim pun tidak: pasangan pseudonim
+-- dengan orang sungguhan diisi peneliti di luar layanan (KA-03, NFR-08).
 
 GRANT CONNECT ON DATABASE smart_coaching_pseudonim
   TO peran_pseudonim;

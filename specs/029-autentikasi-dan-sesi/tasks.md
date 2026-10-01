@@ -38,19 +38,19 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-03, R-07; plan Bagian 3.2.
 
-- [ ] Uji lebih dulu pada `tests/penyimpanan/test_persiapan_basis_data.py`,
+- [x] Uji lebih dulu pada `tests/penyimpanan/test_persiapan_basis_data.py`,
       tiap penolakan menuntut `permission denied`:
       `peran_autentikasi` ditolak `INSERT` akun, `UPDATE` atas `turunan_sandi`,
       `peran`, `status_aktif`, `pseudonim`, `DELETE`, dan `CONNECT` ke basis
       data pseudonim; `peran_pengelola_akun` ditolak `UPDATE` atas `peran`,
       `pseudonim`, dan `DELETE`; `peran_penjawaban` dan `peran_riwayat`
       ditolak seluruh skema `akun`
-- [ ] Uji kedua peran **berjalan** pada hak yang diberikan, tersambung sebagai
+- [x] Uji kedua peran **berjalan** pada hak yang diberikan, tersambung sebagai
       peran itu sendiri (TK-64)
-- [ ] `01-peran-dan-basis-data.sql`: dua peran baru, `CONNECT` ke basis data
+- [x] `01-peran-dan-basis-data.sql`: dua peran baru, `CONNECT` ke basis data
       perilaku saja
-- [ ] `07-akun.sql` baru; `README.md` dan `tests/peladen.py` menjalankannya
-- [ ] Mutasi M-7 dan M-8 pada berkas SQL, dengan basis data dibangun ulang
+- [x] `07-akun.sql` baru; `README.md` dan `tests/peladen.py` menjalankannya
+- [x] Mutasi M-7 dan M-8 pada berkas SQL, dengan basis data dibangun ulang
 
 ---
 

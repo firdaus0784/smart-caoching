@@ -2473,3 +2473,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menafsirkan "lanjutkan" kedua sebagai Gerbang 3 — ditolak; agen sudah menyatakan sebaliknya, dan izin menulis kode tidak ditebak. |
 | Dampak | Empat dokumen; status `tasks.md`. Nol baris kode. Bentuk tanggapan `/tanya` tidak berubah. |
 | Pemutus | Pemegang Gerbang 1–4 (Gerbang 3); agen di dalam batas `tasks.md` (T-1) |
+
+## KB-155 · T-2 fitur 029 — peladen menegakkan hak akun per kolom
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-2 `tasks.md`: hak akun ditegakkan peladen, bukan kode (plan Bagian 3.2). |
+| Keputusan | `07-akun.sql` baru; `peran_autentikasi` dan `peran_pengelola_akun` pada `01`, `CONNECT` ke basis data perilaku saja. 30 uji baru, ditulis lebih dulu dan merah karena berkasnya belum ada: 25 penolakan menuntut `permission denied`, dua penolakan basis data pseudonim, satu uji kedua peran **berjalan** tersambung sebagai dirinya (TK-64), satu uji himpunan hak dari katalog — tingkat tabel dan per kolom dibaca terpisah — dan satu uji batasan tabel (nama orang sebagai `id`, NIK sebagai pseudonim, peran di luar D-14). |
+| **Temuan saat merancang** | `UPDATE … WHERE id = $1` menuntut hak **baca** atas kolom pada `WHERE`. Perkakas karena itu diberi `SELECT (id, status_aktif)` dan `SELECT (id_pengguna, dicabut_pada)` — per kolom, sehingga turunan sandi tetap tidak terbaca olehnya, dan itu diuji. |
+| Mutasi | **M-7** (`GRANT UPDATE (turunan_sandi)` kepada `peran_autentikasi`): dua uji merah — penolakan dan katalog. **M-8** (`GRANT CONNECT` basis data pseudonim kepada `peran_autentikasi`): uji pseudonim merah. Keduanya dengan basis data dibangun ulang oleh *fixture*, bukan `REVOKE` pada basis data lama. Berkas dikembalikan; selisihnya diperiksa. |
+| Catatan lingkungan | PostgreSQL pengembangan dua kali didapati mati di antara giliran; log berakhir tanpa pesan pemadaman, sehingga ia dihentikan dari luar, bukan jatuh. `make check` yang gagal karenanya diperiksa sebabnya lebih dulu, lalu peladen dinyalakan ulang. |
+| Alternatif | Satu peran bagi layanan dan perkakas — ditolak; layanan yang disusupi akan dapat menulis turunan sandi siapa pun. |
+| Dampak | `perkakas/basis_data/` (01, 07, README), `tests/peladen.py`, `tests/penyimpanan/test_persiapan_basis_data.py`. `src/` tidak berubah. |
+| Pemutus | Agen di dalam batas `tasks.md` |

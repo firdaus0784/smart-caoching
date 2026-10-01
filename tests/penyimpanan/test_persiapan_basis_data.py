@@ -55,6 +55,8 @@ def basis_data_siap() -> None:
         "peran_pseudonim",
         "peran_penyematan",
         "peran_riwayat",
+        "peran_autentikasi",
+        "peran_pengelola_akun",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -101,6 +103,12 @@ def basis_data_siap() -> None:
     # Riwayat percakapan (fitur 028) memakai DDL sungguhan `06-riwayat.sql`.
     hasil = _psql(
         PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "06-riwayat.sql")
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
+    # Akun dan sesi (fitur 029) memakai DDL sungguhan `07-akun.sql`.
+    hasil = _psql(
+        PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "07-akun.sql")
     )
     assert hasil.returncode == 0, hasil.stderr
 
@@ -467,3 +475,210 @@ def test_skema_public_tidak_memuat_relasi_apa_pun(basis_data_siap: None) -> None
         f"skema public memuat {hasil.stdout.strip()} relasi — hak USAGE pada public "
         "tidak lagi netral terhadap data"
     )
+
+
+# ── Akun dan sesi — fitur 029, T-2, R-03, R-07, plan Bagian 3.2 ──────────
+#
+# Layanan aplikasi yang disusupi tidak dapat mengubah sandi maupun menaikkan
+# peran siapa pun: bukan karena kodenya tidak menyediakan, melainkan karena
+# **peladen** menolaknya. Setiap penolakan menuntut `permission denied` —
+# peran yang belum dibuat pun "ditolak", dan uji yang tidak memeriksa sebabnya
+# lulus sebelum berkasnya ditulis (KB-098).
+
+_AKUN_CONTOH = (
+    "insert into akun.pengguna (id, pseudonim, peran, tanggal_dibuat, turunan_sandi) "
+    "values ('ks-901', 'psd_00000000000000aa', 'pengguna', now(), 'scrypt$x')"
+)
+
+DITOLAK_AKUN = [
+    *[
+        ("peran_autentikasi", kueri, sebab)
+        for kueri, sebab in (
+            (_AKUN_CONTOH, "layanan aplikasi tidak membuat akun (R-01)"),
+            (
+                "update akun.pengguna set turunan_sandi = 'scrypt$y' where false",
+                "layanan aplikasi tidak mengubah sandi",
+            ),
+            ("update akun.pengguna set peran = 'admin' where false", "tidak menaikkan peran"),
+            (
+                "update akun.pengguna set status_aktif = true where false",
+                "tidak menghidupkan akun yang dinonaktifkan tim",
+            ),
+            (
+                "update akun.pengguna set pseudonim = 'psd_00000000000000bb' where false",
+                "pseudonim tidak berpindah (C-05)",
+            ),
+            ("delete from akun.pengguna where false", "akun tidak dihapus"),
+            ("delete from akun.sesi where false", "sesi dicabut, bukan dihapus (R-06)"),
+            ("truncate akun.sesi", "sesi tidak dikosongkan"),
+            (
+                "update akun.sesi set kedaluwarsa_pada = now() where false",
+                "masa sesi tidak diperpanjang",
+            ),
+            ("create table akun.titipan (a int)", "tanpa CREATE pada skema akun"),
+        )
+    ],
+    *[
+        ("peran_pengelola_akun", kueri, sebab)
+        for kueri, sebab in (
+            (
+                "update akun.pengguna set peran = 'admin' where false",
+                "perkakas tidak menaikkan peran",
+            ),
+            (
+                "update akun.pengguna set pseudonim = 'psd_00000000000000bb' where false",
+                "pseudonim tidak berpindah, juga oleh perkakas (C-05)",
+            ),
+            ("delete from akun.pengguna where false", "perkakas tidak menghapus akun"),
+            ("delete from akun.sesi where false", "perkakas mencabut, tidak menghapus"),
+            ("select turunan_sandi from akun.pengguna", "perkakas tidak membaca turunan sandi"),
+            (
+                "insert into akun.sesi (turunan_pengenal) values ('\\x00')",
+                "perkakas tidak membuat sesi",
+            ),
+        )
+    ],
+    *[
+        (peran, kueri, f"skema akun di luar jangkauan {peran}")
+        for peran in ("peran_penjawaban", "peran_riwayat", "peran_pemanggil_llm")
+        for kueri in ("select * from akun.pengguna", "select * from akun.sesi")
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "kueri", "sebab"), DITOLAK_AKUN)
+def test_peladen_menolak_hak_akun(
+    basis_data_siap: None, peran: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, "smart_coaching", "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+@pytest.mark.parametrize("peran", ["peran_autentikasi", "peran_pengelola_akun"])
+def test_peran_akun_tidak_menyambung_basis_data_pseudonim(
+    basis_data_siap: None, peran: str
+) -> None:
+    """R-07, C-05, KA-03 — dalam bentuk apa pun yang P-1 putuskan."""
+    hasil = _psql(peran, "smart_coaching_pseudonim", "-c", "select 1")
+    assert "permission denied" in hasil.stderr, hasil.stderr
+
+
+def test_peran_akun_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64: hak yang menolak segalanya juga lulus uji penolakan.
+
+    Tersambung sebagai peran itu sendiri — perkakas membuat akun, layanan
+    membaca dan menaikkan penghitung, membuat sesi, menyentuh dan
+    mencabutnya; perkakas mengatur ulang sandi dan mencabut sesi akun.
+    """
+    langkah = [
+        ("peran_pengelola_akun", _AKUN_CONTOH),
+        (
+            "peran_autentikasi",
+            "select id, pseudonim, peran, status_aktif, turunan_sandi, gagal_beruntun, "
+            "ditahan_sampai from akun.pengguna where id = 'ks-901'",
+        ),
+        (
+            "peran_autentikasi",
+            "update akun.pengguna set gagal_beruntun = gagal_beruntun + 1, "
+            "ditahan_sampai = null where id = 'ks-901'",
+        ),
+        (
+            "peran_autentikasi",
+            "insert into akun.sesi (turunan_pengenal, id_pengguna, dibuat_pada, terakhir_aktif, "
+            "kedaluwarsa_pada) values (sha256('pengenal-uji'), 'ks-901', now(), now(), "
+            "now() + interval '8 hours')",
+        ),
+        (
+            "peran_autentikasi",
+            "update akun.sesi set terakhir_aktif = now() "
+            "where turunan_pengenal = sha256('pengenal-uji')",
+        ),
+        (
+            "peran_autentikasi",
+            "update akun.sesi set dicabut_pada = now() "
+            "where turunan_pengenal = sha256('pengenal-uji') and dicabut_pada is null",
+        ),
+        (
+            "peran_pengelola_akun",
+            "update akun.pengguna set turunan_sandi = 'scrypt$baru', gagal_beruntun = 0, "
+            "ditahan_sampai = null where id = 'ks-901'",
+        ),
+        (
+            "peran_pengelola_akun",
+            "update akun.sesi set dicabut_pada = now() "
+            "where id_pengguna = 'ks-901' and dicabut_pada is null",
+        ),
+        (
+            "peran_pengelola_akun",
+            "update akun.pengguna set status_aktif = false where id = 'ks-901'",
+        ),
+    ]
+    for peran, kueri in langkah:
+        hasil = _psql(peran, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, f"{peran}: {kueri}\n{hasil.stderr}"
+
+
+def test_hak_peran_akun_persis_menurut_katalog(basis_data_siap: None) -> None:
+    """Himpunan hak dibaca dari katalog, bukan dicoba satu per satu.
+
+    Penolakan di atas mencoba hak yang terpikir penulis uji; katalog memuat
+    juga yang tidak terpikir — `TRIGGER`, `REFERENCES`, hak kolom yang
+    terlampau lebar. Hak tingkat tabel dan hak per kolom dibaca terpisah,
+    sebab hak tingkat tabel tampil pula pada setiap kolom.
+    """
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where table_schema = 'akun' and grantee like 'peran\\_%' "
+        "group by grantee, table_name order by 1",
+    )
+    assert tabel.stdout.split() == [
+        "peran_autentikasi:pengguna:SELECT",
+        "peran_autentikasi:sesi:INSERT,SELECT",
+        "peran_pengelola_akun:pengguna:INSERT",
+    ]
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || c.relname || ':' || x.privilege_type || ':' "
+        "|| string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'akun' "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null "
+        "group by a.rolname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_autentikasi:pengguna:UPDATE:ditahan_sampai,gagal_beruntun",
+        "peran_autentikasi:sesi:UPDATE:dicabut_pada,terakhir_aktif",
+        "peran_pengelola_akun:pengguna:SELECT:id,status_aktif",
+        "peran_pengelola_akun:pengguna:UPDATE:ditahan_sampai,gagal_beruntun,status_aktif,turunan_sandi",
+        "peran_pengelola_akun:sesi:SELECT:dicabut_pada,id_pengguna",
+        "peran_pengelola_akun:sesi:UPDATE:dicabut_pada",
+    ]
+
+
+def test_batasan_tabel_akun(basis_data_siap: None) -> None:
+    """Lapis kedua sesudah perkakas: pola nama, pseudonim, dan peran."""
+    for nilai, sebab in (
+        ("('Budi Santoso', 'psd_00000000000000c1', 'pengguna')", "nama orang sebagai id"),
+        ("('ks-902', '3201010101010001', 'pengguna')", "NIK sebagai pseudonim"),
+        ("('ks-903', 'psd_00000000000000c3', 'kepala')", "peran di luar D-14"),
+    ):
+        hasil = _psql(
+            "peran_pengelola_akun",
+            "smart_coaching",
+            "-c",
+            "insert into akun.pengguna (id, pseudonim, peran, tanggal_dibuat, turunan_sandi) "
+            f"values {nilai[:-1]}, now(), 'scrypt$x')",
+        )
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"

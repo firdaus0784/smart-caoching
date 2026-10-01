@@ -18,6 +18,7 @@ psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 03-basis-d
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 04-tabel-dokumen.sql
 psql -U <superuser> -d smart_coaching -v dimensi=<N> -v ON_ERROR_STOP=1 -f 05-kolom-vektor.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 06-riwayat.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 07-akun.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -40,6 +41,19 @@ tidak diberi `USAGE` atas skema `riwayat` sama sekali (C-17, R-07).
 
 Kolom `giliran.nomor` berbentuk identitas; `INSERT` atasnya tidak menuntut hak
 atas urutannya, sehingga hak itu sengaja tidak diberikan.
+
+## Akun dan sesi — hak per kolom (fitur 029)
+
+`07-akun.sql` memisahkan dua pemakai skema `akun` dengan **hak per kolom**:
+
+| Peran | Boleh | Ditolak peladen |
+|---|---|---|
+| `peran_autentikasi` (layanan aplikasi) | membaca akun; menaikkan `gagal_beruntun` dan `ditahan_sampai`; membuat sesi; menyentuh `terakhir_aktif` dan mengisi `dicabut_pada` | membuat akun; mengubah sandi, peran, status, pseudonim; masa sesi; hapus |
+| `peran_pengelola_akun` (perkakas tim) | membuat akun; mengatur ulang sandi; menonaktifkan; mencabut sesi | membaca turunan sandi; membuat sesi; mengubah peran dan pseudonim; hapus |
+
+Layanan aplikasi yang disusupi karena itu tidak dapat menaikkan peran siapa
+pun — peladennya yang menolak, bukan kode. Kedua peran tidak memegang
+`CONNECT` ke basis data pseudonim (C-05).
 
 ## Ekstensi pgvector — batas kode dan operasi
 
