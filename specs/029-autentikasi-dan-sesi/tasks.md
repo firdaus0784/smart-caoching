@@ -134,13 +134,13 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** P-5, P-7; K-5, K-7.
 
-- [ ] Uji lebih dulu: `--id` yang bukan pola `^[a-z]{2,8}-[0-9]{3}$` atau
+- [x] Uji lebih dulu: `--id` yang bukan pola `^[a-z]{2,8}-[0-9]{3}$` atau
       berpola data pribadi ditolak; sandi tercetak sekali dan tidak tertulis
       ke berkas mana pun; atur ulang sandi dan nonaktifkan mencabut seluruh
       sesi akun itu; pseudonim acak dan tidak dicetak
-- [ ] `perkakas/akun.py` dengan tiga perintah, tersambung sebagai
+- [x] `perkakas/akun.py` dengan tiga perintah, tersambung sebagai
       `peran_pengelola_akun`
-- [ ] `perkakas/jalankan_lokal.py`: `--autentikasi sesi` bawaan;
+- [x] `perkakas/jalankan_lokal.py`: `--autentikasi sesi` bawaan;
       `pengembangan` hanya bila diminta, dengan peringatan yang sudah ada
 
 ---

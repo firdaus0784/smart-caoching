@@ -347,3 +347,86 @@ class AkunPostgres:
             turunan_pengenal,
             sekarang,
         )
+
+
+# ── T-7 · pengelola akun bagi perkakas tim ───────────────────────────
+
+PERAN_PENGELOLA_AKUN: Final = "peran_pengelola_akun"
+"""Peran basis data perkakas tim — `07-akun.sql`. Layanan aplikasi tidak
+tersambung sebagai peran ini; bila kelas di bawah dipanggil dengan sambungan
+`peran_autentikasi`, peladen menolak tiap pernyataannya."""
+
+_ATUR_ULANG: Final = """
+WITH akun_ini AS (
+    UPDATE akun.pengguna
+       SET turunan_sandi = $2, gagal_beruntun = 0, ditahan_sampai = NULL
+     WHERE id = $1
+    RETURNING id
+), cabut AS (
+    UPDATE akun.sesi SET dicabut_pada = $3
+     WHERE id_pengguna IN (SELECT id FROM akun_ini) AND dicabut_pada IS NULL
+)
+SELECT id FROM akun_ini
+"""
+
+_NONAKTIFKAN: Final = """
+WITH akun_ini AS (
+    UPDATE akun.pengguna SET status_aktif = false WHERE id = $1 RETURNING id
+), cabut AS (
+    UPDATE akun.sesi SET dicabut_pada = $2
+     WHERE id_pengguna IN (SELECT id FROM akun_ini) AND dicabut_pada IS NULL
+)
+SELECT id FROM akun_ini
+"""
+
+
+class PengelolaAkunPostgres:
+    """Membuat akun, mengatur ulang sandi, menonaktifkan — P-5, K-5.
+
+    Dipakai `perkakas/akun.py` dengan sambungan sebagai
+    `PERAN_PENGELOLA_AKUN`. Tinggal di sini, bukan pada perkakasnya, karena
+    seluruh akses penyimpanan lewat `src/penyimpanan/` (C-03, AGENTS.md).
+
+    Atur ulang sandi dan penonaktifan **mencabut seluruh sesi** akun itu dalam
+    pernyataan yang sama: sandi yang diganti karena bocor tidak boleh
+    meninggalkan sesi yang dibuka dengan sandi lama.
+    """
+
+    def __init__(self, sambungan: SambunganAktif) -> None:
+        self._sambungan = sambungan
+
+    async def buat_akun(
+        self,
+        *,
+        id_akun: str,
+        pseudonim: str,
+        peran: str,
+        turunan_sandi: str,
+        sekarang: datetime,
+    ) -> bool:
+        """`False` bila `id_akun` sudah ada — akun lama tidak disentuh."""
+        _utc(sekarang)
+        b = await self._sambungan.fetchrow(
+            "INSERT INTO akun.pengguna (id, pseudonim, peran, tanggal_dibuat, turunan_sandi) "
+            "VALUES ($1, $2, $3, $4, $5) ON CONFLICT (id) DO NOTHING RETURNING id",
+            id_akun,
+            pseudonim,
+            peran,
+            sekarang,
+            turunan_sandi,
+        )
+        return b is not None
+
+    async def atur_ulang_sandi(
+        self, *, id_akun: str, turunan_sandi: str, sekarang: datetime
+    ) -> bool:
+        """`False` bila akun tidak ada."""
+        _utc(sekarang)
+        b = await self._sambungan.fetchrow(_ATUR_ULANG, id_akun, turunan_sandi, sekarang)
+        return b is not None
+
+    async def nonaktifkan(self, *, id_akun: str, sekarang: datetime) -> bool:
+        """`False` bila akun tidak ada."""
+        _utc(sekarang)
+        b = await self._sambungan.fetchrow(_NONAKTIFKAN, id_akun, sekarang)
+        return b is not None

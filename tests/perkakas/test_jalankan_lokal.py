@@ -125,3 +125,50 @@ def test_tidak_diimpor_dari_src() -> None:
         if "jalankan_lokal" in berkas.read_text(encoding="utf-8")
     ]
     assert not tersangkut, f"src/ menyebut perkakas pengembangan: {tersangkut}"
+
+
+# ── fitur 029 T-7 · autentikasi sungguhan pada titik jalan ──────────
+
+
+def test_autentikasi_bawaan_adalah_sesi() -> None:
+    """K-7: `make jalan` memakai sesi sungguhan kecuali diminta tegas."""
+    from perkakas.jalankan_lokal import penghurai
+
+    assert penghurai().parse_args([]).autentikasi == "sesi"
+    assert penghurai().parse_args(["--autentikasi", "pengembangan"]).autentikasi == "pengembangan"
+
+
+def test_dengan_penyimpan_akun_tanpa_sesi_ditolak_dan_masuk_berfungsi() -> None:
+    from src.api import sandi
+    from src.penyimpanan.akun import AkunMemori, BarisAkun
+
+    murah = sandi.ParameterScrypt(n=2**4, r=8, p=1)
+    akun = AkunMemori()
+    akun.pasang_akun(
+        BarisAkun(
+            id="ks-017",
+            pseudonim="psd_abcdefghjkmnpqrs",
+            peran="pengguna",
+            status_aktif=True,
+            turunan_sandi=sandi.turunkan("abcd-efgh-jkmn-pqrs", parameter=murah),
+            gagal_beruntun=0,
+            ditahan_sampai=None,
+        )
+    )
+    klien = TestClient(
+        susun_untuk_pengembangan(akun=akun, turunan_tiruan=sandi.turunkan("t", parameter=murah)),
+        base_url="https://testserver",
+    )
+    assert klien.get("/api/v1/percakapan").status_code == 401
+    masuk = klien.post(
+        "/api/v1/auth/masuk", json={"nama_pengguna": "ks-017", "sandi": "abcd-efgh-jkmn-pqrs"}
+    )
+    assert masuk.status_code == 204
+    assert klien.get("/api/v1/percakapan").status_code == 200
+
+
+def test_tanpa_penyimpan_akun_rute_masuk_tidak_ada() -> None:
+    """Mode `pengembangan`: penentu tiruan, tanpa rute masuk yang tidak dapat
+    berbuat apa pun."""
+    klien = TestClient(susun_untuk_pengembangan())
+    assert klien.post("/api/v1/auth/masuk", json={}).status_code in (404, 405)

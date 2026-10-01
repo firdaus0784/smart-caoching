@@ -11,13 +11,14 @@ pada `src/` membuat identitas pengembangan ikut terbawa ke mana pun aplikasi
 dipasang — dan uji `test_tidak_diimpor_dari_src` menuntut `src/` tidak pernah
 menyebutnya.
 
-## Bahaya berkas ini, dinyatakan terus terang
+## Dua mode autentikasi
 
-Autentikasi (FR-A01) belum dibangun modul mana pun. Titik jalan ini karena itu
-menyediakan **identitas tetap tanpa pemeriksaan apa pun**: setiap pemanggil
-diperlakukan sebagai kepala sekolah. Itu satu-satunya cara menjalankannya
-sebelum autentikasi ada, dan justru itu yang membuatnya berbahaya — berkas
-semacam ini yang paling mungkin terbawa ke lingkungan sungguhan.
+Sejak fitur 029 bawaannya `--autentikasi sesi`: akun dan sesi di PostgreSQL,
+masuk lewat `POST /api/v1/auth/masuk` dengan akun buatan `perkakas.akun`
+(K-7). Mode `--autentikasi pengembangan` tetap ada dan tetap berbahaya: ia
+menyediakan **identitas tetap tanpa pemeriksaan apa pun**, setiap pemanggil
+diperlakukan sebagai kepala sekolah yang sama — berkas semacam ini yang paling
+mungkin terbawa ke lingkungan sungguhan.
 
 Tiga penjagaan, dan ketiganya berupa penolakan:
 
@@ -52,9 +53,11 @@ from typing import Any
 
 from fastapi import FastAPI, Request
 from src.api.aplikasi import susun_aplikasi
+from src.api.autentikasi import PenentuSesi, PenjagaMasuk
 from src.api.identitas import Identitas
 from src.api.peran import Peran
 from src.api.tanya import AlasanBerhenti, HasilTanya
+from src.penyimpanan.akun import PERAN_AUTENTIKASI, AkunPostgres, PenyimpanAkun
 from src.penyimpanan.riwayat import (
     PERAN_RIWAYAT,
     PenyimpanRiwayat,
@@ -134,22 +137,23 @@ def periksa_alamat(alamat: str) -> None:
 
 
 class SambunganPerKueri:
-    """Satu sambungan baru per kueri, sebagai `peran_riwayat` — pengembangan saja.
+    """Satu sambungan baru per kueri, sebagai satu peran — pengembangan saja.
 
     Memenuhi `SambunganAktif` tanpa kolam sambungan: sederhana, dan cukup bagi
     satu pengembang pada mesinnya sendiri. Sandi tidak pernah ditulis di sini;
     `asyncpg` membacanya dari lingkungan (`PGPASSWORD`) bila peladen memintanya.
     """
 
-    def __init__(self, host: str, porta: int) -> None:
+    def __init__(self, host: str, porta: int, peran: str = PERAN_RIWAYAT) -> None:
         self._host = host
         self._porta = porta
+        self._peran = peran
 
     async def _dengan(self, nama: str, kueri: str, *argumen: object) -> Any:
         import asyncpg  # type: ignore[import-untyped]
 
         sambungan = await asyncpg.connect(
-            host=self._host, port=self._porta, user=PERAN_RIWAYAT, database="smart_coaching"
+            host=self._host, port=self._porta, user=self._peran, database="smart_coaching"
         )
         try:
             return await getattr(sambungan, nama)(kueri, *argumen)
@@ -166,28 +170,50 @@ class SambunganPerKueri:
         return await self._dengan("execute", kueri, *argumen)
 
 
-def susun_untuk_pengembangan(riwayat: PenyimpanRiwayat | None = None) -> FastAPI:
+def susun_untuk_pengembangan(
+    riwayat: PenyimpanRiwayat | None = None,
+    *,
+    akun: PenyimpanAkun | None = None,
+    turunan_tiruan: str | None = None,
+) -> FastAPI:
     """Rakit aplikasi dengan pengganti pengembangan.
 
     Riwayat bawaannya di memori — hilang saat dimatikan, dan keluaran `main`
     menyatakannya. `--riwayat postgres` memakai PostgreSQL sebagai
     `peran_riwayat` (fitur 028).
+
+    Dengan `akun`, identitas dibaca dari sesi dan rute masuk terpasang
+    (fitur 029); tanpanya, penentu tiruan tanpa pemeriksaan dipakai.
+    `turunan_tiruan` disuntikkan hanya oleh uji.
     """
+    if akun is None:
+        return susun_aplikasi(
+            jalur=PenjawabBelumSiap(),
+            identitas=IdentitasPengembangan(),
+            riwayat=riwayat if riwayat is not None else RiwayatMemori(),
+        )
     return susun_aplikasi(
         jalur=PenjawabBelumSiap(),
-        identitas=IdentitasPengembangan(),
+        identitas=PenentuSesi(akun),
         riwayat=riwayat if riwayat is not None else RiwayatMemori(),
+        masuk=PenjagaMasuk(akun, turunan_tiruan=turunan_tiruan),
     )
+
+
+def penghurai() -> argparse.ArgumentParser:
+    """Argumen titik jalan — dipisah dari `main` agar bawaannya dapat diuji."""
+    hasil = argparse.ArgumentParser(
+        description="Jalankan Smart-Coaching pada mesin sendiri untuk pengembangan."
+    )
+    hasil.add_argument("--alamat", default=ALAMAT_AMAN)
+    hasil.add_argument("--porta", type=int, default=8000)
+    hasil.add_argument("--riwayat", choices=("memori", "postgres"), default="memori")
+    hasil.add_argument("--autentikasi", choices=("sesi", "pengembangan"), default="sesi")
+    return hasil
 
 
 def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
-    penghurai = argparse.ArgumentParser(
-        description="Jalankan Smart-Coaching pada mesin sendiri untuk pengembangan."
-    )
-    penghurai.add_argument("--alamat", default=ALAMAT_AMAN)
-    penghurai.add_argument("--porta", type=int, default=8000)
-    penghurai.add_argument("--riwayat", choices=("memori", "postgres"), default="memori")
-    argumen = penghurai.parse_args()
+    argumen = penghurai().parse_args()
 
     periksa_alamat(argumen.alamat)
 
@@ -207,16 +233,34 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
         riwayat = RiwayatMemori()
         keterangan_riwayat = "di memori — HILANG saat dimatikan (--riwayat postgres)."
 
+    akun: PenyimpanAkun | None = None
+    if argumen.autentikasi == "sesi":
+        akun = AkunPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN),
+                int(os.environ.get("PGPORT", "5432")),
+                PERAN_AUTENTIKASI,
+            )
+        )
+        keterangan_identitas = (
+            "sesi sungguhan — masuk dengan akun buatan `python -m perkakas.akun buat`."
+        )
+    else:
+        keterangan_identitas = (
+            f"TANPA AUTENTIKASI — {PEMILIK_PENGEMBANGAN}, satu pemilik bagi semua pemanggil."
+        )
+
     print(
         "\n  Smart-Coaching — mode pengembangan\n"
-        f"  Alamat   : http://{argumen.alamat}:{argumen.porta}\n"
-        '  Coba     : POST /api/v1/tanya  {"pertanyaan": "...", "id_percakapan": "<uuid4>"}\n'
-        f"  Riwayat  : {keterangan_riwayat}\n"
-        f"  Pemilik  : {PEMILIK_PENGEMBANGAN} — satu pemilik bagi semua pemanggil.\n"
+        f"  Alamat    : http://{argumen.alamat}:{argumen.porta}\n"
+        f"  Identitas : {keterangan_identitas}\n"
+        f"  Riwayat   : {keterangan_riwayat}\n"
         "\n"
-        "  Tanpa autentikasi. Jawaban selalu 'tidak ditemukan' karena korpus kosong.\n"
+        "  Jawaban selalu 'tidak ditemukan' karena korpus kosong.\n"
     )
-    uvicorn.run(susun_untuk_pengembangan(riwayat), host=argumen.alamat, port=argumen.porta)
+    uvicorn.run(
+        susun_untuk_pengembangan(riwayat, akun=akun), host=argumen.alamat, port=argumen.porta
+    )
 
 
 if __name__ == "__main__":  # pragma: no cover

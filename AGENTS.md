@@ -50,7 +50,10 @@ memeriksanya adalah laporan palsu. Penyiapannya pada
 `perkakas/basis_data/README.md`.
 
 `make jalan` memakai `perkakas/jalankan_lokal.py`: hanya mengikat `127.0.0.1`,
-**tanpa autentikasi**, dan penanda versinya berbunyi `pengembangan`. Ia berhenti
+dan penanda versinya berbunyi `pengembangan`. Sejak fitur 029 ia memakai sesi
+sungguhan di PostgreSQL — akun dibuat dengan `python -m perkakas.akun buat`;
+`--autentikasi pengembangan` masih menyediakan identitas tetap **tanpa
+autentikasi**. Ia berhenti
 berguna ketika fitur 019, 020, dan 024 selesai, dan sebaiknya dihapus pada hari
 itu alih-alih dibiarkan menua.
 

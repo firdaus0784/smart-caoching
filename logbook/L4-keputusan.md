@@ -2540,3 +2540,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membedakan akun ditahan dengan 429 `PAGU_TERLAMPAUI` — ditolak, K-3: status berbeda membocorkan bahwa akunnya ada. Tidak menjalankan turunan bagi akun ditahan — ditolak; waktu tanggapnya terbaca. Selalu memasang rute masuk dengan penjaga tiruan pada titik jalan pengembangan — ditolak; rute yang tidak dapat berbuat apa pun hanya membingungkan pembaca daftar rute. |
 | Dampak | `src/api/` (aplikasi, autentikasi, peran), uji. Kawat sandung C-13 naik ke 17 dengan dua nama disebut tegas. `src/rag/` dan `src/llm/` tidak berubah. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-160 · T-7 fitur 029 — perkakas akun tim dan titik jalan bersesi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-7 `tasks.md`: P-5, P-7, K-5, K-7. |
+| Keputusan | `perkakas/akun.py` dengan tiga perintah — `buat`, `atur-ulang-sandi`, `nonaktifkan` — di atas `PengelolaAkunPostgres` pada `src/penyimpanan/akun.py` (seluruh akses penyimpanan lewat lapisan itu). `--id` wajib berpola nama akun tim dan lolos pendeteksi data pribadi; penolakan tidak mengutip masukan. Sandi bangkitan dicetak sekali; pseudonim huruf saja dan tidak dicetak. Atur ulang sandi dan penonaktifan mencabut seluruh sesi akun **dalam pernyataan yang sama** (CTE). `make jalan` kini bawaannya `--autentikasi sesi` sebagai `peran_autentikasi`; `--autentikasi pengembangan` tetap ada dengan keterangan "TANPA AUTENTIKASI" pada keluarannya. 20 uji baru, merah lebih dulu; uji perkakas berjalan atas PostgreSQL sebagai `peran_pengelola_akun` sendiri. |
+| Satu uji keliru pada harapannya | Uji pertama mengharapkan `pengguna:t`; PostgreSQL menuliskan boolean yang disambung teks sebagai `true`. Yang dibetulkan harapannya, bukan kodenya — kolom yang sama dibaca sendirian memang `t`. |
+| Dokumen yang ikut | `AGENTS.md` dan komentar `Makefile` menyebut `make jalan` "tanpa autentikasi" — kalimat yang kini keliru; dimutakhirkan. `constitution.md` tidak disentuh. |
+| Alternatif | Membuat akun lewat rute admin — ditolak, P-5 B: D-14 Bagian 3 tidak memuatnya. Mencetak pseudonim agar tim dapat mencatat pasangannya — ditolak; pasangan pseudonim dengan orang diisi peneliti pada basis data pseudonim, dan keluaran terminal yang memuat keduanya adalah kunci yang tercecer. |
+| Dampak | `perkakas/akun.py` baru, `perkakas/jalankan_lokal.py`, `src/penyimpanan/akun.py`, `AGENTS.md`, `Makefile`, uji. |
+| Pemutus | Agen di dalam batas `tasks.md` |
