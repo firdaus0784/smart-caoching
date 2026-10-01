@@ -6,8 +6,8 @@ daftar percakapan hanya dapat berupa daftar seluruh percakapan (TK-67).
 
 `Identitas` membawa **pemilik** di samping peran. Pemilik berupa pseudonim —
 bentuk yang sama dengan `Peristiwa.pseudonim` fitur 012 — dan **bukan**
-identitas langsung (C-05). Autentikasi (FR-A01) kelak mengisi penentu
-identitas; riwayat tidak berubah pada hari itu.
+identitas langsung (C-05). Autentikasi (FR-A01, fitur 029) mengisi penentu
+identitas dengan pseudonim akun; riwayat tidak berubah karenanya.
 
 ## Penjagaan atas pemilik
 
@@ -66,8 +66,13 @@ class Identitas(BaseModel):
 class PenentuIdentitas(Protocol):
     """Pengubah permintaan menjadi identitas — satu-satunya kemampuan yang dituntut.
 
-    `Protocol`, bukan kelas: fitur autentikasi kelak mengisinya tanpa menyentuh
-    lapisan HTTP maupun riwayat.
+    `Protocol`, bukan kelas: fitur 029 mengisinya dengan `PenentuSesi` tanpa
+    menyentuh riwayat.
+
+    **`async`, dan boleh mengembalikan `None`** sejak T-5 fitur 029. Identitas
+    sungguhan dibaca dari sesi di basis data; `None` berarti tidak ada sesi
+    sah, dan lapisan HTTP menjawabnya 401 `TIDAK_TERAUTENTIKASI` sebelum
+    membaca badan permintaan (R-05).
     """
 
-    def identitas(self, permintaan: Request) -> Identitas: ...
+    async def identitas(self, permintaan: Request) -> Identitas | None: ...

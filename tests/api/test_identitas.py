@@ -12,6 +12,7 @@ import pytest
 from pydantic import ValidationError
 from src.api.identitas import Identitas, PenentuIdentitas
 from src.api.peran import Peran
+from tests.konftes_asinkron import jalankan
 
 from perkakas.jalankan_lokal import PEMILIK_PENGEMBANGAN, IdentitasPengembangan
 
@@ -53,7 +54,7 @@ def test_bidang_tambahan_ditolak() -> None:
 
 def test_identitas_pengembangan_menyatakan_dirinya() -> None:
     """R-17: satu pemilik tetap, dan namanya menyatakan pengembangan."""
-    identitas = IdentitasPengembangan().identitas(object())  # type: ignore[arg-type]
+    identitas = jalankan(IdentitasPengembangan().identitas(object()))  # type: ignore[arg-type]
     assert identitas == Identitas(peran=Peran.PENGGUNA, pemilik=PEMILIK_PENGEMBANGAN)
     assert "pengembangan" in PEMILIK_PENGEMBANGAN
 

@@ -91,19 +91,19 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-05, R-10; KA-01.
 
-- [ ] Uji lebih dulu: tanpa kuki, kuki tak dikenal, kuki dicabut, dan sesi
+- [x] Uji lebih dulu: tanpa kuki, kuki tak dikenal, kuki dicabut, dan sesi
       kedaluwarsa (tanpa aktivitas 30 menit; mutlak 8 jam, jam disuntikkan) →
       401 `TIDAK_TERAUTENTIKASI` pada ketiga rute lama, **sebelum** badan
       permintaan dibaca
-- [ ] Uji: peran dibaca dari akun tiap permintaan — akun dinonaktifkan
+- [x] Uji: peran dibaca dari akun tiap permintaan — akun dinonaktifkan
       sesudah masuk ditolak pada permintaan berikutnya
-- [ ] `PenentuIdentitas.identitas` menjadi `async`, mengembalikan
+- [x] `PenentuIdentitas.identitas` menjadi `async`, mengembalikan
       `Identitas | None`; `PenentuSesi` pada `src/api/autentikasi.py`
-- [ ] Sembilan tempat pada `tests/api/`, `IdentitasPengembangan`, dan tiruan
+- [x] Sembilan tempat pada `tests/api/`, `IdentitasPengembangan`, dan tiruan
       pemeriksa `rute_terdaftar` dimutakhirkan **tanpa melonggarkan satu
       pernyataan pun**
-- [ ] Uji bahwa `IdentitasPengembangan` tetap tidak terjangkau dari `src/`
-- [ ] Mutasi M-9, M-10, M-11
+- [x] Uji bahwa `IdentitasPengembangan` tetap tidak terjangkau dari `src/`
+- [x] Mutasi M-9, M-10, M-11
 
 ---
 

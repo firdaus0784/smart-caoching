@@ -71,7 +71,7 @@ def _akun_baru() -> BarisAkun:
     return BarisAkun(
         id="".join(secrets.choice("abcdefghjkmnpqrstuvwxyz") for _ in range(6))
         + f"-{secrets.randbelow(1000):03d}",
-        pseudonim=f"psd_{secrets.token_hex(8)}",
+        pseudonim="psd_" + "".join(secrets.choice("abcdefghijklmnopqrstuvwxyz") for _ in range(16)),
         peran="pengguna",
         status_aktif=True,
         turunan_sandi="scrypt$16$8$1$AAAA$AAAA",

@@ -487,7 +487,7 @@ def test_skema_public_tidak_memuat_relasi_apa_pun(basis_data_siap: None) -> None
 
 _AKUN_CONTOH = (
     "insert into akun.pengguna (id, pseudonim, peran, tanggal_dibuat, turunan_sandi) "
-    "values ('ks-901', 'psd_00000000000000aa', 'pengguna', now(), 'scrypt$x')"
+    "values ('ks-901', 'psd_aaaaaaaaaaaaaaaa', 'pengguna', now(), 'scrypt$x')"
 )
 
 DITOLAK_AKUN = [
@@ -505,7 +505,7 @@ DITOLAK_AKUN = [
                 "tidak menghidupkan akun yang dinonaktifkan tim",
             ),
             (
-                "update akun.pengguna set pseudonim = 'psd_00000000000000bb' where false",
+                "update akun.pengguna set pseudonim = 'psd_bbbbbbbbbbbbbbbb' where false",
                 "pseudonim tidak berpindah (C-05)",
             ),
             ("delete from akun.pengguna where false", "akun tidak dihapus"),
@@ -526,7 +526,7 @@ DITOLAK_AKUN = [
                 "perkakas tidak menaikkan peran",
             ),
             (
-                "update akun.pengguna set pseudonim = 'psd_00000000000000bb' where false",
+                "update akun.pengguna set pseudonim = 'psd_bbbbbbbbbbbbbbbb' where false",
                 "pseudonim tidak berpindah, juga oleh perkakas (C-05)",
             ),
             ("delete from akun.pengguna where false", "perkakas tidak menghapus akun"),
@@ -670,9 +670,13 @@ def test_hak_peran_akun_persis_menurut_katalog(basis_data_siap: None) -> None:
 def test_batasan_tabel_akun(basis_data_siap: None) -> None:
     """Lapis kedua sesudah perkakas: pola nama, pseudonim, dan peran."""
     for nilai, sebab in (
-        ("('Budi Santoso', 'psd_00000000000000c1', 'pengguna')", "nama orang sebagai id"),
+        ("('Budi Santoso', 'psd_cccccccccccccccc', 'pengguna')", "nama orang sebagai id"),
         ("('ks-902', '3201010101010001', 'pengguna')", "NIK sebagai pseudonim"),
-        ("('ks-903', 'psd_00000000000000c3', 'kepala')", "peran di luar D-14"),
+        (
+            "('ks-904', 'psd_0123456789abcdef', 'pengguna')",
+            "pseudonim berderet angka — pendeteksi data pribadi membacanya rekening (KB-158)",
+        ),
+        ("('ks-903', 'psd_dddddddddddddddd', 'kepala')", "peran di luar D-14"),
     ):
         hasil = _psql(
             "peran_pengelola_akun",

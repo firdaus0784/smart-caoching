@@ -112,7 +112,7 @@ class IdentitasPengembangan:
     """Setiap pemanggil diperlakukan sebagai kepala sekolah yang **sama** —
     **tanpa autentikasi apa pun**. Lihat bahaya pada uraian modul."""
 
-    def identitas(self, _permintaan: Request) -> Identitas:
+    async def identitas(self, _permintaan: Request) -> Identitas:
         return Identitas(peran=Peran.PENGGUNA, pemilik=PEMILIK_PENGEMBANGAN)
 
 

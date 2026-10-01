@@ -21,6 +21,11 @@
 --   C-05                Tidak satu kolom pun memuat identitas langsung; `id`
 --                       berpola nama akun buatan tim, `pseudonim` berpola acak.
 --
+-- Pseudonim HURUF SAJA (KB-158). Semula 16 heksadesimal; T-5 menemukan sekitar
+-- satu dari dua puluh pseudonim heksadesimal memuat deret sepuluh angka, yang
+-- pendeteksi data pribadi FR-B04 baca sebagai nomor rekening — dan `Identitas`
+-- menolaknya, sehingga pemilik akun itu tidak akan pernah dapat masuk.
+--
 -- Hak SELECT per kolom bagi perkakas ada karena UPDATE ... WHERE id = $1
 -- menuntut hak baca atas kolom yang disebut WHERE.
 
@@ -29,7 +34,7 @@ REVOKE ALL ON SCHEMA akun FROM PUBLIC;
 
 CREATE TABLE IF NOT EXISTS akun.pengguna (
   id              text        PRIMARY KEY CHECK (id ~ '^[a-z]{2,8}-[0-9]{3}$'),
-  pseudonim       text        NOT NULL UNIQUE CHECK (pseudonim ~ '^psd_[0-9a-f]{16}$'),
+  pseudonim       text        NOT NULL UNIQUE,
   peran           text        NOT NULL CHECK (peran IN ('pengguna', 'kurator', 'anotator',
                                                          'peneliti', 'verifikator', 'admin')),
   status_aktif    boolean     NOT NULL DEFAULT true,
@@ -38,6 +43,17 @@ CREATE TABLE IF NOT EXISTS akun.pengguna (
   gagal_beruntun  integer     NOT NULL DEFAULT 0 CHECK (gagal_beruntun >= 0),
   ditahan_sampai  timestamptz
 );
+
+-- Batasan pola pseudonim ditulis terpisah dan DIPASANG ULANG tiap kali berkas
+-- ini dijalankan. `CREATE TABLE IF NOT EXISTS` tidak menyentuh tabel yang sudah
+-- ada, sehingga batasan yang diperbaiki di dalamnya tidak pernah sampai ke
+-- basis data yang disiapkan sebelum perbaikan — ditemukan pada T-5 (KB-158).
+-- `pengguna_pseudonim_check` adalah nama bawaan batasan semula yang tertulis di
+-- dalam CREATE TABLE; ia dilepas agar pola lama tidak tertinggal di sampingnya.
+ALTER TABLE akun.pengguna DROP CONSTRAINT IF EXISTS pengguna_pseudonim_check;
+ALTER TABLE akun.pengguna DROP CONSTRAINT IF EXISTS pengguna_pola_pseudonim;
+ALTER TABLE akun.pengguna
+  ADD CONSTRAINT pengguna_pola_pseudonim CHECK (pseudonim ~ '^psd_[a-z]{16}$');
 
 CREATE TABLE IF NOT EXISTS akun.sesi (
   turunan_pengenal bytea       PRIMARY KEY CHECK (octet_length(turunan_pengenal) = 32),

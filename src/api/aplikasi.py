@@ -38,13 +38,13 @@ dirancang.
 
 `susun_aplikasi` menuntut `identitas` tanpa nilai baku, sehingga aplikasi tanpa
 penentu identitas **tidak dapat disusun** — bukan disusun lalu ditolak saat
-jalan. Autentikasi (FR-A01) belum dibangun modul mana pun, dan nilai baku pada
-bidang yang menentukan siapa pemanggil adalah nilai baku yang akan terpakai di
-lingkungan sungguhan.
+jalan. Nilai baku pada bidang yang menentukan siapa pemanggil adalah nilai baku yang
+akan terpakai di lingkungan sungguhan.
 
-Peladen ini karena itu **belum layak dihadapkan ke jaringan publik**. Keadaan
-itu dinyatakan di sini, pada spesifikasinya, dan pada bentuk fungsinya —
-bukan pada satu di antaranya saja.
+Sejak fitur 029 penentu sungguhan adalah `PenentuSesi` (`src/api/autentikasi.py`):
+tanpa sesi sah, setiap rute menjawab 401 sebelum membaca badan permintaan.
+Penentu tiruan tanpa pemeriksaan tetap hanya terjangkau titik jalan
+pengembangan di luar `src/` (R-10).
 """
 
 from __future__ import annotations
@@ -58,6 +58,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from src.api.autentikasi import PESAN_BELUM_MASUK
 from src.api.galat import tanggapan_galat
 from src.api.identitas import Identitas, PenentuIdentitas
 from src.api.peran import (
@@ -168,12 +169,18 @@ def susun_aplikasi(
             500, KodeGalat.GALAT_INTERNAL, PESAN_GANGGUAN, rute=permintaan.url.path, sebab=galat
         )
 
-    def _identitas_atau_tolak(permintaan: Request, pola: str) -> Identitas | JSONResponse:
+    async def _identitas_atau_tolak(permintaan: Request, pola: str) -> Identitas | JSONResponse:
         """R-01 — dipanggil **sebelum** apa pun yang lain pada tiap penangan.
 
         Identitas dibaca sekali: peran dan pemilik dari satu keadaan yang sama.
+        Tanpa sesi sah: 401, sebelum badan permintaan dibaca (R-05 fitur 029).
+        Peran tidak mencukupi: 403.
         """
-        siapa = identitas.identitas(permintaan)
+        siapa = await identitas.identitas(permintaan)
+        if siapa is None:
+            return tanggapan_galat(
+                401, KodeGalat.TIDAK_TERAUTENTIKASI, PESAN_BELUM_MASUK, rute=pola
+            )
         if not boleh(siapa.peran, permintaan.method, pola):
             return tanggapan_galat(403, KodeGalat.TIDAK_BERWENANG, PESAN_TIDAK_BERHAK, rute=pola)
         return siapa
@@ -184,7 +191,7 @@ def susun_aplikasi(
 
     @aplikasi.post(RUTE_TANYA)
     async def tanya(permintaan: Request) -> JSONResponse:
-        siapa = _identitas_atau_tolak(permintaan, RUTE_TANYA)
+        siapa = await _identitas_atau_tolak(permintaan, RUTE_TANYA)
         if isinstance(siapa, JSONResponse):
             return siapa
         try:
@@ -238,7 +245,7 @@ def susun_aplikasi(
 
     @aplikasi.get(RUTE_DAFTAR_PERCAKAPAN)
     async def daftar_percakapan(permintaan: Request) -> JSONResponse:
-        siapa = _identitas_atau_tolak(permintaan, RUTE_DAFTAR_PERCAKAPAN)
+        siapa = await _identitas_atau_tolak(permintaan, RUTE_DAFTAR_PERCAKAPAN)
         if isinstance(siapa, JSONResponse):
             return siapa
         # TK-67: milik penanya saja, terbaru lebih dulu (D-14 Bagian 4.3).
@@ -247,7 +254,7 @@ def susun_aplikasi(
 
     @aplikasi.get(RUTE_SATU_PERCAKAPAN)
     async def satu_percakapan(permintaan: Request, id: str) -> JSONResponse:
-        siapa = _identitas_atau_tolak(permintaan, RUTE_SATU_PERCAKAPAN)
+        siapa = await _identitas_atau_tolak(permintaan, RUTE_SATU_PERCAKAPAN)
         if isinstance(siapa, JSONResponse):
             return siapa
         try:

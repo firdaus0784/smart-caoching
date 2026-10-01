@@ -74,7 +74,7 @@ class IdentitasTetap:
     def __init__(self, peran: Peran, pemilik: str = "ps_uji_a") -> None:
         self._identitas = Identitas(peran=peran, pemilik=pemilik)
 
-    def identitas(self, _permintaan: object) -> Identitas:
+    async def identitas(self, _permintaan: object) -> Identitas:
         return self._identitas
 
 

@@ -2513,3 +2513,18 @@ ditegakkan uji, bukan kebiasaan.
 | Cakupan | Turun ke 99,79 pada percobaan pertama — empat cabang tak teruji. **Penanda tidak diturunkan**; ditambah empat uji paritas (sesi bagi akun tak ada, turunan ganda, catat berhasil akun tak ada, cabut dua kali). Cakupan modul 100%. |
 | Dampak | Berkas baru `src/penyimpanan/akun.py`, `tests/penyimpanan/test_akun.py`. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+| Alternatif | Baris ini ditambahkan sesudah uji bentuk L4 menolak entri pada T-5: bidang Alternatif terlewat, dan `make check` T-4 dijalankan **sebelum** entri ini ditulis, sehingga commit T-4 lolos tanpa memeriksanya. Baris di atas tidak disunting. Alternatif yang ditimbang: menurunkan penanda cakupan alih-alih menambah uji paritas — ditolak, C-11; menguji cabang itu hanya pada pelaksana memori — ditolak, uji yang hanya ada bagi tiruan menguji tiruannya. Sejak T-5, `make check` dijalankan sesudah entri L4 ditulis, tepat sebelum commit. |
+
+## KB-158 · T-5 fitur 029 — identitas dari sesi; pseudonim huruf saja
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-5 `tasks.md`: penentu identitas sungguhan dari kuki sesi; 401 `TIDAK_TERAUTENTIKASI` sebelum badan dibaca. |
+| Keputusan | `PenentuIdentitas.identitas` menjadi `async` dan boleh mengembalikan `None`; `PenentuSesi` pada `src/api/autentikasi.py` mengembalikan `None` bagi tujuh keadaan — tanpa kuki, kuki tak dikenal atau berbentuk aneh, sesi dicabut, diam 30 menit, lewat 8 jam, akun nonaktif, peran tak dikenal. Sentuhan `terakhir_aktif` paling sering sekali semenit. Sembilan tempat pada `tests/api/`, `IdentitasPengembangan`, dan tiruan pemeriksa `rute_terdaftar` dimutakhirkan menjadi `async` tanpa satu pernyataan pun dilonggarkan. 21 uji baru pada `tests/api/test_sesi_http.py`, merah lebih dulu karena modulnya belum ada. Kawat sandung C-13 naik ke 15 dengan nama `PESAN_BELUM_MASUK` disebut tegas. |
+| **Temuan — pseudonim heksadesimal** | Uji pertama berpemilik `psd_0123456789abcdef` gagal: `Identitas` menolaknya karena pendeteksi data pribadi FR-B04 membaca deret sepuluh angka sebagai **nomor rekening**. Dengan 16 heksadesimal sekitar satu dari dua puluh pseudonim memuat deret seperti itu, dan pemilik akun itu **tidak akan pernah dapat masuk** — galat internal pada tiap permintaan. Pola pseudonim diganti menjadi `psd_` + 16 huruf kecil (sekitar 75 bit), yang tidak dapat cocok dengan pola angka mana pun. Plan Bagian 3.3 diberi catatan koreksi, tidak disunting diam-diam; uji batasan tabel kini memuat pseudonim berderet angka itu. |
+| **Temuan — `CREATE TABLE IF NOT EXISTS`** | Batasan yang diperbaiki di dalam pernyataan pembuat tabel tidak pernah sampai ke basis data yang sudah disiapkan; uji PostgreSQL gagal menurut urutan jalannya. Batasan pola pseudonim kini bernama dan **dipasang ulang** tiap kali `07-akun.sql` dijalankan, dan batasan bawaan lama dilepas. |
+| Mutasi | **M-9** (penentu jatuh ke peran `pengguna` tanpa kuki): 5 uji merah. **M-10** (batas diam dilepas pada kedua pelaksana): 3 merah. **M-11** (identitas disalin per pengenal — peran tidak dibaca ulang): 3 merah. Dipulihkan; 0 merah. |
+| Alternatif | Mempertahankan heksadesimal dan melonggarkan pemeriksaan data pribadi pada `Identitas` — **ditolak**; penjagaan itu lapisan kedua C-05, dan melonggarkannya demi format buatan kita sendiri membalik arah. Menyaring ulang pseudonim heksadesimal sampai bebas deret angka — ditolak; aturan yang hanya berlaku di pembangkit tidak menjaga baris yang masuk lewat jalan lain, sedangkan pola huruf dijaga batasan tabel. |
+| Dampak | `src/api/` (identitas, aplikasi, autentikasi baru), `perkakas/` (jalankan_lokal, pemeriksa rute, `07-akun.sql`), uji. `src/rag/` dan `src/llm/` tidak berubah. |
+| Pemutus | Agen di dalam batas `tasks.md` |

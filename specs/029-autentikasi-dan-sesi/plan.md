@@ -95,7 +95,7 @@ Setiap penolakan diuji dengan sebabnya, `permission denied` (KB-098).
 ### 3.3 Pseudonim tidak sama dengan nama pengguna — K-1
 
 `id` dibagikan kepada peserta dan tercetak pada daftar tim; `pseudonim`
-dibangkitkan acak oleh perkakas (`psd_` + 16 heksadesimal), tidak pernah
+dibangkitkan acak oleh perkakas (`psd_` + 16 huruf kecil — **dikoreksi T-5, KB-158**: semula heksadesimal, yang dapat memuat deret angka berpola rekening), tidak pernah
 ditampilkan kepada siapa pun, dan menjadi **pemilik** riwayat serta penanda
 telemetri. Ekspor penelitian membawa pseudonim, sehingga analis yang memegang
 ekspor tetapi tidak memegang basis data **tidak dapat** menautkan baris ke
