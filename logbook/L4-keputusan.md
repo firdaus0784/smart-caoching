@@ -2412,3 +2412,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menahan pencatatan sampai kata "lolos" diucapkan — ditolak; perintah lanjut atas gerbang yang disebut namanya tidak bermakna lain, dan koreksinya murah. |
 | Dampak | Status tiga berkas fitur 028; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-150 · Usulan fitur 029 — autentikasi dan sesi; TK-70 didaftarkan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | Sesudah Gerbang 4 fitur 028, pemegang Gerbang 1–4 meminta **"lanjutkan yang sebisa anda"**. Lima fitur D-12 tersisa (013, 017, 018, 020, 025) tertahan bahan di luar agen — tim antarmuka, korpus teranotasi dan ET-01, putaran pengisian ontologi, bobot model, *gold set* BT-35 — atau berada di belakang layar masuk. |
+| Keputusan | `specs/029-autentikasi-dan-sesi/spec.md` disusun sebagai **usulan**: sepuluh kebutuhan yang tidak bergantung pada pertanyaan, tujuh pertanyaan terbuka beranjuran. **Baris D-12 tidak ditulis**: penyisipan baris adalah keputusan tim, sama dengan baris 027 yang baru ditulis sesudah disetujui. Tidak ada `plan.md` maupun kode. |
+| Sebab usulan ini, bukan fitur lain | Fitur 022 menyebut FR-A01 dalam cakupannya tetapi tidak membangun alur masuk: tidak ada akun, sesi, maupun rute `/auth/masuk`. Satu-satunya penentu identitas adalah `IdentitasPengembangan`, sehingga aplikasi tidak layak dihadapkan ke jaringan publik dan pilot tidak dapat dimulai. Fitur 028 membangun tempat pemilik yang belum ada pengisinya. |
+| **TK-70** | Layanan aplikasi tidak memiliki jalur sah menuju pseudonim pengguna yang sedang masuk: KA-03 melarang jalur jaringan ke peta pseudonim, sementara telemetri dan riwayat menuntut pseudonim, dan fitur 022 memakai `id_pengguna`. Tersamar selama penentu identitas satu-satunya tiruan pengembangan. Didaftarkan pada D-00 2.69; menjadi P-1 usulan (anjuran: akun berpseudonim). |
+| Alternatif | Mengerjakan BT-69 (pemindahan bentuk galat) atau TK-69 tanpa putusan — ditolak; yang pertama menyentuh `src/llm/` tanpa baris pembangunan, yang kedua menunggu putusan rancangan audit. Menulis baris D-12 lebih dulu — ditolak; lihat di atas. |
+| Dampak | Berkas baru `specs/029-autentikasi-dan-sesi/spec.md`; `docs/D00.md` 2.69. Nol baris kode. |
+| Pemutus | Agen menyusun; baris D-12 dan Gerbang 1 menunggu pemegang Gerbang 1–4 |
