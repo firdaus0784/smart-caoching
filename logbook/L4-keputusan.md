@@ -2449,3 +2449,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | N=2^17 p=1 (baris pertama OWASP) — tidak dianjurkan; sumber yang sama menyatakannya setara dengan N=2^15 p=3, sedangkan memorinya empat kali per percobaan masuk. Mengutip NIST dari ingatan — ditolak; SI-01. |
 | Dampak | Berkas baru `specs/029-autentikasi-dan-sesi/plan.md`. Nol baris kode. |
 | Pemutus | Agen menyusun; Gerbang 2 menunggu pemegang Gerbang 1–4 |
+
+## KB-153 · Gerbang 2 fitur 029 lolos; `tasks.md` disusun
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | Laporan sebelumnya berakhir: *"Berikutnya: `tasks.md` fitur 029, setelah Anda meloloskan Gerbang 2 (K-1 s.d. K-7 dan angka P-4)."* Pemegang Gerbang 1–4 menjawab **"lanjutkan"**. |
+| Keputusan | **Gerbang 2 fitur 029 lolos; K-1 s.d. K-7 dan angka P-4 sesuai anjuran.** scrypt N=2^15 r=8 p=3; sesi 30 menit tanpa aktivitas, 8 jam mutlak; penahanan 10 kali / 15 menit; dua turunan bersamaan. `tasks.md` disusun: sembilan tugas, M-1 s.d. M-15 terbagi pada tugas yang menguji sasarannya. |
+| **Tafsiran yang dicatat** | Pernyataannya tidak memuat kata "Gerbang 2" maupun "lolos". Dibaca sebagai kelulusan karena ia menjawab laporan yang menyebut langkah berikutnya tepat sesudah Gerbang 2, sama dengan KB-149. Dapat dikoreksi: belum ada kode, dan **Gerbang 3 tetap ditunggu tegas** sebelum T-1. |
+| Alternatif | Bertanya ulang sebelum menyusun `tasks.md` — ditolak; menyusun tugas tidak mengubah apa pun yang tidak dapat diubah, sedangkan kode tetap tertahan Gerbang 3. |
+| Dampak | Status `plan.md`; berkas baru `tasks.md`. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
