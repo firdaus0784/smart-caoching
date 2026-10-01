@@ -74,15 +74,15 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-04, R-06; P-2, P-4; plan Bagian 5 dan 6.
 
-- [ ] Satu himpunan uji perilaku atas `AkunMemori` **dan** `AkunPostgres`:
+- [x] Satu himpunan uji perilaku atas `AkunMemori` **dan** `AkunPostgres`:
       baca akun; catat gagal sampai ditahan; penahanan berakhir; berhasil
       mengembalikan penghitung ke nol; percobaan selama ditahan tidak
       memperpanjang; buat, baca, sentuh, dan cabut sesi; sesi akun nonaktif
       tidak terbaca
-- [ ] Uji atomik: sepuluh `catat_gagal` bersamaan pada PostgreSQL menghasilkan
+- [x] Uji atomik: sepuluh `catat_gagal` bersamaan pada PostgreSQL menghasilkan
       tepat satu penahanan dan penghitung sepuluh
-- [ ] Uji: baris `sesi` memuat SHA-256 pengenal, **tidak** pengenalnya
-- [ ] `src/penyimpanan/akun.py`; permukaan tanpa metode hapus — diuji atas
+- [x] Uji: baris `sesi` memuat SHA-256 pengenal, **tidak** pengenalnya
+- [x] `src/penyimpanan/akun.py`; permukaan tanpa metode hapus — diuji atas
       atribut kelasnya
 
 ---

@@ -2500,3 +2500,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Batas memori tetap 64 MiB sebagaimana plan Bagian 4.1 — diganti rumus; angka tetap menolak parameter yang kelak dinaikkan tanpa pesan yang menjelaskan sebabnya. |
 | Dampak | Berkas baru `src/api/sandi.py`, `tests/api/test_sandi.py`. Cakupan tidak turun. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-157 · T-4 fitur 029 — penyimpan akun dan sesi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-4 `tasks.md`: `src/penyimpanan/akun.py`, dua pelaksana dengan satu himpunan uji. |
+| Keputusan | `PenyimpanAkun` dengan tujuh metode: baca akun, catat gagal, catat berhasil, buat/baca/sentuh/cabut sesi. Ambang dan lama penahanan, batas diam, dan masa sesi diberikan pemanggil — penyimpan hanya menjalankannya atomik. `baca_sesi` menggabungkan akun pada tiap pembacaan, sehingga peran dan status selalu dari akun, tidak disalin ke sesi (M-11). Sesi hanya menerima turunan tepat 32 bita: pengenal mentah 43 karakter tidak dapat tersimpan. 38 uji, merah lebih dulu karena modulnya belum ada; `AkunPostgres` tersambung sebagai `peran_autentikasi` sendiri, sehingga uji ini juga membuktikan hak per kolom T-2 cukup. |
+| Atomik | Penahanan dan penaikan penghitung dalam satu `UPDATE … RETURNING`; dua belas kegagalan bersamaan pada PostgreSQL menghasilkan **tepat satu** penahanan dan penghitung tepat sepuluh. |
+| Tafsiran yang dicatat | Plan tidak menyebut keadaan sesudah penahanan lewat. Ditetapkan: penghitung mulai lagi dari satu. Membiarkannya sepuluh akan menahan ulang sesudah satu salah ketik — lebih ketat daripada yang Gerbang 2 setujui. |
+| Cakupan | Turun ke 99,79 pada percobaan pertama — empat cabang tak teruji. **Penanda tidak diturunkan**; ditambah empat uji paritas (sesi bagi akun tak ada, turunan ganda, catat berhasil akun tak ada, cabut dua kali). Cakupan modul 100%. |
+| Dampak | Berkas baru `src/penyimpanan/akun.py`, `tests/penyimpanan/test_akun.py`. |
+| Pemutus | Agen di dalam batas `tasks.md` |
