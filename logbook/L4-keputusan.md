@@ -2437,3 +2437,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menanyakan ulang P-1 s.d. P-7 satu per satu — ditolak; anjuran tiap pertanyaan tertulis dan persetujuan atasnya tidak bermakna lain. |
 | Dampak | `docs/D12.md` 0.35, `docs/D00.md` 2.70, status `spec.md` fitur 029. Nol baris kode. Berikutnya `plan.md`, menunggu Gerbang 2. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-152 · `plan.md` fitur 029 disusun; menunggu Gerbang 2
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | Lanjutan **"setuju dan lanjutkan"** (KB-151). P-3 dan P-4 menuntut angka dari sumber yang **dibaca** (SI-01). |
+| Keputusan | `plan.md` disusun dengan tujuh keputusan rancangan K-1 s.d. K-7 dan angka P-4 beranjuran. Sumber yang dibaca: tiga lembar OWASP *Cheat Sheet Series* (penyimpanan sandi, manajemen sesi, autentikasi) dari salinan GitHub `OWASP/CheatSheetSeries`. Laman OWASP, NIST SP 800-63B, dan RFC 7914 **ditolak proksi** dan karena itu tidak dikutip. Angka yang tidak bersumber — penahanan 10 kali / 15 menit, garam 16 bita, dua turunan bersamaan — dinyatakan sebagai **penetapan tim tanpa dasar literatur**. |
+| **Temuan** | `hashlib.scrypt` pada OpenSSL 3.0.13 menolak parameter OWASP dengan `memory limit exceeded` bila `maxmem` tidak diisi — diukur, bukan disimpulkan. `maxmem` ditetapkan tegas dan diuji pada T-3. |
+| Alternatif | N=2^17 p=1 (baris pertama OWASP) — tidak dianjurkan; sumber yang sama menyatakannya setara dengan N=2^15 p=3, sedangkan memorinya empat kali per percobaan masuk. Mengutip NIST dari ingatan — ditolak; SI-01. |
+| Dampak | Berkas baru `specs/029-autentikasi-dan-sesi/plan.md`. Nol baris kode. |
+| Pemutus | Agen menyusun; Gerbang 2 menunggu pemegang Gerbang 1–4 |
