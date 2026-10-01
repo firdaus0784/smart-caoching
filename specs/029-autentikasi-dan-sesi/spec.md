@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-A01; NFR-05, NFR-06, NFR-08; KA-01, KA-03; C-05, C-13, C-17, C-20; TK-70 |
 | Dokumen terkait | D-14 Bagian 3.1 dan 4 · D-04 Bagian 7.1 dan 10 · D-05 S-01 · D-12 Bagian 7 |
-| Status | **Usulan — menunggu persetujuan baris D-12 dan Gerbang 1.** Tujuh pertanyaan terbuka |
+| Status | **Gerbang 1 lolos** — 1 Oktober 2026 (KB-151). Baris D-12 disetujui; P-1 s.d. P-7 diputus sesuai anjuran |
 
 ## Mengapa fitur ini diusulkan
 
@@ -131,6 +131,21 @@ apa pun.
 **Anjuran:** di luar cakupan. Tim mengatur ulang sandi lewat perkakas P-5;
 layar S-01 menyebut cara menghubungi tim.
 
+## Putusan Gerbang 1 (KB-151)
+
+Pemegang Gerbang 1–4 menyatakan **"setuju dan lanjutkan"** atas usulan yang
+menyebut anjuran tiap pertanyaan. Seluruh anjuran berlaku:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — akun berpseudonim; layanan aplikasi hanya mengenal akun, tidak pernah orangnya |
+| P-2 | **A** — kuki `HttpOnly`, `Secure`, `SameSite=Strict`; sesi tersimpan di peladen dalam bentuk turunan |
+| P-3 | **A** — `scrypt` dari `hashlib`; parameternya ditetapkan `plan.md` terhadap sumber yang dibaca |
+| P-4 | Angka diusulkan `plan.md` beserta sumbernya; diputus Gerbang 2 |
+| P-5 | **A** — perkakas baris perintah tim dengan peran basis data yang hanya dapat membuat akun |
+| P-6 | Ya — layar S-01 saja |
+| P-7 | Di luar cakupan; pengaturan ulang sandi lewat perkakas P-5 |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -147,7 +162,7 @@ layar S-01 menyebut cara menghubungi tim.
 
 ## Kriteria penerimaan
 
-- [ ] Baris D-12 disetujui dan pertanyaan P-1 s.d. P-7 diputus pada Gerbang 1
+- [x] Baris D-12 disetujui dan pertanyaan P-1 s.d. P-7 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Penolakan hak diuji terhadap peladen PostgreSQL dengan sebabnya
 - [ ] Uji mutasi disusun pada `plan.md` dan dilaporkan apa adanya

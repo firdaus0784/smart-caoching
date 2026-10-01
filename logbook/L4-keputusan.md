@@ -2425,3 +2425,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengerjakan BT-69 (pemindahan bentuk galat) atau TK-69 tanpa putusan — ditolak; yang pertama menyentuh `src/llm/` tanpa baris pembangunan, yang kedua menunggu putusan rancangan audit. Menulis baris D-12 lebih dulu — ditolak; lihat di atas. |
 | Dampak | Berkas baru `specs/029-autentikasi-dan-sesi/spec.md`; `docs/D00.md` 2.69. Nol baris kode. |
 | Pemutus | Agen menyusun; baris D-12 dan Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-151 · Gerbang 1 fitur 029 lolos; baris D-12 disisipkan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"setuju dan lanjutkan"** atas laporan KB-150, yang meminta dua hal sekaligus: persetujuan baris D-12 fitur 029 (sebelum 013) dan putusan P-1 s.d. P-7 beserta anjurannya. |
+| Keputusan | **Baris D-12 029 disetujui dan Gerbang 1 fitur 029 lolos; P-1 s.d. P-7 sesuai anjuran.** P-1 A akun berpseudonim; P-2 A kuki `HttpOnly` dengan sesi di peladen; P-3 A `scrypt` pustaka baku; P-4 angka diusulkan `plan.md` dan diputus Gerbang 2; P-5 A perkakas tim; P-6 layar S-01 dibangun; P-7 di luar cakupan. D-12 naik ke 0.35, jumlah fitur **29**. |
+| **Tafsiran yang dicatat** | "Setuju" dibaca berlaku bagi kedua permintaan laporan dan bagi seluruh anjuran, sebab laporan menyebutnya bersama dan tidak ada pertanyaan yang dikecualikan. Dapat dikoreksi; belum ada kode yang bergantung padanya. |
+| Alternatif | Menanyakan ulang P-1 s.d. P-7 satu per satu — ditolak; anjuran tiap pertanyaan tertulis dan persetujuan atasnya tidak bermakna lain. |
+| Dampak | `docs/D12.md` 0.35, `docs/D00.md` 2.70, status `spec.md` fitur 029. Nol baris kode. Berikutnya `plan.md`, menunggu Gerbang 2. |
+| Pemutus | Pemegang Gerbang 1–4 |
