@@ -2553,3 +2553,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membuat akun lewat rute admin — ditolak, P-5 B: D-14 Bagian 3 tidak memuatnya. Mencetak pseudonim agar tim dapat mencatat pasangannya — ditolak; pasangan pseudonim dengan orang diisi peneliti pada basis data pseudonim, dan keluaran terminal yang memuat keduanya adalah kunci yang tercecer. |
 | Dampak | `perkakas/akun.py` baru, `perkakas/jalankan_lokal.py`, `src/penyimpanan/akun.py`, `AGENTS.md`, `Makefile`, uji. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-161 · T-8 fitur 029 — layar S-01, Keluar, peralihan 401
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-8 `tasks.md`: R-08, P-6, K-6; D-05 S-01 yang ditulis T-1. |
+| Keputusan | `Aplikasi.tsx` baru sebagai cangkang: saat dibuka memanggil `GET /api/v1/percakapan` — rute yang sudah ada — dan membuka S-01 hanya bila jawabannya 401; luring tetap membuka Tanya (KL-E). `LayarMasuk.tsx`: dua isian berlabel, sandi `type="password"` dengan `autocomplete="current-password"`, keduanya `autocapitalize="none"` (KB-156); isian sandi dikosongkan begitu dikirim; satu kalimat penolakan bagi semua sebab. `JenisGalat` layar memperoleh `belum_masuk` (401), terpisah dari `tidak_berhak` (403) — tipe layar, bukan enum D-14. 401 di tengah pemakaian kembali ke S-01 dengan pemberitahuan yang menyatakan draf tersimpan hanya bila memang tersimpan. Tombol Keluar mencabut sesi lalu menghapus draf dan percakapan aktif (K-6), juga bila peladen tak terjangkau. 25 uji web baru, merah lebih dulu; 167 uji web lulus; anggaran muat tetap lulus V-01. |
+| **Uji fitur 027 yang diubah, dengan sengaja** | R-17 fitur 027 melarang kata `sandi` dan `password` di seluruh sumber web, sebab tidak ada autentikasi yang sah. R-08 fitur 029 menuntut isian sandi. Larangannya **dipersempit, tidak dihapus**: tiga berkas — `klien.ts`, `masuk/LayarMasuk.tsx`, `mikrokopi.ts` — boleh menyebutnya, dan ketiganya diuji tidak menyentuh simpanan peramban apa pun. Larangan `document.cookie`, `sessionStorage`, `indexedDB`, `Authorization`, dan `token` tetap berlaku pada seluruh sumber. Uji AK-03 **diperluas** ke `input`. Uji pemeriksa rute yang memakai `/auth/masuk` sebagai contoh rute "tercantum tetapi tidak terpasang" diganti contohnya ke `/api/v1/saya/profil`; sifat yang diujinya tetap. |
+| Mutasi | **M-14** (Keluar tidak membersihkan simpanan): 3 uji merah. **M-15** (`type="password"` dilepas): 1 merah. Dipulihkan; 167 lulus. |
+| Alternatif | Menambah rute "siapa saya" untuk memeriksa sesi saat dibuka — ditolak, AG-02. Membuka S-01 juga saat luring — ditolak; pengguna yang sinyalnya putus kehilangan kemampuan menulis draf yang fitur 027 janjikan. Menyimpan nama pengguna terakhir di peramban demi kenyamanan — ditolak; peramban sekolah dipakai bergantian, dan nama akun adalah separuh kredensial. |
+| Dampak | `web/src/` (Aplikasi, masuk/LayarMasuk, klien, kontrak, mikrokopi, percakapan, LayarTanya, main, gaya.css), uji web, `perkakas/pemeriksa/rute_terdaftar.py`, `tests/perkakas/test_rute_terdaftar.py`. |
+| Pemutus | Agen di dalam batas `tasks.md` |

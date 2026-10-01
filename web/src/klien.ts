@@ -18,6 +18,7 @@
 import type {
   HasilBaca,
   HasilDaftar,
+  HasilMasuk,
   HasilTanya,
   JenisGalat,
   SatuPercakapan,
@@ -28,6 +29,8 @@ import type {
 
 export const JALUR_TANYA = "/api/v1/tanya";
 export const JALUR_PERCAKAPAN = "/api/v1/percakapan";
+export const JALUR_MASUK = "/api/v1/auth/masuk";
+export const JALUR_KELUAR = "/api/v1/auth/keluar";
 
 export type Pemanggil = (jalur: string, init?: RequestInit) => Promise<Response>;
 
@@ -50,7 +53,8 @@ async function ambil(
 ): Promise<{ readonly badan: unknown } | { readonly galat: JenisGalat }> {
   let jawaban: Response;
   try {
-    // Tanpa tajuk autentikasi dan tanpa token: identitas ditentukan backend (R-17).
+    // Tanpa tajuk autentikasi: sesi berupa kuki `HttpOnly` yang dikirim
+    // peramban sendiri dan tidak terbaca kode ini (R-17 fitur 027, P-2 fitur 029).
     jawaban = await pemanggil(jalur, init);
   } catch {
     return { galat: "luring" };
@@ -104,12 +108,54 @@ export async function bacaPercakapan(
     : { jenis: "galat", galat: "sistem" };
 }
 
+/**
+ * `POST /api/v1/auth/masuk` — fitur 029. Sandi dikirim sekali dan tidak
+ * disimpan di mana pun; kuki sesinya dipasang peramban, bukan kode ini.
+ */
+export async function masuk(
+  namaPengguna: string,
+  sandi: string,
+  pemanggil: Pemanggil,
+): Promise<HasilMasuk> {
+  let jawaban: Response;
+  try {
+    jawaban = await pemanggil(JALUR_MASUK, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nama_pengguna: namaPengguna, sandi }),
+    });
+  } catch {
+    return { jenis: "galat", galat: "luring" };
+  }
+  if (jawaban.status === 204) return { jenis: "masuk" };
+  if (jawaban.status === 401 || jawaban.status === 400) return { jenis: "ditolak" };
+  return { jenis: "galat", galat: "sistem" };
+}
+
+/**
+ * `POST /api/v1/auth/keluar` — sesi dicabut di peladen (R-06). Tidak pernah
+ * melempar: layar membersihkan peramban apa pun hasilnya, dan sesi yang
+ * gagal dicabut karena luring berakhir sendiri sesudah 30 menit diam.
+ */
+export async function keluar(pemanggil: Pemanggil): Promise<void> {
+  try {
+    await pemanggil(JALUR_KELUAR, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+  } catch {
+    // Lihat uraian fungsi.
+  }
+}
+
 function galat(jenis: JenisGalat): HasilTanya {
   return { jenis: "galat", galat: jenis };
 }
 
 function petakanStatus(status: number): JenisGalat {
-  if (status === 401 || status === 403) return "tidak_berhak";
+  if (status === 401) return "belum_masuk";
+  if (status === 403) return "tidak_berhak";
   if (status === 400 || status === 413 || status === 422) return "pertanyaan_ditolak";
   return "sistem";
 }

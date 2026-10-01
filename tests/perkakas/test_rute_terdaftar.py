@@ -139,16 +139,19 @@ def test_web_rute_bertemplat_dicocokkan_dengan_pola(tmp_path: Path) -> None:
 def test_web_rute_tercantum_d14_tetapi_tidak_terpasang_ditolak(tmp_path: Path) -> None:
     """**Terpasang**, bukan sekadar tercantum D-14.
 
-    `/api/v1/auth/masuk` ada pada `PETA_RUTE` dan pada D-14, tetapi peladen
+    `/api/v1/saya/profil` ada pada `PETA_RUTE` dan pada D-14, tetapi peladen
     belum melayaninya. Layar yang memanggilnya gagal di lapangan dengan 404 —
     dan pemeriksa yang membandingkan dengan dokumen saja akan melaporkan bersih.
+
+    Contohnya semula `/api/v1/auth/masuk`, yang terpasang sejak fitur 029;
+    diganti rute D-14 lain yang memang belum terpasang, sifatnya tetap.
     """
-    akar = _web(tmp_path, "masuk.ts", 'fetch("/api/v1/auth/masuk");\n')
+    akar = _web(tmp_path, "profil.ts", 'fetch("/api/v1/saya/profil");\n')
 
     temuan = periksa_rute_terdaftar(akar)
 
     assert len(temuan) == 1
-    assert "/api/v1/auth/masuk" in temuan[0].pesan
+    assert "/api/v1/saya/profil" in temuan[0].pesan
     assert "tidak terpasang" in temuan[0].pesan
     assert temuan[0].baris == 1
 

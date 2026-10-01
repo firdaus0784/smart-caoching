@@ -152,7 +152,14 @@ def _rute_terpasang() -> set[str]:
 
     from src.penyimpanan.riwayat import RiwayatMemori
 
-    aplikasi = susun_aplikasi(jalur=_Kosong(), identitas=_Kosong(), riwayat=RiwayatMemori())  # type: ignore[arg-type]
+    # `masuk` diisi agar rute masuk dan keluar (fitur 029) terbaca terpasang —
+    # tanpa penjaga masuk keduanya memang tidak didaftarkan.
+    aplikasi = susun_aplikasi(
+        jalur=_Kosong(),  # type: ignore[arg-type]
+        identitas=_Kosong(),  # type: ignore[arg-type]
+        riwayat=RiwayatMemori(),
+        masuk=_Kosong(),  # type: ignore[arg-type]
+    )
     return {_pola(rute.path) for rute in aplikasi.routes if isinstance(rute, APIRoute)}
 
 

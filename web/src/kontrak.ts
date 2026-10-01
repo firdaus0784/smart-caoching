@@ -69,7 +69,10 @@ export interface Tanggapan {
 export type JenisGalat =
   /** KL-E — permintaan tidak sampai; draf tetap tersimpan. */
   | "luring"
-  /** Peladen menolak akun ini untuk rute ini. */
+  /** Sesi tidak sah atau sudah berakhir (401) — layar kembali ke S-01.
+   * Fitur 029; sebelumnya 401 dan 403 sama-sama `tidak_berhak`. */
+  | "belum_masuk"
+  /** Peladen menolak akun ini untuk rute ini (403). */
   | "tidak_berhak"
   /** Pertanyaan ditolak sebagai masukan; dapat ditulis ulang. */
   | "pertanyaan_ditolak"
@@ -106,3 +109,15 @@ export type HasilBaca =
 export type HasilTanya =
   | { readonly jenis: "jawaban"; readonly tanggapan: Tanggapan }
   | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+/**
+ * Hasil `POST /api/v1/auth/masuk` — D-14 Bagian 4.4, fitur 029.
+ *
+ * `ditolak` satu bagi semua sebab: peladen sengaja tidak membedakan akun tak
+ * ada, isian salah, akun ditahan, maupun nonaktif (R-04), dan layar tidak
+ * mencoba menebaknya.
+ */
+export type HasilMasuk =
+  | { readonly jenis: "masuk" }
+  | { readonly jenis: "ditolak" }
+  | { readonly jenis: "galat"; readonly galat: "luring" | "sistem" };

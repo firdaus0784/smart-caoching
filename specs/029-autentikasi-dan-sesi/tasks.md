@@ -149,15 +149,15 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-08; P-6; K-6.
 
-- [ ] Uji lebih dulu: saat dibuka, 401 dari `GET /api/v1/percakapan`
+- [x] Uji lebih dulu: saat dibuka, 401 dari `GET /api/v1/percakapan`
       menampilkan S-01 dan 200 menampilkan Tanya
-- [ ] Uji: isian sandi `type="password"`, `autocomplete` tepat; sandi tidak
+- [x] Uji: isian sandi `type="password"`, `autocomplete` tepat; sandi tidak
       ada di simpanan lokal maupun keadaan sesudah dikirim
-- [ ] Uji: 401 di tengah pemakaian kembali ke S-01, draf tetap tersimpan;
+- [x] Uji: 401 di tengah pemakaian kembali ke S-01, draf tetap tersimpan;
       `belum_masuk` terpisah dari `tidak_berhak`
-- [ ] Uji K-6: Keluar menghapus draf dan percakapan aktif dari simpanan lokal
-- [ ] Mikrokopi lolos pemeriksa C-13; anggaran muat tetap ≤ 150 KB
-- [ ] Mutasi M-14 dan M-15
+- [x] Uji K-6: Keluar menghapus draf dan percakapan aktif dari simpanan lokal
+- [x] Mikrokopi lolos pemeriksa C-13; anggaran muat tetap ≤ 150 KB
+- [x] Mutasi M-14 dan M-15
 
 ---
 

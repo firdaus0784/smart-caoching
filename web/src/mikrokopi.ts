@@ -54,6 +54,22 @@ export const MIKROKOPI = {
   tombolTampilkanTerdahulu: "Tampilkan percakapan terdahulu",
   terdahuluKosong: "Belum ada percakapan terdahulu.",
   terdahuluTidakTermuat: "Percakapan terdahulu belum dapat dimuat.",
+
+  // D-05 S-01 Masuk — fitur 029. Satu kalimat penolakan bagi semua sebab (R-04).
+  judulMasuk: "Masuk",
+  labelNamaPengguna: "Nama pengguna",
+  petunjukNamaPengguna: "Tertulis pada lembar akun dari tim peneliti, misalnya ks-017.",
+  labelSandi: "Sandi",
+  tombolMasuk: "Masuk",
+  masukDitolak: "Nama pengguna atau sandi belum cocok. Periksa lagi, atau hubungi tim peneliti.",
+  masukKosong: "Nama pengguna dan sandi wajib diisi.",
+  masukLuring: "Sedang tidak terhubung. Coba masuk lagi saat sinyal kembali.",
+  masukGangguan: "Ada gangguan di sistem kami. Coba lagi sebentar lagi.",
+  lupaSandi: "Lupa sandi? Hubungi tim peneliti. Tim akan membuatkan sandi baru.",
+  perluMasukLagi: "Anda perlu masuk lagi. Pertanyaan yang sedang Anda tulis tetap tersimpan.",
+  perluMasukLagiSaja: "Anda perlu masuk lagi.",
+  memeriksaAkun: "Sedang memeriksa akun Anda.",
+  tombolKeluar: "Keluar",
 } as const;
 
 /**
@@ -89,6 +105,12 @@ export const PESAN_GALAT: Readonly<
   sistem: {
     tersimpan: "Ada gangguan di sistem kami. Yang Anda ketik sudah tersimpan.",
     tidakTersimpan: "Ada gangguan di sistem kami. Salin pertanyaan Anda sebelum menutup halaman ini.",
+  },
+  // Fitur 029. Ditampilkan hanya bila layar Tanya berdiri tanpa cangkang;
+  // di dalam `Aplikasi`, 401 langsung membuka S-01.
+  belum_masuk: {
+    tersimpan: "Anda perlu masuk lagi. Pertanyaan yang sedang Anda tulis tetap tersimpan.",
+    tidakTersimpan: "Anda perlu masuk lagi. Salin pertanyaan Anda sebelum menutup halaman ini.",
   },
   tidak_berhak: {
     tersimpan: "Akun Anda tidak dapat membuka bagian ini.",

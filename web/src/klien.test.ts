@@ -1,10 +1,14 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  JALUR_KELUAR,
+  JALUR_MASUK,
   JALUR_PERCAKAPAN,
   JALUR_TANYA,
   bacaPercakapan,
   daftarPercakapan,
+  keluar,
+  masuk,
   tanya,
   type Pemanggil,
 } from "./klien";
@@ -85,7 +89,9 @@ describe("tanggapan sah", () => {
 
 describe("galat dipetakan ke keadaan layar", () => {
   test.each([
-    [401, "tidak_berhak"],
+    // Fitur 029: 401 berarti sesi tidak sah — layar kembali ke S-01, bukan
+    // menyatakan akun tidak berhak (D-14 Bagian 4.4).
+    [401, "belum_masuk"],
     [403, "tidak_berhak"],
     [400, "pertanyaan_ditolak"],
     [413, "pertanyaan_ditolak"],
@@ -220,5 +226,64 @@ describe("riwayat percakapan", () => {
     };
     await bacaPercakapan("a/b", pemanggil);
     expect(jalurDiminta).toBe(`${JALUR_PERCAKAPAN}/a%2Fb`);
+  });
+});
+
+
+// ── fitur 029 · masuk dan keluar — D-14 Bagian 4.4 ─────────────────────
+
+describe("masuk", () => {
+  test("mengirim dua bidang sebagai JSON, tanpa tajuk lain", async () => {
+    const panggilan: [string, RequestInit | undefined][] = [];
+    const pemanggil: Pemanggil = async (jalur, init) => {
+      panggilan.push([jalur, init]);
+      return new Response(null, { status: 204 });
+    };
+    expect(await masuk("ks-017", "abcd-efgh", pemanggil)).toEqual({ jenis: "masuk" });
+    expect(panggilan).toHaveLength(1);
+    const [jalur, init] = panggilan[0] ?? ["", undefined];
+    expect(jalur).toBe(JALUR_MASUK);
+    expect(init?.method).toBe("POST");
+    expect(init?.headers).toEqual({ "Content-Type": "application/json" });
+    expect(JSON.parse(String(init?.body))).toEqual({ nama_pengguna: "ks-017", sandi: "abcd-efgh" });
+  });
+
+  test.each([
+    [401, { jenis: "ditolak" }],
+    [400, { jenis: "ditolak" }],
+    [500, { jenis: "galat", galat: "sistem" }],
+    [503, { jenis: "galat", galat: "sistem" }],
+  ] as const)("status %i", async (status, harapan) => {
+    expect(await masuk("ks-017", "x", balasan(status, { galat: {} }))).toEqual(harapan);
+  });
+
+  test("tanpa sambungan menjadi luring", async () => {
+    const putus: Pemanggil = async () => {
+      throw new TypeError("Failed to fetch");
+    };
+    expect(await masuk("ks-017", "x", putus)).toEqual({ jenis: "galat", galat: "luring" });
+  });
+});
+
+describe("keluar", () => {
+  test("POST berbadan JSON kosong ke rute keluar", async () => {
+    const panggilan: [string, RequestInit | undefined][] = [];
+    await keluar(async (jalur, init) => {
+      panggilan.push([jalur, init]);
+      return new Response(null, { status: 204 });
+    });
+    const [jalur, init] = panggilan[0] ?? ["", undefined];
+    expect(jalur).toBe(JALUR_KELUAR);
+    expect(init?.method).toBe("POST");
+    expect(init?.headers).toEqual({ "Content-Type": "application/json" });
+    expect(init?.body).toBe("{}");
+  });
+
+  test("tidak melempar meski peladen tak terjangkau", async () => {
+    await expect(
+      keluar(async () => {
+        throw new TypeError("Failed to fetch");
+      }),
+    ).resolves.toBeUndefined();
   });
 });

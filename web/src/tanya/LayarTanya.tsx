@@ -36,9 +36,20 @@ export interface PropertiLayarTanya {
   readonly pemanggil: Pemanggil;
   readonly simpanan: Simpanan | null;
   readonly salin: (teks: string) => Promise<void>;
+  /** Fitur 029: 401 pada pengiriman — cangkang membuka S-01. Argumennya
+   * menyatakan apakah draf memang tersimpan. */
+  readonly belumMasuk?: (tersimpan: boolean) => void;
+  /** Fitur 029: tombol Keluar; tanpa ini tombolnya tidak tampil. */
+  readonly keluar?: () => void;
 }
 
-export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
+export function LayarTanya({
+  pemanggil,
+  simpanan,
+  salin,
+  belumMasuk,
+  keluar,
+}: PropertiLayarTanya) {
   const [pertanyaan, setPertanyaan] = useState(() => bacaDraf(simpanan));
   const [keadaan, setKeadaan] = useState<Keadaan>({ jenis: "kosong" });
   const [awal] = useState(() => percakapanAktif(simpanan));
@@ -104,6 +115,10 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
     // R-09: draf ditulis ulang pada saat galat, dan "tersimpan" hanya
     // dinyatakan bila simpanan lokal memang menerimanya (M-6, M-14).
     const tersimpan = simpanDraf(simpanan, pertanyaan);
+    if (hasil.galat === "belum_masuk" && belumMasuk !== undefined) {
+      belumMasuk(tersimpan);
+      return;
+    }
     setKeadaan({ jenis: "galat", galat: hasil.galat, tersimpan });
   }
 
@@ -115,6 +130,11 @@ export function LayarTanya({ pemanggil, simpanan, salin }: PropertiLayarTanya) {
   return (
     <main className="layar-tanya">
       <h1>{MIKROKOPI.judulLayar}</h1>
+      {keluar !== undefined && (
+        <button className="tombol-kedua" onClick={keluar} type="button">
+          {MIKROKOPI.tombolKeluar}
+        </button>
+      )}
 
       <form className="isian-pertanyaan" onSubmit={kirim}>
         <label htmlFor="pertanyaan">{MIKROKOPI.labelPertanyaan}</label>

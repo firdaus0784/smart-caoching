@@ -94,7 +94,8 @@ describe("aksesibilitas — D-05 Bagian 11", () => {
 
   test("AK-03: aturan dasar tombol, tautan, dan isian memakai sasaran ketuk ≥ 44px", () => {
     expect(piksel(token("--ukuran-ketuk"))).toBeGreaterThanOrEqual(44);
-    for (const elemen of ["button", "a", "textarea"]) {
+    // `input` sejak fitur 029: isian nama pengguna dan sandi pada S-01.
+    for (const elemen of ["button", "a", "textarea", "input"]) {
       const dasar = BLOK.find((b) => b.pemilih === elemen);
       expect(varPada(dasar?.isi ?? "", /min-height/), elemen).toBe("--ukuran-ketuk");
     }
@@ -165,10 +166,30 @@ function tanpaKomentar(isi: string): string {
 }
 
 describe("tanpa artefak autentikasi", () => {
-  test("tidak ada token, sandi, kuki, maupun tajuk otorisasi pada sumber", () => {
+  test("tidak ada token, kuki yang dibaca kode, maupun tajuk otorisasi pada sumber", () => {
+    // Sesi tinggal pada kuki `HttpOnly` yang tidak terbaca kode peramban
+    // (fitur 029, P-2 A); kode aplikasi tidak pernah memegang pengenalnya.
     for (const [berkas, isi] of Object.entries(SUMBER)) {
       expect(tanpaKomentar(isi), berkas).not.toMatch(
-        /document\.cookie|sessionStorage|indexedDB|Authorization|\btoken\b|password|\bsandi\b/i,
+        /document\.cookie|sessionStorage|indexedDB|Authorization|\btoken\b/i,
+      );
+    }
+  });
+
+  test("sandi hanya disebut layar masuk, klien, dan mikrokopi — dan tidak satu pun menyimpan", () => {
+    // Fitur 027 R-17 melarang kata `sandi` dan `password` di seluruh sumber,
+    // sebab tidak ada autentikasi yang sah. Fitur 029 R-08 membangun S-01:
+    // isian sandi kini wajib ada. Larangannya **dipersempit, tidak dihapus** —
+    // tiga berkas boleh menyebutnya, dan ketiganya tidak boleh menyentuh
+    // simpanan peramban apa pun (KB-161).
+    const menyebut = Object.entries(SUMBER)
+      .filter(([, isi]) => /password|\bsandi\b/i.test(tanpaKomentar(isi)))
+      .map(([b]) => b)
+      .sort();
+    expect(menyebut).toEqual(["./klien.ts", "./masuk/LayarMasuk.tsx", "./mikrokopi.ts"]);
+    for (const berkas of menyebut) {
+      expect(tanpaKomentar(SUMBER[berkas] ?? ""), berkas).not.toMatch(
+        /setItem|getItem|localStorage|simpanan|Simpanan/,
       );
     }
   });

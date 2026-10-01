@@ -83,7 +83,8 @@ h2 {
   font-weight: 600;
 }
 
-#petunjuk-pertanyaan {
+#petunjuk-pertanyaan,
+.petunjuk {
   margin: 0;
   color: var(--huruf-redup);
 }
@@ -97,6 +98,16 @@ textarea {
   border: 1px solid var(--garis);
   border-radius: 0.375rem;
   resize: vertical;
+}
+
+input {
+  min-height: var(--ukuran-ketuk);
+  padding: 0.75rem;
+  font: inherit;
+  color: var(--huruf-utama);
+  background: var(--latar-permukaan);
+  border: 1px solid var(--garis);
+  border-radius: 0.375rem;
 }
 
 button {
@@ -125,6 +136,7 @@ button:disabled {
 
 button:focus-visible,
 textarea:focus-visible,
+input:focus-visible,
 a:focus-visible {
   outline: 3px solid var(--fokus);
   outline-offset: 2px;

@@ -1,8 +1,8 @@
 /**
  * Titik masuk peramban — satu-satunya tempat kolaborator sungguhan dipasang.
  *
- * Tanpa autentikasi tiruan, tanpa token, tanpa sandi (R-17): identitas
- * ditentukan backend. Permintaan memakai asal yang sama; pada pengembangan,
+ * Tanpa autentikasi tiruan (R-17 fitur 027): identitas ditentukan peladen
+ * dari kuki sesi `HttpOnly` yang tidak terbaca kode ini (fitur 029). Permintaan memakai asal yang sama; pada pengembangan,
  * peladen Vite meneruskan `/api` ke `make jalan`.
  */
 
@@ -11,7 +11,7 @@ import { createRoot } from "react-dom/client";
 
 import type { Simpanan } from "./draf";
 import "./gaya.css";
-import { LayarTanya } from "./tanya/LayarTanya";
+import { Aplikasi } from "./Aplikasi";
 
 // Cangkang luring (R-15). Pendaftaran yang ditolak — peramban tanpa dukungan,
 // atau asal yang bukan `https` maupun `localhost` — tidak menjatuhkan layar;
@@ -40,7 +40,7 @@ const akar = document.getElementById("akar");
 if (akar !== null) {
   createRoot(akar).render(
     <StrictMode>
-      <LayarTanya
+      <Aplikasi
         pemanggil={(jalur, init) => fetch(jalur, init)}
         salin={salinKePapan}
         simpanan={simpananPeramban()}

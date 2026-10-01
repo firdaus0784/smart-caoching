@@ -59,3 +59,14 @@ export function percakapanAktif(simpanan: Simpanan | null): {
 export function jadikanAktif(simpanan: Simpanan | null, id: string): void {
   simpan(simpanan, id);
 }
+
+/** K-6 fitur 029: sesudah keluar, percakapan aktif tidak diwarisi orang
+ * berikutnya yang memakai peramban yang sama. */
+export function lupakanPercakapan(simpanan: Simpanan | null): void {
+  try {
+    simpanan?.removeItem(KUNCI);
+  } catch {
+    // Pengenal yang tertinggal tidak memberi akses: kepemilikan ditentukan
+    // peladen (R-02 fitur 028). Ia hanya membuka percakapan kosong baru.
+  }
+}
