@@ -2399,3 +2399,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menandai Layanan API **Terbangun** — ditolak; autentikasi belum ada, dan fitur 028 belum lolos Gerbang 4. |
 | Dampak | `docs/D00.md`, `docs/D14.md`, `docs/hki/dokumentasi-teknis.md`, `logbook/L8-tagihan-pasal.md`, status `plan.md` dan `tasks.md` fitur 028. Nol baris kode. |
 | Pemutus | Agen di dalam batas `tasks.md`; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-149 · Gerbang 4 fitur 028 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | Pemegang Gerbang 1–4 menyatakan **"Gerbang 4 fitur 028 lanjutkan yang sebisa anda"**, atas bahan KB-147 dan KB-148: mutasi 14 dari 14 menyala, `src/rag/` dan `src/llm/` nol berkas berubah sejak Gerbang 3, bukti Playwright dan R-13 ujung ke ujung, `make check` lulus enam gerbang. |
+| Keputusan | **Gerbang 4 fitur 028 lolos.** Status `spec.md`, `plan.md`, dan `tasks.md` dimutakhirkan. Fitur lolos Gerbang 4 menjadi **23 dari 28**. Dokumen HKI: penanda "menunggu Gerbang 4" pada baris Layanan API dan Basis data diganti tanggal kelulusannya; Layanan API tetap **Sebagian** karena autentikasi belum ada. |
+| **Tafsiran yang dicatat** | Pernyataannya tidak memuat kata "lolos". Dibaca sebagai kelulusan, sebab ia menjawab laporan yang berakhir "Berikutnya: Gerbang 4 fitur 028" dan memerintahkan lanjut. Tafsiran ini dinyatakan pada laporan kepada pemegang gerbang dan dapat dikoreksi; tidak ada kode yang bergantung padanya. |
+| Enam hal terbuka KB-148 | Tidak disebut satu per satu, sehingga berlaku sebagaimana tertulis dan **tidak dicatat sebagai diputus tersendiri**: `dapat_ditulis()`, ketiadaan `KredensialRiwayat`, `KodeGalat` dipakai ulang (BT-69 terbuka), TK-69 terbuka, jawaban tidak dikirim bila pencatatan gagal, dan autentikasi yang belum ada. |
+| Alternatif | Menahan pencatatan sampai kata "lolos" diucapkan — ditolak; perintah lanjut atas gerbang yang disebut namanya tidak bermakna lain, dan koreksinya murah. |
+| Dampak | Status tiga berkas fitur 028; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
