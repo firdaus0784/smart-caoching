@@ -58,14 +58,14 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-03; P-3, P-4; plan Bagian 4.
 
-- [ ] Uji lebih dulu: turunan memuat parameter dan garamnya; dua akun dengan
+- [x] Uji lebih dulu: turunan memuat parameter dan garamnya; dua akun dengan
       sandi sama berturunan berbeda; sandi benar cocok, salah tidak; tanda
       hubung pada sandi masukan diabaikan; sandi > 128 karakter ditolak
       **sebelum** diturunkan
-- [ ] Uji: turunan berparameter N=2^15, r=8, p=3 **berhasil** — tanpa `maxmem`
+- [x] Uji: turunan berparameter N=2^15, r=8, p=3 **berhasil** — tanpa `maxmem`
       tegas ia gagal pada OpenSSL 3 (KB-152)
-- [ ] Uji: sandi bangkitan 16 karakter dari 31 simbol, tanpa `0 O 1 l I`
-- [ ] `src/api/sandi.py`: turunan, pemeriksaan dengan `hmac.compare_digest`,
+- [x] Uji: sandi bangkitan 16 karakter dari 31 simbol, tanpa `0 O 1 l I`
+- [x] `src/api/sandi.py`: turunan, pemeriksaan dengan `hmac.compare_digest`,
       pembangkit sandi; tanpa impor selain pustaka baku dan `src/kamus/`
 
 ---

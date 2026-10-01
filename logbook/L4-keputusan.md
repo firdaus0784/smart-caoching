@@ -2487,3 +2487,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Satu peran bagi layanan dan perkakas — ditolak; layanan yang disusupi akan dapat menulis turunan sandi siapa pun. |
 | Dampak | `perkakas/basis_data/` (01, 07, README), `tests/peladen.py`, `tests/penyimpanan/test_persiapan_basis_data.py`. `src/` tidak berubah. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-156 · T-3 fitur 029 — turunan sandi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-3 `tasks.md`: `src/api/sandi.py`, P-3 dan angka P-4. |
+| Keputusan | `scrypt` N=2^15 r=8 p=3 dari `hashlib`; garam 16 bita; turunan berbentuk `scrypt$N$r$p$garam$turunan` sehingga parameter lama tetap dapat diperiksa; pembandingan `hmac.compare_digest`; sandi > 128 karakter ditolak **sebelum** derivasi dipanggil (diuji dengan derivasi yang melempar bila tersentuh); turunan tersimpan yang rusak melempar, bukan terbaca sebagai sandi salah. Sandi bangkitan 16 karakter dari 31 simbol — angka 2 sampai 9 dan huruf kecil tanpa `i l o`. 18 uji ditulis lebih dulu, merah karena modulnya belum ada. |
+| Batas memori | Dihitung dari rumus kebutuhan OpenSSL, `128·r·(N+2+p)` ditambah 1 MiB, bukan angka tebakan. Mutasi pelepasan `maxmem` dijalankan: **hanya** uji parameter sungguhan yang merah, sebagaimana mestinya — uji lain memakai parameter murah yang muat batas bawaan. |
+| Tafsiran yang dicatat | Plan menyebut "tanpa `0 O 1 l I`". Huruf besar tidak dipakai sama sekali, dan `o` serta `i` kecil ikut dikeluarkan karena tertukar dengan `0` dan `1` pada huruf kecil; jumlahnya tetap 31. Huruf kapital pada masukan **tidak** dinormalkan menjadi kecil — layar memasang `autocapitalize="none"` (T-8) alih-alih peladen melonggarkan pembandingan. |
+| Alternatif | Batas memori tetap 64 MiB sebagaimana plan Bagian 4.1 — diganti rumus; angka tetap menolak parameter yang kelak dinaikkan tanpa pesan yang menjelaskan sebabnya. |
+| Dampak | Berkas baru `src/api/sandi.py`, `tests/api/test_sandi.py`. Cakupan tidak turun. |
+| Pemutus | Agen di dalam batas `tasks.md` |
