@@ -84,7 +84,10 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
     assert "PESAN_DATA_PRIBADI" in nama
     # 15 sejak fitur 029 T-5: `PESAN_BELUM_MASUK` bagi galat 401 (R-05).
     assert "PESAN_BELUM_MASUK" in nama
-    assert len(ditemukan) == 15, f"{len(ditemukan)} untai terbaca, seharusnya 15"
+    # 17 sejak T-6: penolakan masuk (R-04) dan badan masuk yang cacat.
+    assert "PESAN_MASUK_DITOLAK" in nama
+    assert "PESAN_MASUK_TIDAK_LENGKAP" in nama
+    assert len(ditemukan) == 17, f"{len(ditemukan)} untai terbaca, seharusnya 17"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

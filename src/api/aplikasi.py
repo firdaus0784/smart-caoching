@@ -55,14 +55,23 @@ from datetime import UTC, datetime
 from typing import Any, Protocol, runtime_checkable
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-from src.api.autentikasi import PESAN_BELUM_MASUK
+from src.api.autentikasi import (
+    MASA_SESI,
+    NAMA_KUKI,
+    PESAN_BELUM_MASUK,
+    PESAN_MASUK_DITOLAK,
+    PESAN_MASUK_TIDAK_LENGKAP,
+    PenjagaMasuk,
+)
 from src.api.galat import tanggapan_galat
 from src.api.identitas import Identitas, PenentuIdentitas
 from src.api.peran import (
     POLA_DAFTAR_PERCAKAPAN,
+    POLA_KELUAR,
+    POLA_MASUK,
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
     boleh,
@@ -128,11 +137,38 @@ class PermintaanTanya(BaseModel):
         return nilai
 
 
+class PermintaanMasuk(BaseModel):
+    """Badan `POST /api/v1/auth/masuk` — D-14 Bagian 4.4.
+
+    Tepat dua bidang. `sandi` dibatasi 128 karakter **di sini**, sebelum
+    penjaga menjalankan turunan apa pun; nilainya tidak pernah disalin ke
+    pesan galat.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid", hide_input_in_errors=True)
+
+    nama_pengguna: str = Field(min_length=1, max_length=64)
+    sandi: str = Field(min_length=1, max_length=128)
+
+
+def _berbadan_json(permintaan: Request) -> bool:
+    """K-4: rute pengubah keadaan hanya menerima `application/json`.
+
+    Formulir lintas situs tidak dapat mengirim jenis ini tanpa *preflight*,
+    dan peladen ini tidak menjawab *preflight* — sehingga syarat ini menutup
+    celah yang ditinggal `SameSite`, yang OWASP sebut pertahanan berlapis,
+    bukan pengganti.
+    """
+    jenis = permintaan.headers.get("content-type", "")
+    return jenis.split(";", 1)[0].strip().lower() == "application/json"
+
+
 def susun_aplikasi(
     *,
     jalur: JalurPenjawab,
     identitas: PenentuIdentitas,
     riwayat: PenyimpanRiwayat,
+    masuk: PenjagaMasuk | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -140,6 +176,11 @@ def susun_aplikasi(
     `identitas` **tanpa nilai baku**, disengaja; lihat uraian modul.
     `riwayat` juga tanpa nilai baku: penyimpan yang diam-diam jatuh ke memori
     adalah riwayat yang hilang saat peladen dimulai ulang tanpa ada yang tahu.
+
+    `masuk` boleh kosong: tanpa penjaga, rute masuk dan keluar **tidak
+    terpasang** — titik jalan pengembangan yang memakai penentu tiruan tidak
+    menyediakan rute masuk yang tidak dapat berbuat apa pun. Ketiadaannya
+    bukan celah: tanpa rute masuk, tidak ada sesi yang dapat diterbitkan.
     """
     aplikasi = FastAPI(
         title="Smart-Coaching Adaptif",
@@ -194,6 +235,10 @@ def susun_aplikasi(
         siapa = await _identitas_atau_tolak(permintaan, RUTE_TANYA)
         if isinstance(siapa, JSONResponse):
             return siapa
+        if not _berbadan_json(permintaan):
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_TIDAK_LENGKAP, rute=RUTE_TANYA
+            )
         try:
             badan = PermintaanTanya.model_validate(await permintaan.json())
         except (ValidationError, ValueError):
@@ -278,4 +323,64 @@ def susun_aplikasi(
             },
         )
 
+    if masuk is not None:
+        _pasang_rute_masuk(aplikasi, masuk, identitas)
+
     return aplikasi
+
+
+def _pasang_rute_masuk(
+    aplikasi: FastAPI, penjaga: PenjagaMasuk, identitas: PenentuIdentitas
+) -> None:
+    """Rute D-14 Bagian 3.1 — bentuknya Bagian 4.4. Hanya menerjemahkan."""
+
+    @aplikasi.post(POLA_MASUK)
+    async def masuk(permintaan: Request) -> Response:
+        if not _berbadan_json(permintaan):
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_MASUK_TIDAK_LENGKAP, rute=POLA_MASUK
+            )
+        try:
+            badan = PermintaanMasuk.model_validate(await permintaan.json())
+        except (ValidationError, ValueError):
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_MASUK_TIDAK_LENGKAP, rute=POLA_MASUK
+            )
+        pengenal = await penjaga.masuk(badan.nama_pengguna, badan.sandi)
+        if pengenal is None:
+            return tanggapan_galat(
+                401, KodeGalat.TIDAK_TERAUTENTIKASI, PESAN_MASUK_DITOLAK, rute=POLA_MASUK
+            )
+        # Sesi lama pada peramban yang sama dicabut: satu peramban, satu sesi.
+        lama = permintaan.cookies.get(NAMA_KUKI)
+        if lama:
+            await penjaga.keluar(lama)
+        tanggapan = Response(status_code=204)
+        tanggapan.set_cookie(
+            NAMA_KUKI,
+            pengenal,
+            max_age=int(MASA_SESI.total_seconds()),
+            path="/",
+            secure=True,
+            httponly=True,
+            samesite="strict",
+        )
+        return tanggapan
+
+    @aplikasi.post(POLA_KELUAR)
+    async def keluar(permintaan: Request) -> Response:
+        siapa = await identitas.identitas(permintaan)
+        if siapa is None:
+            return tanggapan_galat(
+                401, KodeGalat.TIDAK_TERAUTENTIKASI, PESAN_BELUM_MASUK, rute=POLA_KELUAR
+            )
+        if not _berbadan_json(permintaan):
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_TIDAK_LENGKAP, rute=POLA_KELUAR
+            )
+        pengenal = permintaan.cookies.get(NAMA_KUKI)
+        if pengenal:
+            await penjaga.keluar(pengenal)
+        tanggapan = Response(status_code=204)
+        tanggapan.delete_cookie(NAMA_KUKI, path="/", secure=True, httponly=True, samesite="strict")
+        return tanggapan

@@ -237,6 +237,8 @@ sebagian."""
 
 _INDEKS: dict[tuple[str, str], Rute] = {(r.metode, r.jalur): r for r in PETA_RUTE}
 
+POLA_MASUK = _INDEKS["POST", "/api/v1/auth/masuk"].jalur
+POLA_KELUAR = _INDEKS["POST", "/api/v1/auth/keluar"].jalur
 POLA_TANYA = _INDEKS["POST", "/api/v1/tanya"].jalur
 POLA_DAFTAR_PERCAKAPAN = _INDEKS["GET", "/api/v1/percakapan"].jalur
 POLA_SATU_PERCAKAPAN = _INDEKS["GET", "/api/v1/percakapan/{id}"].jalur

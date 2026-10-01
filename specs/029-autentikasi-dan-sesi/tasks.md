@@ -111,22 +111,22 @@ PostgreSQL menyala. **Tidak satu baris pun berubah di `src/rag/` maupun
 
 **Kebutuhan:** R-01, R-03, R-04, R-06, R-09; K-3, K-4.
 
-- [ ] Uji lebih dulu: masuk berhasil → 204, kuki `__Host-sesi` dengan
+- [x] Uji lebih dulu: masuk berhasil → 204, kuki `__Host-sesi` dengan
       `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`, tanpa `Domain`
-- [ ] Uji R-04: akun tidak ada, sandi salah, ditahan, dan nonaktif →
+- [x] Uji R-04: akun tidak ada, sandi salah, ditahan, dan nonaktif →
       tanggapan **sama persis** kecuali `id_jejak`, dan **tepat satu**
       turunan sandi dijalankan pada keempatnya
-- [ ] Uji: sesudah masuk, kuki sesi lama dicabut; sesudah keluar, kuki lama
+- [x] Uji: sesudah masuk, kuki sesi lama dicabut; sesudah keluar, kuki lama
       ditolak 401 (R-06)
-- [ ] Uji K-4: masuk, keluar, dan tanya dengan `Content-Type` selain JSON
+- [x] Uji K-4: masuk, keluar, dan tanya dengan `Content-Type` selain JSON
       ditolak, tanpa turunan sandi dan tanpa panggilan jalur
-- [ ] Uji R-09: log tidak memuat sandi, pengenal sesi, turunannya, maupun nama
+- [x] Uji R-09: log tidak memuat sandi, pengenal sesi, turunannya, maupun nama
       pengguna yang diketik pada penolakan; penahanan akun yang ada tercatat
       dengan `id` akun dan `id_jejak`
-- [ ] Uji: badan berbidang tambahan → 400; pesan penolakan lolos C-13
-- [ ] Turunan pada utas, semafor dua; rute pada `src/api/aplikasi.py`;
+- [x] Uji: badan berbidang tambahan → 400; pesan penolakan lolos C-13
+- [x] Turunan pada utas, semafor dua; rute pada `src/api/aplikasi.py`;
       `POLA_MASUK`, `POLA_KELUAR` dari `PETA_RUTE`
-- [ ] Mutasi M-1 s.d. M-6, M-12, M-13
+- [x] Mutasi M-1 s.d. M-6, M-12, M-13
 
 ---
 

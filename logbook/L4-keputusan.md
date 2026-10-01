@@ -2528,3 +2528,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mempertahankan heksadesimal dan melonggarkan pemeriksaan data pribadi pada `Identitas` — **ditolak**; penjagaan itu lapisan kedua C-05, dan melonggarkannya demi format buatan kita sendiri membalik arah. Menyaring ulang pseudonim heksadesimal sampai bebas deret angka — ditolak; aturan yang hanya berlaku di pembangkit tidak menjaga baris yang masuk lewat jalan lain, sedangkan pola huruf dijaga batasan tabel. |
 | Dampak | `src/api/` (identitas, aplikasi, autentikasi baru), `perkakas/` (jalankan_lokal, pemeriksa rute, `07-akun.sql`), uji. `src/rag/` dan `src/llm/` tidak berubah. |
 | Pemutus | Agen di dalam batas `tasks.md` |
+
+## KB-159 · T-6 fitur 029 — rute masuk dan keluar
+
+| | |
+|---|---|
+| Tanggal | 2026-10-01 |
+| Konteks | T-6 `tasks.md`, inti fitur: rute D-14 Bagian 3.1 dengan bentuk Bagian 4.4. |
+| Keputusan | `PenjagaMasuk` pada `src/api/autentikasi.py`: satu turunan pada setiap percobaan — akun tak ada diperiksa terhadap turunan tiruan berparameter sungguhan, akun ditahan dan nonaktif tetap diperiksa lalu ditolak; keempat penolakan menerima tanggapan sama persis kecuali `id_jejak`. Turunan pada utas lewat `asyncio.to_thread`, semafor dua. Rute masuk: syarat `application/json`, `PermintaanMasuk` dua bidang (`sandi` ≤ 128), 204 tanpa badan dengan kuki `__Host-sesi; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=28800`; sesi lama pada peramban yang sama dicabut. Rute keluar: identitas dulu (401), syarat JSON, cabut di peladen, kuki dikosongkan. `/tanya` memperoleh syarat JSON sesudah identitas. Tanpa `PenjagaMasuk`, kedua rute tidak terpasang. 33 uji baru, merah lebih dulu; satu di antaranya ujung ke ujung atas PostgreSQL sebagai `peran_autentikasi`. |
+| Mutasi | **M-1** 2 merah; **M-2** 2; **M-3** 7, termasuk uji PostgreSQL; **M-4** 1; **M-5** 1; **M-6** 1; **M-13** 1. **M-12 menyala pada percobaan pertama, tetapi tidak lewat uji masuk**: uji formulir pada rute masuk lulus juga tanpa syarat `Content-Type`, karena badan formulir memang bukan JSON — lulus karena sebab lain (KB-098). Formulir lintas situs ber-`text/plain` dapat menyusun badan JSON yang sah, sehingga ditambah uji tepat bentuk itu; M-12 diulang dan uji barunya merah. |
+| Alternatif | Membedakan akun ditahan dengan 429 `PAGU_TERLAMPAUI` — ditolak, K-3: status berbeda membocorkan bahwa akunnya ada. Tidak menjalankan turunan bagi akun ditahan — ditolak; waktu tanggapnya terbaca. Selalu memasang rute masuk dengan penjaga tiruan pada titik jalan pengembangan — ditolak; rute yang tidak dapat berbuat apa pun hanya membingungkan pembaca daftar rute. |
+| Dampak | `src/api/` (aplikasi, autentikasi, peran), uji. Kawat sandung C-13 naik ke 17 dengan dua nama disebut tegas. `src/rag/` dan `src/llm/` tidak berubah. |
+| Pemutus | Agen di dalam batas `tasks.md` |
