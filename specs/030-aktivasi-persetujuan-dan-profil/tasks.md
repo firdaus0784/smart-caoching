@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 4 Oktober 2026 (KB-165); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 4 Oktober 2026 (KB-168); K-1 s.d. K-8 dan draf S-03 sesuai anjuran |
-| Status | **Gerbang 3 lolos (didelegasikan)** — 4 Oktober 2026 (KB-168). Pelaksanaan berjalan |
+| Status | **Gerbang 3 lolos (didelegasikan)** — 4 Oktober 2026 (KB-168). Enam dari enam tugas selesai — **menunggu Gerbang 4 manusia** (KB-175) |
 | Kebutuhan | R-01 s.d. R-10; FR-A02 s.d. FR-A06; C-04, C-05, C-13, C-14, C-20; TK-50 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -77,10 +77,10 @@ Agen **tidak** membuat berkas naskah persetujuan (ET-02).
 
 ## T-6 · Putaran mutasi, bukti, penutupan
 
-- [ ] M-1 s.d. M-11 sebagai satu putaran
-- [ ] Playwright terhadap `make jalan` dengan naskah uji pada direktori sementara
-- [ ] `git diff --stat` atas `src/rag/`, `src/llm/`, `src/telemetri/` sejak Gerbang 3: kosong
-- [ ] D-00, L8, dokumen HKI, L4; **menunggu Gerbang 4 manusia**
+- [x] M-1 s.d. M-11 sebagai satu putaran
+- [x] Playwright terhadap `make jalan` dengan naskah uji pada direktori sementara
+- [x] `git diff --stat` atas `src/rag/`, `src/llm/`, `src/telemetri/` sejak Gerbang 3: kosong
+- [x] D-00, L8, dokumen HKI, L4; **menunggu Gerbang 4 manusia**
 
 ## Yang menghentikan pekerjaan
 

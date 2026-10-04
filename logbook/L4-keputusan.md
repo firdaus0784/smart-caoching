@@ -2736,3 +2736,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengecualikan 404 dari bukti — ditolak; galat yang dikecualikan tanpa dibaca adalah cara cacat ini lolos sejak fitur 028. Kunci simpanan kedua bagi penanda — ditolak; uji halaman membatasi satu kunci per berkas, dan dua kunci yang menyatakan satu hal dapat berselisih. |
 | Dampak | `web/src/percakapan.ts`, `web/src/tanya/LayarTanya.tsx`, dua berkas uji web. Peladen tidak berubah. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-175 · T-6 fitur 030 — putaran mutasi, bukti, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | T-6 `tasks.md` fitur 030, atas pendelegasian KB-168. Pendelegasian **tidak** mencakup Gerbang 4. |
+| Keputusan | **Enam dari enam tugas fitur 030 selesai — menunggu Gerbang 4 manusia.** Putaran mutasi M-1 s.d. M-11: **11 dari 11 menyala**; berkas dipulihkan tanpa sisa. Bukti Playwright terhadap `make jalan` bersesi dengan akun buatan perkakas: masuk, S-02 dengan naskah **uji** dari berkas, setuju, S-03 empat layar, S-04, Tanya; muat ulang langsung ke Tanya; cabut dari Tanya. Seluruh pemeriksaan lulus, **0 respons 404** sesudah perbaikan KB-174; empat tangkapan layar. Basis data sesudahnya memuat satu catatan persetujuan yang **dicabut, bukan dihapus**, dan prioritas berurutan `{K5,K1,K7}`. `git diff --stat` atas `src/rag/`, `src/llm/`, `src/telemetri/` sejak Gerbang 3: **kosong**. L8: tagihan tidak menyusut (19 / 0 / 1), C-04 untuk pertama kali dapat dipenuhi di lapangan. Dokumen HKI dimutakhirkan dengan penanda menunggu Gerbang 4. |
+| Naskah uji | Dipasang sementara pada `web/public/naskah/persetujuan.json` bertanda "NASKAH UJI — bukan naskah ET-02", lalu **dihapus**; tidak pernah di-commit, dan uji repositori menjaga ketiadaannya. Sandi akun bukti hanya lewat berkas sementara di luar repositori yang dihapus sesudahnya. |
+| Terbuka bagi pemegang Gerbang 4 | (1) **Naskah ET-02** belum ada; tanpanya S-02 dilewati dan telemetri mati bagi semua orang — aman, tetapi penelitian perilaku belum dapat berjalan. (2) Penarikan data `DELETE /saya/data` (NFR-09) belum dibangun. (3) Layar S-14 pengubahan profil tetap pada 013 (P-6). (4) Bukti fitur 029 kini tidak dapat diulang apa adanya: sesudah masuk, akun baru melewati aktivasi lebih dulu. (5) Perbaikan cacat fitur 028 (KB-174) dikerjakan di luar `tasks.md` 030, dengan commit tersendiri. |
+| Alternatif | Menyatakan fitur selesai tanpa membaca 404 yang tercatat bukti — ditolak; justru dari sana cacat 028 ditemukan. |
+| Dampak | `docs/hki/dokumentasi-teknis.md`, `logbook/L8-tagihan-pasal.md`, status `tasks.md`, bukti baru. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

@@ -453,3 +453,29 @@ dihitung ulang dari selisih kode: kalimat peladen baru berjumlah **tiga**
 bukan lima; kalimat layar baru berjumlah **enam belas** (empat belas kunci
 `MIKROKOPI` dan dua bentuk `PESAN_GALAT.belum_masuk`), bukan tiga belas.
 Baris di atas tidak disunting.
+
+### Fitur 030 — 4 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 029. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan empat pasal yang sudah lulus, dan satu di antaranya
+untuk pertama kali **dapat dipenuhi di lapangan**:
+
+| Pasal | Yang bertambah pada fitur 030 |
+|---|---|
+| C-04 | Persetujuan penelitian kini dapat diambil (S-02) dan dicabut (P-5); keadaannya dibaca lewat `KeadaanPersetujuan.dari` fitur 022 — jalur yang sama dengan gerbang perekaman fitur 012. **Tanpa naskah ET-02 terpasang, setiap persetujuan ditolak peladen**, sehingga telemetri tetap mati bagi semua orang sampai naskahnya ada (mutasi M-3) |
+| C-05 | Pemilik profil, prioritas, dan persetujuan berupa pseudonim — ditegakkan batasan pola pada ketiga tabel; `peran_pengguna` tanpa jalur ke basis data pseudonim (M-6) |
+| C-13 | Tiga kalimat peladen dan dua puluh tujuh kalimat layar baru melewati pemeriksa; satu kalimat yang tertulis harfiah di JSX tertangkap dan dipindah |
+| C-14 | Profil dan prioritas tidak diteruskan ke jalur penjawaban (M-9) |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 030 tidak menyentuh apa pun yang C-01 tunggu.
+
+**Koreksi atas baris C-13 di atas**, ditambahkan sebelum commit sesudah
+dihitung ulang dari selisih `web/src/mikrokopi.ts` sejak Gerbang 3: untai
+layar baru berjumlah **empat puluh lima** — 28 kunci `MIKROKOPI`, 8 untai
+`PENGENALAN`, 8 label kategori, dan 1 fungsi penanda layar — bukan dua puluh
+tujuh. Baris di atas tidak disunting.
