@@ -551,6 +551,18 @@ describe("tidak meminta riwayat yang pasti belum ada — T-8", () => {
     await vi.waitFor(() => expect(peladen.bacaan).toContain(baru));
   });
 
+  test("muat ulang sebelum pertanyaan pertama tidak membaca riwayat — KB-174", async () => {
+    const peladen = peladenPalsu();
+    const simpanan = simpananPeta();
+    const pertama = pasangPeladen(peladen, simpanan);
+    await screen.findByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu });
+    pertama.unmount();
+    pasangPeladen(peladen, simpanan);
+    await screen.findByRole("button", { name: MIKROKOPI.tombolTampilkanTerdahulu });
+    await new Promise((selesai) => setTimeout(selesai, 20));
+    expect(peladen.bacaan).toEqual([]);
+  });
+
   test("percakapan tersimpan tetap dibaca sesudah muat ulang", async () => {
     const peladen = peladenPalsu();
     const simpanan = simpananPeta();

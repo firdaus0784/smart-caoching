@@ -2723,3 +2723,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menampilkan S-02 "naskah belum tersedia" pada tiap masuk — ditolak; layar yang tidak dapat dikerjakan apa pun adalah penghalang (AI-07). |
 | Dampak | `web/src/` (aktivasi baru, Aplikasi, klien, kontrak, mikrokopi, LayarTanya), `perkakas/pemeriksa/kontrak_web.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-174 · Cacat fitur 028 tersingkap bukti fitur 030 — riwayat diminta bagi percakapan yang belum dikenal
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | Bukti Playwright T-6 fitur 030 lulus seluruh pemeriksaan fungsionalnya, tetapi mencatat dua respons **404** pada `GET /api/v1/percakapan/{id}`. URL-nya dicatat dan dibaca alih-alih galatnya dikecualikan. |
+| Sebab | Pengenal percakapan baru disimpan di peramban apa adanya. Sesudah muat ulang — atau sesudah layar Tanya dipasang ulang, seperti saat kembali dari S-02 — pengenal itu terbaca "sudah dikenal", dan layar meminta riwayat yang peladen belum pernah lihat. Itu persis permintaan sia-sia yang KB-147 larang. Uji fitur 028 **mengunci cacat ini**: ia mengharapkan `baru` bernilai `false` sesudah muat ulang. Bukti 028 tidak menangkapnya karena selalu bertanya sebelum memuat ulang. |
+| Keputusan | Pengenal yang baru dibangkitkan disimpan bersama penanda `#baru` pada **kunci yang sama**; penanda dilepas `tandaiDikenal` sesudah jawaban pertamanya diterima. Harapan uji 028 itu **diubah dengan sengaja** menjadi `true`, dan tiga uji baru ditambahkan: penandaan dikenal, pengenal lain tidak tersentuh, dan muat ulang sebelum pertanyaan pertama tidak membaca riwayat. Lima uji merah lebih dulu; 189 uji web lulus. Bukti 030 diulang sesudahnya: **0 respons 404**. |
+| Lingkup | Perbaikan ini mengembalikan kode ke perilaku yang fitur 028 sendiri tetapkan (KB-147) — Kebenaran, urutan kedua AGENTS.md — bukan fitur baru. Dikerjakan pada commit tersendiri, di luar tugas `tasks.md` 030, dan dicatat di sini agar tidak terbaca sebagai bagian 030. |
+| Alternatif | Mengecualikan 404 dari bukti — ditolak; galat yang dikecualikan tanpa dibaca adalah cara cacat ini lolos sejak fitur 028. Kunci simpanan kedua bagi penanda — ditolak; uji halaman membatasi satu kunci per berkas, dan dua kunci yang menyatakan satu hal dapat berselisih. |
+| Dampak | `web/src/percakapan.ts`, `web/src/tanya/LayarTanya.tsx`, dua berkas uji web. Peladen tidak berubah. |
+| Pemutus | Agen atas pendelegasian KB-168 |

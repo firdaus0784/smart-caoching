@@ -17,7 +17,7 @@ import { bacaDraf, hapusDraf, simpanDraf, type Simpanan } from "../draf";
 import { bacaPercakapan, tanya, type Pemanggil } from "../klien";
 import type { Giliran, JenisGalat, Tanggapan } from "../kontrak";
 import { MIKROKOPI, PESAN_GALAT } from "../mikrokopi";
-import { jadikanAktif, percakapanAktif, percakapanBaru } from "../percakapan";
+import { jadikanAktif, percakapanAktif, percakapanBaru, tandaiDikenal } from "../percakapan";
 import { BlokJawaban } from "./BlokJawaban";
 import { PercakapanTerdahulu, PertanyaanSebelumnya } from "./RiwayatPercakapan";
 
@@ -111,6 +111,7 @@ export function LayarTanya({
     if (hasil.jenis === "jawaban") {
       hapusDraf(simpanan);
       setKeadaan({ jenis: "jawaban", tanggapan: hasil.tanggapan });
+      tandaiDikenal(simpanan, idPercakapan);
       setDikenalPeladen(true);
       setMuatUlang((n) => n + 1);
       return;

@@ -17,6 +17,14 @@ const KUNCI = "smart-coaching:percakapan-aktif";
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
+/**
+ * Penanda "belum dikenal peladen" — KB-174. Pengenal yang baru dibangkitkan
+ * disimpan bersama penanda ini sampai jawaban pertamanya diterima. Tanpanya,
+ * muat ulang sebelum pertanyaan pertama membuat layar meminta riwayat yang
+ * peladen belum kenal (404, KB-147). Kunci simpanannya tetap satu.
+ */
+const PENANDA_BARU = "#baru";
+
 function simpan(simpanan: Simpanan | null, id: string): void {
   try {
     simpanan?.setItem(KUNCI, id);
@@ -27,7 +35,7 @@ function simpan(simpanan: Simpanan | null, id: string): void {
 
 export function percakapanBaru(simpanan: Simpanan | null): string {
   const id = crypto.randomUUID();
-  simpan(simpanan, id);
+  simpan(simpanan, id + PENANDA_BARU);
   return id;
 }
 
@@ -50,9 +58,12 @@ export function percakapanAktif(simpanan: Simpanan | null): {
   }
   // Nilai tersimpan yang bukan UUID v4 — disunting tangan, atau dari versi
   // lain — diganti, bukan dikirim: peladen akan menolaknya (R-16).
-  return tersimpan !== null && UUID_V4.test(tersimpan)
-    ? { id: tersimpan, baru: false }
-    : { id: percakapanBaru(simpanan), baru: true };
+  if (tersimpan !== null) {
+    const baru = tersimpan.endsWith(PENANDA_BARU);
+    const id = baru ? tersimpan.slice(0, -PENANDA_BARU.length) : tersimpan;
+    if (UUID_V4.test(id)) return { id, baru };
+  }
+  return { id: percakapanBaru(simpanan), baru: true };
 }
 
 /** Dipakai layar ketika pengguna membuka percakapan terdahulu. */
@@ -68,5 +79,15 @@ export function lupakanPercakapan(simpanan: Simpanan | null): void {
   } catch {
     // Pengenal yang tertinggal tidak memberi akses: kepemilikan ditentukan
     // peladen (R-02 fitur 028). Ia hanya membuka percakapan kosong baru.
+  }
+}
+
+/** Jawaban pertama diterima: peladen kini mengenal percakapan ini, sehingga
+ * riwayatnya dibaca pada muat ulang berikutnya. Pengenal lain tidak disentuh. */
+export function tandaiDikenal(simpanan: Simpanan | null, id: string): void {
+  try {
+    if (simpanan?.getItem(KUNCI) === id + PENANDA_BARU) simpan(simpanan, id);
+  } catch {
+    // Paling buruk: satu pembacaan riwayat terlewat sesudah muat ulang.
   }
 }
