@@ -2607,3 +2607,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis 013 utuh sebagai satu spec — ditolak; lihat sebabnya di atas. Menulis baris D-12 lebih dulu — ditolak; penyisipan baris adalah keputusan tim, sama dengan 027, 028, dan 029. |
 | Dampak | Berkas baru `specs/030-aktivasi-persetujuan-dan-profil/spec.md`. Nol baris kode. |
 | Pemutus | Agen menyusun; baris D-12 dan Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-165 · Gerbang 1 fitur 030 lolos; baris D-12 disisipkan, 013 dipersempit
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | Laporan KB-164 meminta tiga hal: persetujuan baris D-12 030 sebelum 013 beserta penyempitan 013, Gerbang 1 fitur 030, dan putusan P-1 s.d. P-7 dengan anjurannya. Pemegang Gerbang 1–4 menjawab **"setuju"**. |
+| Keputusan | **Baris 030 disisipkan, 013 dipersempit menjadi S-05 s.d. S-08 dan S-10 s.d. S-18, dan Gerbang 1 fitur 030 lolos; P-1 s.d. P-7 sesuai anjuran.** D-12 naik ke 0.36, jumlah fitur **30**; D-00 2.73. |
+| **Tafsiran yang dicatat** | "Setuju" dibaca berlaku bagi ketiga permintaan, sama dengan KB-151 — laporan menyebutnya bersama dan tidak mengecualikan satu pun. Berbeda dari Gerbang 3 dan 4, gerbang ini tidak memberi izin menulis kode, sehingga tidak ditanyakan ulang (KB-154). Dapat dikoreksi; belum ada kode yang bergantung padanya. |
+| Alternatif | Menanyakan ulang — ditolak; persetujuan atas daftar yang disebut lengkap tidak bermakna lain, dan kode tetap tertahan Gerbang 3. |
+| Dampak | `docs/D12.md` 0.36, `docs/D00.md` 2.73, status `spec.md` fitur 030. Nol baris kode. Berikutnya `plan.md`, termasuk draf empat layar S-03 (P-2). |
+| Pemutus | Pemegang Gerbang 1–4 |

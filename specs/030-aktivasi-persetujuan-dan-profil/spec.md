@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-A02, FR-A03, FR-A04, FR-A05, FR-A06; NFR-19; C-04, C-05, C-13, C-14, C-20; TK-50 |
 | Dokumen terkait | D-05 Bagian 4.1 dan 5.1 (S-02, S-03, S-04, alur J1) · D-14 Bagian 3.1 · D-01 Bagian 13 (ET-01, ET-02) · D-12 Bagian 7 |
-| Status | **Usulan — menunggu persetujuan baris D-12 dan Gerbang 1.** Tujuh pertanyaan terbuka |
+| Status | **Gerbang 1 lolos** — 4 Oktober 2026 (KB-165). Baris D-12 disetujui; P-1 s.d. P-7 diputus sesuai anjuran |
 
 ## Mengapa fitur ini diusulkan, dan mengapa bukan 013 utuh
 
@@ -117,6 +117,21 @@ dibangun di sini karena S-04 memakainya; layar pengubahannya tetap S-14 pada
 **Anjuran:** nilainya diisi pseudonim akun (R-02), nama bidangnya tetap
 mengikuti D-14; tidak ada perubahan enum maupun nama.
 
+## Putusan Gerbang 1 (KB-165)
+
+Pemegang Gerbang 1–4 menjawab **"setuju"** atas laporan yang menyebut baris
+D-12 dan anjuran tiap pertanyaan. Seluruh anjuran berlaku:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — S-02 dibangun; naskah dibaca dari berkas berversi yang diisi tim; tanpa berkas itu persetujuan tidak dapat diberikan dan telemetri tetap mati |
+| P-2 | Agen menyusun draf empat layar S-03; drafnya diputus pada Gerbang 2 |
+| P-3 | **A** — ikuti D-14 (`jalur_akreditasi`); D-04 diselaraskan |
+| P-4 | Aktivasi selesai sesudah S-04 tersimpan; dibaca dari ada tidaknya profil |
+| P-5 | Tautan dari layar Tanya membuka S-02 lagi; pencabutan ditangani di sana |
+| P-6 | Rute `PUT` dibangun di sini; layar S-14 tetap pada 013 |
+| P-7 | `id_pengguna` fitur 022 diisi pseudonim akun; nama bidang tetap |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -134,7 +149,7 @@ mengikuti D-14; tidak ada perubahan enum maupun nama.
 
 ## Kriteria penerimaan
 
-- [ ] Baris D-12 030 dan penyempitan 013 disetujui; P-1 s.d. P-7 diputus pada Gerbang 1
+- [x] Baris D-12 030 dan penyempitan 013 disetujui; P-1 s.d. P-7 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Penolakan hak diuji terhadap peladen PostgreSQL dengan sebabnya
 - [ ] Uji mutasi disusun pada `plan.md` dan dilaporkan apa adanya
