@@ -2709,3 +2709,17 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `src/api/` (saya baru, aplikasi, peran), `perkakas/jalankan_lokal.py`, `perkakas/pemeriksa/rute_terdaftar.py`, uji. `src/rag/`, `src/llm/`, `src/telemetri/` tidak berubah. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Koreksi jumlah uji | Dihitung ulang sebelum commit dengan menjalankannya: uji baru T-4 berjumlah **48** (47 pada `tests/api/test_saya_http.py`, 1 pada `tests/perkakas/test_jalankan_lokal.py`), bukan 52 seperti tertulis pada baris Keputusan. Baris itu tidak disunting. |
+
+## KB-173 · T-5 fitur 030 — layar aktivasi S-02, S-03, S-04
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | T-5 `tasks.md` fitur 030 (R-06, R-07, R-09; K-6, K-7, K-8), atas pendelegasian KB-168. |
+| Keputusan | `web/src/aktivasi/`: `LayarPersetujuan` (naskah dimuat dan ditampilkan apa adanya; setuju dan tidak setuju setara bentuknya; cabut bila sudah setuju), `LayarPengenalan` (empat layar draf yang disetujui Gerbang 2, tanpa tombol lewati), `LayarProfil` (enam isian; tiga sampai lima prioritas berurutan menurut pilihan, berlabel D-03 apa adanya). Cangkang kini membaca **ringkasan aktivasi** `GET /saya/profil` — bukan daftar percakapan — saat dibuka dan sesudah masuk; S-02 dilewati pada alur bila naskah belum tersedia, agar tidak muncul pada tiap masuk; luring membuka Tanya (K-6). Layar Tanya memperoleh tombol "Persetujuan penelitian" (P-5). Pemeriksa kontrak V-03 kini membandingkan `PermintaanProfil`, `Naskah`, `JalurAkreditasi`, dan `KeadaanPersetujuan` dengan modelnya. 19 uji Vitest baru, merah lebih dulu; 186 uji web lulus. |
+| Temuan pemeriksa | C-13 menolak penanda "1 / 4" yang tertulis harfiah di JSX — tepat sebagaimana dirancang; dipindah ke mikrokopi sebagai "Layar 1 dari 4". |
+| Naskah yang tidak ada | Peladen statis menjawab halaman pengganti untuk berkas yang tidak ada, bukan 404. Klien karena itu membaca "belum ada" dari bentuk, bukan dari status: badan yang bukan naskah sah berarti naskah belum tersedia. Peladen API tetap menolak setiap persetujuan tanpa naskah (T-4), sehingga pembacaan klien yang keliru pun tidak dapat menghasilkan persetujuan. |
+| Mutasi | **M-10** (jalan pintas ke S-04 dari layar 1): 4 merah. **M-11** (kode K1 s.d. K8 tampil): 4 merah. Dipulihkan; 186 lulus. |
+| Alternatif | Menampilkan S-02 "naskah belum tersedia" pada tiap masuk — ditolak; layar yang tidak dapat dikerjakan apa pun adalah penghalang (AI-07). |
+| Dampak | `web/src/` (aktivasi baru, Aplikasi, klien, kontrak, mikrokopi, LayarTanya), `perkakas/pemeriksa/kontrak_web.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

@@ -121,3 +121,45 @@ export type HasilMasuk =
   | { readonly jenis: "masuk" }
   | { readonly jenis: "ditolak" }
   | { readonly jenis: "galat"; readonly galat: "luring" | "sistem" };
+
+/**
+ * Akun saya — D-14 Bagian 4.5, fitur 030.
+ *
+ * `PermintaanProfil` dan `Naskah` dijaga pemeriksa kontrak V-03 terhadap model
+ * bernama sama pada `src/api/saya.py`; `JalurAkreditasi` dan
+ * `KeadaanPersetujuan` terhadap enum fitur 022.
+ */
+export type JalurAkreditasi = "visitasi" | "automasi";
+
+export type KeadaanPersetujuan = "belum_diminta" | "diberikan" | "ditolak" | "dicabut";
+
+export interface PermintaanProfil {
+  readonly jabatan: string;
+  readonly masa_kerja: number;
+  readonly jumlah_rombel: number;
+  readonly jumlah_ptk: number;
+  readonly jalur_akreditasi: JalurAkreditasi;
+  readonly wilayah: string;
+}
+
+/** Ringkasan aktivasi — bentuk bersama keempat rute `/saya/*` (K-5). */
+export interface Ringkasan {
+  readonly profil: PermintaanProfil | null;
+  readonly prioritas: readonly string[];
+  readonly persetujuan: KeadaanPersetujuan;
+}
+
+/** Berkas naskah ET-02 yang diisi tim — ditampilkan apa adanya (K-4). */
+export interface Naskah {
+  readonly versi: string;
+  readonly judul: string;
+  readonly paragraf: readonly string[];
+}
+
+export type HasilRingkasan =
+  | { readonly jenis: "ringkasan"; readonly ringkasan: Ringkasan }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilNaskah =
+  | { readonly jenis: "naskah"; readonly naskah: Naskah }
+  | { readonly jenis: "belum_ada" };

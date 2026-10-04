@@ -36,7 +36,10 @@ from pathlib import Path
 
 from pydantic import BaseModel
 from src.api.percakapan import Giliran
+from src.api.saya import Naskah, PermintaanProfil
 from src.kamus.segmen import StatusKeberlakuan
+from src.pengguna.persetujuan import KeadaanPersetujuan
+from src.pengguna.profil import JalurAkreditasi
 from src.rag.jawaban.tanggapan import (
     BacaanLanjutan,
     KlaimTampil,
@@ -58,8 +61,17 @@ MODEL: tuple[type[BaseModel], ...] = (
     BacaanLanjutan,
     # Fitur 028: bentuk riwayat D-14 Bagian 4.3 — giliran tanpa tanggapan (C-07).
     Giliran,
+    # Fitur 030: isian profil dan naskah persetujuan, D-14 Bagian 4.5.
+    PermintaanProfil,
+    Naskah,
 )
-ENUM: tuple[type[Enum], ...] = (StatusDasar, StatusKeberlakuan)
+ENUM: tuple[type[Enum], ...] = (
+    StatusDasar,
+    StatusKeberlakuan,
+    # Fitur 030.
+    JalurAkreditasi,
+    KeadaanPersetujuan,
+)
 
 _ANTARMUKA = re.compile(r"^export interface (\w+) \{\n(.*?)^\}", re.MULTILINE | re.DOTALL)
 _BIDANG = re.compile(r"^\s*readonly\s+(\w+)\??\s*:", re.MULTILINE)

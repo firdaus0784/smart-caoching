@@ -19,6 +19,12 @@ import type {
   HasilBaca,
   HasilDaftar,
   HasilMasuk,
+  HasilNaskah,
+  HasilRingkasan,
+  KeadaanPersetujuan,
+  Naskah,
+  PermintaanProfil,
+  Ringkasan,
   HasilTanya,
   JenisGalat,
   SatuPercakapan,
@@ -31,6 +37,11 @@ export const JALUR_TANYA = "/api/v1/tanya";
 export const JALUR_PERCAKAPAN = "/api/v1/percakapan";
 export const JALUR_MASUK = "/api/v1/auth/masuk";
 export const JALUR_KELUAR = "/api/v1/auth/keluar";
+export const JALUR_PROFIL = "/api/v1/saya/profil";
+export const JALUR_PRIORITAS = "/api/v1/saya/prioritas";
+export const JALUR_PERSETUJUAN = "/api/v1/saya/persetujuan";
+/** Berkas statis yang diisi tim (K-4 fitur 030), bukan rute API. */
+export const JALUR_NASKAH = "/naskah/persetujuan.json";
 
 export type Pemanggil = (jalur: string, init?: RequestInit) => Promise<Response>;
 
@@ -147,6 +158,112 @@ export async function keluar(pemanggil: Pemanggil): Promise<void> {
   } catch {
     // Lihat uraian fungsi.
   }
+}
+
+// ── fitur 030 · akun saya — D-14 Bagian 4.5 ─────────────────────────────
+
+const KEADAAN_PERSETUJUAN: readonly KeadaanPersetujuan[] = [
+  "belum_diminta",
+  "diberikan",
+  "ditolak",
+  "dicabut",
+];
+
+async function ringkasanDari(
+  jalur: string,
+  pemanggil: Pemanggil,
+  init?: RequestInit,
+): Promise<HasilRingkasan> {
+  const hasil = await ambil(pemanggil, jalur, init);
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  return apakahRingkasan(hasil.badan)
+    ? { jenis: "ringkasan", ringkasan: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+function kirimJson(metode: string, badan: unknown): RequestInit {
+  return {
+    method: metode,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(badan),
+  };
+}
+
+export function bacaRingkasan(pemanggil: Pemanggil): Promise<HasilRingkasan> {
+  return ringkasanDari(JALUR_PROFIL, pemanggil, { method: "GET" });
+}
+
+export function simpanProfil(profil: PermintaanProfil, pemanggil: Pemanggil): Promise<HasilRingkasan> {
+  return ringkasanDari(JALUR_PROFIL, pemanggil, kirimJson("PUT", profil));
+}
+
+export function tetapkanPrioritas(
+  kategori: readonly string[],
+  pemanggil: Pemanggil,
+): Promise<HasilRingkasan> {
+  return ringkasanDari(JALUR_PRIORITAS, pemanggil, kirimJson("PUT", { kategori }));
+}
+
+export function putuskanPersetujuan(
+  badan: { readonly versi_naskah: string; readonly disetujui: boolean } | { readonly cabut: true },
+  pemanggil: Pemanggil,
+): Promise<HasilRingkasan> {
+  return ringkasanDari(JALUR_PERSETUJUAN, pemanggil, kirimJson("POST", badan));
+}
+
+/**
+ * Naskah ET-02. Berkas yang tidak ada — termasuk peladen statis yang menjawab
+ * halaman pengganti — dibaca "belum ada", bukan galat: tanpa naskah memang
+ * tidak ada yang dapat disetujui, dan peladen API menolak setiap persetujuan.
+ */
+export async function muatNaskah(pemanggil: Pemanggil): Promise<HasilNaskah> {
+  try {
+    const jawaban = await pemanggil(JALUR_NASKAH, { method: "GET" });
+    if (!jawaban.ok) return { jenis: "belum_ada" };
+    const badan: unknown = await jawaban.json();
+    return apakahNaskah(badan) ? { jenis: "naskah", naskah: badan } : { jenis: "belum_ada" };
+  } catch {
+    return { jenis: "belum_ada" };
+  }
+}
+
+function apakahProfil(nilai: unknown): nilai is PermintaanProfil {
+  return (
+    objekBerkunci(nilai, [
+      "jabatan",
+      "masa_kerja",
+      "jumlah_rombel",
+      "jumlah_ptk",
+      "jalur_akreditasi",
+      "wilayah",
+    ]) &&
+    untai(nilai["jabatan"]) &&
+    Number.isInteger(nilai["masa_kerja"]) &&
+    Number.isInteger(nilai["jumlah_rombel"]) &&
+    Number.isInteger(nilai["jumlah_ptk"]) &&
+    (nilai["jalur_akreditasi"] === "visitasi" || nilai["jalur_akreditasi"] === "automasi") &&
+    untai(nilai["wilayah"])
+  );
+}
+
+function apakahRingkasan(nilai: unknown): nilai is Ringkasan {
+  return (
+    objekBerkunci(nilai, ["profil", "prioritas", "persetujuan"]) &&
+    (nilai["profil"] === null || apakahProfil(nilai["profil"])) &&
+    larikDari(nilai["prioritas"], untai) &&
+    KEADAAN_PERSETUJUAN.includes(nilai["persetujuan"] as KeadaanPersetujuan)
+  );
+}
+
+function apakahNaskah(nilai: unknown): nilai is Naskah {
+  return (
+    objekBerkunci(nilai, ["versi", "judul", "paragraf"]) &&
+    untai(nilai["versi"]) &&
+    nilai["versi"].trim() !== "" &&
+    untai(nilai["judul"]) &&
+    larikDari(nilai["paragraf"], untai) &&
+    (nilai["paragraf"] as unknown[]).length > 0
+  );
 }
 
 function galat(jenis: JenisGalat): HasilTanya {

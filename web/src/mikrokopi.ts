@@ -70,6 +70,74 @@ export const MIKROKOPI = {
   perluMasukLagiSaja: "Anda perlu masuk lagi.",
   memeriksaAkun: "Sedang memeriksa akun Anda.",
   tombolKeluar: "Keluar",
+
+  // D-05 S-02 — fitur 030. Naskahnya sendiri milik ketua peneliti (ET-02) dan
+  // tidak ditulis di sini; layar memuatnya dari berkas yang diisi tim.
+  judulPersetujuan: "Persetujuan penelitian",
+  tautanPersetujuan: "Persetujuan penelitian",
+  tombolSetuju: "Saya setuju",
+  tombolTidakSetuju: "Saya tidak setuju",
+  keteranganMenolak: "Menolak tidak mengurangi fitur apa pun yang dapat Anda pakai.",
+  naskahBelumAda: "Naskah persetujuan belum tersedia. Anda tetap dapat memakai seluruh fitur.",
+  sudahSetuju: "Anda sudah menyetujui perekaman data penelitian.",
+  tombolCabut: "Cabut persetujuan",
+  tombolKembali: "Kembali",
+  persetujuanGagal: "Persetujuan belum dapat dicatat. Muat ulang halaman, lalu coba lagi.",
+
+  // D-05 S-03.
+  tombolLanjut: "Lanjut",
+  tombolMulaiProfil: "Mulai mengisi profil",
+
+  // D-05 S-04.
+  judulProfil: "Profil sekolah",
+  labelJabatan: "Jabatan",
+  labelMasaKerja: "Masa kerja (tahun)",
+  labelJumlahRombel: "Jumlah rombongan belajar",
+  labelJumlahPtk: "Jumlah pendidik dan tenaga kependidikan",
+  labelJalurAkreditasi: "Jalur akreditasi",
+  jalurVisitasi: "Visitasi",
+  jalurAutomasi: "Automasi",
+  labelWilayah: "Wilayah (kabupaten atau kota)",
+  judulPrioritas: "Prioritas pengelolaan",
+  petunjukPrioritas: "Pilih tiga sampai lima, mulai dari yang paling penting.",
+  prioritasJumlah: "Pilih tiga sampai lima prioritas.",
+  tombolSimpanProfil: "Simpan dan mulai bertanya",
+  profilDitolak: "Isian profil belum sesuai. Periksa lagi setiap isian.",
+  prioritasDitolak: "Pilih tiga sampai lima prioritas yang berbeda.",
+  profilGangguan: "Profil belum tersimpan. Isian Anda masih di layar, coba simpan lagi.",
+} as const;
+
+/** D-05 S-03 — empat layar, diputus pada Gerbang 2 fitur 030 (K-8). Layar kedua
+ * adalah satu-satunya isi yang FR-A04 wajibkan, dan tidak dapat dilewati. */
+export const PENGENALAN: readonly { readonly judul: string; readonly isi: string }[] = [
+  {
+    judul: "Yang dapat dibantu",
+    isi: "Aplikasi ini menjawab pertanyaan pengelolaan sekolah dasar. Setiap jawaban menyebut dokumen yang menjadi dasarnya.",
+  },
+  {
+    judul: "Alat bantu, bukan penentu",
+    isi: "Keputusan tetap berada pada Anda sebagai kepala sekolah. Jawaban membantu menimbang, tidak menggantikan pertimbangan Anda.",
+  },
+  {
+    judul: "Bila dasarnya tidak ada",
+    isi: "Bila tidak ada dokumen yang memuat jawabannya, aplikasi mengatakannya terus terang. Itu bukan kesalahan Anda.",
+  },
+  {
+    judul: "Menjaga data",
+    isi: "Akun Anda tidak memuat nama Anda. Jangan tulis nama orang atau nomor pribadi pada pertanyaan.",
+  },
+];
+
+/** Nama kategori D-03 Bagian 5 apa adanya (K-7). Kodenya tidak pernah tampil. */
+export const LABEL_KATEGORI = {
+  K1: "Kurikulum dan pembelajaran",
+  K2: "Kepegawaian dan tenaga kependidikan",
+  K3: "Kesiswaan",
+  K4: "Sarana dan prasarana",
+  K5: "Keuangan dan pembiayaan",
+  K6: "Kemitraan dan hubungan masyarakat",
+  K7: "Penjaminan mutu dan akreditasi",
+  K8: "Kepemimpinan dan budaya sekolah",
 } as const;
 
 /**
@@ -123,6 +191,11 @@ export const PESAN_GALAT: Readonly<
     tidakTersimpan: "Pertanyaan belum dapat diproses. Pastikan kalimatnya utuh dan tanpa nomor pribadi.",
   },
 };
+
+/** Penanda letak pada S-03 — "Layar 2 dari 4". */
+export function langkahPengenalan(ke: number, jumlah: number): string {
+  return `Layar ${ke} dari ${jumlah}`;
+}
 
 /** Rujukan pengubah pada sitasi berstatus diubah — FR-F14. */
 export function teksPengganti(rujukan: string): string {

@@ -41,6 +41,8 @@ export interface PropertiLayarTanya {
   readonly belumMasuk?: (tersimpan: boolean) => void;
   /** Fitur 029: tombol Keluar; tanpa ini tombolnya tidak tampil. */
   readonly keluar?: () => void;
+  /** Fitur 030 P-5: membuka S-02 lagi — setuju sesudah menolak, atau mencabut. */
+  readonly bukaPersetujuan?: () => void;
 }
 
 export function LayarTanya({
@@ -49,6 +51,7 @@ export function LayarTanya({
   salin,
   belumMasuk,
   keluar,
+  bukaPersetujuan,
 }: PropertiLayarTanya) {
   const [pertanyaan, setPertanyaan] = useState(() => bacaDraf(simpanan));
   const [keadaan, setKeadaan] = useState<Keadaan>({ jenis: "kosong" });
@@ -133,6 +136,11 @@ export function LayarTanya({
       {keluar !== undefined && (
         <button className="tombol-kedua" onClick={keluar} type="button">
           {MIKROKOPI.tombolKeluar}
+        </button>
+      )}
+      {bukaPersetujuan !== undefined && (
+        <button className="tombol-kedua" onClick={bukaPersetujuan} type="button">
+          {MIKROKOPI.tautanPersetujuan}
         </button>
       )}
 

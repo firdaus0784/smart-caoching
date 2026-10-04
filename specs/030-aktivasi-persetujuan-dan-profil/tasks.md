@@ -68,12 +68,12 @@ Agen **tidak** membuat berkas naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-06, R-07, R-09; K-6, K-7, K-8.
 
-- [ ] Uji lebih dulu: alur menurut ringkasan aktivasi; S-02 tanpa naskah;
+- [x] Uji lebih dulu: alur menurut ringkasan aktivasi; S-02 tanpa naskah;
       setuju, tolak, cabut; S-03 empat layar tanpa jalan pintas melewati layar 2;
       S-04 enam isian dan tiga sampai lima prioritas berlabel D-03; tautan
       persetujuan dari S-09; luring membuka S-09
-- [ ] `web/src/aktivasi/`; cangkang; mikrokopi; `kontrak.ts` dan pemeriksa kontrak
-- [ ] Anggaran muat ≤ 150 KB; mutasi M-10 dan M-11
+- [x] `web/src/aktivasi/`; cangkang; mikrokopi; `kontrak.ts` dan pemeriksa kontrak
+- [x] Anggaran muat ≤ 150 KB; mutasi M-10 dan M-11
 
 ## T-6 · Putaran mutasi, bukti, penutupan
 
