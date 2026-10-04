@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-A01; NFR-05, NFR-06, NFR-08; KA-01, KA-03; C-05, C-13, C-17, C-20; TK-70 |
 | Dokumen terkait | D-14 Bagian 3.1 dan 4 · D-04 Bagian 7.1 dan 10 · D-05 S-01 · D-12 Bagian 7 |
-| Status | **Gerbang 1 lolos** — 1 Oktober 2026 (KB-151). Baris D-12 disetujui; P-1 s.d. P-7 diputus sesuai anjuran |
+| Status | **Gerbang 4 lolos** — 4 Oktober 2026 (KB-163). Sembilan dari sembilan tugas selesai |
 
 ## Mengapa fitur ini diusulkan
 

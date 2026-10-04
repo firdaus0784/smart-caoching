@@ -2580,3 +2580,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menandai fitur selesai tanpa bukti peramban — ditolak; atribut kuki yang diuji lewat `TestClient` membuktikan apa yang peladen kirim, bukan apa yang peramban terima. |
 | Dampak | `docs/D00.md`, `docs/hki/dokumentasi-teknis.md`, `logbook/L8-tagihan-pasal.md`, status `tasks.md`, bukti baru. Nol baris kode. |
 | Pemutus | Agen di dalam batas `tasks.md`; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-163 · Gerbang 4 fitur 029 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | Laporan KB-162 meminta Gerbang 4 fitur 029. Pemegang Gerbang 1–4 menjawab "lanjutkan"; agen menanyakan tegas apakah itu berarti Gerbang 4 lolos dengan lima hal terbuka KB-162 diterima apa adanya, dan jawabannya **"Gerbang 4 lolos"**. |
+| Keputusan | **Gerbang 4 fitur 029 lolos.** Status `spec.md`, `plan.md`, dan `tasks.md` dimutakhirkan. Fitur lolos Gerbang 4 menjadi **24 dari 29**. Dokumen HKI: penanda "menunggu Gerbang 4" pada Aplikasi web, Layanan API, dan Basis data diganti tanggal kelulusannya. |
+| Lima hal terbuka KB-162 | **Diterima apa adanya** sebagaimana ditanyakan: pembatasan laju per alamat jaringan tidak ada (BT-60 terbuka); tiga angka penetapan tim tanpa dasar literatur; pengisian `id_pengguna` fitur 022 menunggu fitur 013; kuki diuji pada Chromium saja; `Secure` menuntut HTTPS pada penyebaran (D-09). |
+| Catatan lingkungan | Sesi kerja ini berjalan pada kontainer baru: checkout tertinggal pada `2fe976b` (fitur 028) dan dimajukan *fast-forward* ke `9bda21a`; venv, `node_modules`, dan PostgreSQL disiapkan ulang. `make check` pertama gagal karena paket pgvector belum terpasang pada mesin — sebabnya dibaca dari galat pengumpulan, bukan diduga — lalu `postgresql-16-pgvector` dipasang (0.6.0, sama dengan sebelumnya; paket sistem, bukan ketergantungan proyek). Sesudahnya `make check` lulus enam gerbang. |
+| Alternatif | Menafsirkan "lanjutkan" sebagai kelulusan tanpa bertanya, seperti KB-149 — ditolak; KB-154 menetapkan izin gerbang tidak ditebak bila dapat ditanyakan. |
+| Dampak | Status tiga berkas fitur 029; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
