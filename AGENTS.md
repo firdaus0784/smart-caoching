@@ -121,6 +121,15 @@ kedua ada karena pendeteksi data pribadi FR-B04 menjaga `peristiwa.properti`
 perilaku membalik arah C-04 — yang seharusnya persetujuan menentukan
 perekaman, bukan perekaman menentukan profil.
 
+`api` boleh memanggil `pengguna`, satu jurusan — `pengguna` tidak memanggil
+`api`. Tepi ini dituliskan pada fitur 030, ketika rute `/saya/*` menerima
+profil, prioritas, dan persetujuan. Alasannya dapat dinyatakan umum, dan itu
+yang membuatnya bukan perkecualian — `api` satu-satunya titik masuk, sehingga
+setiap lapisan yang modelnya **diterima lewat rute** wajib terjangkau darinya;
+menulis ulang validasinya di `api` menghasilkan dua tempat yang berselisih.
+Arah sebaliknya terlarang: `pengguna` yang memanggil `api` membuat model
+profil bergantung pada bentuk HTTP.
+
 `src/kamus/` boleh diimpor siapa pun dan **tidak mengimpor apa pun dari `src/`**.
 Ia lapisan di bawah `src/penyimpanan/`. Isinya enum milik `docs/D14.md` Bagian
 5 — bukan milik lapisan mana pun, dan itu sebabnya ia berdiri sendiri:

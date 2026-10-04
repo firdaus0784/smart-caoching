@@ -18,16 +18,16 @@ Agen **tidak** membuat berkas naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-01; K-1, K-5; P-3.
 
-- [ ] D-14 Bagian 4.5: bentuk empat rute `/saya/*` — ringkasan aktivasi,
+- [x] D-14 Bagian 4.5: bentuk empat rute `/saya/*` — ringkasan aktivasi,
       permintaan, penolakan; syarat `application/json`
-- [ ] D-14 Bagian 5.1: `prioritas_manajerial` tambah-saja, `persetujuan`
+- [x] D-14 Bagian 5.1: `prioritas_manajerial` tambah-saja, `persetujuan`
       tambah-saja kecuali `dicabut_pada`; `id_pengguna` berisi pseudonim
-- [ ] D-04 Bagian 7.1: `akreditasi` diselaraskan menjadi `jalur_akreditasi`
+- [x] D-04 Bagian 7.1: `akreditasi` diselaraskan menjadi `jalur_akreditasi`
       (TK-50 ditutup)
-- [ ] D-05: blok S-02, S-03 (draf Bagian 7 plan), S-04; tautan persetujuan pada S-09
-- [ ] AGENTS.md: tepi `api → pengguna` satu jurusan beserta alasannya;
+- [x] D-05: blok S-02, S-03 (draf Bagian 7 plan), S-04; tautan persetujuan pada S-09
+- [x] AGENTS.md: tepi `api → pengguna` satu jurusan beserta alasannya;
       pemeriksa arah tetap lulus
-- [ ] Register D-00
+- [x] Register D-00
 
 ## T-2 · Peladen menegakkan hak profil
 

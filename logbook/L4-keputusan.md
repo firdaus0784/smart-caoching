@@ -2656,3 +2656,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menanyakan Gerbang 3 secara tegas seperti KB-154 — ditolak; pemegang gerbang sudah menyatakan izinnya secara tertulis, dan bertanya ulang mengabaikan pernyataan itu. Membaca pendelegasian sebagai izin meluluskan Gerbang 4 juga — ditolak; penerimaan hasil adalah satu-satunya gerbang yang menilai pekerjaan yang sudah jadi, dan menilainya sendiri bukan penilaian. |
 | Dampak | Status `plan.md`; berkas baru `tasks.md`. Nol baris kode. Pendelegasian dapat dicabut kapan saja oleh pemegang gerbang. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-169 · T-1 fitur 030 — kontrak lebih dulu; TK-50 selesai; tepi `api → pengguna`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | T-1 `tasks.md` fitur 030, dikerjakan atas pendelegasian KB-168. |
+| Keputusan | D-14 0.11 Bagian 4.5: empat rute `/saya/*` mengembalikan satu bentuk ringkasan aktivasi; Bagian 5.1: `persetujuan` dan `prioritas_manajerial` tambah-saja, `profil_sekolah.id_pengguna` berupa pseudonim. D-04 0.11: `akreditasi` menjadi `jalur_akreditasi` — **TK-50 selesai**. D-05 0.5: S-02, S-03 (draf yang disetujui Gerbang 2), S-04, tautan persetujuan pada S-09; naskah ET-02 **tidak** ditulis. AGENTS.md: tepi `api → pengguna` satu jurusan beserta alasan umumnya (K-1). D-00 2.74. |
+| Penyimpangan kecil yang dicatat | D-04 semula menyimpan `urutan` sebagai kolom prioritas; kini larik berurutan dengan urutan dari posisi — bentuk yang fitur 022 sudah pakai (`PrioritasManajerial.baris()`), sehingga dua tempat penyimpan urutan tidak dapat berselisih. |
+| Alternatif | Membiarkan `urutan` sebagai kolom terpisah — ditolak; lihat di atas. |
+| Dampak | `docs/D14.md`, `docs/D04.md`, `docs/D05.md`, `docs/D00.md`, `AGENTS.md`, `tasks.md`. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168, dalam batas `plan.md` yang lolos Gerbang 2 |
+| Catatan sesudah pemeriksaan | `make check` pertama gagal pada dua uji fitur 022 yang membaca baris D-04 sebagai daftar dipisah koma: tambahan tebal dan keterangan pada baris `profil_sekolah`, dan kolom `nomor` pada baris `persetujuan`, merusak pembacaannya. Kedua baris dikembalikan menjadi daftar bidang **logis** — bidang model — dan sifat tambah-saja serta kolom penyimpanan `nomor` dipindah ke paragraf catatan. Ujinya tidak diubah: ia benar menuntut D-04 dan model sepakat. |
