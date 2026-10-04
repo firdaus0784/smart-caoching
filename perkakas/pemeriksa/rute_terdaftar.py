@@ -159,6 +159,7 @@ def _rute_terpasang() -> set[str]:
         identitas=_Kosong(),  # type: ignore[arg-type]
         riwayat=RiwayatMemori(),
         masuk=_Kosong(),  # type: ignore[arg-type]
+        pengguna=_Kosong(),  # type: ignore[arg-type]
     )
     return {_pola(rute.path) for rute in aplikasi.routes if isinstance(rute, APIRoute)}
 

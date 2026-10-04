@@ -87,7 +87,14 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
     # 17 sejak T-6: penolakan masuk (R-04) dan badan masuk yang cacat.
     assert "PESAN_MASUK_DITOLAK" in nama
     assert "PESAN_MASUK_TIDAK_LENGKAP" in nama
-    assert len(ditemukan) == 17, f"{len(ditemukan)} untai terbaca, seharusnya 17"
+    # 20 sejak fitur 030 T-4: penolakan profil, prioritas, dan persetujuan.
+    for baru in (
+        "PESAN_PROFIL_TIDAK_SAH",
+        "PESAN_PRIORITAS_TIDAK_SAH",
+        "PESAN_PERSETUJUAN_TIDAK_SAH",
+    ):
+        assert baru in nama, baru
+    assert len(ditemukan) == 20, f"{len(ditemukan)} untai terbaca, seharusnya 20"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

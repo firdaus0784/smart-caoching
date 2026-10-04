@@ -2693,3 +2693,19 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Penyimpan menerima model fitur 022 langsung — ditolak; membalik arah lapisan. |
 | Dampak | `src/penyimpanan/pengguna.py`, `tests/penyimpanan/test_pengguna_simpan.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-172 · T-4 fitur 030 — rute `/saya/*` dan naskah berversi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | T-4 `tasks.md` fitur 030 (R-01 s.d. R-05, R-08, R-10; K-4, K-5), atas pendelegasian KB-168. |
+| Keputusan | `src/api/saya.py`: model permintaan, ringkasan aktivasi, pembaca naskah. Aturan isi **dipakai dari model fitur 022** lewat tepi `api → pengguna` (K-1), tidak ditulis ulang; keadaan persetujuan dibaca lewat `KeadaanPersetujuan.dari` — satu jalur penafsiran. Empat rute dipasang pada `susun_aplikasi` bila penyimpan diberikan; ketiga rute penulis menuntut `application/json`. Peladen menerima `versi_naskah` hanya bila sama dengan berkas naskah terpasang; tanpa berkas, setiap persetujuan ditolak; berkas yang rusak menghentikan penyusunan. `make jalan` bersesi memuat `PenggunaPostgres` sebagai `peran_pengguna` dan versi dari `web/public/naskah/persetujuan.json` — **berkas itu tidak dibuat agen**, dan sebuah uji menjaga ketiadaannya di repositori. 52 uji baru, merah lebih dulu. Kawat sandung C-13 naik ke 20 dengan tiga nama disebut tegas. |
+| Satu uji keliru pada jamnya | Uji tolak–setuju–cabut memakai jam beku, sehingga pencabutan jatuh pada detik yang sama dengan persetujuannya — dan peladen serta model fitur 022 benar menolak pencabutan yang tidak sesudah persetujuan. Yang diperbaiki ujinya: jam yang maju. |
+| Cakupan | Turun ke 99,75 pada percobaan pertama. **Penanda tidak diturunkan**: satu cabang mati pada rute keluar disederhanakan (sesudah identitas lolos, kukinya pasti ada), dan dua uji ditambah — tiga rute penulis tanpa sesi, badan JSON rusak. |
+| Pemeriksa rute | Uji yang memakai rute "tercantum D-14 tetapi belum terpasang" sebagai contoh kembali harus berganti contoh — `/saya/profil` kini terpasang; diganti `/api/v1/beranda`, sifatnya tetap. |
+| Mutasi | **M-1** (badan boleh membawa bidang lain, termasuk pemilik): 4 merah. **M-2** (versi tidak dicocokkan): 1. **M-3** (persetujuan tanpa naskah): 3. **M-8** (penolakan menghalangi `/tanya`): 1. **M-9** (profil diteruskan ke jalur penjawab): 1. Dipulihkan; 0 merah. M-1 dipasang sebagai pelonggaran `extra`, bukan pemindahan pemilik secara langsung — pemilik dari badan hanya mungkin bila bidang tambahan diterima, dan itu yang diuji. |
+| Alternatif | Menyimpan naskah contoh agar alur dapat dicoba — ditolak; persetujuan atas naskah karangan bukan persetujuan, dan naskah contoh di repositori adalah naskah yang kelak terbawa. Bukti Playwright T-6 memakai naskah uji pada direktori sementara. |
+| Dampak | `src/api/` (saya baru, aplikasi, peran), `perkakas/jalankan_lokal.py`, `perkakas/pemeriksa/rute_terdaftar.py`, uji. `src/rag/`, `src/llm/`, `src/telemetri/` tidak berubah. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Koreksi jumlah uji | Dihitung ulang sebelum commit dengan menjalankannya: uji baru T-4 berjumlah **48** (47 pada `tests/api/test_saya_http.py`, 1 pada `tests/perkakas/test_jalankan_lokal.py`), bukan 52 seperti tertulis pada baris Keputusan. Baris itu tidak disunting. |

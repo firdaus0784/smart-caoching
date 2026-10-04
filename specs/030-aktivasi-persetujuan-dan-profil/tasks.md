@@ -56,13 +56,13 @@ Agen **tidak** membuat berkas naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-01 s.d. R-05, R-08, R-10; K-4, K-5.
 
-- [ ] Uji lebih dulu: pemilik dari sesi; B tidak membaca maupun menulis milik A;
+- [x] Uji lebih dulu: pemilik dari sesi; B tidak membaca maupun menulis milik A;
       tujuh isian ditolak; dua atau enam prioritas ditolak; versi naskah
       karangan ditolak; tanpa berkas naskah setiap persetujuan ditolak;
       penolakan persetujuan tidak menghalangi `/tanya`; `jalur.jawab` tidak
       menerima profil (C-14); kalimat lolos C-13
-- [ ] `src/api/saya.py`; pemasangan pada `susun_aplikasi`; titik jalan memuatnya
-- [ ] Mutasi M-1 s.d. M-3, M-8, M-9
+- [x] `src/api/saya.py`; pemasangan pada `susun_aplikasi`; titik jalan memuatnya
+- [x] Mutasi M-1 s.d. M-3, M-8, M-9
 
 ## T-5 · Layar aktivasi
 

@@ -172,3 +172,27 @@ def test_tanpa_penyimpan_akun_rute_masuk_tidak_ada() -> None:
     berbuat apa pun."""
     klien = TestClient(susun_untuk_pengembangan())
     assert klien.post("/api/v1/auth/masuk", json={}).status_code in (404, 405)
+
+
+def test_titik_jalan_bersesi_memasang_rute_saya_dan_naskah(tmp_path: Path) -> None:
+    """Fitur 030: rute `/saya/*` terpasang bersama sesi; versi naskah dibaca
+    dari berkas — tanpa berkas, persetujuan ditolak."""
+    import json
+
+    from src.penyimpanan.akun import AkunMemori
+    from src.penyimpanan.pengguna import PenggunaMemori
+
+    from perkakas.jalankan_lokal import versi_naskah_terpasang
+
+    assert versi_naskah_terpasang(tmp_path / "tidak-ada.json") is None
+    berkas = tmp_path / "persetujuan.json"
+    berkas.write_text(json.dumps({"versi": "v-uji", "judul": "J", "paragraf": ["P"]}), "utf-8")
+    assert versi_naskah_terpasang(berkas) == "v-uji"
+
+    klien = TestClient(
+        susun_untuk_pengembangan(
+            akun=AkunMemori(), pengguna=PenggunaMemori(), versi_naskah="v-uji"
+        ),
+        base_url="https://testserver",
+    )
+    assert klien.get("/api/v1/saya/profil").status_code == 401

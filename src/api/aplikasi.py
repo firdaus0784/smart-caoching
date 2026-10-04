@@ -50,7 +50,7 @@ pengembangan di luar `src/` (R-10).
 from __future__ import annotations
 
 import uuid
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
 from typing import Any, Protocol, runtime_checkable
 
@@ -72,14 +72,27 @@ from src.api.peran import (
     POLA_DAFTAR_PERCAKAPAN,
     POLA_KELUAR,
     POLA_MASUK,
+    POLA_PERSETUJUAN,
+    POLA_PRIORITAS,
+    POLA_PROFIL,
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
     boleh,
 )
 from src.api.percakapan import Giliran, giliran_sah
+from src.api.saya import (
+    PESAN_PERSETUJUAN_TIDAK_SAH,
+    PESAN_PRIORITAS_TIDAK_SAH,
+    PESAN_PROFIL_TIDAK_SAH,
+    prioritas_sah,
+    profil_sah,
+    putuskan_persetujuan,
+    ringkasan,
+)
 from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
+from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
 
 PESAN_TIDAK_BERHAK = "Akun Anda tidak dapat membuka bagian ini."
@@ -169,6 +182,8 @@ def susun_aplikasi(
     identitas: PenentuIdentitas,
     riwayat: PenyimpanRiwayat,
     masuk: PenjagaMasuk | None = None,
+    pengguna: PenyimpanPengguna | None = None,
+    versi_naskah: str | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -181,6 +196,10 @@ def susun_aplikasi(
     terpasang** — titik jalan pengembangan yang memakai penentu tiruan tidak
     menyediakan rute masuk yang tidak dapat berbuat apa pun. Ketiadaannya
     bukan celah: tanpa rute masuk, tidak ada sesi yang dapat diterbitkan.
+
+    `pengguna` sama: tanpa penyimpan, rute `/saya/*` tidak terpasang (fitur
+    030). `versi_naskah` adalah versi berkas naskah ET-02 yang terpasang;
+    `None` berarti naskah belum ada, dan setiap persetujuan ditolak (C-04).
     """
     aplikasi = FastAPI(
         title="Smart-Coaching Adaptif",
@@ -325,6 +344,8 @@ def susun_aplikasi(
 
     if masuk is not None:
         _pasang_rute_masuk(aplikasi, masuk, identitas)
+    if pengguna is not None:
+        _pasang_rute_saya(aplikasi, pengguna, _identitas_atau_tolak, versi_naskah, sekarang)
 
     return aplikasi
 
@@ -378,9 +399,85 @@ def _pasang_rute_masuk(
             return tanggapan_galat(
                 400, KodeGalat.VALIDASI_GAGAL, PESAN_TIDAK_LENGKAP, rute=POLA_KELUAR
             )
-        pengenal = permintaan.cookies.get(NAMA_KUKI)
-        if pengenal:
-            await penjaga.keluar(pengenal)
+        # Identitas sudah lolos, sehingga kukinya pasti ada.
+        await penjaga.keluar(permintaan.cookies.get(NAMA_KUKI, ""))
         tanggapan = Response(status_code=204)
         tanggapan.delete_cookie(NAMA_KUKI, path="/", secure=True, httponly=True, samesite="strict")
         return tanggapan
+
+
+def _pasang_rute_saya(
+    aplikasi: FastAPI,
+    simpan: PenyimpanPengguna,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    versi_naskah: str | None,
+    sekarang: Callable[[], datetime],
+) -> None:
+    """Rute D-14 Bagian 3.1 `/saya/*` — bentuknya Bagian 4.5. Hanya menerjemahkan;
+    aturannya milik `src/api/saya.py` dan model fitur 022."""
+
+    async def _baca(permintaan: Request) -> Any:
+        try:
+            return await permintaan.json()
+        except ValueError:
+            return None
+
+    @aplikasi.get(POLA_PROFIL)
+    async def baca_profil(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_PROFIL)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        return JSONResponse(status_code=200, content=await ringkasan(simpan, siapa.pemilik))
+
+    @aplikasi.put(POLA_PROFIL)
+    async def simpan_profil(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_PROFIL)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            if not _berbadan_json(permintaan):
+                raise ValueError("bukan JSON")
+            profil = profil_sah(siapa.pemilik, await _baca(permintaan))
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_PROFIL_TIDAK_SAH, rute=POLA_PROFIL
+            )
+        await simpan.simpan_profil(siapa.pemilik, profil, sekarang=sekarang())
+        return JSONResponse(status_code=200, content=await ringkasan(simpan, siapa.pemilik))
+
+    @aplikasi.put(POLA_PRIORITAS)
+    async def tetapkan_prioritas(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_PRIORITAS)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            if not _berbadan_json(permintaan):
+                raise ValueError("bukan JSON")
+            kategori = prioritas_sah(siapa.pemilik, await _baca(permintaan))
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_PRIORITAS_TIDAK_SAH, rute=POLA_PRIORITAS
+            )
+        await simpan.tetapkan_prioritas(siapa.pemilik, kategori, sekarang=sekarang())
+        return JSONResponse(status_code=200, content=await ringkasan(simpan, siapa.pemilik))
+
+    @aplikasi.post(POLA_PERSETUJUAN)
+    async def persetujuan(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_PERSETUJUAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            if not _berbadan_json(permintaan):
+                raise ValueError("bukan JSON")
+            await putuskan_persetujuan(
+                simpan,
+                siapa.pemilik,
+                await _baca(permintaan),
+                versi_naskah=versi_naskah,
+                sekarang=sekarang(),
+            )
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_PERSETUJUAN_TIDAK_SAH, rute=POLA_PERSETUJUAN
+            )
+        return JSONResponse(status_code=200, content=await ringkasan(simpan, siapa.pemilik))

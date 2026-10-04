@@ -49,6 +49,7 @@ from __future__ import annotations
 import argparse
 import sys
 import uuid
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -56,8 +57,10 @@ from src.api.aplikasi import susun_aplikasi
 from src.api.autentikasi import PenentuSesi, PenjagaMasuk
 from src.api.identitas import Identitas
 from src.api.peran import Peran
+from src.api.saya import baca_naskah
 from src.api.tanya import AlasanBerhenti, HasilTanya
 from src.penyimpanan.akun import PERAN_AUTENTIKASI, AkunPostgres, PenyimpanAkun
+from src.penyimpanan.pengguna import PERAN_PENGGUNA, PenggunaPostgres, PenyimpanPengguna
 from src.penyimpanan.riwayat import (
     PERAN_RIWAYAT,
     PenyimpanRiwayat,
@@ -175,6 +178,8 @@ def susun_untuk_pengembangan(
     *,
     akun: PenyimpanAkun | None = None,
     turunan_tiruan: str | None = None,
+    pengguna: PenyimpanPengguna | None = None,
+    versi_naskah: str | None = None,
 ) -> FastAPI:
     """Rakit aplikasi dengan pengganti pengembangan.
 
@@ -197,7 +202,21 @@ def susun_untuk_pengembangan(
         identitas=PenentuSesi(akun),
         riwayat=riwayat if riwayat is not None else RiwayatMemori(),
         masuk=PenjagaMasuk(akun, turunan_tiruan=turunan_tiruan),
+        pengguna=pengguna,
+        versi_naskah=versi_naskah,
     )
+
+
+BERKAS_NASKAH = (
+    Path(__file__).resolve().parents[1] / "web" / "public" / "naskah" / "persetujuan.json"
+)
+"""Naskah ET-02 yang diisi tim (fitur 030, K-4). Agen tidak menulisnya."""
+
+
+def versi_naskah_terpasang(berkas: Path = BERKAS_NASKAH) -> str | None:
+    """Versi naskah yang peladen terima, atau `None` bila belum ada naskah."""
+    naskah = baca_naskah(berkas)
+    return None if naskah is None else naskah.versi
 
 
 def penghurai() -> argparse.ArgumentParser:
@@ -234,7 +253,15 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
         keterangan_riwayat = "di memori — HILANG saat dimatikan (--riwayat postgres)."
 
     akun: PenyimpanAkun | None = None
+    pengguna: PenyimpanPengguna | None = None
     if argumen.autentikasi == "sesi":
+        pengguna = PenggunaPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN),
+                int(os.environ.get("PGPORT", "5432")),
+                PERAN_PENGGUNA,
+            )
+        )
         akun = AkunPostgres(
             SambunganPerKueri(
                 os.environ.get("PGHOST", ALAMAT_AMAN),
@@ -259,7 +286,11 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
         "  Jawaban selalu 'tidak ditemukan' karena korpus kosong.\n"
     )
     uvicorn.run(
-        susun_untuk_pengembangan(riwayat, akun=akun), host=argumen.alamat, port=argumen.porta
+        susun_untuk_pengembangan(
+            riwayat, akun=akun, pengguna=pengguna, versi_naskah=versi_naskah_terpasang()
+        ),
+        host=argumen.alamat,
+        port=argumen.porta,
     )
 
 
