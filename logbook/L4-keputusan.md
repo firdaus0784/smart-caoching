@@ -2593,3 +2593,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menafsirkan "lanjutkan" sebagai kelulusan tanpa bertanya, seperti KB-149 — ditolak; KB-154 menetapkan izin gerbang tidak ditebak bila dapat ditanyakan. |
 | Dampak | Status tiga berkas fitur 029; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-164 · Usulan fitur 030 — aktivasi J1: persetujuan, pengenalan, profil
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | Sesudah Gerbang 4 fitur 029 pemegang gerbang memilih "Gerbang 4 lolos", yang anjurannya menyebut langkah berikutnya: usulan spec fitur 013 tanpa kode sampai Gerbang 1. |
+| Keputusan | Bukan 013 utuh yang diusulkan, melainkan **030 — aktivasi J1** (S-02, S-03, S-04 beserta rute `/saya/profil`, `/saya/prioritas`, `/saya/persetujuan`), disisipkan sebelum 013, dengan 013 dipersempit menjadi layar sisanya. `specs/030-aktivasi-persetujuan-dan-profil/spec.md` disusun sebagai **usulan**: sepuluh kebutuhan, tujuh pertanyaan beranjuran. Baris D-12 tidak ditulis. |
+| Sebab tidak 013 utuh | Enam belas layar 013 tertahan hal yang berbeda — korpus butir terkurasi, peran internal, pembaca dokumen. Satu baris yang separuhnya menunggu mengulang pola yang sudah lima kali dipecah (KB-032). Aktivasi J1 tidak menunggu apa pun selain naskah ET-02, dan P-1 A memisahkan penantian itu menjadi satu berkas. |
+| Mengapa aktivasi lebih dulu | Tanpa S-02, **C-04 tidak dapat dipenuhi di lapangan**: gerbang perekaman fitur 012 membaca persetujuan yang tidak ada jalur untuk mengambilnya. Tanpa S-04, feed fitur 011 menyaring terhadap prioritas kosong. Model fitur 022 belum memiliki penyimpanan maupun rute. |
+| Yang sengaja tidak dilakukan agen | Menulis naskah persetujuan — kewajiban ketua peneliti (ET-02), dan persetujuan atas naskah karangan bukan persetujuan. Memutus TK-50 — `akreditasi` dan `jalur_akreditasi` bukan hal yang sama, dan memilih peringkat mengubah FR-A02. |
+| Alternatif | Menulis 013 utuh sebagai satu spec — ditolak; lihat sebabnya di atas. Menulis baris D-12 lebih dulu — ditolak; penyisipan baris adalah keputusan tim, sama dengan 027, 028, dan 029. |
+| Dampak | Berkas baru `specs/030-aktivasi-persetujuan-dan-profil/spec.md`. Nol baris kode. |
+| Pemutus | Agen menyusun; baris D-12 dan Gerbang 1 menunggu pemegang Gerbang 1–4 |
