@@ -2644,3 +2644,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menaikkan jeda 20 ms — ditolak; jeda yang lebih panjang hanya memindahkan batas beban, bukan menghapus adu waktunya. |
 | Dampak | `web/src/tanya/LayarTanya.test.tsx`, satu pernyataan. Kode layar tidak berubah. |
 | Pemutus | Agen |
+
+## KB-168 · Gerbang 2 fitur 030 lolos; pendelegasian otonomi dan batasnya
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | Pemegang Gerbang 1–4 menulis: **"lanjutkan sesuai anjuran, silakan lakukan secara otonom selanjutnya sesuai dengan blueprint project kita"**. |
+| Keputusan | **Gerbang 2 fitur 030 lolos; K-1 s.d. K-8 dan draf S-03 sesuai anjuran.** Kalimat kedua dibaca sebagai **pendelegasian tegas** untuk melanjutkan tanpa menunggu pada tiap langkah: `tasks.md` disusun persis menurut `plan.md` Bagian 10, dan **Gerbang 3 dinyatakan lolos atas pendelegasian itu** — bukan ditebak dari "lanjutkan" (KB-154), sebab izinnya tertulis. |
+| **Batas yang tidak ikut didelegasikan** | (1) **Gerbang 4** — agen tidak meluluskan pekerjaannya sendiri; fitur berakhir pada "menunggu Gerbang 4". (2) Perubahan `constitution.md`. (3) Baris D-12 baru, penyempitan baris, dan putusan yang menurut dokumen milik tim — naskah ET-02, ambang C-16, paket baru C-12, angka tanpa dasar. (4) Tugas di luar `plan.md` yang disetujui. Bila salah satunya tampak perlu, agen berhenti dan bertanya. |
+| Alternatif | Menanyakan Gerbang 3 secara tegas seperti KB-154 — ditolak; pemegang gerbang sudah menyatakan izinnya secara tertulis, dan bertanya ulang mengabaikan pernyataan itu. Membaca pendelegasian sebagai izin meluluskan Gerbang 4 juga — ditolak; penerimaan hasil adalah satu-satunya gerbang yang menilai pekerjaan yang sudah jadi, dan menilainya sendiri bukan penilaian. |
+| Dampak | Status `plan.md`; berkas baru `tasks.md`. Nol baris kode. Pendelegasian dapat dicabut kapan saja oleh pemegang gerbang. |
+| Pemutus | Pemegang Gerbang 1–4 |
