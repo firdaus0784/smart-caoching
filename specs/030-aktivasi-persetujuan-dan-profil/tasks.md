@@ -45,12 +45,12 @@ Agen **tidak** membuat berkas naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-02, R-03, R-04; K-3.
 
-- [ ] Satu himpunan uji atas pelaksana memori **dan** PostgreSQL (sebagai
+- [x] Satu himpunan uji atas pelaksana memori **dan** PostgreSQL (sebagai
       `peran_pengguna`): profil simpan-baca-perbarui; prioritas tambah-saja
       dengan yang terbaru berlaku; persetujuan tambah-saja, keadaan dari baris
       terbaru, pencabutan hanya mengisi `dicabut_pada`
-- [ ] `src/penyimpanan/pengguna.py`; permukaan tanpa hapus
-- [ ] Mutasi M-7
+- [x] `src/penyimpanan/pengguna.py`; permukaan tanpa hapus
+- [x] Mutasi M-7
 
 ## T-4 · Rute `/saya/*` dan naskah
 

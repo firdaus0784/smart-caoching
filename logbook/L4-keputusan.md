@@ -2681,3 +2681,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyimpan prioritas sebagai baris per kategori dengan kolom `urutan` (D-04 semula) — ditolak pada T-1; larik berurutan membuat urutan satu tempat. Memberi `peran_autentikasi` hak atas skema ini — ditolak, K-2. |
 | Dampak | `perkakas/basis_data/` (01, 08, README), `tests/peladen.py`, uji. `src/` tidak berubah. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-171 · T-3 fitur 030 — penyimpan profil, prioritas, persetujuan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | T-3 `tasks.md` fitur 030 (R-02, R-03, R-04, K-3), atas pendelegasian KB-168. |
+| Keputusan | `src/penyimpanan/pengguna.py`: `PenyimpanPengguna` dengan `PenggunaMemori` dan `PenggunaPostgres`. **Baris sederhana, bukan model fitur 022** — `penyimpanan` lapisan di bawah `pengguna` dan tidak mengimpornya; pemetaan ke model dilakukan `src/api/` (T-4). Kedua pelaksana menolak sama bentuk yang tabelnya tolak: pemilik bukan pseudonim, prioritas di luar tiga sampai lima K1 s.d. K8, versi naskah kosong, waktu tanpa zona. Prioritas tambah-saja dengan yang terbaru berlaku; persetujuan tambah-saja, pencabutan hanya mengisi `dicabut_pada` catatan **terbaru** yang disetujui. 38 uji, merah lebih dulu; `PenggunaPostgres` tersambung sebagai `peran_pengguna` sendiri. Cakupan modul 100%. |
+| Mutasi | **M-7** (prioritas ditimpa): uji tambah-saja merah pada pelaksana memori. Pada PostgreSQL penimpaan tidak dapat dicoba — peladen tidak memberi hak ubah maupun hapus (T-2, M-4 s.d. M-6). |
+| Alternatif | Penyimpan menerima model fitur 022 langsung — ditolak; membalik arah lapisan. |
+| Dampak | `src/penyimpanan/pengguna.py`, `tests/penyimpanan/test_pengguna_simpan.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
