@@ -545,7 +545,10 @@ describe("tidak meminta riwayat yang pasti belum ada — T-8", () => {
     await kirimDanTunggu("Pertanyaan pertama percakapan baru");
     const baru = peladen.kiriman.at(-1)?.id_percakapan;
     expect(peladen.bacaan.slice(0, baca)).not.toContain(baru);
-    expect(peladen.bacaan).toContain(baru);
+    // Pembacaan sesudah jawaban dipicu efek, asinkron. Pernyataan sinkron
+    // semula gagal sesekali saat mesin sibuk — rangkaian penuh `make check`,
+    // 4 Oktober 2026 (KB-167). Yang ditunggu kejadiannya, bukan jeda.
+    await vi.waitFor(() => expect(peladen.bacaan).toContain(baru));
   });
 
   test("percakapan tersimpan tetap dibaca sesudah muat ulang", async () => {

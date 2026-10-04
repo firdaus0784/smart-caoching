@@ -2619,3 +2619,28 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menanyakan ulang — ditolak; persetujuan atas daftar yang disebut lengkap tidak bermakna lain, dan kode tetap tertahan Gerbang 3. |
 | Dampak | `docs/D12.md` 0.36, `docs/D00.md` 2.73, status `spec.md` fitur 030. Nol baris kode. Berikutnya `plan.md`, termasuk draf empat layar S-03 (P-2). |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-166 · `plan.md` fitur 030 disusun; menunggu Gerbang 2
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | Lanjutan Gerbang 1 fitur 030 (KB-165). P-2 menetapkan draf empat layar S-03 diputus pada Gerbang 2. |
+| Keputusan | `plan.md` disusun dengan delapan keputusan rancangan K-1 s.d. K-8, draf S-03, sebelas mutasi, dan enam tugas. Model fitur 022 dipakai, tidak ditulis ulang. |
+| **Temuan — tepi arsitektur** | Rute `/saya/*` di `src/api/` wajib memvalidasi dengan model `src/pengguna/`, tetapi AGENTS.md tidak memuat tepi `api → pengguna`, dan pemeriksa arah V-03 membacanya dari sana. Diajukan sebagai **K-1**, bukan ditambahkan diam-diam saat menulis kode: perubahan AGENTS.md adalah keputusan, dan tepi yang lahir dari kebiasaan adalah bentuk yang AGENTS.md sendiri catat sebagai kekeliruan (tepi `ingest → llm`, `logbook`). |
+| **Temuan — naskah dan C-13** | Naskah ET-02 tidak boleh diperiksa pemeriksa C-13: kalimatnya milik komite etik, dan menyuntingnya agar ≤ 20 kata mengubah naskah yang disetujui. Diajukan sebagai bagian K-4. |
+| Alternatif | Validasi ditulis ulang di `src/api/` agar tepi tidak bertambah — tidak dianjurkan; dua tempat yang menegakkan batas yang sama akan berselisih (`IndeksTujuan`, KB-036). Prioritas ditimpa — tidak dianjurkan; perubahan prioritas adalah data penelitian. |
+| Dampak | Berkas baru `specs/030-aktivasi-persetujuan-dan-profil/plan.md`. Nol baris kode. |
+| Pemutus | Agen menyusun; Gerbang 2 menunggu pemegang Gerbang 1–4 |
+
+## KB-167 · Uji adu waktu fitur 028 pada `LayarTanya.test.tsx`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | `make check` sesudah `plan.md` fitur 030 — perubahan dokumen saja — gagal pada `test_build_yang_gagal_menjatuhkan_v01`. Uji itu lulus bila dijalankan sendiri. Sebabnya **dibaca, bukan disimpulkan**: rangkaian penuh dijalankan ulang dengan keluaran lengkap, dan temuan pemeriksa web pada salinan `web/` menyebut satu uji Vitest fitur 028 yang merah — "percakapan baru tidak dibaca sebelum pertanyaan pertamanya". |
+| Keputusan | Pernyataan terakhir uji itu memeriksa **sinkron** bahwa percakapan baru sudah dibaca, padahal pembacaannya dipicu efek React sesudah jawaban tampil — asinkron. Saat mesin sibuk, pembacaan belum terjadi pada saat diperiksa. Pernyataannya diganti `vi.waitFor`: yang ditunggu kejadiannya, bukan jeda tetap. Pernyataan sebelumnya — percakapan baru **tidak** dibaca sebelum pertanyaan pertamanya — tidak diubah. Delapan putaran Vitest penuh dengan lima putaran lain berjalan bersamaan: nol gagal. |
+| Bukan pelonggaran | Yang diuji tetap sama: percakapan baru dibaca sesudah pertanyaan pertamanya. Uji semula dapat lulus atau gagal menurut beban mesin, bukan menurut perilaku layar — dan uji yang kadang merah mengajari orang mengabaikan merah. |
+| Alternatif | Menaikkan jeda 20 ms — ditolak; jeda yang lebih panjang hanya memindahkan batas beban, bukan menghapus adu waktunya. |
+| Dampak | `web/src/tanya/LayarTanya.test.tsx`, satu pernyataan. Kode layar tidak berubah. |
+| Pemutus | Agen |
