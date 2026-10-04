@@ -19,6 +19,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 04-tabel-d
 psql -U <superuser> -d smart_coaching -v dimensi=<N> -v ON_ERROR_STOP=1 -f 05-kolom-vektor.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 06-riwayat.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 07-akun.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 08-pengguna.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -54,6 +55,13 @@ atas urutannya, sehingga hak itu sengaja tidak diberikan.
 Layanan aplikasi yang disusupi karena itu tidak dapat menaikkan peran siapa
 pun — peladennya yang menolak, bukan kode. Kedua peran tidak memegang
 `CONNECT` ke basis data pseudonim (C-05).
+
+## Profil, prioritas, persetujuan (fitur 030)
+
+`08-pengguna.sql` memberi `peran_pengguna` hak baca dan tambah atas ketiga
+tabel skema `pengguna`, ditambah hak ubah **per kolom**: tujuh kolom profil
+selain `id_pengguna`, dan `dicabut_pada` saja pada persetujuan. Riwayat
+prioritas tambah-saja. Pemilik tiap baris wajib berpola pseudonim akun.
 
 ## Ekstensi pgvector — batas kode dan operasi
 

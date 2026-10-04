@@ -33,13 +33,13 @@ Agen **tidak** membuat berkas naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-02; K-2, K-3.
 
-- [ ] Uji lebih dulu: `peran_pengguna` ditolak `UPDATE (id_pengguna)` profil,
+- [x] Uji lebih dulu: `peran_pengguna` ditolak `UPDATE (id_pengguna)` profil,
       `UPDATE`/`DELETE` prioritas, `UPDATE` selain `dicabut_pada` pada
       persetujuan, `DELETE` di mana pun, skema `akun`/`riwayat`/karantina, dan
       basis data pseudonim — sebab `permission denied`
-- [ ] Uji peran **berjalan** pada haknya; himpunan hak dari katalog
-- [ ] `08-pengguna.sql`; `peran_pengguna` pada `01`; `tests/peladen.py`; README
-- [ ] Mutasi M-4 s.d. M-6
+- [x] Uji peran **berjalan** pada haknya; himpunan hak dari katalog
+- [x] `08-pengguna.sql`; `peran_pengguna` pada `01`; `tests/peladen.py`; README
+- [x] Mutasi M-4 s.d. M-6
 
 ## T-3 · Penyimpan pengguna
 

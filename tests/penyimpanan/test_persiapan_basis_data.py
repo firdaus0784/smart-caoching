@@ -57,6 +57,7 @@ def basis_data_siap() -> None:
         "peran_riwayat",
         "peran_autentikasi",
         "peran_pengelola_akun",
+        "peran_pengguna",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -109,6 +110,12 @@ def basis_data_siap() -> None:
     # Akun dan sesi (fitur 029) memakai DDL sungguhan `07-akun.sql`.
     hasil = _psql(
         PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "07-akun.sql")
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
+    # Profil, prioritas, persetujuan (fitur 030) memakai DDL `08-pengguna.sql`.
+    hasil = _psql(
+        PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "08-pengguna.sql")
     )
     assert hasil.returncode == 0, hasil.stderr
 
@@ -685,4 +692,175 @@ def test_batasan_tabel_akun(basis_data_siap: None) -> None:
             "insert into akun.pengguna (id, pseudonim, peran, tanggal_dibuat, turunan_sandi) "
             f"values {nilai[:-1]}, now(), 'scrypt$x')",
         )
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+
+# ── Profil, prioritas, persetujuan — fitur 030, T-2, R-02, K-2, K-3 ──────
+#
+# Profil tidak dapat dipindahkan ke pengguna lain, riwayat prioritas tidak
+# dapat diubah, dan catatan persetujuan tidak dapat disunting kecuali
+# pencabutannya — ditolak **peladen**, dengan sebab `permission denied`.
+
+_PSD = "psd_aaaaaaaaaaaaaaaa"
+_PROFIL = (
+    "insert into pengguna.profil_sekolah (id_pengguna, jabatan, masa_kerja, jumlah_rombel, "
+    "jumlah_ptk, jalur_akreditasi, wilayah) values "
+    f"('{_PSD}', 'Kepala Sekolah', 3, 6, 9, 'visitasi', 'Sumedang') "
+    "on conflict (id_pengguna) do update set jabatan = excluded.jabatan"
+)
+
+DITOLAK_PENGGUNA = [
+    *[
+        ("peran_pengguna", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            (
+                "update pengguna.profil_sekolah set id_pengguna = 'psd_bbbbbbbbbbbbbbbb' where false",
+                "profil tidak berpindah pengguna (C-05)",
+            ),
+            ("delete from pengguna.profil_sekolah where false", "profil tidak dihapus"),
+            (
+                "update pengguna.prioritas_manajerial set kategori = '{K1,K2,K3}' where false",
+                "riwayat prioritas tidak diubah (K-3)",
+            ),
+            (
+                "delete from pengguna.prioritas_manajerial where false",
+                "riwayat prioritas tidak dihapus",
+            ),
+            (
+                "update pengguna.persetujuan set disetujui = true where false",
+                "apa yang disetujui tidak diubah",
+            ),
+            (
+                "update pengguna.persetujuan set versi_naskah = 'lain' where false",
+                "versi naskah tidak diubah",
+            ),
+            (
+                "update pengguna.persetujuan set tanggal = now() where false",
+                "waktu persetujuan tidak diubah",
+            ),
+            ("delete from pengguna.persetujuan where false", "persetujuan tidak dihapus"),
+            ("truncate pengguna.persetujuan", "persetujuan tidak dikosongkan"),
+            ("create table pengguna.titipan (a int)", "tanpa CREATE pada skema pengguna"),
+            ("select * from akun.pengguna", "penulis profil tidak membaca akun"),
+            ("select * from riwayat.giliran", "penulis profil tidak membaca riwayat"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+        )
+    ],
+    ("peran_pengguna", "smart_coaching_pseudonim", "select 1", "C-05 — tanpa basis data pseudonim"),
+    *[
+        (
+            peran,
+            "smart_coaching",
+            "select * from pengguna.persetujuan",
+            f"skema pengguna di luar {peran}",
+        )
+        for peran in (
+            "peran_penjawaban",
+            "peran_pemanggil_llm",
+            "peran_autentikasi",
+            "peran_riwayat",
+        )
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_PENGGUNA)
+def test_peladen_menolak_hak_pengguna(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_peran_pengguna_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64: tersambung sebagai `peran_pengguna` sendiri."""
+    langkah = [
+        _PROFIL,
+        "update pengguna.profil_sekolah set wilayah = 'Bandung', tanggal_perbarui = now() "
+        f"where id_pengguna = '{_PSD}'",
+        "insert into pengguna.prioritas_manajerial (id_pengguna, kategori, ditetapkan_pada) "
+        f"values ('{_PSD}', '{{K5,K1,K7}}', now())",
+        "insert into pengguna.persetujuan (id_pengguna, jenis, versi_naskah, disetujui, tanggal) "
+        f"values ('{_PSD}', 'penelitian', 'et02-v1', true, now() - interval '1 minute')",
+        "update pengguna.persetujuan set dicabut_pada = now() "
+        f"where id_pengguna = '{_PSD}' and dicabut_pada is null and disetujui",
+        "select p.jabatan, r.kategori, s.dicabut_pada from pengguna.profil_sekolah p "
+        "join pengguna.prioritas_manajerial r using (id_pengguna) "
+        "join pengguna.persetujuan s using (id_pengguna)",
+    ]
+    for kueri in langkah:
+        hasil = _psql("peran_pengguna", "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, f"{kueri}\n{hasil.stderr}"
+
+
+def test_hak_peran_pengguna_persis_menurut_katalog(basis_data_siap: None) -> None:
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where table_schema = 'pengguna' and grantee like 'peran\\_%' "
+        "group by grantee, table_name order by 1",
+    )
+    assert tabel.stdout.split() == [
+        "peran_pengguna:persetujuan:INSERT,SELECT",
+        "peran_pengguna:prioritas_manajerial:INSERT,SELECT",
+        "peran_pengguna:profil_sekolah:INSERT,SELECT",
+    ]
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || c.relname || ':' || x.privilege_type || ':' "
+        "|| string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'pengguna' "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null "
+        "group by a.rolname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_pengguna:persetujuan:UPDATE:dicabut_pada",
+        "peran_pengguna:profil_sekolah:UPDATE:jabatan,jalur_akreditasi,jumlah_ptk,"
+        "jumlah_rombel,masa_kerja,tanggal_perbarui,wilayah",
+    ]
+
+
+def test_batasan_tabel_pengguna(basis_data_siap: None) -> None:
+    """Lapis kedua sesudah model fitur 022."""
+    for kueri, sebab in (
+        (
+            "insert into pengguna.profil_sekolah (id_pengguna, jabatan, masa_kerja, jumlah_rombel, "
+            "jumlah_ptk, jalur_akreditasi, wilayah) values "
+            "('ks-017', 'Kepala', 1, 1, 1, 'visitasi', 'X')",
+            "nama akun, bukan pseudonim, sebagai pemilik (C-05)",
+        ),
+        (
+            "insert into pengguna.prioritas_manajerial (id_pengguna, kategori, ditetapkan_pada) "
+            f"values ('{_PSD}', '{{K1,K2}}', now())",
+            "dua prioritas (FR-A03)",
+        ),
+        (
+            "insert into pengguna.prioritas_manajerial (id_pengguna, kategori, ditetapkan_pada) "
+            f"values ('{_PSD}', '{{K1,K2,K9}}', now())",
+            "kategori di luar K1-K8",
+        ),
+        (
+            "insert into pengguna.persetujuan (id_pengguna, jenis, versi_naskah, disetujui, tanggal) "
+            f"values ('{_PSD}', 'penelitian', ' ', true, now())",
+            "versi naskah kosong (R-04)",
+        ),
+        (
+            "insert into pengguna.persetujuan (id_pengguna, jenis, versi_naskah, disetujui, tanggal, "
+            f"dicabut_pada) values ('{_PSD}', 'penelitian', 'v', false, now(), now())",
+            "penolakan yang dicabut",
+        ),
+    ):
+        hasil = _psql("peran_pengguna", "smart_coaching", "-c", kueri)
         assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"

@@ -2669,3 +2669,15 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `docs/D14.md`, `docs/D04.md`, `docs/D05.md`, `docs/D00.md`, `AGENTS.md`, `tasks.md`. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168, dalam batas `plan.md` yang lolos Gerbang 2 |
 | Catatan sesudah pemeriksaan | `make check` pertama gagal pada dua uji fitur 022 yang membaca baris D-04 sebagai daftar dipisah koma: tambahan tebal dan keterangan pada baris `profil_sekolah`, dan kolom `nomor` pada baris `persetujuan`, merusak pembacaannya. Kedua baris dikembalikan menjadi daftar bidang **logis** — bidang model — dan sifat tambah-saja serta kolom penyimpanan `nomor` dipindah ke paragraf catatan. Ujinya tidak diubah: ia benar menuntut D-04 dan model sepakat. |
+
+## KB-170 · T-2 fitur 030 — peladen menegakkan hak profil, prioritas, persetujuan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-04 |
+| Konteks | T-2 `tasks.md` fitur 030 (K-2, K-3), atas pendelegasian KB-168. |
+| Keputusan | `08-pengguna.sql` baru: skema `pengguna` dengan `profil_sekolah`, `prioritas_manajerial`, `persetujuan`; `peran_pengguna` pada `01` dengan `CONNECT` ke basis data perilaku saja. Hak ubah per kolom: tujuh kolom profil selain `id_pengguna`, dan `dicabut_pada` saja pada persetujuan; prioritas tambah-saja. Pemilik tiap baris wajib berpola pseudonim (`^psd_[a-z]{16}$`), dipasang ulang tiap kali berkas dijalankan — pelajaran KB-158. 23 uji baru, merah lebih dulu karena berkasnya belum ada: 18 penolakan bersebab `permission denied`, satu uji peran **berjalan** sebagai dirinya, satu uji katalog, satu uji batasan tabel berisi lima kasus. |
+| Mutasi | **M-4** (`UPDATE (id_pengguna)` profil): 2 merah. **M-5** (`UPDATE (disetujui)` persetujuan): 2 merah. **M-6** (`CONNECT` basis data pseudonim): 1 merah. Basis data dibangun ulang *fixture*; berkas dipulihkan dan diperiksa. |
+| Alternatif | Menyimpan prioritas sebagai baris per kategori dengan kolom `urutan` (D-04 semula) — ditolak pada T-1; larik berurutan membuat urutan satu tempat. Memberi `peran_autentikasi` hak atas skema ini — ditolak, K-2. |
+| Dampak | `perkakas/basis_data/` (01, 08, README), `tests/peladen.py`, uji. `src/` tidak berubah. |
+| Pemutus | Agen atas pendelegasian KB-168 |
