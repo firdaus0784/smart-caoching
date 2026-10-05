@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Kebutuhan | FR-G01, FR-G02, FR-G03, FR-G04, FR-G05, FR-G07, FR-G08; FR-I01, FR-I02, FR-I03, FR-I07; NFR-19; C-02, C-03, C-06, C-07, C-13, C-14, C-15, C-20 |
+| Kebutuhan | FR-G01, FR-G02, FR-G03, FR-G04, FR-G05, FR-G07, FR-G08; FR-I01, FR-I02, FR-I03, FR-I06, FR-I07; NFR-19; C-02, C-03, C-06, C-07, C-13, C-14, C-15, C-20 |
 | Dokumen terkait | D-05 Bagian 4, 5.3, 6, 7, 8 (S-05, S-06, S-15, S-16) · D-06 Bagian 5 dan 7 · D-14 Bagian 3.3 dan 3.4 · D-12 Bagian 7 |
-| Status | **Usulan** — menunggu Gerbang 1. Nama folder mengikuti anjuran P-1 dan diganti bila putusannya lain |
+| Status | **Gerbang 1 lolos** — 5 Oktober 2026 (KB-178). Menunggu `plan.md` dan Gerbang 2 |
 
 ## Mengapa fitur ini diusulkan, dan mengapa bukan 013 sisa utuh
 
@@ -135,6 +135,24 @@ masih "isian tunggal — teks bebas, tanpa batas minimum"; S-12 menulis alasan
 KB-059. Tidak menyentuh irisan anjuran P-1 A, tetapi wajib diputus sebelum
 baris penerapan J4 dibuka — D-05 tidak diubah agen tanpa putusan itu.
 
+## Putusan Gerbang 1 (KB-178)
+
+Pemegang Gerbang 1–4 menjawab **"setuju dan lanjutkan"** atas laporan yang
+menyebut penyempitan baris, baris baru, dan anjuran tiap pertanyaan. Seluruh
+anjuran berlaku:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — 013 = S-15, S-16, S-05, S-06. Empat baris baru sesudah 013: penerapan J4, koleksi dan pembaca sumber, pengaturan dan penarikan data, aduan dan analitik |
+| P-2 | Skema `kurasi` tersendiri; peran kurasi menulis, peran penayangan hanya membaca butir tayang; keduanya tanpa jangkauan karantina; antrean diisi perkakas tim |
+| P-3 | **A** — satu kalimat per butir, ditulis kurator terhadap kategori prioritas; tidak disusun per pengguna |
+| P-4 | Batas hari pagu tayang pada WIB (Asia/Jakarta) — penetapan tim, tanpa dasar literatur |
+| P-5 | Penarikan butir tayang (`POST /api/v1/kurasi/{id}/tarik`, FR-I06) **masuk cakupan** — butir "Di luar cakupan" yang menyebutnya gugur oleh putusan ini |
+| P-6 | Telemetri penemuan di luar cakupan; menjadi baris tersendiri sebelum pilot |
+| P-7 | Simpanan luring S-05 dan S-06 termasuk, memakai penyimpanan peramban fitur 027 |
+
+TK-71 tetap terbuka dan diputus sebelum baris penerapan J4 dibuka.
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -155,7 +173,7 @@ baris penerapan J4 dibuka — D-05 tidak diubah agen tanpa putusan itu.
 
 ## Kriteria penerimaan
 
-- [ ] Penyempitan 013 dan baris baru disetujui; P-1 s.d. P-7 diputus pada Gerbang 1
+- [x] Penyempitan 013 dan baris baru disetujui; P-1 s.d. P-7 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] R-02 dan R-03 diuji terhadap peladen PostgreSQL dengan sebab penolakannya
 - [ ] Uji mutasi disusun pada `plan.md` dan dilaporkan apa adanya

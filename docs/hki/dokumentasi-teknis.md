@@ -185,7 +185,7 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
 | Jumlah uji otomatis | 2.347 pada backend dan perkakas; 139 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 25 dari 30 |
+| Fitur lolos Gerbang 4 | 25 dari 35 |
 | Anggaran muat aplikasi web | 70.812 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,
@@ -201,7 +201,7 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 
 | Hal | Menunggu |
 |---|---|
-| Layar selain Masuk, aktivasi, dan Tanya, serta panel internal | Fitur 013 dan baris yang dipecah darinya (usulan KB-177) |
+| Layar selain Masuk, aktivasi, dan Tanya, serta panel internal | Fitur 013 dan baris 031 s.d. 035 (KB-178) |
 | Model NER dan klasifikasi | Korpus teranotasi dan izin etik ET-01 (fitur 017) |
 | Isi ontologi | Putusan putaran pengisian (fitur 018) |
 | VS-03, VS-05, VS-07 | Bobot model dan kalibrasi (fitur 020) |

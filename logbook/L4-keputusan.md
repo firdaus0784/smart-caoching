@@ -2776,3 +2776,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | B — sisi pengguna J3 + J4 lebih dulu dengan butir dimuat perkakas tim: tidak dianjurkan, C-06 bergantung pada siapa menjalankan perkakas. C — 013 memuat kelima belas layar: tidak dianjurkan, mengulang pola KB-032. |
 | Dampak | Berkas baru `specs/013-kurasi-dan-penemuan-harian/spec.md`; `docs/D00.md` 2.75 (TK-71); `docs/hki/dokumentasi-teknis.md` Bagian 9. Nol baris kode. |
 | Pemutus | Agen menyusun; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-178 · Gerbang 1 fitur 013 lolos; 013 dipersempit lagi, baris 031 s.d. 035 disisipkan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | Laporan KB-177 meminta putusan P-1 s.d. P-7 dan menyebut bahwa "setuju" memberlakukan seluruh anjuran, termasuk penyempitan 013 dan baris baru. Pemegang Gerbang 1–4 menjawab **"setuju dan lanjutkan"**. |
+| Keputusan | **Gerbang 1 fitur 013 lolos; P-1 s.d. P-7 sesuai anjuran.** 013 menjadi kurasi dan penemuan harian (S-15, S-16, S-05, S-06, penarikan butir tayang). Baris 031 penerapan J4, 032 koleksi dan pembaca sumber, 033 pengaturan dan penarikan data, 034 telemetri, 035 aduan dan analitik. D-12 0.37, jumlah fitur **35**; D-00 2.76; dokumen HKI "25 dari 35". |
+| **Tafsiran yang dicatat** | Penyisipan baris termasuk hal yang KB-168 kecualikan dari pendelegasian, sehingga ia ditanyakan dan baru ditulis sesudah jawaban ini — bukan atas pendelegasian. P-5 memasukkan `POST /api/v1/kurasi/{id}/tarik` ke cakupan; butir "Di luar cakupan" pada spec yang menyebutnya gugur, dan itu dinyatakan pada bagian putusan alih-alih menghapus barisnya. |
+| Alternatif | Baris telemetri sesudah aduan dan analitik — ditolak; panel analitik membaca peristiwa yang baru tersimpan sesudah baris telemetri. |
+| Dampak | `docs/D12.md` 0.37, `docs/D00.md` 2.76, `docs/hki/dokumentasi-teknis.md`, status `spec.md` fitur 013. Nol baris kode. Berikutnya `plan.md`; Gerbang 2 dan 3 berjalan atas pendelegasian KB-168 dengan batas yang sama, Gerbang 4 tidak. |
+| Pemutus | Pemegang Gerbang 1–4 |
