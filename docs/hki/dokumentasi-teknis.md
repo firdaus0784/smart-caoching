@@ -201,12 +201,11 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 
 | Hal | Menunggu |
 |---|---|
-| Layar selain Tanya, dan panel internal | Tim antarmuka (fitur 013) |
+| Layar selain Masuk, aktivasi, dan Tanya, serta panel internal | Fitur 013 dan baris yang dipecah darinya (usulan KB-177) |
 | Model NER dan klasifikasi | Korpus teranotasi dan izin etik ET-01 (fitur 017) |
 | Isi ontologi | Putusan putaran pengisian (fitur 018) |
 | VS-03, VS-05, VS-07 | Bobot model dan kalibrasi (fitur 020) |
 | Ambang kecukupan bukti dan validator | *Gold set* BT-35 (fitur 025) |
-| Autentikasi | Belum ada baris pembangunan yang menjadwalkannya (FR-A01). Fitur 028 membangun tempat pemilik riwayat yang kelak diisinya |
 | Adaptor penyedia model sungguhan | Keputusan penyedia (ADR-12) |
 
 ---

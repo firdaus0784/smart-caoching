@@ -2761,3 +2761,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menafsirkan "lanjutkan" sebagai kelulusan tanpa bertanya — ditolak; KB-168 menyatakan Gerbang 4 tidak didelegasikan. |
 | Dampak | Status tiga berkas fitur 030; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. Berikutnya usulan spec fitur 013 yang dipersempit, tanpa kode sampai Gerbang 1. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-177 · Usulan `spec.md` fitur 013 dipersempit; menunggu Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | Lanjutan Gerbang 4 fitur 030 (KB-176): langkah berikut yang disebut di sana adalah usulan spec 013 yang dipersempit, tanpa kode sampai Gerbang 1. Pemegang Gerbang 1–4 menjawab **"lanjutkan"** selama usulan disusun; jawaban itu dibaca sebagai izin menyusun dan mencatat, **bukan** sebagai Gerbang 1 — usulannya belum pernah ia lihat. |
+| Keputusan | Usulan `specs/013-kurasi-dan-penemuan-harian/spec.md` disusun: irisan tegak S-15, S-16, S-05, S-06 (anjuran P-1 A), tiga belas kebutuhan R-01 s.d. R-13, tujuh pertanyaan P-1 s.d. P-7 beranjuran. Baris D-12 **tidak** diubah sebelum disetujui. |
+| **Temuan — urutan ketergantungan** | Tidak ada penyimpanan butir tayang maupun antrean kurasi, dan `ButirTayang` hanya lahir dari putusan kurator (C-06). Beranda yang dibangun sebelum S-15 akan selalu kosong di lapangan, atau diisi jalan pintas yang melewati kurator. Hambatan "peran internal" pada catatan D-12 KB-165 sudah gugur sejak akun fitur 029 membawa peran. |
+| **Temuan — TK-71** | Wireframe S-08 dan S-12 pada D-05 tertinggal dari TK-51: isian tunggal teks bebas dan alasan "tidak jadi" opsional, sedangkan fitur 011 membangun dua bidang isyarat–tindakan dan alasan wajib (KB-059). Didaftarkan pada D-00 2.75; D-05 tidak diubah sebelum diputus. |
+| **Temuan — S-07** | Pemeriksaan pemahaman tidak memiliki model soal maupun ketentuan siapa menulis soalnya; R-09 dan R-10 fitur 011 belum berwujud kode. Dicatat pada spec sebagai alasan S-07 di luar irisan. |
+| **Koreksi dokumen HKI** | Bagian 9 `docs/hki/dokumentasi-teknis.md` masih menyebut autentikasi "belum ada baris pembangunan", padahal fitur 029 lolos Gerbang 4 (KB-163). Barisnya dilepas; baris layar disesuaikan dengan fitur 029 dan 030. |
+| Alternatif | B — sisi pengguna J3 + J4 lebih dulu dengan butir dimuat perkakas tim: tidak dianjurkan, C-06 bergantung pada siapa menjalankan perkakas. C — 013 memuat kelima belas layar: tidak dianjurkan, mengulang pola KB-032. |
+| Dampak | Berkas baru `specs/013-kurasi-dan-penemuan-harian/spec.md`; `docs/D00.md` 2.75 (TK-71); `docs/hki/dokumentasi-teknis.md` Bagian 9. Nol baris kode. |
+| Pemutus | Agen menyusun; Gerbang 1 menunggu pemegang Gerbang 1–4 |
