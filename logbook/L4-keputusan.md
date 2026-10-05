@@ -2749,3 +2749,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyatakan fitur selesai tanpa membaca 404 yang tercatat bukti — ditolak; justru dari sana cacat 028 ditemukan. |
 | Dampak | `docs/hki/dokumentasi-teknis.md`, `logbook/L8-tagihan-pasal.md`, status `tasks.md`, bukti baru. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-176 · Gerbang 4 fitur 030 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | Laporan KB-175 meminta Gerbang 4 fitur 030. Pemegang Gerbang 1–4 menjawab "lanjutkan"; karena Gerbang 4 tidak termasuk pendelegasian KB-168, agen menanyakan tegas, dan jawabannya **"Gerbang 4 lolos"** dengan lima hal terbuka KB-175 diterima apa adanya. |
+| Keputusan | **Gerbang 4 fitur 030 lolos.** Status `spec.md`, `plan.md`, `tasks.md` dimutakhirkan; fitur lolos Gerbang 4 menjadi **25 dari 30**. Dokumen HKI: penanda menunggu pada Aplikasi web, Layanan API, dan Basis data diganti tanggal kelulusannya. |
+| Lima hal terbuka KB-175 | Diterima apa adanya: naskah ET-02 belum ada (telemetri mati bagi semua orang sampai ada); `DELETE /saya/data` belum dibangun; S-14 tetap pada 013; bukti fitur 029 tidak dapat diulang apa adanya; perbaikan KB-174 di luar `tasks.md` 030. |
+| Alternatif | Menafsirkan "lanjutkan" sebagai kelulusan tanpa bertanya — ditolak; KB-168 menyatakan Gerbang 4 tidak didelegasikan. |
+| Dampak | Status tiga berkas fitur 030; `docs/hki/dokumentasi-teknis.md`. Nol baris kode. Berikutnya usulan spec fitur 013 yang dipersempit, tanpa kode sampai Gerbang 1. |
+| Pemutus | Pemegang Gerbang 1–4 |

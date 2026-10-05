@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 4 Oktober 2026 (KB-165); P-1 s.d. P-7 sesuai anjuran |
-| Status | **Gerbang 3 lolos (didelegasikan)** — 4 Oktober 2026 (KB-168). Gerbang 2 lolos; K-1 s.d. K-8 dan draf S-03 sesuai anjuran |
+| Status | **Gerbang 4 lolos** — 5 Oktober 2026 (KB-176). Enam dari enam tugas selesai |
 | Kebutuhan | R-01 s.d. R-10 `spec.md`; FR-A02 s.d. FR-A06; C-04, C-05, C-13, C-14, C-20 |
 
 ## 1. Letak dan batas

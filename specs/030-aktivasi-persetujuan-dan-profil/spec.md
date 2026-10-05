@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-A02, FR-A03, FR-A04, FR-A05, FR-A06; NFR-19; C-04, C-05, C-13, C-14, C-20; TK-50 |
 | Dokumen terkait | D-05 Bagian 4.1 dan 5.1 (S-02, S-03, S-04, alur J1) · D-14 Bagian 3.1 · D-01 Bagian 13 (ET-01, ET-02) · D-12 Bagian 7 |
-| Status | **Gerbang 1 lolos** — 4 Oktober 2026 (KB-165). Baris D-12 disetujui; P-1 s.d. P-7 diputus sesuai anjuran |
+| Status | **Gerbang 4 lolos** — 5 Oktober 2026 (KB-176). Enam dari enam tugas selesai |
 
 ## Mengapa fitur ini diusulkan, dan mengapa bukan 013 utuh
 
