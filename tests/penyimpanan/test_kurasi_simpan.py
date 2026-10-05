@@ -567,3 +567,20 @@ def test_butir_yang_menyusul_berurutan_di_belakang(simpan: Tiga) -> None:
         )
 
     jalankan(uji())
+
+
+def test_jumlah_masuk_antrean_dalam_rentang(simpan: Tiga) -> None:
+    """Bagi pagu kurasi harian TK-72 B — dihitung dari `masuk_pada`."""
+
+    async def uji() -> None:
+        awal = datetime(2050 + secrets.randbelow(900), 3, 3, 17, 0, tzinfo=UTC)
+        akhir = awal + timedelta(days=1)
+        assert await simpan.pengisi.jumlah_masuk(sejak=awal, sampai=akhir) == 0
+        for geser in (timedelta(0), timedelta(hours=23, minutes=59), timedelta(days=1)):
+            k = _kandidat()
+            await simpan.pengisi.tambah_kandidat(
+                BarisKandidat(**{**k.__dict__, "masuk_pada": awal + geser})
+            )
+        assert await simpan.pengisi.jumlah_masuk(sejak=awal, sampai=akhir) == 2
+
+    jalankan(uji())

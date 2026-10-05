@@ -2944,3 +2944,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menunda dengan perbaikan — tidak dipilih pemegang gerbang. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 013; penanda dokumen HKI. Nol baris kode. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-190 · TK-72 diputus B — kurator menjadi penyaring relevansi sampai L4 berjalan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | KB-183 mengajukan TK-72: `saring()` fitur 010 menahan setiap kandidat di L4 sampai ambang relevansi dikalibrasi (BT-24), sehingga antrean kurasi tidak terisi lewat jalur sah. Pilihan A — menunggu L4; pilihan B — kandidat yang lolos L1 s.d. L3 masuk antrean, kurator menjadi penyaring relevansi, dibatasi pagu kurasi harian. Ditanyakan tegas bersama Gerbang 4 fitur 013. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **B**. Perkakas `isi` memasukkan kandidat yang `lapis_terakhir` L4 dan `tindakan` TERTAHAN, paling banyak `PAGU_KURASI_HARIAN` (15) kandidat per tanggal WIB; keluaran menyebut berapa yang masuk tanpa penyaring relevansi dan berapa yang melampaui pagu. `saring()` tidak diubah; L1 s.d. L3 tetap menolak. D-06 0.4 Bagian 6 mencatat aturannya; TK-72 berstatus diputus pada D-00 2.79. |
+| **Tafsiran yang dicatat** | TK-72 menyebut putusan ini menuntut penanggung jawab teknis atas C-16. Ia diambil pemegang Gerbang 1–4. **Tidak ada ambang yang ditetapkan** — yang berubah adalah siapa yang menyaring relevansi sementara ambang belum ada, bukan nilai ambangnya — sehingga C-16 dibaca tidak dilanggar. Bila penanggung jawab teknis orang lain dan membaca berbeda, putusan ini dibuka kembali; perubahan kodenya satu kondisi. |
+| Uji dan mutasi | Uji ditulis lebih dulu dan merah: kandidat tertahan L4 masuk; pagu per tanggal WIB berlaku lintas pemanggilan dan baru pada hari berikutnya; L1 s.d. L3 tidak ikut dilonggarkan; `jumlah_masuk` pada kedua pelaksana penyimpan. Tiga mutan menyala: pagu diabaikan, L4 ditahan lagi, lapis selain L4 ikut diloloskan. |
+| Alternatif | A — menunggu L4: tidak dipilih; beranda kosong di lapangan sampai fitur 017 dan BT-24. Pagu atas seluruh kandidat termasuk yang kelak diloloskan L4: tidak dipilih; putusan hanya menyangkut keadaan sebelum L4 ada. |
+| Dampak | `perkakas/kurasi.py`, `src/penyimpanan/kurasi.py` (`jumlah_masuk`), uji perkakas dan penyimpan; `docs/D06.md` 0.4, `docs/D00.md` 2.79, dokumen HKI. Skrip bukti fitur 013 tidak diubah — ia bukti atas keadaan sebelum putusan ini. |
+| Pemutus | Pemegang Gerbang 1–4 |

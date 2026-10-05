@@ -12,17 +12,24 @@ karantina, korpus, maupun basis data pseudonim.
 Berkas JSON berisi daftar `{"butir": ButirPengetahuan, "sumber": SumberButir}`.
 **Seluruh berkas diperiksa bentuknya lebih dulu**; satu entri yang salah
 menolak seluruhnya, sehingga tidak ada setengah berkas yang tertulis. Sesudah
-itu tiap kandidat melewati `saring()` fitur 010, dan **hanya** yang dinyatakan
-`boleh_masuk_antrean` yang masuk.
+itu tiap kandidat melewati `saring()` fitur 010.
 
-Hari ini itu berarti **tidak satu pun**: lapis L4 menahan seluruh kandidat
-sampai ambang relevansi dikalibrasi (BT-24, C-16). Meloloskan kandidat yang
-tertahan di L4 sama dengan memilih ambang "longgar" yang uraian `saring.py`
-tolak, dan pilihan itu bukan milik perkakas ini — TK-72. Perkakas menyebut
-jumlah yang tertahan alih-alih diam.
+## Kandidat yang tertahan di L4 — putusan TK-72 B (KB-190)
 
-Keluaran hanya memuat **jumlah**. Isi butir tidak dikutip: ia dapat memuat
-apa pun yang terbawa dari dokumen sumber.
+Lapis L4 menahan seluruh kandidat sampai ambang relevansi dikalibrasi (BT-24).
+Tim memutus pilihan B: kandidat yang **lolos L1 s.d. L3 dan hanya tertahan di
+L4** masuk antrean, dan **kurator menjadi penyaring relevansinya** — dibatasi
+`PAGU_KURASI_HARIAN` per tanggal WIB, batas kelayakan kurator D-06 Bagian 8.3.
+Yang melampaui pagu tidak disimpan dan dapat dimasukkan esok.
+
+Tidak ada ambang yang disetel: `saring()` tidak diubah, dan lapis L1 s.d. L3
+tetap menolak sebagaimana adanya. Aturan ini berhenti berlaku dengan
+sendirinya ketika L4 berjalan — `saring()` kemudian mengembalikan
+`MASUK_ANTREAN` atau `KOLAM_CADANGAN`, bukan `TERTAHAN`.
+
+Keluaran hanya memuat **jumlah**, termasuk berapa yang masuk tanpa penyaring
+relevansi. Isi butir tidak dikutip: ia dapat memuat apa pun yang terbawa dari
+dokumen sumber.
 
 ## `status` — salinan status regulasi (K-4)
 
@@ -43,14 +50,16 @@ import asyncio
 import json
 import sys
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import UTC, datetime, time, timedelta
 from pathlib import Path
 from typing import Any, TextIO
 
 from pydantic import BaseModel, ConfigDict, ValidationError
+from src.api.hari import WIB, tanggal_wib
 from src.ingest.kurasi.butir import ButirPengetahuan
-from src.ingest.kurasi.saring import HasilSaring, Tindakan, saring
+from src.ingest.kurasi.saring import HasilSaring, Lapis, Tindakan, saring
 from src.ingest.kurasi.sumber import SumberButir
+from src.ingest.kurasi.tetapan import PAGU_KURASI_HARIAN
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
 from src.penyimpanan.kurasi import (
     PERAN_PENGISI_ANTREAN,
@@ -100,6 +109,11 @@ def _baca(berkas: str) -> list[_Entri] | None:
     return entri if len(set(ids)) == len(ids) else None
 
 
+def _tertahan_l4(hasil: HasilSaring) -> bool:
+    """Lolos L1 s.d. L3, ditahan L4 karena ambangnya belum ada — TK-72 B."""
+    return hasil.lapis_terakhir is Lapis.L4_RELEVANSI and hasil.tindakan is Tindakan.TERTAHAN
+
+
 async def _isi(
     berkas: str,
     pengisi: PengisiAntrean,
@@ -107,6 +121,7 @@ async def _isi(
     keluar: TextIO,
     galat: TextIO,
     sekarang: datetime,
+    pagu_harian: int,
 ) -> int:
     entri = _baca(berkas)
     if entri is None:
@@ -116,12 +131,27 @@ async def _isi(
             file=galat,
         )
         return 2
+    awal = datetime.combine(tanggal_wib(sekarang), time(0), tzinfo=WIB).astimezone(UTC)
+    masuk_hari_ini = await pengisi.jumlah_masuk(sejak=awal, sampai=awal + timedelta(days=1))
     dikenal = set(await pengisi.dokumen_dikenal())
-    hitung = {"masuk": 0, "sudah": 0, "tertahan": 0, "dibuang": 0, "historis": 0, "cadangan": 0}
+    hitung = {
+        "masuk": 0,
+        "tanpa_l4": 0,
+        "sudah": 0,
+        "lewat_pagu": 0,
+        "tertahan": 0,
+        "dibuang": 0,
+        "historis": 0,
+        "cadangan": 0,
+    }
     for satu in entri:
         hasil = penyaring(satu.butir, id_dokumen_dikenal=frozenset(dikenal))
-        if not hasil.boleh_masuk_antrean:
+        tanpa_l4 = _tertahan_l4(hasil)
+        if not (hasil.boleh_masuk_antrean or tanpa_l4):
             hitung[_KELOMPOK[hasil.tindakan]] += 1
+            continue
+        if tanpa_l4 and masuk_hari_ini >= pagu_harian:
+            hitung["lewat_pagu"] += 1
             continue
         masuk = await pengisi.tambah_kandidat(
             BarisKandidat(
@@ -136,10 +166,18 @@ async def _isi(
                 masuk_pada=sekarang,
             )
         )
-        hitung["masuk" if masuk else "sudah"] += 1
+        if masuk:
+            hitung["masuk"] += 1
+            masuk_hari_ini += 1
+            hitung["tanpa_l4"] += int(tanpa_l4)
+        else:
+            hitung["sudah"] += 1
         dikenal.add(satu.butir.id_dokumen_sumber)
     print(
-        f"Masuk antrean: {hitung['masuk']}. Sudah ada: {hitung['sudah']}. "
+        f"Masuk antrean: {hitung['masuk']}. "
+        f"Di antaranya tanpa penyaring relevansi: {hitung['tanpa_l4']}. "
+        f"Sudah ada: {hitung['sudah']}. "
+        f"Melampaui pagu kurasi hari ini: {hitung['lewat_pagu']}. "
         f"Tertahan menunggu penyaring relevansi: {hitung['tertahan']}. "
         f"Dibuang: {hitung['dibuang']}. "
         f"Rujukan historis, tidak masuk antrean: {hitung['historis']}. "
@@ -194,12 +232,16 @@ def utama(
     galat: TextIO = sys.stderr,
     penyaring: Penyaring = saring,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
+    pagu_harian: int = PAGU_KURASI_HARIAN,
 ) -> int:
-    """Titik masuk yang dapat diuji. `penyaring` disuntikkan hanya oleh uji;
-    perkakas sungguhan memakai `saring()` fitur 010."""
+    """Titik masuk yang dapat diuji. `penyaring` dan `pagu_harian` disuntikkan
+    hanya oleh uji; perkakas sungguhan memakai `saring()` fitur 010 dan pagu
+    kurasi harian D-06 Bagian 8.3."""
     argumen = _penghurai().parse_args(argv)
     if argumen.perintah == "isi":
-        return asyncio.run(_isi(argumen.berkas, pengisi, penyaring, keluar, galat, sekarang()))
+        return asyncio.run(
+            _isi(argumen.berkas, pengisi, penyaring, keluar, galat, sekarang(), pagu_harian)
+        )
     return asyncio.run(_status(argumen.dokumen, argumen.status, pengisi, keluar, galat, sekarang()))
 
 

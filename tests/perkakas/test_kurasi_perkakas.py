@@ -18,7 +18,7 @@ from __future__ import annotations
 import io
 import json
 import secrets
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -82,15 +82,19 @@ def _loloskan(butir: ButirPengetahuan, **_: object) -> HasilSaring:
     )
 
 
-def _jalan(*argumen: str, penyaring: Any = None) -> tuple[int, str, str]:
+def _jalan(
+    *argumen: str, penyaring: Any = None, sekarang: datetime = T0, pagu: int | None = None
+) -> tuple[int, str, str]:
     keluar, galat = io.StringIO(), io.StringIO()
-    tambahan = {} if penyaring is None else {"penyaring": penyaring}
+    tambahan: dict[str, Any] = {} if penyaring is None else {"penyaring": penyaring}
+    if pagu is not None:
+        tambahan["pagu_harian"] = pagu
     kode = perkakas_kurasi.utama(
         list(argumen),
         pengisi=PengisiAntreanPostgres(SambunganPeran(PERAN_PENGISI_ANTREAN)),  # type: ignore[arg-type]
         keluar=keluar,
         galat=galat,
-        sekarang=lambda: T0,
+        sekarang=lambda: sekarang,
         **tambahan,
     )
     return kode, keluar.getvalue(), galat.getvalue()
@@ -110,14 +114,57 @@ def _menunggu() -> set[str]:
 # ── isi ──────────────────────────────────────────────────────────────
 
 
-def test_penyaring_sungguhan_menahan_seluruhnya_di_l4(tmp_path: Path) -> None:
-    """TK-72: tanpa ambang L4, antrean tidak terisi — dan perkakas mengatakannya."""
+def _hari_sendiri() -> datetime:
+    """Satu tanggal WIB milik uji ini saja — basis data dipakai bersama, dan
+    pagu dihitung per tanggal."""
+    return datetime(2040 + secrets.randbelow(900), 1 + secrets.randbelow(12), 10, 3, tzinfo=UTC)
+
+
+def _menunggu_pada(kini: datetime) -> set[str]:
+    kurasi = KurasiPostgres(SambunganPeran(PERAN_KURASI))  # type: ignore[arg-type]
+    return {k.id_butir for k in jalankan(kurasi.menunggu(hari_ini=kini.date()))}
+
+
+def test_tk72_b_kandidat_tertahan_l4_masuk_antrean(tmp_path: Path) -> None:
+    """TK-72 B (KB-190): yang lolos L1 s.d. L3 dan hanya tertahan di L4 masuk
+    antrean; kurator yang menjadi penyaring relevansinya. Keluaran menyebutnya."""
     entri = [_entri(), _entri()]
-    kode, keluar, _ = _jalan("isi", "--berkas", _berkas(tmp_path, entri))
+    kini = _hari_sendiri()
+    kode, keluar, _ = _jalan("isi", "--berkas", _berkas(tmp_path, entri), sekarang=kini)
     assert kode == 0
+    assert "Masuk antrean: 2" in keluar
+    assert "Di antaranya tanpa penyaring relevansi: 2" in keluar
+    assert {e["butir"]["id_butir"] for e in entri} <= _menunggu_pada(kini)
+
+
+def test_tk72_b_dibatasi_pagu_kurasi_harian(tmp_path: Path) -> None:
+    """Yang melampaui pagu hari itu tidak masuk, dan dapat dimasukkan esok."""
+    kini = _hari_sendiri()
+    entri = [_entri() for _ in range(3)]
+    kode, keluar, _ = _jalan("isi", "--berkas", _berkas(tmp_path, entri), sekarang=kini, pagu=2)
+    assert kode == 0
+    assert "Masuk antrean: 2" in keluar
+    assert "Melampaui pagu kurasi hari ini: 1" in keluar
+    # Pemanggilan kedua pada hari yang sama: pagu sudah habis.
+    lagi = [_entri()]
+    _, keluar, _ = _jalan("isi", "--berkas", _berkas(tmp_path, lagi), sekarang=kini, pagu=2)
     assert "Masuk antrean: 0" in keluar
-    assert "Tertahan menunggu penyaring relevansi: 2" in keluar
-    assert not {e["butir"]["id_butir"] for e in entri} & _menunggu()
+    assert "Melampaui pagu kurasi hari ini: 1" in keluar
+    # Hari WIB berikutnya, pagu baru.
+    esok = kini + timedelta(days=1)
+    _, keluar, _ = _jalan("isi", "--berkas", _berkas(tmp_path, lagi), sekarang=esok, pagu=2)
+    assert "Masuk antrean: 1" in keluar
+
+
+def test_tk72_b_tidak_melonggarkan_l1_s_d_l3(tmp_path: Path) -> None:
+    """Pilihan B hanya menyangkut L4: lisensi tertutup tetap dibuang, regulasi
+    yang dicabut tetap rujukan historis."""
+    kini = _hari_sendiri()
+    tertutup = _entri(lisensi="Hak cipta dilindungi")
+    dicabut = _entri(jenis="regulasi", status="dicabut")
+    _, keluar, _ = _jalan("isi", "--berkas", _berkas(tmp_path, [tertutup, dicabut]), sekarang=kini)
+    assert "Masuk antrean: 0" in keluar
+    assert not {tertutup["butir"]["id_butir"], dicabut["butir"]["id_butir"]} & _menunggu_pada(kini)
 
 
 def test_kandidat_lolos_masuk_antrean_beserta_sumbernya(tmp_path: Path) -> None:

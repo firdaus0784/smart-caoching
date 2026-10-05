@@ -134,6 +134,11 @@ class PengisiAntrean(Protocol):
         """Dokumen sumber kandidat dan butir tayang — masukan lapis L2 `saring()`."""
         ...
 
+    async def jumlah_masuk(self, *, sejak: datetime, sampai: datetime) -> int:
+        """Kandidat yang masuk antrean dalam `[sejak, sampai)` — bagi pagu
+        kurasi harian TK-72 B (KB-190)."""
+        ...
+
 
 class PenyimpanKurasi(Protocol):
     async def menunggu(self, *, hari_ini: date) -> tuple[BarisKandidat, ...]:
@@ -270,6 +275,11 @@ class KurasiMemori:
 
     async def dokumen_dikenal(self) -> frozenset[str]:
         return frozenset(k.id_dokumen_sumber for k in self._isi.kandidat.values())
+
+    async def jumlah_masuk(self, *, sejak: datetime, sampai: datetime) -> int:
+        _utc(sejak)
+        _utc(sampai)
+        return sum(1 for k in self._isi.kandidat.values() if sejak <= k.masuk_pada < sampai)
 
     # PenyimpanKurasi
 
@@ -533,6 +543,16 @@ class PengisiAntreanPostgres:
             "UNION SELECT id_dokumen_sumber FROM kurasi.butir_tayang"
         )
         return frozenset(str(b["id_dokumen_sumber"]) for b in baris)
+
+    async def jumlah_masuk(self, *, sejak: datetime, sampai: datetime) -> int:
+        _utc(sejak)
+        _utc(sampai)
+        b = await self._sambungan.fetchrow(
+            "SELECT count(*) AS n FROM kurasi.kandidat WHERE masuk_pada >= $1 AND masuk_pada < $2",
+            sejak,
+            sampai,
+        )
+        return 0 if b is None else int(b["n"])  # type: ignore[call-overload]
 
 
 class KurasiPostgres:
