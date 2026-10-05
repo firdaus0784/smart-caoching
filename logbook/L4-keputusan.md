@@ -2788,3 +2788,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Baris telemetri sesudah aduan dan analitik — ditolak; panel analitik membaca peristiwa yang baru tersimpan sesudah baris telemetri. |
 | Dampak | `docs/D12.md` 0.37, `docs/D00.md` 2.76, `docs/hki/dokumentasi-teknis.md`, status `spec.md` fitur 013. Nol baris kode. Berikutnya `plan.md`; Gerbang 2 dan 3 berjalan atas pendelegasian KB-168 dengan batas yang sama, Gerbang 4 tidak. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-179 · `plan.md` dan `tasks.md` fitur 013; Gerbang 2 dan 3 atas pendelegasian KB-168
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | Lanjutan Gerbang 1 fitur 013 (KB-178). Pemegang Gerbang 1–4 menulis "setuju dan lanjutkan"; pendelegasian KB-168 ("lakukan secara otonom selanjutnya sesuai blueprint") belum dicabut. |
+| Keputusan | `plan.md` disusun dengan delapan keputusan rancangan K-1 s.d. K-8, tiga belas mutasi, dan sembilan tugas. **Gerbang 2 dan 3 dinyatakan lolos atas pendelegasian KB-168**, dengan batas yang sama: Gerbang 4, `constitution.md`, baris D-12, dan putusan milik tim tidak ikut didelegasikan. Tidak satu pun K-1 s.d. K-8 menyentuh batas itu — tanpa paket baru, tanpa ambang, tanpa rute di luar D-14 Bagian 3, tanpa tepi arsitektur baru. |
+| **Temuan — R-10 dan fitur 010** | `JejakKurasi` fitur 010 mencatat peran saja dan menolak orang (C-05, KM-03); R-10 spec ini meminta pseudonim kurator, dan D-04 memuat `jejak_kurasi.id_kurator`. Keduanya tidak bertentangan: fitur 010 ditulis sebelum akun berpseudonim ada (fitur 029), sehingga peran satu-satunya pengganti nama yang tersedia. K-5: baris jejak membawa peran **dan** pseudonim, tidak pernah `pengguna.id` maupun nama. Dilaporkan agar pemegang gerbang dapat membaliknya sebelum T-5. |
+| **Temuan — penarikan bukan putusan kelima** | Draf pertama mencatat penarikan pada tabel putusan, yang berarti nilai kelima bagi `JenisPutusan`. Dibatalkan sebelum terbit: penarikan mendapat tabel sendiri dengan `Pemicu` dan `TindakanPenarikan` fitur 010 apa adanya — mengubah daftar enum dilarang AGENTS.md. |
+| **Temuan — status regulasi salinan** | Lapis kedua C-07 pada `terapkan()` hanya berarti bila status butir terkini, tetapi tidak ada jalur yang memperbaruinya selama butir menunggu. K-4: perkakas tim `status` memperbarui salinan dan menarik otomatis butir tayang, sesuai D-06 Bagian 7.5. |
+| **Penyimpangan dari D-05 yang dicatat** | Navigasi dua tujuan (Beranda · Tanya), bukan tiga: "Milik saya" memuat isi baris 031 dan 032 dan tidak tampil sebelum isinya ada (K-7). Skor relevansi tidak tampil pada S-15 sampai BT-24 (C-16). Label TL-11 tampil tanpa contoh bersingkatan (C-13). |
+| Alternatif | Menunggu Gerbang 2 dari pemegang gerbang — tidak dipilih; pendelegasian tertulis dan belum dicabut, dan bertanya ulang mengabaikannya (KB-168). Peran basis data tunggal bagi kurasi dan penayangan — tidak dianjurkan; C-06 menjadi dijaga kode saja. |
+| Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 013; status `spec.md`. Nol baris kode. Pendelegasian dapat dicabut kapan saja. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
