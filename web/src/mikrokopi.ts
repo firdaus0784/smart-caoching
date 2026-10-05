@@ -143,6 +143,74 @@ export const MIKROKOPI = {
   alasanDitolak: "Tulis alasan singkat tanpa nomor pribadi, lalu kirim lagi.",
   alasanLuring: "Sedang tidak terhubung. Alasan Anda belum terkirim dan masih ada di isian.",
   alasanGangguan: "Alasan belum terkirim. Isian Anda masih ada, coba kirim lagi.",
+
+  // D-05 S-15 Antrean kurasi dan S-16 Penyuntingan — fitur 013. Kurator
+  // dikenali tanpa rute baru (K-8); skor relevansi tidak tampil (BT-24, C-16).
+  akunTidakDikenali: "Akun Anda tidak dapat membuka bagian mana pun di aplikasi ini.",
+  judulKurasi: "Antrean kurasi",
+  judulMenunggu: "Menunggu putusan",
+  judulSedangTayang: "Sedang tayang",
+  kurasiMemuat: "Antrean sedang dimuat.",
+  antreanKosong: "Antrean kosong. Kandidat masuk setelah lolos penyaringan oleh tim.",
+  tayangKosong: "Belum ada butir yang tayang.",
+  kurasiGangguan: "Antrean belum dapat dimuat. Coba lagi sebentar lagi.",
+  kurasiLuring: "Sedang tidak terhubung. Putusan Anda belum terkirim.",
+  perluTinjauan: "Perlu ditinjau: data sumbernya diperbarui.",
+  tombolSetujui: "Setujui",
+  tombolSunting: "Sunting",
+  tombolTolak: "Tolak",
+  tombolTunda: "Tunda",
+  tombolTarik: "Tarik",
+  tombolKirimPutusan: "Kirim putusan",
+  labelCatatan: "Catatan singkat",
+  labelAlasanTolak: "Alasan penolakan",
+  labelKembaliPada: "Kembali ke antrean pada",
+  labelPemicu: "Sebab penarikan",
+  labelStatusTerkini: "Status regulasi sekarang",
+  labelAngkaBermakna: "Angka pada sumber berubah bermakna",
+  putusanBelumLengkap: "Lengkapi isian putusan, lalu kirim lagi.",
+  putusanDitolak:
+    "Putusan belum dapat dicatat. Periksa isian. Bila regulasinya tidak berlaku lagi, pilih Tolak.",
+  putusanSudahDiambil: "Butir ini sudah diputus atau ditarik. Daftar sudah dimuat ulang.",
+  putusanGangguan: "Putusan belum tercatat karena gangguan di sistem kami. Coba lagi.",
+  judulSunting: "Sunting parafrase",
+  labelJudul: "Judul",
+  labelAlasanRelevansi: "Mengapa relevan untuk sekolah",
+  labelIntiTemuan: "Inti temuan",
+  labelImplikasi: "Implikasi tindakan, satu per baris",
+  keteranganTetap: "Bagian berikut tidak dapat disunting karena mengubah butirnya, bukan parafrasenya.",
+  tombolSimpanSetujui: "Simpan dan setujui",
+} as const;
+
+/** Alasan penolakan baku D-06 Bagian 7.4 — kodenya tidak tampil (C-13).
+ * Kalimat D-06 apa adanya, kecuali dua rujukan bersingkatan yang dilepas:
+ * contoh "BAN-S/M" pada TL-11 dan "(NFR-19)" pada TL-07. */
+export const LABEL_ALASAN_TOLAK = {
+  "TL-01": "Tidak relevan dengan konteks sekolah dasar Indonesia",
+  "TL-02": "Lisensi tidak jelas atau tidak mengizinkan penggunaan",
+  "TL-03": "Sumber tidak kredibel atau tidak dapat ditelusuri",
+  "TL-04": "Regulasi sudah dicabut atau digantikan",
+  "TL-11": "Menyebut lembaga atau istilah yang sudah berganti tanpa keterangan, sehingga menyesatkan",
+  "TL-05": "Parafrase terlalu dekat dengan teks asli dan sulit diperbaiki",
+  "TL-06": "Isi keliru atau bertentangan dengan regulasi yang berlaku",
+  "TL-07": "Terlalu teknis untuk pengguna sasaran",
+  "TL-08": "Duplikat butir yang sudah tayang",
+  "TL-09": "Implikasi tindakan tidak dapat dijalankan kepala sekolah",
+  "TL-10": "Data sudah usang",
+} as const;
+
+/** Pemicu penarikan D-06 Bagian 7.5. */
+export const LABEL_PEMICU = {
+  regulasi_sumber_berubah: "Regulasi sumber dicabut atau diubah",
+  kekeliruan_isi_dilaporkan: "Isi butir keliru",
+  data_sumber_diperbarui: "Data sumber diperbarui",
+} as const;
+
+/** Status keberlakuan regulasi — KL-07. */
+export const LABEL_STATUS = {
+  berlaku: "Berlaku",
+  diubah: "Diubah",
+  dicabut: "Dicabut",
 } as const;
 
 /** Label jenis sumber S-06 blok 1 — FR-G04, teks bukan warna saja. */
@@ -256,4 +324,20 @@ export function teksPengganti(rujukan: string): string {
 /** Satu baris sitasi — PK-03: nama dokumen · penerbit · tahun · bagian. */
 export function barisSitasi(judul: string, penerbit: string, tahun: number, bagian: string): string {
   return [judul, penerbit, String(tahun), bagian].join(" · ");
+}
+
+/** Satu baris sumber butir — S-06 blok 7 dan S-16: nama · penerbit · tahun. */
+export function barisSumber(judul: string, penerbit: string, tahun: number): string {
+  return [judul, penerbit, String(tahun)].join(" · ");
+}
+
+/** Keterangan baris kurasi — lisensi, dan status regulasi bila ada. */
+export function keteranganKurasi(lisensi: string, status: string | null): string {
+  const lisensiSaja = `Lisensi: ${lisensi}`;
+  return status === null ? lisensiSaja : `${lisensiSaja} · Status regulasi: ${status}`;
+}
+
+/** Jenis sumber dan kategori butir pada S-16. */
+export function jenisDanKategori(jenis: string, kategori: string): string {
+  return `${jenis} · ${kategori}`;
 }

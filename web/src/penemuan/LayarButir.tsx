@@ -19,7 +19,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import type { Simpanan } from "../draf";
 import { bacaButir, tolakButir, type Pemanggil } from "../klien";
 import type { ButirLengkap } from "../kontrak";
-import { LABEL_JENIS_SUMBER, MIKROKOPI, waktuBaca } from "../mikrokopi";
+import { LABEL_JENIS_SUMBER, MIKROKOPI, barisSumber, waktuBaca } from "../mikrokopi";
 import { salinanButir, simpanButir } from "./salinan";
 
 type Keadaan =
@@ -146,7 +146,7 @@ export function LayarButir({
         </section>
         <section>
           <h2>{MIKROKOPI.judulSumber}</h2>
-          <p>{[butir.sumber.judul, butir.sumber.penerbit, String(butir.sumber.tahun)].join(" · ")}</p>
+          <p>{barisSumber(butir.sumber.judul, butir.sumber.penerbit, butir.sumber.tahun)}</p>
           {butir.sumber.tautan !== null && (
             <a href={butir.sumber.tautan} rel="noopener noreferrer" target="_blank">
               {MIKROKOPI.bukaHalamanSumber}

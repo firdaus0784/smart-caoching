@@ -21,6 +21,11 @@
  *
  * Luring atau galat lain saat memeriksa tetap membuka Tanya (K-6): pengguna
  * masih dapat menulis draf (KL-E), dan aktivasi ditanyakan lagi lain kali.
+ *
+ * **Kurator dikenali tanpa rute baru (K-8 fitur 013).** Ringkasan akun hanya
+ * terbuka bagi peran `pengguna`; 403 di sana diikuti `GET /kurasi/antrean`.
+ * 200 membuka S-15; selainnya kalimat bahwa akun tidak dikenali, beserta
+ * tombol keluar. Rute "siapa saya" tidak ditambahkan (AG-02).
  */
 
 import { useEffect, useState } from "react";
@@ -29,8 +34,9 @@ import { LayarPengenalan } from "./aktivasi/LayarPengenalan";
 import { LayarPersetujuan } from "./aktivasi/LayarPersetujuan";
 import { LayarProfil } from "./aktivasi/LayarProfil";
 import { hapusDraf, type Simpanan } from "./draf";
-import { bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
-import type { HasilNaskah, KeadaanPersetujuan, Ringkasan } from "./kontrak";
+import { bacaAntrean, bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
+import type { Antrean, HasilNaskah, KeadaanPersetujuan, Ringkasan } from "./kontrak";
+import { LayarKurasi } from "./kurasi/LayarKurasi";
 import { LayarMasuk } from "./masuk/LayarMasuk";
 import { MIKROKOPI } from "./mikrokopi";
 import { LayarBeranda } from "./penemuan/LayarBeranda";
@@ -54,6 +60,9 @@ type Tahap =
   | { readonly jenis: "profil" }
   | { readonly jenis: "beranda" }
   | { readonly jenis: "butir"; readonly idButir: string }
+  | { readonly jenis: "kurasi"; readonly antrean: Antrean }
+  | { readonly jenis: "kurasi_galat"; readonly luring: boolean }
+  | { readonly jenis: "tidak_dikenali" }
   | { readonly jenis: "tanya" };
 
 export interface PropertiAplikasi {
@@ -85,7 +94,18 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
   async function periksa(): Promise<Tahap> {
     const hasil = await bacaRingkasan(pemanggil);
     if (hasil.jenis === "ringkasan") return tahapDari(hasil.ringkasan);
-    return hasil.galat === "belum_masuk" ? { jenis: "masuk", pemberitahuan: null } : { jenis: "tanya" };
+    if (hasil.galat === "belum_masuk") return { jenis: "masuk", pemberitahuan: null };
+    if (hasil.galat !== "tidak_berhak") return { jenis: "tanya" };
+    // K-8: akun bukan pengguna — mungkin kurator.
+    const antrean = await bacaAntrean(pemanggil);
+    if (antrean.jenis === "antrean") return { jenis: "kurasi", antrean: antrean.antrean };
+    if (antrean.jenis === "galat" && antrean.galat === "belum_masuk") {
+      return { jenis: "masuk", pemberitahuan: null };
+    }
+    if (antrean.jenis === "galat" && (antrean.galat === "luring" || antrean.galat === "sistem")) {
+      return { jenis: "kurasi_galat", luring: antrean.galat === "luring" };
+    }
+    return { jenis: "tidak_dikenali" };
   }
 
   useEffect(() => {
@@ -181,6 +201,39 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
   }
   if (tahap.jenis === "profil") {
     return <LayarProfil pemanggil={pemanggil} selesai={() => setTahap({ jenis: "tanya" })} />;
+  }
+  if (tahap.jenis === "kurasi") {
+    return (
+      <LayarKurasi
+        awal={tahap.antrean}
+        belumMasuk={perluMasuk}
+        keluar={() => void keluarkan()}
+        pemanggil={pemanggil}
+      />
+    );
+  }
+  if (tahap.jenis === "kurasi_galat" || tahap.jenis === "tidak_dikenali") {
+    return (
+      <main className="layar-tanya">
+        <div className="galat" role="alert">
+          <p>
+            {tahap.jenis === "tidak_dikenali"
+              ? MIKROKOPI.akunTidakDikenali
+              : tahap.luring
+                ? MIKROKOPI.kurasiLuring
+                : MIKROKOPI.kurasiGangguan}
+          </p>
+          {tahap.jenis === "kurasi_galat" && (
+            <button onClick={() => void periksa().then(setTahap)} type="button">
+              {MIKROKOPI.tombolCobaLagi}
+            </button>
+          )}
+        </div>
+        <button className="tombol-kedua" onClick={() => void keluarkan()} type="button">
+          {MIKROKOPI.tombolKeluar}
+        </button>
+      </main>
+    );
   }
   if (tahap.jenis === "beranda") {
     return (

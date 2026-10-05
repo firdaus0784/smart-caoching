@@ -2902,3 +2902,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Tujuan ketiga "Milik saya" kosong — ditolak K-7. |
 | Dampak | `web/src/` (kontrak, klien, mikrokopi, gaya, cangkang, `penemuan/`); `src/api/penemuan.py`, `src/api/kurasi.py`; `perkakas/pemeriksa/kontrak_web.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-187 · T-8 fitur 013 — layar kurator S-15, S-16, cangkang kurator
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-8 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | `web/src/kurasi/` — `LayarKurasi` (S-15: antrean berkelompok menurut kategori, empat putusan setara, daftar "Sedang tayang" dengan Tarik) dan `LayarSunting` (S-16: empat bidang parafrase saja). Cangkang mengenali kurator dari 403 pada ringkasan akun lalu 200 pada antrean (K-8); akun yang ditolak keduanya mendapat kalimat dan tombol keluar; antrean yang gagal dimuat mendapat Coba lagi. Uji Vitest ditulis lebih dulu: 23 uji. |
+| **Label alasan penolakan** | Kalimat D-06 Bagian 7.4 apa adanya, kodenya tidak tampil (C-13). Dua rujukan bersingkatan dilepas: contoh "BAN-S/M" pada TL-11 dan "(NFR-19)" pada TL-07. Kodenya tetap yang dikirim. |
+| **Teks antarmuka** | Pemisah ": " dan " · " semula tertulis pada `.tsx`; dipindah ke fungsi mikrokopi (`barisSumber`, `keteranganKurasi`, `jenisDanKategori`) agar tidak ada teks antarmuka di luar `mikrokopi.ts`. `LayarButir` T-7 ikut memakai `barisSumber`. |
+| Yang tidak tampil | Skor relevansi (BT-24, C-16); kode kategori dan kode TL; pseudonim pemutus. |
+| Alternatif | Mengenali kurator dari rute baru "siapa saya" — dilarang AG-02. Membaca kalimat galat peladen untuk penolakan regulasi — diurungkan (KB-186); status regulasi tampil pada barisnya. |
+| Dampak | `web/src/kurasi/`, `web/src/Aplikasi.tsx`, `web/src/mikrokopi.ts`, `web/src/penemuan/LayarButir.tsx`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Catatan sesudah pemeriksaan | `make check` pertama gagal pada V-01 dan V-03: peladen palsu pada uji kurasi mencocokkan jalur dengan awalan harfiah `"/api/v1/kurasi/"`, dan pemeriksa rute menolaknya sebagai jalur yang tidak terpasang — juga pada berkas uji. Diganti pencocokan lewat `jalurPutusan`/`jalurTarik`. |
