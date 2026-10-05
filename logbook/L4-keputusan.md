@@ -2815,3 +2815,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Bentuk tanggapan `tolak` 204 tanpa badan — tidak dipilih; layar membaca beranda dua kali, dan pola fitur 030 (rute penulis mengembalikan bentuk baca) sudah terbukti. |
 | Dampak | `docs/D14.md`, `docs/D04.md`, `docs/D05.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168, dalam batas `plan.md` yang lolos Gerbang 2 |
+
+## KB-181 · T-2 fitur 013 — peladen menegakkan hak kurasi dan penayangan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-2 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | `09-kurasi.sql`: skema `kurasi` (kandidat, putusan, butir tayang, penarikan) dan `penemuan` (butir hari ini, belum relevan); tiga peran pada `01-peran-dan-basis-data.sql`. Uji ditulis lebih dulu dan merah karena berkasnya belum ada. 49 uji penolakan dengan sebab `permission denied`, satu uji peran berjalan pada haknya, katalog hak persis, batasan tabel, dan butir tayang sekali bagi orang yang sama. |
+| **Tambahan atas plan** | C-06 ditegakkan peladen **dua kali**, bukan sekali: selain penayang yang tidak dapat membaca antrean, butir tayang merujuk putusan lewat kunci asing gabungan `(nomor, id_butir, menyetujui)` dengan `menyetujui` kolom terhitung — persetujuan bagi butir lain maupun putusan tolak ditolak peladen. Satu putusan akhir per butir ditegakkan indeks unik bersyarat. Tidak mengubah keputusan K-1; mengencangkannya. |
+| Mutasi | M-2, M-3, M-4 menyala: masing-masing memerahkan uji penolakan dan uji katalog. |
+| Alternatif | Pemicu (*trigger*) yang memeriksa jenis putusan saat butir tayang ditulis — tidak dipilih; kunci asing terbaca dari katalog dan tidak dapat dimatikan peran aplikasi. |
+| Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `09-kurasi.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

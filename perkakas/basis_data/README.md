@@ -20,6 +20,7 @@ psql -U <superuser> -d smart_coaching -v dimensi=<N> -v ON_ERROR_STOP=1 -f 05-ko
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 06-riwayat.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 07-akun.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 08-pengguna.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 09-kurasi.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -62,6 +63,22 @@ pun — peladennya yang menolak, bukan kode. Kedua peran tidak memegang
 tabel skema `pengguna`, ditambah hak ubah **per kolom**: tujuh kolom profil
 selain `id_pengguna`, dan `dicabut_pada` saja pada persetujuan. Riwayat
 prioritas tambah-saja. Pemilik tiap baris wajib berpola pseudonim akun.
+
+## Kurasi dan penemuan — tiga peran (fitur 013)
+
+`09-kurasi.sql` memisahkan tiga pemakai skema `kurasi` dan `penemuan`:
+
+| Peran | Boleh | Ditolak peladen |
+|---|---|---|
+| `peran_pengisi_antrean` (perkakas tim) | menambah kandidat; memperbarui salinan status regulasi; menarik otomatis | menayangkan; memutus; mengubah isi kandidat |
+| `peran_kurasi` (rute kurator) | membaca antrean; mencatat putusan dan penarikan; menayangkan | menambah kandidat; mengubah status regulasi; menyunting butir tayang; membaca perilaku pengguna |
+| `peran_penayangan` (rute pengguna) | membaca butir tayang; mencatat butir hari ini dan "belum relevan" | membaca antrean, putusan, penarikan; menulis butir tayang |
+
+**C-06 ditegakkan peladen dua kali.** Peran yang menayangkan tidak dapat
+membaca kandidat, dan butir tayang hanya dapat merujuk putusan yang
+**menyetujui** butir itu sendiri — kunci asing gabungan atas `(nomor,
+id_butir, menyetujui)`. Ketiga peran tidak menjangkau karantina, korpus, maupun
+basis data pseudonim.
 
 ## Ekstensi pgvector — batas kode dan operasi
 

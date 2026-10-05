@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Satu dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Dua dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -33,12 +33,12 @@ Agen **tidak** mengisi antrean dengan butir karangan di luar uji dan bukti.
 
 **Kebutuhan:** R-02, R-03; K-1.
 
-- [ ] Uji lebih dulu: tiap baris "yang ditolak" plan Bagian 2.2 dengan sebab
+- [x] Uji lebih dulu: tiap baris "yang ditolak" plan Bagian 2.2 dengan sebab
       `permission denied`; ketiga peran tanpa `CONNECT` basis data pseudonim,
       tanpa karantina dan korpus, tanpa `DELETE`
-- [ ] Uji peran **berjalan** pada haknya; himpunan hak dari katalog
-- [ ] `01-peran-dan-basis-data.sql` tiga peran; `09-kurasi.sql`
-- [ ] Mutasi M-2, M-3, M-4
+- [x] Uji peran **berjalan** pada haknya; himpunan hak dari katalog
+- [x] `01-peran-dan-basis-data.sql` tiga peran; `09-kurasi.sql`
+- [x] Mutasi M-2, M-3, M-4
 
 ## T-3 · Penyimpan kurasi dan penemuan
 

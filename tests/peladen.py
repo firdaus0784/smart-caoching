@@ -144,3 +144,8 @@ def siapkan() -> None:
     hasil = psql("smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "08-pengguna.sql"))
     if hasil.returncode != 0:
         raise RuntimeError(f"08-pengguna.sql gagal: {hasil.stderr}")
+
+    # 09 — kurasi dan penemuan (fitur 013).
+    hasil = psql("smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "09-kurasi.sql"))
+    if hasil.returncode != 0:
+        raise RuntimeError(f"09-kurasi.sql gagal: {hasil.stderr}")

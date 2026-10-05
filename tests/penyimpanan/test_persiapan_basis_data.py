@@ -58,6 +58,9 @@ def basis_data_siap() -> None:
         "peran_autentikasi",
         "peran_pengelola_akun",
         "peran_pengguna",
+        "peran_kurasi",
+        "peran_penayangan",
+        "peran_pengisi_antrean",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -116,6 +119,12 @@ def basis_data_siap() -> None:
     # Profil, prioritas, persetujuan (fitur 030) memakai DDL `08-pengguna.sql`.
     hasil = _psql(
         PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "08-pengguna.sql")
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
+    # Kurasi dan penemuan (fitur 013) memakai DDL `09-kurasi.sql`.
+    hasil = _psql(
+        PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "09-kurasi.sql")
     )
     assert hasil.returncode == 0, hasil.stderr
 
@@ -864,3 +873,332 @@ def test_batasan_tabel_pengguna(basis_data_siap: None) -> None:
     ):
         hasil = _psql("peran_pengguna", "smart_coaching", "-c", kueri)
         assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+
+# ── Fitur 013 · kurasi dan penemuan ───────────────────────────────────
+#
+# Tiga peran, satu batas tiap peran (plan Bagian 2.2). Yang menayangkan tidak
+# membaca antrean (C-06); yang memutus tidak menambah kandidat (FR-I07); yang
+# mengisi antrean tidak menayangkan. Ditolak **peladen**, sebab
+# `permission denied`.
+
+_PSD_KURATOR = "psd_kkkkkkkkkkkkkkkk"
+_BUTIR = '{"id_butir": "b-uji"}'
+_SUMBER = '{"judul": "Sumber", "penerbit": "Penerbit", "tahun": 2025, "tautan": null}'
+
+DITOLAK_KURASI = [
+    *[
+        ("peran_penayangan", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            ("select * from kurasi.kandidat", "C-06 — penayang tidak membaca antrean"),
+            ("select * from kurasi.putusan", "penayang tidak membaca putusan"),
+            ("select * from kurasi.penarikan", "penayang tidak membaca penarikan"),
+            (
+                "insert into kurasi.butir_tayang (id_butir) values ('x')",
+                "C-06 — penayang tidak menulis butir tayang",
+            ),
+            (
+                "update kurasi.butir_tayang set ditarik_pada = null where false",
+                "penayang tidak menarik butir",
+            ),
+            ("delete from penemuan.tayang_harian where false", "butir hari ini tidak dihapus"),
+            (
+                "update penemuan.tayang_harian set tanggal = current_date where false",
+                "butir hari ini tidak diubah",
+            ),
+            ("delete from penemuan.belum_relevan where false", "umpan balik tidak dihapus"),
+            ("select * from pengguna.profil_sekolah", "penayang tidak membaca profil"),
+            ("select * from korpus.dokumen_sumber", "K-3 — penayang tidak membaca korpus"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+        )
+    ],
+    *[
+        ("peran_kurasi", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            (
+                "insert into kurasi.kandidat (id_butir) values ('x')",
+                "FR-I07 — kandidat tidak ditambahkan dari layar kurator",
+            ),
+            (
+                "update kurasi.kandidat set butir = '{}' where false",
+                "isi kandidat tidak diubah kurator",
+            ),
+            (
+                "update kurasi.kandidat set status_keberlakuan = 'berlaku' where false",
+                "C-07 — kurator tidak mengubah status regulasi",
+            ),
+            ("update kurasi.putusan set jenis = 'tolak' where false", "putusan tidak disunting"),
+            ("delete from kurasi.putusan where false", "putusan tidak dihapus"),
+            ("delete from kurasi.penarikan where false", "penarikan tidak dihapus"),
+            (
+                "update kurasi.butir_tayang set butir = '{}' where false",
+                "butir tayang tidak disunting sesudah tayang",
+            ),
+            ("delete from kurasi.butir_tayang where false", "butir tayang tidak dihapus"),
+            ("truncate kurasi.putusan", "putusan tidak dikosongkan"),
+            ("select * from penemuan.tayang_harian", "kurator tidak membaca perilaku pengguna"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+            ("select * from korpus.dokumen_sumber", "kurator tidak membaca teks korpus"),
+            ("create table kurasi.titipan (a int)", "tanpa CREATE pada skema kurasi"),
+        )
+    ],
+    *[
+        ("peran_pengisi_antrean", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            (
+                "insert into kurasi.butir_tayang (id_butir) values ('x')",
+                "C-06 — pengisi antrean tidak menayangkan",
+            ),
+            (
+                "insert into kurasi.putusan (id_butir) values ('x')",
+                "pengisi antrean tidak memutus",
+            ),
+            (
+                "update kurasi.kandidat set butir = '{}' where false",
+                "isi kandidat tidak diubah sesudah masuk",
+            ),
+            ("delete from kurasi.kandidat where false", "kandidat tidak dihapus"),
+            ("select * from penemuan.tayang_harian", "pengisi tidak membaca perilaku"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+        )
+    ],
+    *[
+        (
+            peran,
+            "smart_coaching_pseudonim",
+            "select 1",
+            f"C-05 — {peran} tanpa basis data pseudonim",
+        )
+        for peran in ("peran_kurasi", "peran_penayangan", "peran_pengisi_antrean")
+    ],
+    *[
+        (
+            peran,
+            "smart_coaching",
+            "select * from kurasi.butir_tayang",
+            f"skema kurasi di luar {peran}",
+        )
+        for peran in ("peran_penjawaban", "peran_pengguna", "peran_riwayat", "peran_autentikasi")
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_KURASI)
+def test_peladen_menolak_hak_kurasi(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def _kandidat(id_butir: str, dokumen: str = "dok-1") -> str:
+    return (
+        "insert into kurasi.kandidat (id_butir, butir, sumber, id_dokumen_sumber, kategori, "
+        f"status_keberlakuan, masuk_pada) values ('{id_butir}', '{_BUTIR}', '{_SUMBER}', "
+        f"'{dokumen}', 'K5', 'berlaku', now())"
+    )
+
+
+def _putusan(id_butir: str, jenis: str, alasan: str = "Layak tayang") -> str:
+    return (
+        "insert into kurasi.putusan (id_butir, jenis, peran, pseudonim_kurator, alasan, waktu) "
+        f"values ('{id_butir}', '{jenis}', 'kurator', '{_PSD_KURATOR}', '{alasan}', now())"
+    )
+
+
+def _tayang(id_butir: str) -> str:
+    return (
+        "insert into kurasi.butir_tayang (id_butir, butir, sumber, id_dokumen_sumber, kategori, "
+        "status_keberlakuan, nomor_putusan, tayang_pada) "
+        f"select '{id_butir}', '{_BUTIR}', '{_SUMBER}', 'dok-1', 'K5', 'berlaku', nomor, now() "
+        f"from kurasi.putusan where id_butir = '{id_butir}' order by nomor desc limit 1"
+    )
+
+
+def _jalan(peran: str, kueri: str) -> None:
+    hasil = _psql(peran, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+    assert hasil.returncode == 0, f"{peran}: {kueri}\n{hasil.stderr}"
+
+
+def test_peran_kurasi_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64: tiap peran tersambung sendiri dan menjalankan pekerjaannya."""
+    _jalan("peran_pengisi_antrean", _kandidat("b-jalan"))
+    _jalan(
+        "peran_pengisi_antrean",
+        "update kurasi.kandidat set status_keberlakuan = 'berlaku' where id_dokumen_sumber = 'dok-1'",
+    )
+    _jalan("peran_kurasi", "select * from kurasi.kandidat")
+    _jalan("peran_kurasi", "update kurasi.kandidat set kembali_pada = null where false")
+    _jalan("peran_kurasi", _putusan("b-jalan", "setujui"))
+    _jalan("peran_kurasi", _tayang("b-jalan"))
+    _jalan(
+        "peran_kurasi",
+        "update kurasi.butir_tayang set perlu_tinjauan_pada = now() where id_butir = 'b-jalan'",
+    )
+    _jalan("peran_penayangan", "select * from kurasi.butir_tayang")
+    _jalan(
+        "peran_penayangan",
+        "insert into penemuan.tayang_harian (id_pengguna, tanggal, id_butir, urutan, "
+        f"ditayangkan_pada) values ('{_PSD}', current_date, 'b-jalan', 1, now())",
+    )
+    _jalan(
+        "peran_penayangan",
+        "insert into penemuan.belum_relevan (id_pengguna, id_butir, alasan, waktu) "
+        f"values ('{_PSD}', 'b-jalan', 'Belum menjadi prioritas semester ini', now())",
+    )
+    _jalan("peran_penayangan", "select * from penemuan.tayang_harian")
+    _jalan(
+        "peran_kurasi",
+        "insert into kurasi.penarikan (id_butir, pemicu, tindakan, peran, pseudonim_kurator, "
+        f"alasan, waktu) values ('b-jalan', 'kekeliruan_isi_dilaporkan', 'ditarik', 'kurator', "
+        f"'{_PSD_KURATOR}', 'Angka keliru', now())",
+    )
+    _jalan(
+        "peran_pengisi_antrean",
+        "insert into kurasi.penarikan (id_butir, pemicu, tindakan, alasan, waktu) values "
+        "('b-jalan', 'regulasi_sumber_berubah', 'ditarik', 'Regulasi dicabut', now())",
+    )
+    _jalan(
+        "peran_pengisi_antrean",
+        "update kurasi.butir_tayang set ditarik_pada = now(), alasan_tarik = 'dicabut', "
+        "status_keberlakuan = 'dicabut' where id_butir = 'b-jalan'",
+    )
+
+
+def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_schema || '.' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where table_schema in ('kurasi', 'penemuan') and grantee like 'peran\\_%' "
+        "group by grantee, table_schema, table_name order by 1",
+    )
+    assert tabel.stdout.split() == [
+        "peran_kurasi:kurasi.butir_tayang:INSERT,SELECT",
+        "peran_kurasi:kurasi.kandidat:SELECT",
+        "peran_kurasi:kurasi.penarikan:INSERT,SELECT",
+        "peran_kurasi:kurasi.putusan:INSERT,SELECT",
+        "peran_penayangan:kurasi.butir_tayang:SELECT",
+        "peran_penayangan:penemuan.belum_relevan:INSERT,SELECT",
+        "peran_penayangan:penemuan.tayang_harian:INSERT,SELECT",
+        "peran_pengisi_antrean:kurasi.butir_tayang:SELECT",
+        "peran_pengisi_antrean:kurasi.kandidat:INSERT,SELECT",
+        "peran_pengisi_antrean:kurasi.penarikan:INSERT",
+    ]
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || c.relname || ':' || x.privilege_type || ':' "
+        "|| string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace and n.nspname in ('kurasi', 'penemuan') "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null "
+        "group by a.rolname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_kurasi:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,perlu_tinjauan_pada",
+        "peran_kurasi:kandidat:UPDATE:kembali_pada",
+        "peran_pengisi_antrean:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,status_keberlakuan",
+        "peran_pengisi_antrean:kandidat:UPDATE:status_keberlakuan",
+    ]
+
+
+def test_batasan_tabel_kurasi(basis_data_siap: None) -> None:
+    """Lapis kedua sesudah model fitur 010 — terutama C-06 pada peladen:
+    butir tayang hanya dapat merujuk putusan yang **menyetujui** butir itu."""
+    _jalan("peran_pengisi_antrean", _kandidat("b-tolak"))
+    _jalan("peran_pengisi_antrean", _kandidat("b-dua"))
+    _jalan("peran_kurasi", _putusan("b-tolak", "tolak", "TL-01"))
+    _jalan("peran_kurasi", _putusan("b-dua", "setujui"))
+    for peran, kueri, pesan, sebab in (
+        (
+            "peran_kurasi",
+            _tayang("b-tolak"),
+            "violates foreign key constraint",
+            "C-06 — butir tayang berdasar putusan tolak",
+        ),
+        (
+            "peran_kurasi",
+            "insert into kurasi.butir_tayang (id_butir, butir, sumber, id_dokumen_sumber, kategori, "
+            "status_keberlakuan, nomor_putusan, tayang_pada) select 'b-tolak', butir, sumber, "
+            "id_dokumen_sumber, kategori, status_keberlakuan, nomor_putusan, now() "
+            "from kurasi.butir_tayang where false union all select 'b-tolak', '{}', '{}', 'dok-1', "
+            "'K5', null, nomor, now() from kurasi.putusan where id_butir = 'b-dua'",
+            "violates foreign key constraint",
+            "C-06 — putusan butir lain",
+        ),
+        (
+            "peran_kurasi",
+            _putusan("b-dua", "tolak", "TL-02"),
+            "duplicate key",
+            "satu putusan akhir per butir",
+        ),
+        (
+            "peran_kurasi",
+            "insert into kurasi.putusan (id_butir, jenis, peran, pseudonim_kurator, alasan, waktu) "
+            "values ('b-dua', 'tunda', 'kurator', 'ks-017', 'Nanti', now())",
+            "violates check constraint",
+            "C-05 — nama akun sebagai pemutus",
+        ),
+        (
+            "peran_kurasi",
+            "insert into kurasi.putusan (id_butir, jenis, peran, pseudonim_kurator, alasan, waktu) "
+            f"values ('b-dua', 'tarik', 'kurator', '{_PSD_KURATOR}', 'x', now())",
+            "violates check constraint",
+            "empat jenis putusan, bukan lima",
+        ),
+        (
+            "peran_pengisi_antrean",
+            "insert into kurasi.penarikan (id_butir, pemicu, tindakan, alasan, waktu) values "
+            "('b-dua', 'kekeliruan_isi_dilaporkan', 'ditarik', 'x', now())",
+            "violates check constraint",
+            "penarikan tanpa pemutus hanya bagi regulasi",
+        ),
+        (
+            "peran_pengisi_antrean",
+            "insert into kurasi.kandidat (id_butir, butir, sumber, id_dokumen_sumber, kategori, "
+            f"status_keberlakuan, masuk_pada) values ('b-k9', '{_BUTIR}', '{_SUMBER}', 'd', 'K9', "
+            "null, now())",
+            "violates check constraint",
+            "kategori di luar K1-K8",
+        ),
+        (
+            "peran_penayangan",
+            "insert into penemuan.tayang_harian (id_pengguna, tanggal, id_butir, urutan, "
+            "ditayangkan_pada) values ('ks-017', current_date, 'b-dua', 1, now())",
+            "violates check constraint",
+            "C-05 — nama akun sebagai pemilik",
+        ),
+        (
+            "peran_penayangan",
+            "insert into penemuan.belum_relevan (id_pengguna, id_butir, alasan, waktu) "
+            f"values ('{_PSD}', 'b-dua', ' ', now())",
+            "violates check constraint",
+            "alasan kosong (FR-G07)",
+        ),
+    ):
+        hasil = _psql(peran, "smart_coaching", "-c", kueri)
+        assert pesan in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+
+def test_butir_tayang_sekali_bagi_orang_yang_sama(basis_data_siap: None) -> None:
+    """K-2: kunci utama menolak butir yang sama tayang dua kali bagi satu orang."""
+    _jalan("peran_pengisi_antrean", _kandidat("b-sekali"))
+    _jalan("peran_kurasi", _putusan("b-sekali", "setujui"))
+    _jalan("peran_kurasi", _tayang("b-sekali"))
+    sisip = (
+        "insert into penemuan.tayang_harian (id_pengguna, tanggal, id_butir, urutan, "
+        f"ditayangkan_pada) values ('{_PSD}', current_date + %d, 'b-sekali', 1, now())"
+    )
+    _jalan("peran_penayangan", sisip % 0)
+    hasil = _psql("peran_penayangan", "smart_coaching", "-c", sisip % 1)
+    assert "duplicate key" in hasil.stderr, hasil.stderr

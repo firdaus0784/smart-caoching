@@ -4,8 +4,9 @@
 --   satu peladen, DUA basis data, dan pemisahan lewat skema SEKALIGUS pengguna.
 --
 -- Peran yang berpasangan dengan `src/penyimpanan/kredensial_baku.py` mencerminkannya
--- satu lawan satu; `peran_riwayat`, `peran_autentikasi`, `peran_pengelola_akun`, dan
--- `peran_pengguna` dipakai lewat tetapan namanya pada modul penyimpannya sendiri.
+-- satu lawan satu; `peran_riwayat`, `peran_autentikasi`, `peran_pengelola_akun`,
+-- `peran_pengguna`, `peran_kurasi`, `peran_penayangan`, dan `peran_pengisi_antrean`
+-- dipakai lewat tetapan namanya pada modul penyimpannya sendiri.
 -- Bila berkas itu berubah, berkas ini wajib ikut berubah — dua daftar yang
 -- bercerita berbeda adalah cacat, dan yang salah justru daftar yang dibaca orang.
 
@@ -31,7 +32,8 @@ BEGIN
                               'peran_pemanggil_llm','peran_pseudonim',
                               'peran_penyematan','peran_riwayat',
                               'peran_autentikasi','peran_pengelola_akun',
-                              'peran_pengguna'] LOOP
+                              'peran_pengguna','peran_kurasi',
+                              'peran_penayangan','peran_pengisi_antrean'] LOOP
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
       EXECUTE format('CREATE ROLE %I LOGIN', nama);
     END IF;
@@ -55,7 +57,8 @@ REVOKE CONNECT ON DATABASE smart_coaching_pseudonim  FROM PUBLIC;
 
 GRANT CONNECT ON DATABASE smart_coaching
   TO peran_penjawaban, peran_verifikasi, peran_pemanggil_llm, peran_penyematan,
-     peran_riwayat, peran_autentikasi, peran_pengelola_akun, peran_pengguna;
+     peran_riwayat, peran_autentikasi, peran_pengelola_akun, peran_pengguna,
+     peran_kurasi, peran_penayangan, peran_pengisi_antrean;
 
 -- `peran_penyematan` (fitur 026, TK-63) sengaja TIDAK diberi CONNECT ke basis
 -- data pseudonim. Jalur penyematan tidak membutuhkannya, dan C-05 menuntut
@@ -71,6 +74,9 @@ GRANT CONNECT ON DATABASE smart_coaching
 --
 -- `peran_pengguna` (fitur 030) sama: profil, prioritas, dan persetujuan
 -- dimiliki pseudonim akun, dan penulisnya tidak membutuhkan pemetaan ke orang.
+--
+-- `peran_kurasi`, `peran_penayangan`, dan `peran_pengisi_antrean` (fitur 013)
+-- sama: jejak kurasi membawa pseudonim kurator dari sesi, bukan orangnya.
 
 GRANT CONNECT ON DATABASE smart_coaching_pseudonim
   TO peran_pseudonim;
