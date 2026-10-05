@@ -328,3 +328,73 @@ a {
   font-weight: 400;
   text-align: left;
 }
+
+/* Navigasi utama dan Beranda — D-05 Bagian 3.1 dan S-05, fitur 013 (K-7). */
+
+.navigasi {
+  display: flex;
+  gap: 0.5rem;
+  max-width: var(--lebar-baca);
+  margin: 0 auto;
+  padding: var(--jarak) var(--jarak) 0;
+  color: var(--huruf-utama);
+  background: var(--latar-halaman);
+}
+
+.navigasi button {
+  flex: 1;
+  color: var(--huruf-utama);
+  background: var(--latar-tombol-kedua);
+}
+
+.navigasi button[aria-current="page"] {
+  color: var(--huruf-tombol);
+  background: var(--latar-tombol);
+}
+
+.kepala-layar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-width: var(--lebar-baca);
+  margin: 0 auto;
+  padding: var(--jarak) var(--jarak) 0;
+  color: var(--huruf-utama);
+  background: var(--latar-halaman);
+}
+
+.daftar-butir {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kartu-butir {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  padding: var(--jarak);
+  font-weight: 400;
+  text-align: left;
+  color: var(--huruf-utama);
+  background: var(--latar-permukaan);
+  border: 1px solid var(--garis);
+  border-radius: 0.5rem;
+}
+
+.label-sumber {
+  justify-self: start;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--huruf-utama);
+  background: var(--latar-kuat);
+  border-radius: 0.25rem;
+}
+
+.waktu-baca {
+  color: var(--huruf-redup);
+  background: var(--latar-permukaan);
+}

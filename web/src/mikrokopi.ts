@@ -105,7 +105,58 @@ export const MIKROKOPI = {
   profilDitolak: "Isian profil belum sesuai. Periksa lagi setiap isian.",
   prioritasDitolak: "Pilih tiga sampai lima prioritas yang berbeda.",
   profilGangguan: "Profil belum tersimpan. Isian Anda masih di layar, coba simpan lagi.",
+
+  // Navigasi — D-05 Bagian 3.1 pada fitur 013 (K-7): dua tujuan sampai isi
+  // "Milik saya" dibangun pada baris 031 dan 032.
+  labelNavigasi: "Navigasi utama",
+  navBeranda: "Beranda",
+  navTanya: "Tanya",
+
+  // D-05 S-05 Beranda — fitur 013.
+  judulBeranda: "Butir hari ini",
+  berandaMemuat: "Butir hari ini sedang dimuat.",
+  berandaBelumPrioritas: "Butir muncul setelah Anda menetapkan prioritas pengelolaan.",
+  berandaBelumAda: "Belum ada bacaan untuk prioritas Anda. Bacaan muncul setelah kurator menyetujuinya.",
+  berandaHabis: "Butir hari ini sudah tampil semua. Bacaan baru muncul setelah kurator menyetujuinya.",
+  berandaGangguan: "Butir hari ini belum dapat dimuat. Coba lagi sebentar lagi.",
+  berandaLuringSalinan: "Sedang tidak terhubung. Ini salinan butir hari ini dari perangkat Anda.",
+  berandaLuringKosong: "Sedang tidak terhubung. Butir hari ini belum pernah dimuat di perangkat ini.",
+  tombolTanyaCepat: "Ajukan pertanyaan",
+
+  // D-05 S-06 Detail butir — fitur 013.
+  butirMemuat: "Butir sedang dimuat.",
+  butirTidakAda: "Butir ini sudah tidak tersedia.",
+  butirGangguan: "Butir belum dapat dimuat. Coba lagi sebentar lagi.",
+  butirLuringSalinan: "Sedang tidak terhubung. Ini salinan yang tersimpan di perangkat Anda.",
+  butirLuringKosong: "Sedang tidak terhubung. Butir ini belum tersimpan di perangkat ini.",
+  judulMengapaRelevan: "Mengapa relevan untuk sekolah Anda",
+  judulIntiTemuan: "Inti temuan",
+  judulImplikasi: "Yang dapat Anda lakukan",
+  judulSumber: "Sumber",
+  bukaHalamanSumber: "Buka halaman sumber",
+  teksPenuhTertutup: "Teks lengkapnya tidak ditampilkan karena lisensi sumbernya tidak mengizinkan.",
+  tombolBelumRelevan: "Belum relevan",
+  labelAlasanBelumRelevan: "Mengapa butir ini belum relevan bagi sekolah Anda?",
+  tombolKirimAlasan: "Kirim",
+  tombolBatal: "Batal",
+  tombolKembaliBeranda: "Kembali ke beranda",
+  alasanDitolak: "Tulis alasan singkat tanpa nomor pribadi, lalu kirim lagi.",
+  alasanLuring: "Sedang tidak terhubung. Alasan Anda belum terkirim dan masih ada di isian.",
+  alasanGangguan: "Alasan belum terkirim. Isian Anda masih ada, coba kirim lagi.",
 } as const;
+
+/** Label jenis sumber S-06 blok 1 — FR-G04, teks bukan warna saja. */
+export const LABEL_JENIS_SUMBER = {
+  riset: "Riset",
+  regulasi: "Regulasi",
+  data_resmi: "Data Resmi",
+  praktik_baik: "Praktik Baik",
+} as const;
+
+/** Perkiraan waktu baca — D-05 S-06 blok 4, "± 4 menit". */
+export function waktuBaca(menit: number): string {
+  return `± ${menit} menit`;
+}
 
 /** D-05 S-03 — empat layar, diputus pada Gerbang 2 fitur 030 (K-8). Layar kedua
  * adalah satu-satunya isi yang FR-A04 wajibkan, dan tidak dapat dilewati. */

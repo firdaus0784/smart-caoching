@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Enam dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Tujuh dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -81,9 +81,9 @@ Agen **tidak** mengisi antrean dengan butir karangan di luar uji dan bukti.
 
 **Kebutuhan:** R-06, R-11, R-12, R-13; K-7; P-7.
 
-- [ ] Vitest lebih dulu: tujuh keadaan, label D-03, tanpa teks penuh bagi
+- [x] Vitest lebih dulu: tujuh keadaan, label D-03, tanpa teks penuh bagi
       lisensi tertutup, salinan luring, navigasi
-- [ ] `web/src/penemuan/`, klien, kontrak, mikrokopi
+- [x] `web/src/penemuan/`, klien, kontrak, mikrokopi
 
 ## T-8 · Layar S-15, S-16, cangkang kurator
 

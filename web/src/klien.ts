@@ -16,6 +16,22 @@
  */
 
 import type {
+  Antrean,
+  Beranda,
+  ButirLengkap,
+  ButirRingkas,
+  HasilAntrean,
+  HasilBeranda,
+  HasilButir,
+  JenisSumberButir,
+  KandidatTampil,
+  KategoriMasalah,
+  KeadaanBeranda,
+  Pemicu,
+  PermintaanTarik,
+  Suntingan,
+  SumberButir,
+  TayangTampil,
   HasilBaca,
   HasilDaftar,
   HasilMasuk,
@@ -40,6 +56,8 @@ export const JALUR_KELUAR = "/api/v1/auth/keluar";
 export const JALUR_PROFIL = "/api/v1/saya/profil";
 export const JALUR_PRIORITAS = "/api/v1/saya/prioritas";
 export const JALUR_PERSETUJUAN = "/api/v1/saya/persetujuan";
+export const JALUR_BERANDA = "/api/v1/beranda";
+export const JALUR_ANTREAN = "/api/v1/kurasi/antrean";
 /** Berkas statis yang diisi tim (K-4 fitur 030), bukan rute API. */
 export const JALUR_NASKAH = "/naskah/persetujuan.json";
 
@@ -389,3 +407,283 @@ function apakahSatuPercakapan(nilai: unknown): nilai is SatuPercakapan {
     larikDari(nilai["giliran"], apakahGiliran)
   );
 }
+
+
+// ── fitur 013 · penemuan — D-14 Bagian 4.6 ──────────────────────────────
+
+const KATEGORI: readonly KategoriMasalah[] = ["K1", "K2", "K3", "K4", "K5", "K6", "K7", "K8"];
+const JENIS_SUMBER: readonly JenisSumberButir[] = ["riset", "regulasi", "data_resmi", "praktik_baik"];
+const KEADAAN_BERANDA: readonly KeadaanBeranda[] = [
+  "berisi",
+  "belum_ada_prioritas",
+  "belum_ada_butir",
+  "habis",
+];
+
+export function jalurButir(idButir: string): string {
+  return `/api/v1/butir/${encodeURIComponent(idButir)}`;
+}
+
+export function jalurTolakButir(idButir: string): string {
+  return `/api/v1/butir/${encodeURIComponent(idButir)}/tolak`;
+}
+
+/**
+ * Satu permintaan bagi rute fitur 013. Berbeda dari `ambil`: 404 dibaca
+ * sebagai keadaan sah `tidak_ada` (KL-G — butir yang sudah tidak tersedia
+ * bukan galat sistem), bukan galat.
+ */
+async function ambil013(
+  pemanggil: Pemanggil,
+  jalur: string,
+  init: RequestInit,
+): Promise<
+  | { readonly badan: unknown }
+  | { readonly tidak_ada: true }
+  | { readonly status: number }
+  | { readonly galat: JenisGalat }
+> {
+  let jawaban: Response;
+  try {
+    jawaban = await pemanggil(jalur, init);
+  } catch {
+    return { galat: "luring" };
+  }
+  if (jawaban.status === 404) return { tidak_ada: true };
+  if (!jawaban.ok) return { status: jawaban.status };
+  try {
+    return { badan: await jawaban.json() };
+  } catch {
+    return { galat: "sistem" };
+  }
+}
+
+function apakahSumber(nilai: unknown): nilai is SumberButir {
+  return (
+    objekBerkunci(nilai, ["judul", "penerbit", "tahun", "tautan"]) &&
+    untai(nilai["judul"]) &&
+    untai(nilai["penerbit"]) &&
+    Number.isInteger(nilai["tahun"]) &&
+    untaiAtauKosong(nilai["tautan"])
+  );
+}
+
+const KUNCI_RINGKAS = [
+  "id_butir",
+  "kategori",
+  "jenis_sumber",
+  "judul",
+  "alasan_relevansi",
+  "perkiraan_waktu_baca",
+] as const;
+
+function ringkasSah(nilai: Record<string, unknown>): boolean {
+  return (
+    untai(nilai["id_butir"]) &&
+    KATEGORI.includes(nilai["kategori"] as KategoriMasalah) &&
+    JENIS_SUMBER.includes(nilai["jenis_sumber"] as JenisSumberButir) &&
+    untai(nilai["judul"]) &&
+    untai(nilai["alasan_relevansi"]) &&
+    Number.isInteger(nilai["perkiraan_waktu_baca"])
+  );
+}
+
+function apakahButirRingkas(nilai: unknown): nilai is ButirRingkas {
+  return objekBerkunci(nilai, KUNCI_RINGKAS) && ringkasSah(nilai);
+}
+
+export function apakahButirLengkap(nilai: unknown): nilai is ButirLengkap {
+  return (
+    objekBerkunci(nilai, [
+      ...KUNCI_RINGKAS,
+      "inti_temuan",
+      "implikasi_tindakan",
+      "tenggat_terkait",
+      "boleh_teks_penuh",
+      "sumber",
+    ]) &&
+    ringkasSah(nilai) &&
+    untai(nilai["inti_temuan"]) &&
+    larikDari(nilai["implikasi_tindakan"], untai) &&
+    untaiAtauKosong(nilai["tenggat_terkait"]) &&
+    typeof nilai["boleh_teks_penuh"] === "boolean" &&
+    apakahSumber(nilai["sumber"])
+  );
+}
+
+export function apakahBeranda(nilai: unknown): nilai is Beranda {
+  return (
+    objekBerkunci(nilai, ["keadaan", "butir"]) &&
+    KEADAAN_BERANDA.includes(nilai["keadaan"] as KeadaanBeranda) &&
+    larikDari(nilai["butir"], apakahButirRingkas)
+  );
+}
+
+function berandaDari(
+  hasil: Awaited<ReturnType<typeof ambil013>>,
+): HasilBeranda {
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahBeranda(hasil.badan)
+    ? { jenis: "beranda", beranda: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+/** `GET /api/v1/beranda` — butir hari ini. */
+export async function bacaBeranda(pemanggil: Pemanggil): Promise<HasilBeranda> {
+  return berandaDari(await ambil013(pemanggil, JALUR_BERANDA, { method: "GET" }));
+}
+
+/** `GET /api/v1/butir/{id}` — bentuk lengkap, atau `tidak_ada`. */
+export async function bacaButir(idButir: string, pemanggil: Pemanggil): Promise<HasilButir> {
+  const hasil = await ambil013(pemanggil, jalurButir(idButir), { method: "GET" });
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahButirLengkap(hasil.badan)
+    ? { jenis: "butir", butir: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+/** `POST /api/v1/butir/{id}/tolak` — "belum relevan"; beranda terbaru bila diterima. */
+export async function tolakButir(
+  idButir: string,
+  alasan: string,
+  pemanggil: Pemanggil,
+): Promise<HasilBeranda> {
+  return berandaDari(
+    await ambil013(pemanggil, jalurTolakButir(idButir), kirimJson("POST", { alasan })),
+  );
+}
+
+// ── fitur 013 · kurasi — D-14 Bagian 4.7 ────────────────────────────────
+
+const STATUS_KEBERLAKUAN: readonly StatusKeberlakuan[] = ["berlaku", "diubah", "dicabut"];
+
+export function jalurPutusan(idButir: string): string {
+  return `/api/v1/kurasi/${encodeURIComponent(idButir)}/putusan`;
+}
+
+export function jalurTarik(idButir: string): string {
+  return `/api/v1/kurasi/${encodeURIComponent(idButir)}/tarik`;
+}
+
+function statusSah(nilai: unknown): boolean {
+  return nilai === null || STATUS_KEBERLAKUAN.includes(nilai as StatusKeberlakuan);
+}
+
+function apakahKandidat(nilai: unknown): nilai is KandidatTampil {
+  return (
+    objekBerkunci(nilai, [
+      "id_butir",
+      "kategori",
+      "jenis_sumber",
+      "judul",
+      "alasan_relevansi",
+      "inti_temuan",
+      "implikasi_tindakan",
+      "perkiraan_waktu_baca",
+      "tenggat_terkait",
+      "lisensi",
+      "status_keberlakuan",
+      "sumber",
+      "masuk_pada",
+    ]) &&
+    untai(nilai["id_butir"]) &&
+    KATEGORI.includes(nilai["kategori"] as KategoriMasalah) &&
+    JENIS_SUMBER.includes(nilai["jenis_sumber"] as JenisSumberButir) &&
+    untai(nilai["judul"]) &&
+    untai(nilai["alasan_relevansi"]) &&
+    untai(nilai["inti_temuan"]) &&
+    larikDari(nilai["implikasi_tindakan"], untai) &&
+    Number.isInteger(nilai["perkiraan_waktu_baca"]) &&
+    untaiAtauKosong(nilai["tenggat_terkait"]) &&
+    untai(nilai["lisensi"]) &&
+    statusSah(nilai["status_keberlakuan"]) &&
+    apakahSumber(nilai["sumber"]) &&
+    untai(nilai["masuk_pada"])
+  );
+}
+
+function apakahTayang(nilai: unknown): nilai is TayangTampil {
+  return (
+    objekBerkunci(nilai, [
+      "id_butir",
+      "kategori",
+      "jenis_sumber",
+      "judul",
+      "lisensi",
+      "status_keberlakuan",
+      "tayang_pada",
+      "perlu_tinjauan",
+    ]) &&
+    untai(nilai["id_butir"]) &&
+    KATEGORI.includes(nilai["kategori"] as KategoriMasalah) &&
+    JENIS_SUMBER.includes(nilai["jenis_sumber"] as JenisSumberButir) &&
+    untai(nilai["judul"]) &&
+    untai(nilai["lisensi"]) &&
+    statusSah(nilai["status_keberlakuan"]) &&
+    untai(nilai["tayang_pada"]) &&
+    typeof nilai["perlu_tinjauan"] === "boolean"
+  );
+}
+
+export function apakahAntrean(nilai: unknown): nilai is Antrean {
+  return (
+    objekBerkunci(nilai, ["menunggu", "tayang"]) &&
+    larikDari(nilai["menunggu"], apakahKandidat) &&
+    larikDari(nilai["tayang"], apakahTayang)
+  );
+}
+
+/** Galat tidak pernah dibaca isinya (R-10 fitur 027): penolakan regulasi
+ * (R-04) dan penolakan bentuk sama-sama `pertanyaan_ditolak`, dan layar kurator
+ * menampilkan status regulasi pada barisnya sendiri. */
+async function antreanDari(
+  pemanggil: Pemanggil,
+  jalur: string,
+  init: RequestInit,
+): Promise<HasilAntrean> {
+  const hasil = await ambil013(pemanggil, jalur, init);
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahAntrean(hasil.badan)
+    ? { jenis: "antrean", antrean: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+/** `GET /api/v1/kurasi/antrean`. Juga dipakai cangkang mengenali kurator (K-8). */
+export function bacaAntrean(pemanggil: Pemanggil): Promise<HasilAntrean> {
+  return antreanDari(pemanggil, JALUR_ANTREAN, { method: "GET" });
+}
+
+export type BadanPutusan =
+  | { readonly jenis: "setujui"; readonly catatan: string }
+  | { readonly jenis: "sunting_lalu_setujui"; readonly catatan: string; readonly suntingan: Suntingan }
+  | { readonly jenis: "tolak"; readonly alasan_tolak: string }
+  | { readonly jenis: "tunda"; readonly catatan: string; readonly kembali_pada: string };
+
+export function putuskan(
+  idButir: string,
+  badan: BadanPutusan,
+  pemanggil: Pemanggil,
+): Promise<HasilAntrean> {
+  return antreanDari(pemanggil, jalurPutusan(idButir), kirimJson("POST", badan));
+}
+
+export function tarikButir(
+  idButir: string,
+  badan: PermintaanTarik,
+  pemanggil: Pemanggil,
+): Promise<HasilAntrean> {
+  return antreanDari(pemanggil, jalurTarik(idButir), kirimJson("POST", badan));
+}
+
+/** Nilai `Pemicu` — urutan D-06 Bagian 7.5. */
+export const PEMICU: readonly Pemicu[] = [
+  "regulasi_sumber_berubah",
+  "kekeliruan_isi_dilaporkan",
+  "data_sumber_diperbarui",
+];

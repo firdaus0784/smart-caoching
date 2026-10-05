@@ -10,9 +10,14 @@
  * ```
  * 401                         → S-01
  * persetujuan belum_diminta   → S-02 (dilewati bila naskah belum tersedia)
- * profil null                 → S-03 → S-04
- * selainnya                   → S-09
+ * profil null                 → S-03 → S-04 → S-09
+ * selainnya                   → S-05 Beranda (fitur 013)
  * ```
+ *
+ * Sesudah aktivasi pertama pengguna tetap mendarat di S-09 (R-07 fitur 030);
+ * pembukaan berikutnya mendarat di S-05 (D-05 0.6). Navigasi utama dua
+ * tujuan — Beranda dan Tanya (K-7 fitur 013); "Milik saya" tampil ketika
+ * isinya dibangun.
  *
  * Luring atau galat lain saat memeriksa tetap membuka Tanya (K-6): pengguna
  * masih dapat menulis draf (KL-E), dan aktivasi ditanyakan lagi lain kali.
@@ -28,6 +33,9 @@ import { bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
 import type { HasilNaskah, KeadaanPersetujuan, Ringkasan } from "./kontrak";
 import { LayarMasuk } from "./masuk/LayarMasuk";
 import { MIKROKOPI } from "./mikrokopi";
+import { LayarBeranda } from "./penemuan/LayarBeranda";
+import { LayarButir } from "./penemuan/LayarButir";
+import { hapusSalinan } from "./penemuan/salinan";
 import { lupakanPercakapan } from "./percakapan";
 import { LayarTanya } from "./tanya/LayarTanya";
 
@@ -38,11 +46,14 @@ type Tahap =
       readonly jenis: "persetujuan";
       readonly keadaan: KeadaanPersetujuan;
       readonly naskah: HasilNaskah;
-      readonly dariTanya: boolean;
+      /** Dari mana S-02 dibuka: alur aktivasi, atau tautan pada layar utama. */
+      readonly asal: "aktivasi" | "tanya" | "beranda";
       readonly profilAda: boolean;
     }
   | { readonly jenis: "pengenalan" }
   | { readonly jenis: "profil" }
+  | { readonly jenis: "beranda" }
+  | { readonly jenis: "butir"; readonly idButir: string }
   | { readonly jenis: "tanya" };
 
 export interface PropertiAplikasi {
@@ -63,12 +74,12 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
           jenis: "persetujuan",
           keadaan: r.persetujuan,
           naskah,
-          dariTanya: false,
+          asal: "aktivasi",
           profilAda: r.profil !== null,
         };
       }
     }
-    return r.profil === null ? { jenis: "pengenalan" } : { jenis: "tanya" };
+    return r.profil === null ? { jenis: "pengenalan" } : { jenis: "beranda" };
   }
 
   async function periksa(): Promise<Tahap> {
@@ -88,24 +99,49 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
     // `periksa` dibentuk ulang tiap render; yang menentukan hanya pemanggil.
   }, [pemanggil]);
 
-  async function bukaPersetujuan() {
+  async function bukaPersetujuan(asal: "tanya" | "beranda") {
     const [hasil, naskah] = await Promise.all([bacaRingkasan(pemanggil), muatNaskah(pemanggil)]);
     if (hasil.jenis !== "ringkasan") return;
     setTahap({
       jenis: "persetujuan",
       keadaan: hasil.ringkasan.persetujuan,
       naskah,
-      dariTanya: true,
+      asal,
       profilAda: hasil.ringkasan.profil !== null,
     });
   }
 
   async function keluarkan() {
     await keluar(pemanggil);
-    // K-6: peramban sekolah dapat dipakai bergantian.
+    // K-6: peramban sekolah dapat dipakai bergantian — termasuk salinan
+    // butir hari ini, yang memperlihatkan prioritas penggunanya (fitur 013).
     hapusDraf(simpanan);
     lupakanPercakapan(simpanan);
+    hapusSalinan(simpanan);
     setTahap({ jenis: "masuk", pemberitahuan: null });
+  }
+
+  const perluMasuk = () => setTahap({ jenis: "masuk", pemberitahuan: MIKROKOPI.perluMasukLagiSaja });
+
+  function navigasi(aktif: "beranda" | "tanya") {
+    return (
+      <nav aria-label={MIKROKOPI.labelNavigasi} className="navigasi">
+        <button
+          aria-current={aktif === "beranda" ? "page" : undefined}
+          onClick={() => setTahap({ jenis: "beranda" })}
+          type="button"
+        >
+          {MIKROKOPI.navBeranda}
+        </button>
+        <button
+          aria-current={aktif === "tanya" ? "page" : undefined}
+          onClick={() => setTahap({ jenis: "tanya" })}
+          type="button"
+        >
+          {MIKROKOPI.navTanya}
+        </button>
+      </nav>
+    );
   }
 
   if (tahap.jenis === "memeriksa") {
@@ -127,14 +163,15 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
   if (tahap.jenis === "persetujuan") {
     return (
       <LayarPersetujuan
-        dariTanya={tahap.dariTanya}
+        dariTanya={tahap.asal !== "aktivasi"}
         keadaan={tahap.keadaan}
         naskah={tahap.naskah}
         pemanggil={pemanggil}
         selesai={(r) => {
-          // Menolak pun melanjutkan alur (FR-A05); dari Tanya, kembali ke Tanya.
+          // Menolak pun melanjutkan alur (FR-A05); dari layar utama, kembali ke sana.
           const profilAda = r === null ? tahap.profilAda : r.profil !== null;
-          setTahap(tahap.dariTanya || profilAda ? { jenis: "tanya" } : { jenis: "pengenalan" });
+          if (tahap.asal !== "aktivasi") setTahap({ jenis: tahap.asal });
+          else setTahap(profilAda ? { jenis: "beranda" } : { jenis: "pengenalan" });
         }}
       />
     );
@@ -145,7 +182,46 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
   if (tahap.jenis === "profil") {
     return <LayarProfil pemanggil={pemanggil} selesai={() => setTahap({ jenis: "tanya" })} />;
   }
+  if (tahap.jenis === "beranda") {
+    return (
+      <>
+        {navigasi("beranda")}
+        <div className="kepala-layar">
+          <button className="tombol-kedua" onClick={() => void keluarkan()} type="button">
+            {MIKROKOPI.tombolKeluar}
+          </button>
+          <button className="tombol-kedua" onClick={() => void bukaPersetujuan("beranda")} type="button">
+            {MIKROKOPI.tautanPersetujuan}
+          </button>
+        </div>
+        <LayarBeranda
+          belumMasuk={perluMasuk}
+          buka={(idButir) => setTahap({ jenis: "butir", idButir })}
+          keTanya={() => setTahap({ jenis: "tanya" })}
+          pemanggil={pemanggil}
+          simpanan={simpanan}
+        />
+      </>
+    );
+  }
+  if (tahap.jenis === "butir") {
+    return (
+      <>
+        {navigasi("beranda")}
+        <LayarButir
+          belumMasuk={perluMasuk}
+          idButir={tahap.idButir}
+          kembali={() => setTahap({ jenis: "beranda" })}
+          key={tahap.idButir}
+          pemanggil={pemanggil}
+          simpanan={simpanan}
+        />
+      </>
+    );
+  }
   return (
+    <>
+    {navigasi("tanya")}
     <LayarTanya
       belumMasuk={(tersimpan) =>
         setTahap({
@@ -153,11 +229,12 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
           pemberitahuan: tersimpan ? MIKROKOPI.perluMasukLagi : MIKROKOPI.perluMasukLagiSaja,
         })
       }
-      bukaPersetujuan={() => void bukaPersetujuan()}
+      bukaPersetujuan={() => void bukaPersetujuan("tanya")}
       keluar={() => void keluarkan()}
       pemanggil={pemanggil}
       salin={salin}
       simpanan={simpanan}
     />
+    </>
   );
 }

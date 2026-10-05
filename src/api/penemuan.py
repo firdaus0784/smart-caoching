@@ -24,15 +24,17 @@ Pemilihan tidak membaca apa pun selain prioritas yang ia pilih sendiri (C-14).
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
+from enum import Enum
 from typing import Any, Final
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from src.api.hari import tanggal_wib
 from src.api.kurasi import bentuk_ulang
-from src.ingest.kurasi.butir import ButirPengetahuan
+from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.ingest.kurasi.putusan import ButirTayang, GalatPutusan
+from src.ingest.kurasi.sumber import SumberButir
 from src.nlp.anotasi.skema import KategoriMasalah
 from src.pengguna.feed import GalatFeed, boleh_teks_penuh, susun_feed, tandai_belum_relevan
 from src.pengguna.prioritas import PrioritasManajerial
@@ -55,6 +57,46 @@ class PermintaanTolak(BaseModel):
     alasan: str
 
 
+# ── bentuk tanggapan — D-14 Bagian 4.6 ───────────────────────────────
+#
+# Model bernama, bukan kamus lepas: `web/src/kontrak.ts` menyalinnya, dan
+# pemeriksa kontrak V-03 membandingkan keduanya (C-20). Kamus lepas tidak
+# memiliki nama untuk dibandingkan.
+
+
+class KeadaanBeranda(Enum):
+    BERISI = "berisi"
+    BELUM_ADA_PRIORITAS = "belum_ada_prioritas"
+    BELUM_ADA_BUTIR = "belum_ada_butir"
+    HABIS = "habis"
+
+
+class _Tanggapan(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+class ButirRingkas(_Tanggapan):
+    id_butir: str
+    kategori: KategoriMasalah
+    jenis_sumber: JenisSumberButir
+    judul: str
+    alasan_relevansi: str
+    perkiraan_waktu_baca: int
+
+
+class ButirLengkap(ButirRingkas):
+    inti_temuan: str
+    implikasi_tindakan: list[str]
+    tenggat_terkait: date | None
+    boleh_teks_penuh: bool
+    sumber: SumberButir
+
+
+class Beranda(_Tanggapan):
+    keadaan: KeadaanBeranda
+    butir: list[ButirRingkas]
+
+
 def _tayang_sah(baris: BarisTayang) -> ButirTayang | None:
     """Butir yang masih boleh tampil, atau `None` — ditarik, tanpa putusan yang
     menyetujui, atau regulasinya tidak lagi berlaku menurut status terkini."""
@@ -66,15 +108,19 @@ def _tayang_sah(baris: BarisTayang) -> ButirTayang | None:
         return None
 
 
-def _ringkas(butir: ButirPengetahuan) -> dict[str, Any]:
-    return {
-        "id_butir": butir.id_butir,
-        "kategori": butir.kategori.value,
-        "jenis_sumber": butir.jenis_sumber.value,
-        "judul": butir.judul,
-        "alasan_relevansi": butir.alasan_relevansi,
-        "perkiraan_waktu_baca": butir.perkiraan_waktu_baca,
-    }
+def _ringkas(butir: ButirPengetahuan) -> ButirRingkas:
+    return ButirRingkas(
+        id_butir=butir.id_butir,
+        kategori=butir.kategori,
+        jenis_sumber=butir.jenis_sumber,
+        judul=butir.judul,
+        alasan_relevansi=butir.alasan_relevansi,
+        perkiraan_waktu_baca=butir.perkiraan_waktu_baca,
+    )
+
+
+def _isi(keadaan: KeadaanBeranda, butir: list[ButirRingkas]) -> dict[str, Any]:
+    return Beranda(keadaan=keadaan, butir=butir).model_dump(mode="json")
 
 
 async def beranda(
@@ -87,7 +133,7 @@ async def beranda(
     """Bentuk tanggapan `GET /beranda` dan `POST /butir/{id}/tolak`."""
     kode = await pengguna.baca_prioritas(pemilik)
     if not kode:
-        return {"keadaan": "belum_ada_prioritas", "butir": []}
+        return _isi(KeadaanBeranda.BELUM_ADA_PRIORITAS, [])
     hari = tanggal_wib(sekarang)
     hari_ini = await penemuan.catatan_hari_ini(pemilik, hari)
     pernah = await penemuan.pernah_tayang(pemilik)
@@ -125,9 +171,9 @@ async def beranda(
         if tayang is not None:
             tampil.append(_ringkas(tayang.butir))
     if tampil:
-        return {"keadaan": "berisi", "butir": tampil}
+        return _isi(KeadaanBeranda.BERISI, tampil)
     sudah_pernah = pernah or bool(hari_ini)
-    return {"keadaan": "habis" if sudah_pernah else "belum_ada_butir", "butir": []}
+    return _isi(KeadaanBeranda.HABIS if sudah_pernah else KeadaanBeranda.BELUM_ADA_BUTIR, [])
 
 
 async def detail(penemuan: PenyimpanPenemuan, pemilik: str, id_butir: str) -> dict[str, Any]:
@@ -139,16 +185,14 @@ async def detail(penemuan: PenyimpanPenemuan, pemilik: str, id_butir: str) -> di
     if baris is None or tayang is None:
         raise ButirTidakTampil(id_butir)
     butir = tayang.butir
-    return {
-        **_ringkas(butir),
-        "inti_temuan": butir.inti_temuan,
-        "implikasi_tindakan": list(butir.implikasi_tindakan),
-        "tenggat_terkait": None
-        if butir.tenggat_terkait is None
-        else butir.tenggat_terkait.isoformat(),
-        "boleh_teks_penuh": boleh_teks_penuh(butir),
-        "sumber": baris.sumber,
-    }
+    return ButirLengkap(
+        **_ringkas(butir).model_dump(),
+        inti_temuan=butir.inti_temuan,
+        implikasi_tindakan=list(butir.implikasi_tindakan),
+        tenggat_terkait=butir.tenggat_terkait,
+        boleh_teks_penuh=boleh_teks_penuh(butir),
+        sumber=SumberButir.model_validate(baris.sumber),
+    ).model_dump(mode="json")
 
 
 async def tolak(

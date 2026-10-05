@@ -1,9 +1,18 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, expect, test, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { Aplikasi } from "./Aplikasi";
 import { bacaDraf, simpanDraf, type Simpanan } from "./draf";
-import { JALUR_KELUAR, JALUR_MASUK, JALUR_PERCAKAPAN, JALUR_TANYA, type Pemanggil } from "./klien";
+import {
+  JALUR_BERANDA,
+  JALUR_KELUAR,
+  JALUR_MASUK,
+  JALUR_PERCAKAPAN,
+  JALUR_PROFIL,
+  JALUR_TANYA,
+  jalurButir,
+  type Pemanggil,
+} from "./klien";
 import { MIKROKOPI } from "./mikrokopi";
 import { percakapanAktif } from "./percakapan";
 
@@ -140,4 +149,101 @@ test("sesudah Keluar lalu masuk lagi, isian pertanyaan kosong", async () => {
   const isian = (await screen.findByLabelText(MIKROKOPI.labelPertanyaan)) as HTMLTextAreaElement;
   expect(isian.value).toBe("");
   vi.restoreAllMocks();
+});
+
+// ── fitur 013 · Beranda, Detail butir, navigasi (K-7) ───────────────────
+
+describe("beranda dan navigasi", () => {
+  const RINGKASAN_AKTIF = {
+    profil: {
+      jabatan: "Kepala Sekolah",
+      masa_kerja: 3,
+      jumlah_rombel: 6,
+      jumlah_ptk: 9,
+      jalur_akreditasi: "visitasi",
+      wilayah: "Kabupaten Sumedang",
+    },
+    prioritas: ["K1", "K2", "K3"],
+    persetujuan: "ditolak",
+  };
+  const RINGKAS = {
+    id_butir: "b-1",
+    kategori: "K1",
+    jenis_sumber: "riset",
+    judul: "Supervisi akademik terjadwal",
+    alasan_relevansi: "Sekolah Anda menetapkan supervisi akademik sebagai prioritas.",
+    perkiraan_waktu_baca: 4,
+  };
+  const LENGKAP = {
+    ...RINGKAS,
+    inti_temuan: "Supervisi yang terjadwal meningkatkan umpan balik kepada guru.",
+    implikasi_tindakan: ["Susun jadwal supervisi satu semester."],
+    tenggat_terkait: null,
+    boleh_teks_penuh: true,
+    sumber: { judul: "Laporan", penerbit: "Penerbit", tahun: 2025, tautan: null },
+  };
+
+  function peladenAktif(sah = { berlaku: true }) {
+    const panggilan: string[] = [];
+    const pemanggil: Pemanggil = async (jalur, init) => {
+      panggilan.push(`${init?.method ?? "GET"} ${jalur}`);
+      if (jalur === JALUR_KELUAR) return new Response(null, { status: 204 });
+      if (!sah.berlaku) return new Response("{}", { status: 401 });
+      if (jalur === JALUR_PROFIL) return new Response(JSON.stringify(RINGKASAN_AKTIF));
+      if (jalur === JALUR_BERANDA) {
+        return new Response(JSON.stringify({ keadaan: "berisi", butir: [RINGKAS] }));
+      }
+      if (jalur === jalurButir("b-1")) return new Response(JSON.stringify(LENGKAP));
+      if (jalur === JALUR_PERCAKAPAN) return new Response(JSON.stringify({ percakapan: [] }));
+      return new Response("{}", { status: 500 });
+    };
+    return { pemanggil, panggilan, sah };
+  }
+
+  test("pengguna aktif mendarat di Beranda, navigasi menandai halaman aktif", async () => {
+    pasang(peladenAktif().pemanggil);
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda })).toBeTruthy();
+    const nav = screen.getByRole("navigation", { name: MIKROKOPI.labelNavigasi });
+    expect(nav.querySelector('[aria-current="page"]')?.textContent).toBe(MIKROKOPI.navBeranda);
+    expect(nav.querySelectorAll("button")).toHaveLength(2);
+  });
+
+  test("Beranda → Detail → kembali; navigasi ke Tanya dan kembali", async () => {
+    pasang(peladenAktif().pemanggil);
+    fireEvent.click(await screen.findByRole("button", { name: new RegExp(RINGKAS.judul) }));
+    expect(await screen.findByRole("heading", { level: 1, name: LENGKAP.judul })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolKembaliBeranda }));
+    await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda });
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.navTanya }));
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulLayar })).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.navBeranda }));
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda })).toBeTruthy();
+  });
+
+  test("jalur cepat dari Beranda membuka Tanya", async () => {
+    pasang(peladenAktif().pemanggil);
+    fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolTanyaCepat }));
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulLayar })).toBeTruthy();
+  });
+
+  test("Keluar dari Beranda menghapus salinan butir hari ini", async () => {
+    const simpanan = simpananPeta();
+    pasang(peladenAktif().pemanggil, simpanan);
+    await screen.findByRole("button", { name: new RegExp(RINGKAS.judul) });
+    await waitFor(() => expect(simpanan.isi.has("smart-coaching:beranda")).toBe(true));
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolKeluar }));
+    await screen.findByRole("heading", { name: MIKROKOPI.judulMasuk });
+    expect(simpanan.isi.has("smart-coaching:beranda")).toBe(false);
+  });
+
+  test("401 pada Beranda kembali ke S-01", async () => {
+    const p = peladenAktif();
+    pasang(p.pemanggil);
+    await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda });
+    p.sah.berlaku = false;
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.navTanya }));
+    fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.navBeranda }));
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulMasuk })).toBeTruthy();
+    expect(screen.getByText(MIKROKOPI.perluMasukLagiSaja)).toBeTruthy();
+  });
 });

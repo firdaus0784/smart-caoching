@@ -2887,3 +2887,18 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `src/api/penemuan.py`, `src/api/kurasi.py`, `src/api/aplikasi.py`, `src/api/peran.py`, `src/pengguna/feed.py`, `src/penyimpanan/kurasi.py`, `src/penyimpanan/penemuan.py`, `09-kurasi.sql`, `perkakas/pemeriksa/rute_terdaftar.py`, D-14, README; uji. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Catatan sesudah pemeriksaan | `make check` gagal dua kali, keduanya pada uji penjaga yang memang harus bergerak: uji pemeriksa rute memakai `/api/v1/beranda` sebagai contoh rute "tercantum tetapi belum terpasang" — kini terpasang, contohnya diganti `/api/v1/komitmen`; uji penjaga C-13 menghitung 25 untai dengan `PESAN_ALASAN_TIDAK_SAH`. |
+
+## KB-186 · T-7 fitur 013 — layar Beranda (S-05) dan Detail butir (S-06)
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-7 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | `web/src/penemuan/` — `LayarBeranda`, `LayarButir`, `salinan.ts` (P-7); klien `bacaBeranda`, `bacaButir`, `tolakButir`; kontrak D-14 4.6 dan 4.7 pada `kontrak.ts`; mikrokopi S-05/S-06 dan label jenis sumber; cangkang dengan navigasi dua tujuan (K-7) dan pendaratan di Beranda bagi pengguna yang sudah aktif. Uji Vitest ditulis lebih dulu: 29 uji layar, 5 uji cangkang. |
+| **Kontrak dijaga dua sisi** | Tanggapan Python penemuan dan kurasi kini disusun lewat **model pydantic bernama** (`Beranda`, `ButirRingkas`, `ButirLengkap`, `Antrean`, `KandidatTampil`, `TayangTampil`) alih-alih kamus lepas, dan didaftarkan pada pemeriksa kontrak web V-03 bersama `SumberButir`, `PermintaanTolak`, `Suntingan`, `PermintaanTarik` dan lima enum. Kamus lepas tidak memiliki nama untuk dibandingkan. |
+| **Yang sengaja diurungkan** | Klien semula membaca kalimat galat peladen untuk mengenali penolakan regulasi pada S-15. Diurungkan sebelum diuji: janji klien fitur 027 (R-10) ialah layar tidak membaca isi galat. Layar kurator menampilkan status regulasi pada barisnya sendiri. |
+| **Uji fitur 030 yang diubah dengan sengaja** | Empat uji mengharapkan pengguna aktif mendarat di Tanya; sejak K-7 mereka mendarat di Beranda. "Sudah aktif" kini menuntut Beranda; tiga uji tautan persetujuan berpindah ke Tanya lebih dulu agar yang diuji tetap tautan S-09; satu uji baru: persetujuan yang dibuka dari Beranda kembali ke Beranda. Penjaga simpanan lokal menambah kunci ketiga `smart-coaching:beranda` secara tegas, dengan alasannya. |
+| Keadaan D-05 Bagian 7 | S-05: KL-A kerangka, KL-B dua kalimat (prioritas belum ada, belum ada butir), KL-C habis, KL-D Coba lagi, KL-E salinan atau keterangan tanpa salinan; KL-F tidak berlaku (layar tidak mengirim); KL-G milik S-06. S-06: KL-A, KL-D, KL-E, KL-F (alasan yang belum terkirim tetap di isian), KL-G (butir sudah tidak tersedia, bukan galat). |
+| Alternatif | Tujuan ketiga "Milik saya" kosong — ditolak K-7. |
+| Dampak | `web/src/` (kontrak, klien, mikrokopi, gaya, cangkang, `penemuan/`); `src/api/penemuan.py`, `src/api/kurasi.py`; `perkakas/pemeriksa/kontrak_web.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

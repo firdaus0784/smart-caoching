@@ -194,16 +194,24 @@ describe("tanpa artefak autentikasi", () => {
     }
   });
 
-  test("simpanan lokal hanya ditulis draf.ts dan percakapan.ts, masing-masing satu kunci", () => {
+  test("simpanan lokal hanya ditulis tiga berkas, masing-masing satu kunci", () => {
     // Fitur 028 menambah kunci kedua secara tegas: pengenal percakapan aktif.
     // Ia bukan token — mengetahuinya tidak memberi akses (R-02 fitur 028).
+    // Fitur 013 menambah kunci ketiga secara tegas: salinan butir hari ini
+    // (P-7, D-05 Bagian 8). Butir terkurasi bukan data pribadi dan bukan
+    // token; salinannya dihapus saat keluar.
     const menulis = Object.entries(SUMBER).filter(([, isi]) => /\.setItem\(/.test(isi));
-    expect(menulis.map(([b]) => b).sort()).toEqual(["./draf.ts", "./percakapan.ts"]);
+    expect(menulis.map(([b]) => b).sort()).toEqual([
+      "./draf.ts",
+      "./penemuan/salinan.ts",
+      "./percakapan.ts",
+    ]);
     const kunci = Object.fromEntries(
       menulis.map(([b, isi]) => [b, [...isi.matchAll(/"(smart-coaching:[^"]+)"/g)].map((m) => m[1])]),
     );
     expect(kunci).toEqual({
       "./draf.ts": ["smart-coaching:draf-tanya"],
+      "./penemuan/salinan.ts": ["smart-coaching:beranda"],
       "./percakapan.ts": ["smart-coaching:percakapan-aktif"],
     });
   });

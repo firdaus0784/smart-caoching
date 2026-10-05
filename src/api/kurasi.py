@@ -35,7 +35,7 @@ from typing import Annotated, Any, Final, Literal
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
 
 from src.api.hari import iso_utc, tanggal_wib
-from src.ingest.kurasi.butir import ButirPengetahuan
+from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.ingest.kurasi.jejak import GalatJejakKurasi, JejakKurasi
 from src.ingest.kurasi.penarikan import GalatPenarikan, Pemicu, tinjau
 from src.ingest.kurasi.putusan import (
@@ -47,8 +47,10 @@ from src.ingest.kurasi.putusan import (
     Putusan,
     terapkan,
 )
+from src.ingest.kurasi.sumber import SumberButir
 from src.kamus.segmen import StatusKeberlakuan
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
+from src.nlp.anotasi.skema import KategoriMasalah
 from src.penyimpanan.kurasi import (
     BarisKandidat,
     BarisTayang,
@@ -128,45 +130,89 @@ class PermintaanTarik(_Ketat):
 # ── tanggapan ────────────────────────────────────────────────────────
 
 
-def _kandidat(k: BarisKandidat) -> dict[str, Any]:
-    b = k.butir
-    return {
-        "id_butir": k.id_butir,
-        "kategori": k.kategori,
-        "jenis_sumber": b["jenis_sumber"],
-        "judul": b["judul"],
-        "alasan_relevansi": b["alasan_relevansi"],
-        "inti_temuan": b["inti_temuan"],
-        "implikasi_tindakan": list(b["implikasi_tindakan"]),
-        "perkiraan_waktu_baca": b["perkiraan_waktu_baca"],
-        "tenggat_terkait": b.get("tenggat_terkait"),
-        "lisensi": b["lisensi"],
-        "status_keberlakuan": k.status_keberlakuan,
-        "sumber": k.sumber,
-        "masuk_pada": iso_utc(k.masuk_pada),
-    }
+class _Tanggapan(BaseModel):
+    """Bentuk tanggapan — model bernama agar pemeriksa kontrak V-03 dapat
+    membandingkannya dengan `web/src/kontrak.ts` (C-20)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
 
-def _tayang(t: BarisTayang) -> dict[str, Any]:
-    return {
-        "id_butir": t.id_butir,
-        "kategori": t.kategori,
-        "jenis_sumber": t.butir["jenis_sumber"],
-        "judul": t.butir["judul"],
-        "lisensi": t.butir["lisensi"],
-        "status_keberlakuan": t.status_keberlakuan,
-        "tayang_pada": iso_utc(t.tayang_pada),
-        "perlu_tinjauan": t.perlu_tinjauan_pada is not None,
-    }
+class KandidatTampil(_Tanggapan):
+    id_butir: str
+    kategori: KategoriMasalah
+    jenis_sumber: JenisSumberButir
+    judul: str
+    alasan_relevansi: str
+    inti_temuan: str
+    implikasi_tindakan: list[str]
+    perkiraan_waktu_baca: int
+    tenggat_terkait: date | None
+    lisensi: str
+    status_keberlakuan: StatusKeberlakuan | None
+    sumber: SumberButir
+    masuk_pada: str
+
+
+class TayangTampil(_Tanggapan):
+    id_butir: str
+    kategori: KategoriMasalah
+    jenis_sumber: JenisSumberButir
+    judul: str
+    lisensi: str
+    status_keberlakuan: StatusKeberlakuan | None
+    tayang_pada: str
+    perlu_tinjauan: bool
+
+
+class Antrean(_Tanggapan):
+    menunggu: list[KandidatTampil]
+    tayang: list[TayangTampil]
+
+
+def _kandidat(k: BarisKandidat) -> KandidatTampil:
+    b = ButirPengetahuan.model_validate(k.butir)
+    return KandidatTampil(
+        id_butir=k.id_butir,
+        kategori=b.kategori,
+        jenis_sumber=b.jenis_sumber,
+        judul=b.judul,
+        alasan_relevansi=b.alasan_relevansi,
+        inti_temuan=b.inti_temuan,
+        implikasi_tindakan=list(b.implikasi_tindakan),
+        perkiraan_waktu_baca=b.perkiraan_waktu_baca,
+        tenggat_terkait=b.tenggat_terkait,
+        lisensi=b.lisensi,
+        status_keberlakuan=None
+        if k.status_keberlakuan is None
+        else StatusKeberlakuan(k.status_keberlakuan),
+        sumber=SumberButir.model_validate(k.sumber),
+        masuk_pada=iso_utc(k.masuk_pada),
+    )
+
+
+def _tayang(t: BarisTayang) -> TayangTampil:
+    b = ButirPengetahuan.model_validate(t.butir)
+    return TayangTampil(
+        id_butir=t.id_butir,
+        kategori=b.kategori,
+        jenis_sumber=b.jenis_sumber,
+        judul=b.judul,
+        lisensi=b.lisensi,
+        status_keberlakuan=None
+        if t.status_keberlakuan is None
+        else StatusKeberlakuan(t.status_keberlakuan),
+        tayang_pada=iso_utc(t.tayang_pada),
+        perlu_tinjauan=t.perlu_tinjauan_pada is not None,
+    )
 
 
 async def antrean(simpan: PenyimpanKurasi, *, sekarang: datetime) -> dict[str, Any]:
     """Bentuk tanggapan bersama ketiga rute — D-14 Bagian 4.7."""
     menunggu = await simpan.menunggu(hari_ini=tanggal_wib(sekarang))
-    return {
-        "menunggu": [_kandidat(k) for k in menunggu],
-        "tayang": [_tayang(t) for t in await simpan.tayang_aktif()],
-    }
+    return Antrean(
+        menunggu=[_kandidat(k) for k in menunggu],
+        tayang=[_tayang(t) for t in await simpan.tayang_aktif()],
+    ).model_dump(mode="json")
 
 
 # ── putusan ──────────────────────────────────────────────────────────

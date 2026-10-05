@@ -163,3 +163,141 @@ export type HasilRingkasan =
 export type HasilNaskah =
   | { readonly jenis: "naskah"; readonly naskah: Naskah }
   | { readonly jenis: "belum_ada" };
+
+/**
+ * Penemuan — D-14 Bagian 4.6, fitur 013.
+ *
+ * Dijaga pemeriksa kontrak V-03 terhadap model bernama sama pada
+ * `src/api/penemuan.py` dan `src/ingest/kurasi/sumber.py`; enum terhadap
+ * `KategoriMasalah`, `JenisSumberButir`, dan `KeadaanBeranda`.
+ *
+ * `ButirLengkap` ditulis rata, bukan `extends`: pemeriksa membaca bidang
+ * satu per baris, dan bentuk lain dilaporkan tidak ditemukan.
+ */
+export type KategoriMasalah = "K1" | "K2" | "K3" | "K4" | "K5" | "K6" | "K7" | "K8";
+
+export type JenisSumberButir = "riset" | "regulasi" | "data_resmi" | "praktik_baik";
+
+export type KeadaanBeranda = "berisi" | "belum_ada_prioritas" | "belum_ada_butir" | "habis";
+
+export interface SumberButir {
+  readonly judul: string;
+  readonly penerbit: string;
+  readonly tahun: number;
+  readonly tautan: string | null;
+}
+
+export interface ButirRingkas {
+  readonly id_butir: string;
+  readonly kategori: KategoriMasalah;
+  readonly jenis_sumber: JenisSumberButir;
+  readonly judul: string;
+  readonly alasan_relevansi: string;
+  readonly perkiraan_waktu_baca: number;
+}
+
+/** Tanpa bidang lisensi, dengan sengaja: layar tidak menyimpulkan boleh
+ * tidaknya teks penuh dari untai lisensi — `boleh_teks_penuh` milik peladen. */
+export interface ButirLengkap {
+  readonly id_butir: string;
+  readonly kategori: KategoriMasalah;
+  readonly jenis_sumber: JenisSumberButir;
+  readonly judul: string;
+  readonly alasan_relevansi: string;
+  readonly perkiraan_waktu_baca: number;
+  readonly inti_temuan: string;
+  readonly implikasi_tindakan: readonly string[];
+  readonly tenggat_terkait: string | null;
+  readonly boleh_teks_penuh: boolean;
+  readonly sumber: SumberButir;
+}
+
+export interface Beranda {
+  readonly keadaan: KeadaanBeranda;
+  readonly butir: readonly ButirRingkas[];
+}
+
+export interface PermintaanTolak {
+  readonly alasan: string;
+}
+
+export type HasilBeranda =
+  | { readonly jenis: "beranda"; readonly beranda: Beranda }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilButir =
+  | { readonly jenis: "butir"; readonly butir: ButirLengkap }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+/**
+ * Kurasi — D-14 Bagian 4.7, fitur 013. Dijaga terhadap model pada
+ * `src/api/kurasi.py`; `AlasanTolak` dan `Pemicu` terhadap enum fitur 010.
+ */
+export type AlasanTolak =
+  | "TL-01"
+  | "TL-02"
+  | "TL-03"
+  | "TL-04"
+  | "TL-11"
+  | "TL-05"
+  | "TL-06"
+  | "TL-07"
+  | "TL-08"
+  | "TL-09"
+  | "TL-10";
+
+export type Pemicu = "regulasi_sumber_berubah" | "kekeliruan_isi_dilaporkan" | "data_sumber_diperbarui";
+
+export interface KandidatTampil {
+  readonly id_butir: string;
+  readonly kategori: KategoriMasalah;
+  readonly jenis_sumber: JenisSumberButir;
+  readonly judul: string;
+  readonly alasan_relevansi: string;
+  readonly inti_temuan: string;
+  readonly implikasi_tindakan: readonly string[];
+  readonly perkiraan_waktu_baca: number;
+  readonly tenggat_terkait: string | null;
+  readonly lisensi: string;
+  readonly status_keberlakuan: StatusKeberlakuan | null;
+  readonly sumber: SumberButir;
+  readonly masuk_pada: string;
+}
+
+export interface TayangTampil {
+  readonly id_butir: string;
+  readonly kategori: KategoriMasalah;
+  readonly jenis_sumber: JenisSumberButir;
+  readonly judul: string;
+  readonly lisensi: string;
+  readonly status_keberlakuan: StatusKeberlakuan | null;
+  readonly tayang_pada: string;
+  readonly perlu_tinjauan: boolean;
+}
+
+export interface Antrean {
+  readonly menunggu: readonly KandidatTampil[];
+  readonly tayang: readonly TayangTampil[];
+}
+
+/** Empat bidang parafrase saja (D-06 Bagian 7.3). */
+export interface Suntingan {
+  readonly judul: string;
+  readonly alasan_relevansi: string;
+  readonly inti_temuan: string;
+  readonly implikasi_tindakan: readonly string[];
+}
+
+export interface PermintaanTarik {
+  readonly pemicu: Pemicu;
+  readonly catatan: string;
+  readonly status_terkini?: StatusKeberlakuan | null;
+  readonly angka_berubah_bermakna?: boolean;
+}
+
+export type HasilAntrean =
+  | { readonly jenis: "antrean"; readonly antrean: Antrean }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };

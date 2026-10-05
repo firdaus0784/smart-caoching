@@ -35,9 +35,16 @@ from enum import Enum
 from pathlib import Path
 
 from pydantic import BaseModel
+from src.api.kurasi import Antrean, KandidatTampil, PermintaanTarik, Suntingan, TayangTampil
+from src.api.penemuan import Beranda, ButirLengkap, ButirRingkas, KeadaanBeranda, PermintaanTolak
 from src.api.percakapan import Giliran
 from src.api.saya import Naskah, PermintaanProfil
+from src.ingest.kurasi.butir import JenisSumberButir
+from src.ingest.kurasi.penarikan import Pemicu
+from src.ingest.kurasi.putusan import AlasanTolak
+from src.ingest.kurasi.sumber import SumberButir
 from src.kamus.segmen import StatusKeberlakuan
+from src.nlp.anotasi.skema import KategoriMasalah
 from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.pengguna.profil import JalurAkreditasi
 from src.rag.jawaban.tanggapan import (
@@ -64,6 +71,17 @@ MODEL: tuple[type[BaseModel], ...] = (
     # Fitur 030: isian profil dan naskah persetujuan, D-14 Bagian 4.5.
     PermintaanProfil,
     Naskah,
+    # Fitur 013: penemuan D-14 Bagian 4.6 dan kurasi Bagian 4.7.
+    SumberButir,
+    ButirRingkas,
+    ButirLengkap,
+    Beranda,
+    PermintaanTolak,
+    KandidatTampil,
+    TayangTampil,
+    Antrean,
+    Suntingan,
+    PermintaanTarik,
 )
 ENUM: tuple[type[Enum], ...] = (
     StatusDasar,
@@ -71,6 +89,12 @@ ENUM: tuple[type[Enum], ...] = (
     # Fitur 030.
     JalurAkreditasi,
     KeadaanPersetujuan,
+    # Fitur 013.
+    KategoriMasalah,
+    JenisSumberButir,
+    KeadaanBeranda,
+    AlasanTolak,
+    Pemicu,
 )
 
 _ANTARMUKA = re.compile(r"^export interface (\w+) \{\n(.*?)^\}", re.MULTILINE | re.DOTALL)

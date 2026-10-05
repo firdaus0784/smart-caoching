@@ -145,9 +145,9 @@ describe("alur aktivasi menurut ringkasan", () => {
     expect(p.ringkasan.persetujuan).toBe("ditolak");
   });
 
-  test("sudah aktif: langsung Tanya", async () => {
+  test("sudah aktif: langsung Beranda — fitur 013 K-7, D-05 0.6", async () => {
     pasang(peladen({ profil: PROFIL, prioritas: ["K1", "K2", "K3"], persetujuan: "ditolak" }));
-    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulLayar })).toBeTruthy();
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda })).toBeTruthy();
   });
 
   test("persetujuan sudah diputus tetapi profil belum: pengenalan, bukan S-02", async () => {
@@ -262,9 +262,17 @@ describe("S-04 profil dan prioritas", () => {
 // ── P-5 · tautan persetujuan dari S-09 ─────────────────────────────────
 
 describe("persetujuan dari layar Tanya", () => {
+  // Sejak fitur 013 pengguna yang sudah aktif mendarat di Beranda (K-7);
+  // uji ini berpindah ke Tanya lebih dulu agar yang diuji tetap tautan S-09.
+  async function keTanya(): Promise<void> {
+    fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.navTanya }));
+    await screen.findByRole("heading", { name: MIKROKOPI.judulLayar });
+  }
+
   test("mencabut sesudah setuju, lalu kembali ke Tanya", async () => {
     const p = peladen({ profil: PROFIL, prioritas: ["K1", "K2", "K3"], persetujuan: "diberikan" });
     pasang(p);
+    await keTanya();
     fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tautanPersetujuan }));
     expect(await screen.findByText(MIKROKOPI.sudahSetuju)).toBeTruthy();
     fireEvent.click(tombol(MIKROKOPI.tombolCabut));
@@ -275,6 +283,7 @@ describe("persetujuan dari layar Tanya", () => {
   test("setuju sesudah menolak", async () => {
     const p = peladen({ profil: PROFIL, prioritas: ["K1", "K2", "K3"], persetujuan: "ditolak" });
     pasang(p);
+    await keTanya();
     fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tautanPersetujuan }));
     fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolSetuju }));
     await screen.findByRole("heading", { name: MIKROKOPI.judulLayar });
@@ -283,11 +292,22 @@ describe("persetujuan dari layar Tanya", () => {
 
   test("naskah belum tersedia: kalimatnya dan tombol kembali, tanpa tombol setuju", async () => {
     pasang(peladen({ profil: PROFIL, prioritas: ["K1", "K2", "K3"] }, null));
+    await keTanya();
     fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tautanPersetujuan }));
     expect(await screen.findByText(MIKROKOPI.naskahBelumAda)).toBeTruthy();
     expect(screen.queryByRole("button", { name: MIKROKOPI.tombolSetuju })).toBeNull();
     fireEvent.click(tombol(MIKROKOPI.tombolKembali));
     expect(await screen.findByRole("heading", { name: MIKROKOPI.judulLayar })).toBeTruthy();
+  });
+
+  test("dari Beranda, persetujuan kembali ke Beranda", async () => {
+    const p = peladen({ profil: PROFIL, prioritas: ["K1", "K2", "K3"], persetujuan: "ditolak" });
+    pasang(p);
+    await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda });
+    fireEvent.click(tombol(MIKROKOPI.tautanPersetujuan));
+    fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolSetuju }));
+    expect(await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda })).toBeTruthy();
+    expect(p.ringkasan.persetujuan).toBe("diberikan");
   });
 
   test("setuju dan tidak setuju setara bentuknya — tidak ada yang ditonjolkan", async () => {
