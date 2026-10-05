@@ -2957,3 +2957,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | A — menunggu L4: tidak dipilih; beranda kosong di lapangan sampai fitur 017 dan BT-24. Pagu atas seluruh kandidat termasuk yang kelak diloloskan L4: tidak dipilih; putusan hanya menyangkut keadaan sebelum L4 ada. |
 | Dampak | `perkakas/kurasi.py`, `src/penyimpanan/kurasi.py` (`jumlah_masuk`), uji perkakas dan penyimpan; `docs/D06.md` 0.4, `docs/D00.md` 2.79, dokumen HKI. Skrip bukti fitur 013 tidak diubah — ia bukti atas keadaan sebelum putusan ini. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-191 · Usulan `spec.md` fitur 034 — penyimpanan dan penyambungan telemetri; menunggu Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | Sesudah Gerbang 4 fitur 013 dan putusan TK-72 (KB-189, KB-190), laporan mengajukan fitur 034 sebagai langkah berikut — prasyarat pilot, tidak tertahan putusan tim. Pemegang Gerbang 1–4 menjawab **"lanjutkan"**, dibaca sebagai izin menyusun usulan, bukan Gerbang 1. |
+| Keputusan | Usulan `specs/034-penyimpanan-dan-penyambungan-telemetri/spec.md`: sepuluh kebutuhan R-01 s.d. R-10, enam pertanyaan P-1 s.d. P-6 beranjuran. Anjuran P-1 C: peristiwa yang teramati peladen direkam di rute yang sudah ada; rute peristiwa dari peramban diajukan tersendiri. Nol baris kode. |
+| **Temuan — TK-73** | D-14 Bagian 3 tidak memiliki rute penerima peristiwa, sehingga tujuh kode taksonomi yang hanya teramati di peramban tidak memiliki kanal; rasio penuntasan D-01 Bagian 9.1 tidak dapat dihitung tanpanya. Didaftarkan pada D-00 2.80. |
+| **Temuan — fitur 012 belum disambungkan** | Gerbang `rekam()` lolos Gerbang 4 sejak Agustus tetapi tidak dipanggil satu rute pun, dan peristiwa tidak tersimpan di mana pun. Bentuk yang sama dengan TK-56 dan TK-70: pekerjaan yang tiap baris anggap milik baris lain. |
+| **Temuan — tepi arsitektur** | Rute di `src/api/` wajib memanggil `src/telemetri/`, tetapi AGENTS.md tidak memuat tepi `api → telemetri`. Diajukan sebagai P-3, bukan ditambahkan diam-diam. |
+| Alternatif | Membangun rute peristiwa sekalian (P-1 B) — tidak dianjurkan sebelum putusan D-14; rute yang menerima masukan bebas dari klien juga menambah permukaan serangan. |
+| Dampak | Berkas baru `spec.md` fitur 034; `docs/D00.md` 2.80. Nol baris kode. |
+| Pemutus | Agen menyusun; Gerbang 1 menunggu pemegang Gerbang 1–4 |
