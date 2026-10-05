@@ -60,6 +60,8 @@ from src.api.peran import Peran
 from src.api.saya import baca_naskah
 from src.api.tanya import AlasanBerhenti, HasilTanya
 from src.penyimpanan.akun import PERAN_AUTENTIKASI, AkunPostgres, PenyimpanAkun
+from src.penyimpanan.kurasi import PERAN_KURASI, KurasiPostgres, PenyimpanKurasi
+from src.penyimpanan.penemuan import PERAN_PENAYANGAN, PenemuanPostgres, PenyimpanPenemuan
 from src.penyimpanan.pengguna import PERAN_PENGGUNA, PenggunaPostgres, PenyimpanPengguna
 from src.penyimpanan.riwayat import (
     PERAN_RIWAYAT,
@@ -180,6 +182,8 @@ def susun_untuk_pengembangan(
     turunan_tiruan: str | None = None,
     pengguna: PenyimpanPengguna | None = None,
     versi_naskah: str | None = None,
+    kurasi: PenyimpanKurasi | None = None,
+    penemuan: PenyimpanPenemuan | None = None,
 ) -> FastAPI:
     """Rakit aplikasi dengan pengganti pengembangan.
 
@@ -189,7 +193,8 @@ def susun_untuk_pengembangan(
 
     Dengan `akun`, identitas dibaca dari sesi dan rute masuk terpasang
     (fitur 029); tanpanya, penentu tiruan tanpa pemeriksaan dipakai.
-    `turunan_tiruan` disuntikkan hanya oleh uji.
+    `turunan_tiruan` disuntikkan hanya oleh uji. `kurasi` dan `penemuan`
+    memasang rute kurator dan beranda (fitur 013).
     """
     if akun is None:
         return susun_aplikasi(
@@ -204,6 +209,8 @@ def susun_untuk_pengembangan(
         masuk=PenjagaMasuk(akun, turunan_tiruan=turunan_tiruan),
         pengguna=pengguna,
         versi_naskah=versi_naskah,
+        kurasi=kurasi,
+        penemuan=penemuan,
     )
 
 
@@ -254,7 +261,24 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
 
     akun: PenyimpanAkun | None = None
     pengguna: PenyimpanPengguna | None = None
+    kurasi: PenyimpanKurasi | None = None
+    penemuan: PenyimpanPenemuan | None = None
     if argumen.autentikasi == "sesi":
+        # Fitur 013: kurator dan penayang, masing-masing dengan perannya.
+        kurasi = KurasiPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN),
+                int(os.environ.get("PGPORT", "5432")),
+                PERAN_KURASI,
+            )
+        )
+        penemuan = PenemuanPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN),
+                int(os.environ.get("PGPORT", "5432")),
+                PERAN_PENAYANGAN,
+            )
+        )
         pengguna = PenggunaPostgres(
             SambunganPerKueri(
                 os.environ.get("PGHOST", ALAMAT_AMAN),
@@ -287,7 +311,12 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
     )
     uvicorn.run(
         susun_untuk_pengembangan(
-            riwayat, akun=akun, pengguna=pengguna, versi_naskah=versi_naskah_terpasang()
+            riwayat,
+            akun=akun,
+            pengguna=pengguna,
+            versi_naskah=versi_naskah_terpasang(),
+            kurasi=kurasi,
+            penemuan=penemuan,
         ),
         host=argumen.alamat,
         port=argumen.porta,

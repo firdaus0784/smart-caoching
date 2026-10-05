@@ -2917,3 +2917,19 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `web/src/kurasi/`, `web/src/Aplikasi.tsx`, `web/src/mikrokopi.ts`, `web/src/penemuan/LayarButir.tsx`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Catatan sesudah pemeriksaan | `make check` pertama gagal pada V-01 dan V-03: peladen palsu pada uji kurasi mencocokkan jalur dengan awalan harfiah `"/api/v1/kurasi/"`, dan pemeriksa rute menolaknya sebagai jalur yang tidak terpasang — juga pada berkas uji. Diganti pencocokan lewat `jalurPutusan`/`jalurTarik`. |
+
+## KB-188 · T-9 fitur 013 — putaran mutasi, bukti, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-9 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). Gerbang 4 tidak didelegasikan. |
+| Putaran mutasi | Tiga belas mutasi plan Bagian 10.3, dijalankan pada tugas tempat kodenya lahir dan dilaporkan apa adanya. **Menyala 13 dari 13**: M-1 (KB-185), M-2 s.d. M-4 (KB-181), M-5 (KB-183, KB-184), M-6, M-7 (KB-185), M-8 pada lapis tampil (KB-185), M-9 (KB-185), M-10, M-11 (KB-184), M-12, M-13 (KB-185). **Yang tidak menyala sebagaimana ditulis**: M-8 pada pemilihan selamat sebagai **mutan setara** — butir hanya dapat ditolak bila pernah tayang baginya — dan kondisinya dibuang; M-10 dan M-11 semula tampak selamat karena mutasinya tidak terpasang dan karena uji yang ditolak oleh sebab lain, keduanya diperbaiki sebelum dilaporkan. Mutasi tambahan di luar daftar: penahanan L4 pada perkakas, pengabaian status terkini pada feed — keduanya menyala. |
+| Bukti | `bukti/ujung_ke_ujung.mjs` terhadap `make jalan` dengan PostgreSQL: kurator memutus lima kandidat (setujui, sunting, tolak), pengguna baru melewati aktivasi dan menerima tiga butir menurut urutan prioritasnya, membuka detail, menolak satu; kurator menarik satu; beranda pengguna tinggal satu butir; luring membaca salinan beranda dan detail. **15 pemeriksaan lulus, 0 respons 404**, tanpa galat halaman. Tujuh tangkapan layar pada lebar 360 piksel. |
+| **Yang dilewati bukti, dinyatakan** | Antrean diisi `bukti/isi_antrean_bukti.py`: perkakas `isi` yang sama dengan L4 diloloskan — bentuk pilihan B TK-72 — **khusus bukti**; L1 s.d. L3 tetap berjalan, dan butirnya bertanda "(contoh bukti)". Percobaan pertama gagal karena basis data pengembangan memuat baris sisa uji yang JSON-nya tidak lengkap, dan antrean menolaknya dengan galat terang — perilaku yang dirancang; tabel `kurasi` dan `penemuan` pada basis data uji dikosongkan sebelum bukti diulang. Satu akun bukti yang sandinya tidak tersimpan dinonaktifkan. |
+| Penutupan | L8: tagihan pasal tidak menyusut (19 lulus, 0 gagal, 1 belum); sembilan pasal dikuatkan. Dokumen HKI: wadah aplikasi web, panel internal, layanan API, dan basis data; uji 2.828 dan 253; anggaran muat 83.756 dari 153.600 bait. |
+| Yang menunggu | **Gerbang 4** oleh pemegang gerbang. **TK-72** oleh tim dan penanggung jawab teknis: tanpa putusannya antrean tidak terisi lewat jalur sah, dan beranda tetap kosong di lapangan. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+| Keputusan | Fitur 013 dinyatakan selesai sembilan dari sembilan tugas dan **diajukan ke Gerbang 4**; status `tasks.md` menyatakannya. Agen tidak meluluskannya sendiri (KB-168). |
+| Alternatif | Menjalankan bukti dengan antrean kosong — ditolak; bukti tanpa butir tidak membuktikan C-06 dari ujung ke ujung. Memasukkan butir lewat SQL langsung — ditolak; perkakas `isi` sungguhan dipakai agar L1 s.d. L3 tetap berjalan. |
+| Dampak | `specs/013-kurasi-dan-penemuan-harian/bukti/` (skrip, tujuh tangkapan layar), `tasks.md`, `perkakas/jalankan_lokal.py` (rute kurasi dan beranda pada titik jalan pengembangan), `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. Catatan: ketiga bidang ini ditambahkan sesudah pemeriksa bentuk L4 menolak entri tanpa mereka. |

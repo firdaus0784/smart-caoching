@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Delapan dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Sembilan dari sembilan tugas selesai — **menunggu Gerbang 4 manusia** (KB-188) |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -95,6 +95,6 @@ Agen **tidak** mengisi antrean dengan butir karangan di luar uji dan bukti.
 
 ## T-9 · Putaran mutasi, bukti, penutupan
 
-- [ ] Tiga belas mutasi dijalankan dan dilaporkan apa adanya
-- [ ] Playwright Bagian 10.2 plan; tangkapan layar ke `bukti/`
-- [ ] D-00, L8, dokumen HKI, L4; status menunggu Gerbang 4
+- [x] Tiga belas mutasi dijalankan dan dilaporkan apa adanya
+- [x] Playwright Bagian 10.2 plan; tangkapan layar ke `bukti/`
+- [x] D-00, L8, dokumen HKI, L4; status menunggu Gerbang 4

@@ -479,3 +479,29 @@ dihitung ulang dari selisih `web/src/mikrokopi.ts` sejak Gerbang 3: untai
 layar baru berjumlah **empat puluh lima** — 28 kunci `MIKROKOPI`, 8 untai
 `PENGENALAN`, 8 label kategori, dan 1 fungsi penanda layar — bukan dua puluh
 tujuh. Baris di atas tidak disunting.
+
+### Fitur 013 — 5 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 030. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan sembilan pasal yang sudah lulus. Dua di antaranya untuk
+pertama kali ditegakkan **peladen basis data** pada jalur penayangan:
+
+| Pasal | Yang bertambah pada fitur 013 |
+|---|---|
+| C-02 | Butir lengkap tidak membawa untai lisensi; `boleh_teks_penuh` ditetapkan peladen lewat `boleh_teks_penuh()` fitur 011 (M-9). Metadata sumber disalin ke kandidat, sehingga peran penayang tidak membaca korpus yang memuat teks penuh |
+| C-03 | Tiga peran baru tanpa hak atas `karantina` maupun `korpus` — diuji dengan sebab `permission denied` |
+| C-05 | Pemutus putusan dan penarikan, pemilik butir hari ini dan "belum relevan" berpola pseudonim, ditegakkan batasan tabel; jejak membawa pseudonim sesi, tidak pernah nama akun (M-10); ketiga peran tanpa jalur ke basis data pseudonim |
+| C-06 | Ditegakkan **dua kali oleh peladen**: penayang tidak dapat membaca antrean (M-2), dan butir tayang hanya dapat merujuk putusan yang menyetujui butir itu sendiri — kunci asing gabungan `(nomor, id_butir, menyetujui)`. `ButirTayang` dibentuk hanya lewat `terapkan()`; pemeriksa C-06 menolak pembentukan langsung yang sempat ditulis pada T-5. Ujung ke ujung lewat HTTP (M-1) dan lewat peramban |
+| C-07 | Status regulasi salinan diperbarui perkakas; putusan memakai status terkini dan menolak TL-04 (M-5); butir yang regulasinya dicabut tidak tampil meski belum ditarik; `status dicabut` menarik otomatis butir tayang |
+| C-13 | Lima kalimat peladen dan delapan puluh lima untai layar baru — 64 kunci `MIKROKOPI`, 21 label (jenis sumber, alasan penolakan, pemicu, status) — serta empat fungsi penyusun baris melewati pemeriksa. Dua rujukan bersingkatan pada label D-06 dilepas; pemisah yang semula tertulis di `.tsx` dipindah ke mikrokopi |
+| C-14 | Pemilihan beranda membaca prioritas saja, bukan riwayat buka; diuji dengan dua pengguna berprioritas sama sesudah salah satunya membuka butir. Jalur penjawab tidak menerima prioritas maupun butir |
+| C-15 | Tidak ada poin, lencana, runtun, maupun peringkat — diuji sebagai ketiadaan pada layar |
+| C-16 | **Lapis L4 tidak dilonggarkan.** Kandidat yang tertahan di L4 tidak dimasukkan perkakas; pilihan itu diajukan kepada tim sebagai TK-72. Skor relevansi tidak tampil pada S-15 |
+| C-20 | Bentuk enam rute ditulis ke D-14 4.6 dan 4.7 sebelum kodenya; tanggapan disusun lewat model pydantic bernama dan dijaga pemeriksa kontrak web |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 013 tidak menyentuh jalur penjawaban.

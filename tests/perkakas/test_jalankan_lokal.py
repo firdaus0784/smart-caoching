@@ -196,3 +196,30 @@ def test_titik_jalan_bersesi_memasang_rute_saya_dan_naskah(tmp_path: Path) -> No
         base_url="https://testserver",
     )
     assert klien.get("/api/v1/saya/profil").status_code == 401
+
+
+def test_titik_jalan_bersesi_memasang_rute_kurasi_dan_penemuan() -> None:
+    """Fitur 013: rute kurator dan beranda terpasang bersama sesi; tanpa
+    penyimpannya keduanya tidak ada."""
+    from src.penyimpanan.akun import AkunMemori
+    from src.penyimpanan.kurasi import KurasiMemori
+    from src.penyimpanan.penemuan import PenemuanMemori
+    from src.penyimpanan.pengguna import PenggunaMemori
+
+    kurasi = KurasiMemori()
+    klien = TestClient(
+        susun_untuk_pengembangan(
+            akun=AkunMemori(),
+            pengguna=PenggunaMemori(),
+            kurasi=kurasi,
+            penemuan=PenemuanMemori(kurasi),
+        ),
+        base_url="https://testserver",
+    )
+    assert klien.get("/api/v1/beranda").status_code == 401
+    assert klien.get("/api/v1/kurasi/antrean").status_code == 401
+    tanpa = TestClient(
+        susun_untuk_pengembangan(akun=AkunMemori(), pengguna=PenggunaMemori()),
+        base_url="https://testserver",
+    )
+    assert tanpa.get("/api/v1/beranda").status_code == 404

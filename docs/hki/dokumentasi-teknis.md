@@ -77,13 +77,13 @@ Sumber: D-04 Bagian 5. Kolom keadaan diperiksa terhadap commit `9c0b138`.
 
 | Wadah | Teknologi | Keadaan | Keterangan |
 |---|---|---|---|
-| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, lolos Gerbang 4 pada 28 September 2026). Riwayat percakapan tersambung (fitur 028). Layar S-01 Masuk dan tombol Keluar terbangun (fitur 029, lolos Gerbang 4 pada 4 Oktober 2026). Layar lain belum (fitur 013). Alur aktivasi J1 — persetujuan penelitian (S-02), pengenalan empat layar (S-03), profil dan prioritas (S-04) — terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026); naskah persetujuan menunggu ET-02 |
-| Panel internal | React | **Dirancang** | Belum ada kode |
-| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Riwayat percakapan kini tercatat dan tersaring pemilik berpseudonim; pertanyaan berdata pribadi ditolak sebelum dijawab; galat berbentuk D-14 Bagian 4.2 (fitur 028, lolos Gerbang 4 pada 1 Oktober 2026). Autentikasi terbangun (FR-A01, fitur 029, lolos Gerbang 4 pada 4 Oktober 2026): akun berpseudonim buatan tim, sandi `scrypt`, sesi di peladen yang dapat dicabut, kuki `HttpOnly`/`Secure`/`SameSite=Strict`; tanpa sesi sah setiap rute menjawab 401. Rute `/saya/profil`, `/saya/prioritas`, `/saya/persetujuan` terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026) |
+| Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, lolos Gerbang 4 pada 28 September 2026). Riwayat percakapan tersambung (fitur 028). Layar S-01 Masuk dan tombol Keluar terbangun (fitur 029, lolos Gerbang 4 pada 4 Oktober 2026). Layar lain belum (fitur 013). Alur aktivasi J1 — persetujuan penelitian (S-02), pengenalan empat layar (S-03), profil dan prioritas (S-04) — terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026); naskah persetujuan menunggu ET-02. Beranda (S-05) dan detail butir (S-06) dengan salinan luring, navigasi Beranda · Tanya, beserta layar kurator S-15 dan S-16 terbangun (fitur 013, **menunggu Gerbang 4**) |
+| Panel internal | React | **Sebagian** | Antrean kurasi (S-15) dan penyuntingan butir (S-16) terbangun dalam aplikasi yang sama, dikenali dari peran akun (fitur 013, **menunggu Gerbang 4**); aduan (S-17) dan analitik (S-18) belum (baris 035) |
+| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Riwayat percakapan kini tercatat dan tersaring pemilik berpseudonim; pertanyaan berdata pribadi ditolak sebelum dijawab; galat berbentuk D-14 Bagian 4.2 (fitur 028, lolos Gerbang 4 pada 1 Oktober 2026). Autentikasi terbangun (FR-A01, fitur 029, lolos Gerbang 4 pada 4 Oktober 2026): akun berpseudonim buatan tim, sandi `scrypt`, sesi di peladen yang dapat dicabut, kuki `HttpOnly`/`Secure`/`SameSite=Strict`; tanpa sesi sah setiap rute menjawab 401. Rute `/saya/profil`, `/saya/prioritas`, `/saya/persetujuan` terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026). Rute beranda, detail butir, belum relevan, antrean kurasi, putusan, dan penarikan terbangun (fitur 013, **menunggu Gerbang 4**); kandidat hanya masuk lewat perkakas tim, dan hari ini tertahan di lapis relevansi sampai TK-72 diputus |
 | Layanan NLP | Python | **Sebagian** | Praproses, OCR, dan deteksi data pribadi berpola terbangun (fitur 015); **model NER dan klasifikasi belum** (fitur 017) |
 | Layanan RAG | Python | **Sebagian** | Lihat Bagian 4 |
 | Pekerja latar | Python | **Sebagian** | Ingesti kanal dan penyematan korpus ada sebagai fungsi (fitur 002, 010, 026); **antrean tugas dan penjadwal belum** |
-| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026). Peran keenam `peran_riwayat` — hanya membaca dan menambah riwayat — dibangun fitur 028, lolos Gerbang 4 pada 1 Oktober 2026. Peran ketujuh dan kedelapan — `peran_autentikasi` dan `peran_pengelola_akun`, dipisah dengan hak per kolom — dibangun fitur 029, lolos Gerbang 4 pada 4 Oktober 2026. Peran kesembilan `peran_pengguna` — profil, prioritas tambah-saja, persetujuan yang hanya dapat dicabut — dibangun fitur 030, lolos Gerbang 4 pada 5 Oktober 2026 |
+| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026). Peran keenam `peran_riwayat` — hanya membaca dan menambah riwayat — dibangun fitur 028, lolos Gerbang 4 pada 1 Oktober 2026. Peran ketujuh dan kedelapan — `peran_autentikasi` dan `peran_pengelola_akun`, dipisah dengan hak per kolom — dibangun fitur 029, lolos Gerbang 4 pada 4 Oktober 2026. Peran kesembilan `peran_pengguna` — profil, prioritas tambah-saja, persetujuan yang hanya dapat dicabut — dibangun fitur 030, lolos Gerbang 4 pada 5 Oktober 2026. Peran kesepuluh sampai kedua belas — `peran_kurasi`, `peran_penayangan`, `peran_pengisi_antrean` — dibangun fitur 013, **menunggu Gerbang 4**; butir tayang hanya dapat merujuk putusan yang menyetujuinya, ditegakkan kunci asing |
 | Penyimpanan berkas | Sistem berkas, area karantina terpisah | **Sebagian** | Pemisahan area karantina dan korpus terbangun **pada basis data**; penyimpanan berkas asli pada sistem berkas belum |
 | Perangkat anotasi | Label Studio, dipasang mandiri | **Sebagian** | Pembacaan ekspor terbangun (fitur 016); pemasangan perangkatnya pekerjaan operasi |
 
@@ -184,9 +184,9 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 |---|---|
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
-| Jumlah uji otomatis | 2.347 pada backend dan perkakas; 139 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 25 dari 35 |
-| Anggaran muat aplikasi web | 70.812 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
+| Jumlah uji otomatis | 2.828 pada backend dan perkakas; 253 pada aplikasi web |
+| Fitur lolos Gerbang 4 | 25 dari 35 (fitur 013 menunggu Gerbang 4) |
+| Anggaran muat aplikasi web | 83.756 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,
 rancangan, daftar tugas, verifikasi) dan uji mutasi yang dilaporkan apa
@@ -201,7 +201,8 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 
 | Hal | Menunggu |
 |---|---|
-| Layar selain Masuk, aktivasi, dan Tanya, serta panel internal | Fitur 013 dan baris 031 s.d. 035 (KB-178) |
+| Penerapan J4, koleksi dan pembaca sumber, pengaturan, aduan, analitik | Baris 031 s.d. 035 (KB-178) |
+| Antrean kurasi yang terisi lewat jalur sah | Putusan tim atas TK-72 — lapis relevansi L4 menunggu fitur 017 dan BT-24 |
 | Model NER dan klasifikasi | Korpus teranotasi dan izin etik ET-01 (fitur 017) |
 | Isi ontologi | Putusan putaran pengisian (fitur 018) |
 | VS-03, VS-05, VS-07 | Bobot model dan kalibrasi (fitur 020) |
