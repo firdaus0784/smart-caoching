@@ -524,3 +524,25 @@ def test_dokumen_dikenal_bagi_lapis_l2(simpan: Tiga) -> None:
         assert k.id_dokumen_sumber in await simpan.pengisi.dokumen_dikenal()
 
     jalankan(uji())
+
+
+def test_daftar_tayang_kurator_membawa_putusannya(simpan: Tiga) -> None:
+    """Rute penarikan membentuk ulang `ButirTayang` dari putusan sungguhan."""
+
+    async def uji() -> None:
+        k = _kandidat()
+        await simpan.pengisi.tambah_kandidat(k)
+        await simpan.kurasi.setujui(_putusan(k.id_butir, "sunting_lalu_setujui"), butir=k.butir)
+        aktif = {b.id_butir: b for b in await simpan.kurasi.tayang_aktif()}
+        putusan = aktif[k.id_butir].putusan
+        assert putusan is not None
+        assert (putusan.jenis, putusan.peran, putusan.waktu) == (
+            "sunting_lalu_setujui",
+            "kurator",
+            T0,
+        )
+        # Penayang tidak menerima putusan (R-02).
+        baris = await simpan.penemuan.baca_tayang(k.id_butir)
+        assert baris is not None and baris.putusan is None
+
+    jalankan(uji())

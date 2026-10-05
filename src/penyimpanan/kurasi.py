@@ -74,6 +74,20 @@ class BarisKandidat:
 
 
 @dataclass(frozen=True)
+class PutusanTayang:
+    """Putusan yang menayangkan sebuah butir, sebagaimana tersimpan.
+
+    Dibaca peran kurasi saja — penayang tidak membaca putusan (R-02). Dengan
+    ini rute penarikan membentuk ulang `ButirTayang` fitur 010 dari baris
+    sungguhan, alih-alih menyusun putusan karangan demi memanggil `tinjau()`.
+    """
+
+    jenis: str
+    peran: str
+    waktu: datetime
+
+
+@dataclass(frozen=True)
 class BarisTayang:
     id_butir: str
     butir: dict[str, Any]
@@ -84,6 +98,8 @@ class BarisTayang:
     tayang_pada: datetime
     ditarik_pada: datetime | None = None
     perlu_tinjauan_pada: datetime | None = None
+    putusan: PutusanTayang | None = None
+    """Terisi hanya pada `PenyimpanKurasi.tayang_aktif`."""
 
 
 @dataclass(frozen=True)
@@ -293,6 +309,7 @@ class KurasiMemori:
             kategori=k.kategori,
             status_keberlakuan=k.status_keberlakuan,
             tayang_pada=catatan.waktu,
+            putusan=PutusanTayang(jenis=catatan.jenis, peran=catatan.peran, waktu=catatan.waktu),
         )
         return True
 
@@ -343,8 +360,13 @@ class KurasiMemori:
         return True
 
     def baris_tayang(self) -> dict[str, BarisTayang]:
-        """Bagi `PenemuanMemori` — salinan, bukan rujukan ke isi."""
-        return dict(self._isi.tayang)
+        """Bagi `PenemuanMemori` — salinan tanpa putusan, sebab penayang tidak
+        membaca putusan (R-02)."""
+        return {k: replace(t, putusan=None) for k, t in self._isi.tayang.items()}
+
+    def jejak(self) -> tuple[CatatanPutusan, ...]:
+        """Seluruh putusan tercatat — bagi uji jejak FR-I05."""
+        return tuple(self._isi.putusan)
 
 
 # ── PostgreSQL ───────────────────────────────────────────────────────
@@ -526,10 +548,23 @@ class KurasiPostgres:
 
     async def tayang_aktif(self) -> tuple[BarisTayang, ...]:
         baris = await self._sambungan.fetch(
-            f"SELECT {KOLOM_TAYANG} FROM kurasi.butir_tayang WHERE ditarik_pada IS NULL "
-            "ORDER BY tayang_pada, id_butir"
+            "SELECT b.id_butir, b.butir, b.sumber, b.id_dokumen_sumber, b.kategori, "
+            "b.status_keberlakuan, b.tayang_pada, b.ditarik_pada, b.perlu_tinjauan_pada, "
+            "p.jenis, p.peran, p.waktu FROM kurasi.butir_tayang b "
+            "JOIN kurasi.putusan p ON p.nomor = b.nomor_putusan "
+            "WHERE b.ditarik_pada IS NULL ORDER BY b.tayang_pada, b.id_butir"
         )
-        return tuple(baris_tayang(b) for b in baris)
+        return tuple(
+            replace(
+                baris_tayang(b),
+                putusan=PutusanTayang(
+                    jenis=str(b["jenis"]),
+                    peran=str(b["peran"]),
+                    waktu=b["waktu"],  # type: ignore[arg-type]
+                ),
+            )
+            for b in baris
+        )
 
     async def _putuskan(self, kueri: str, catatan: CatatanPutusan, *lebih: object) -> bool:
         b = await self._sambungan.fetchrow(

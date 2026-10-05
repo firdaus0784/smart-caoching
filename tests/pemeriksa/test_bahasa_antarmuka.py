@@ -94,7 +94,15 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
         "PESAN_PERSETUJUAN_TIDAK_SAH",
     ):
         assert baru in nama, baru
-    assert len(ditemukan) == 20, f"{len(ditemukan)} untai terbaca, seharusnya 20"
+    # 24 sejak fitur 013 T-5: pesan putusan, penarikan, regulasi, butir tak ada.
+    for baru in (
+        "PESAN_PUTUSAN_TIDAK_SAH",
+        "PESAN_REGULASI_TIDAK_BERLAKU",
+        "PESAN_TARIK_TIDAK_SAH",
+        "PESAN_BUTIR_TIDAK_ADA",
+    ):
+        assert baru in nama, baru
+    assert len(ditemukan) == 24, f"{len(ditemukan)} untai terbaca, seharusnya 24"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

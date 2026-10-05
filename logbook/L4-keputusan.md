@@ -2858,3 +2858,17 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `perkakas/kurasi.py`, `src/ingest/kurasi/sumber.py`, `src/penyimpanan/kurasi.py`; dua berkas uji; D-00 2.78 (TK-72). |
 | Pemutus | Agen atas pendelegasian KB-168; TK-72 menunggu tim |
 | Catatan sesudah pemeriksaan | `make check` pertama gagal: cakupan 99.859 di bawah penanda 99.87 — cabang penolakan `SumberButir` belum diuji, sebab uji perkakas berada di luar sumber cakupan (`perkakas/`). Ditambah `tests/ingest/kurasi/test_sumber.py`; penanda tidak diturunkan. |
+
+## KB-184 · T-5 fitur 013 — rute kurasi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-5 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | `src/api/kurasi.py` dan pemasangan `GET /kurasi/antrean`, `POST /kurasi/{id}/putusan`, `POST /kurasi/{id}/tarik` bila `susun_aplikasi` menerima `kurasi`. Aturan isi milik fitur 010: `Putusan`, `terapkan()`, `JejakKurasi` (dipakai sebagai pemeriksa alasan sebelum menulis), `tinjau()`. `src/api/hari.py`: batas hari WIB (P-4) dan bentuk waktu `…Z`. Uji HTTP ditulis lebih dulu dengan `PenentuSesi` sungguhan. |
+| **Tambahan atas plan** | `tinjau()` menuntut `ButirTayang`. Daftar tayang bagi kurator kini membawa **putusan yang menayangkan** butir (jenis, peran, waktu) dari basis data, sehingga `ButirTayang` dibentuk ulang dari baris sungguhan — bukan putusan karangan, dan tanpa mengubah fitur 010. Penayang tetap tidak menerima putusan (R-02), diuji. |
+| Mutasi | M-5 (status salinan lama), M-10 (pemutus bukan pseudonim sesi), M-11 (suntingan mengganti bidang selain parafrase) — ketiganya menyala. **M-10 dan M-11 semula tampak selamat**: M-10 karena penggantian teks tidak terpasang pada baris yang sudah dipecah pemformat; M-11 karena ujinya mengirim suntingan **tidak lengkap**, sehingga ditolak oleh sebab lain. Ujinya diperbaiki agar badan lengkap dan hanya bidang terlarang yang menolak — pelajaran KB-098 diterapkan pada uji sendiri. |
+| Alternatif | Mengubah `tinjau()` agar menerima `ButirPengetahuan` — tidak dipilih; tipe `ButirTayang` pada parameternya adalah penjaga bahwa yang ditarik memang pernah tayang. |
+| Dampak | `src/api/kurasi.py`, `src/api/hari.py`, `src/api/aplikasi.py`, `src/api/peran.py`, `src/penyimpanan/kurasi.py`, `perkakas/pemeriksa/rute_terdaftar.py`; uji. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Catatan sesudah pemeriksaan | `make check` pertama gagal pada tiga gerbang, ketiganya benar. **V-02 C-06**: rute penarikan membentuk `ButirTayang` dengan konstruktornya, di luar modul putusan — pemeriksa C-06 melarangnya. Diganti: `ButirTayang` dibentuk lewat `terapkan()` atas putusan tersimpan, gerbang yang sama dengan persetujuannya; pemeriksanya tidak disentuh. **V-01/C-11**: cakupan 99.80 — cabang "didahului kurator lain" dan "penyimpan rusak" belum diuji; ditambah uji, modul 100 %. **V-03**: uraian `src/api/hari.py` tidak menyebut kode kebutuhan; kini menyebut R-05 dan FR-G05. |

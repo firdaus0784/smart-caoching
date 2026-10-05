@@ -68,15 +68,29 @@ from src.api.autentikasi import (
 )
 from src.api.galat import tanggapan_galat
 from src.api.identitas import Identitas, PenentuIdentitas
+from src.api.kurasi import (
+    PESAN_BUTIR_TIDAK_ADA,
+    PESAN_PUTUSAN_TIDAK_SAH,
+    PESAN_REGULASI_TIDAK_BERLAKU,
+    PESAN_TARIK_TIDAK_SAH,
+    ButirTidakAda,
+    RegulasiTidakBerlaku,
+    antrean,
+    putuskan,
+    tarik,
+)
 from src.api.peran import (
+    POLA_ANTREAN,
     POLA_DAFTAR_PERCAKAPAN,
     POLA_KELUAR,
     POLA_MASUK,
     POLA_PERSETUJUAN,
     POLA_PRIORITAS,
     POLA_PROFIL,
+    POLA_PUTUSAN,
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
+    POLA_TARIK,
     boleh,
 )
 from src.api.percakapan import Giliran, giliran_sah
@@ -92,6 +106,7 @@ from src.api.saya import (
 from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
+from src.penyimpanan.kurasi import PenyimpanKurasi
 from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
 
@@ -184,6 +199,7 @@ def susun_aplikasi(
     masuk: PenjagaMasuk | None = None,
     pengguna: PenyimpanPengguna | None = None,
     versi_naskah: str | None = None,
+    kurasi: PenyimpanKurasi | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -200,6 +216,9 @@ def susun_aplikasi(
     `pengguna` sama: tanpa penyimpan, rute `/saya/*` tidak terpasang (fitur
     030). `versi_naskah` adalah versi berkas naskah ET-02 yang terpasang;
     `None` berarti naskah belum ada, dan setiap persetujuan ditolak (C-04).
+
+    `kurasi` sama: tanpa penyimpan, rute kurator D-14 Bagian 3.4 tidak
+    terpasang (fitur 013).
     """
     aplikasi = FastAPI(
         title="Smart-Coaching Adaptif",
@@ -346,6 +365,8 @@ def susun_aplikasi(
         _pasang_rute_masuk(aplikasi, masuk, identitas)
     if pengguna is not None:
         _pasang_rute_saya(aplikasi, pengguna, _identitas_atau_tolak, versi_naskah, sekarang)
+    if kurasi is not None:
+        _pasang_rute_kurasi(aplikasi, kurasi, _identitas_atau_tolak, sekarang)
 
     return aplikasi
 
@@ -481,3 +502,71 @@ def _pasang_rute_saya(
                 400, KodeGalat.VALIDASI_GAGAL, PESAN_PERSETUJUAN_TIDAK_SAH, rute=POLA_PERSETUJUAN
             )
         return JSONResponse(status_code=200, content=await ringkasan(simpan, siapa.pemilik))
+
+
+def _pasang_rute_kurasi(
+    aplikasi: FastAPI,
+    simpan: PenyimpanKurasi,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    sekarang: Callable[[], datetime],
+) -> None:
+    """Rute D-14 Bagian 3.4 milik kurator — bentuknya Bagian 4.7. Hanya
+    menerjemahkan; aturannya milik `src/api/kurasi.py` dan model fitur 010."""
+
+    def _tidak_ada(pola: str) -> JSONResponse:
+        return tanggapan_galat(404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_BUTIR_TIDAK_ADA, rute=pola)
+
+    async def _badan(permintaan: Request) -> Any:
+        if not _berbadan_json(permintaan):
+            raise ValueError("bukan JSON")
+        try:
+            return await permintaan.json()
+        except ValueError:
+            return None
+
+    @aplikasi.get(POLA_ANTREAN)
+    async def baca_antrean(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_ANTREAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        return JSONResponse(status_code=200, content=await antrean(simpan, sekarang=sekarang()))
+
+    @aplikasi.post(POLA_PUTUSAN)
+    async def putusan(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_PUTUSAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        kini = sekarang()
+        try:
+            await putuskan(
+                simpan, id, await _badan(permintaan), pseudonim=siapa.pemilik, sekarang=kini
+            )
+        except ButirTidakAda:
+            return _tidak_ada(POLA_PUTUSAN)
+        except RegulasiTidakBerlaku:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_REGULASI_TIDAK_BERLAKU, rute=POLA_PUTUSAN
+            )
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_PUTUSAN_TIDAK_SAH, rute=POLA_PUTUSAN
+            )
+        return JSONResponse(status_code=200, content=await antrean(simpan, sekarang=kini))
+
+    @aplikasi.post(POLA_TARIK)
+    async def penarikan(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_TARIK)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        kini = sekarang()
+        try:
+            await tarik(
+                simpan, id, await _badan(permintaan), pseudonim=siapa.pemilik, sekarang=kini
+            )
+        except ButirTidakAda:
+            return _tidak_ada(POLA_TARIK)
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_TARIK_TIDAK_SAH, rute=POLA_TARIK
+            )
+        return JSONResponse(status_code=200, content=await antrean(simpan, sekarang=kini))
