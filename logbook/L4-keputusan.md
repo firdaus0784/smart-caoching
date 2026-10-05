@@ -2828,3 +2828,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Pemicu (*trigger*) yang memeriksa jenis putusan saat butir tayang ditulis — tidak dipilih; kunci asing terbaca dari katalog dan tidak dapat dimatikan peran aplikasi. |
 | Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `09-kurasi.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-182 · T-3 fitur 013 — penyimpan kurasi dan penemuan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-3 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | `src/penyimpanan/kurasi.py` (`PengisiAntrean`, `PenyimpanKurasi`; memori dan PostgreSQL) dan `src/penyimpanan/penemuan.py` (`PenyimpanPenemuan`). Uji ditulis lebih dulu atas kedua pelaksana; pelaksana PostgreSQL tersambung sebagai perannya masing-masing (TK-64). Putusan menyetujui dan butir tayangnya ditulis dalam satu pernyataan `WITH … INSERT … INSERT`, sebab `SambunganAktif` tidak menyediakan transaksi. |
+| **Temuan saat uji pertama** | Penarikan otomatis semula memakai `RETURNING` dari `kurasi.penarikan`, dan peladen menolaknya bagi `peran_pengisi_antrean` yang hanya memegang `INSERT` — penolakan yang **benar**. Kuerinya dibalik (ubah butir tayang lebih dulu, lalu sisipkan penarikan) dan jumlah barisnya dibaca dari status perintah. Hak baca tidak ditambahkan demi satu nilai kembali. |
+| **Salinan enum** | Lapisan penyimpanan tidak mengimpor `src/ingest/`, sehingga ia memegang salinan nilai `JenisPutusan`, `PeranKurasi`, `Pemicu`, `TindakanPenarikan`. Uji `test_kurasi_selaras.py` menjaga keduanya sama — salinan tanpa penjaga adalah `IndeksTujuan` yang ditulis dua kali (KB-036). |
+| Mutasi | Sisi penyimpan M-13 (butir ditarik tetap tersedia) dan pengabaian tanggal tunda: keduanya memerahkan uji. |
+| Alternatif | Memberi `peran_pengisi_antrean` hak `SELECT` atas penarikan — ditolak; hak dipersempit menurut pekerjaan, bukan menurut kenyamanan kueri. |
+| Dampak | Dua modul baru dan dua berkas uji. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Catatan sesudah pemeriksaan | `make check` pertama gagal: cakupan turun dari penanda 99.87 menjadi 99.49 — cabang penolakan bentuk (alasan kosong, peran pemutus lain, status dan kategori di luar daftar, pemicu tak dikenal) dan cabang pelaksana memori belum diuji. Ditambah tujuh uji perilaku atas kedua pelaksana; kedua modul 100 %. Penanda tidak diturunkan (C-11). |
