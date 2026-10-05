@@ -2803,3 +2803,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menunggu Gerbang 2 dari pemegang gerbang — tidak dipilih; pendelegasian tertulis dan belum dicabut, dan bertanya ulang mengabaikannya (KB-168). Peran basis data tunggal bagi kurasi dan penayangan — tidak dianjurkan; C-06 menjadi dijaga kode saja. |
 | Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 013; status `spec.md`. Nol baris kode. Pendelegasian dapat dicabut kapan saja. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-180 · T-1 fitur 013 — kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-1 `tasks.md` fitur 013, dikerjakan atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | D-14 0.12: Bagian 4.6 (tiga rute penemuan, empat keadaan beranda, butir ringkas dan lengkap) dan 4.7 (antrean dua daftar, empat badan putusan, badan penarikan); Bagian 5.1 memperoleh skema `kurasi` dan `penemuan`. D-04 0.12: `jejak_kurasi.id_kurator` menjadi `peran, pseudonim_kurator`, tabel `penarikan` (K-5). D-05 0.6: S-05 beserta keadaannya, navigasi dua tujuan (K-7), catatan blok 8 S-06, S-15 pada fitur 013, S-16. D-00 2.77. |
+| **Yang sengaja tidak ditulis** | Teks wireframe D-05 lama — tiga tombol S-15, skor relevansi — tidak dihapus; catatan fitur 013 ditambahkan di bawahnya agar selisihnya terbaca, bukan tersamar. |
+| Alternatif | Bentuk tanggapan `tolak` 204 tanpa badan — tidak dipilih; layar membaca beranda dua kali, dan pola fitur 030 (rute penulis mengembalikan bentuk baca) sudah terbukti. |
+| Dampak | `docs/D14.md`, `docs/D04.md`, `docs/D05.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168, dalam batas `plan.md` yang lolos Gerbang 2 |

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Nol dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Satu dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -18,16 +18,16 @@ Agen **tidak** mengisi antrean dengan butir karangan di luar uji dan bukti.
 
 **Kebutuhan:** R-01; K-5, K-6.
 
-- [ ] D-14 Bagian 4.6: bentuk tiga rute penemuan — keadaan beranda, ringkas,
+- [x] D-14 Bagian 4.6: bentuk tiga rute penemuan — keadaan beranda, ringkas,
       lengkap, penolakan; syarat `application/json` pada `tolak`
-- [ ] D-14 Bagian 4.7: bentuk tiga rute kurasi — antrean dua daftar, empat
+- [x] D-14 Bagian 4.7: bentuk tiga rute kurasi — antrean dua daftar, empat
       badan putusan, badan penarikan
-- [ ] D-14 Bagian 5.1: `kandidat`, `butir_tayang`, `putusan`, `penarikan`,
+- [x] D-14 Bagian 5.1: `kandidat`, `butir_tayang`, `putusan`, `penarikan`,
       `tayang_harian`, `belum_relevan`
-- [ ] D-04 Bagian 7.3: `jejak_kurasi.id_kurator` diselaraskan menjadi
+- [x] D-04 Bagian 7.3: `jejak_kurasi.id_kurator` diselaraskan menjadi
       `peran, pseudonim_kurator`; tabel penarikan
-- [ ] D-05: blok S-05, S-15, S-16; navigasi dua tujuan (K-7)
-- [ ] Register D-00
+- [x] D-05: blok S-05, S-15, S-16; navigasi dua tujuan (K-7)
+- [x] Register D-00
 
 ## T-2 · Peladen menegakkan hak kurasi dan penayangan
 
