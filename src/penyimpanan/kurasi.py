@@ -112,6 +112,10 @@ class PengisiAntrean(Protocol):
         """Penarikan tanpa pemutus — hanya pemicu regulasi (D-06 Bagian 7.5)."""
         ...
 
+    async def dokumen_dikenal(self) -> frozenset[str]:
+        """Dokumen sumber kandidat dan butir tayang — masukan lapis L2 `saring()`."""
+        ...
+
 
 class PenyimpanKurasi(Protocol):
     async def menunggu(self, *, hari_ini: date) -> tuple[BarisKandidat, ...]:
@@ -245,6 +249,9 @@ class KurasiMemori:
     async def tarik_otomatis(self, id_butir: str, alasan: str, *, sekarang: datetime) -> bool:
         _penarikan("regulasi_sumber_berubah", "ditarik", alasan, sekarang)
         return self._tarik(id_butir, "regulasi_sumber_berubah", "ditarik", alasan, sekarang)
+
+    async def dokumen_dikenal(self) -> frozenset[str]:
+        return frozenset(k.id_dokumen_sumber for k in self._isi.kandidat.values())
 
     # PenyimpanKurasi
 
@@ -492,6 +499,13 @@ class PengisiAntreanPostgres:
         return (
             _jumlah(await self._sambungan.execute(_TARIK_OTOMATIS, id_butir, alasan, sekarang)) > 0
         )
+
+    async def dokumen_dikenal(self) -> frozenset[str]:
+        baris = await self._sambungan.fetch(
+            "SELECT id_dokumen_sumber FROM kurasi.kandidat "
+            "UNION SELECT id_dokumen_sumber FROM kurasi.butir_tayang"
+        )
+        return frozenset(str(b["id_dokumen_sumber"]) for b in baris)
 
 
 class KurasiPostgres:

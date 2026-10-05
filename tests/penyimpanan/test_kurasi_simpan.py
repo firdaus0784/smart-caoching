@@ -514,3 +514,13 @@ def test_kolom_json_yang_bukan_objek_ditolak_terang() -> None:
     assert json_dari({"a": 1}) == {"a": 1}
     with pytest.raises(TypeError):
         json_dari("[1, 2]")
+
+
+def test_dokumen_dikenal_bagi_lapis_l2(simpan: Tiga) -> None:
+    async def uji() -> None:
+        k = _kandidat()
+        assert k.id_dokumen_sumber not in await simpan.pengisi.dokumen_dikenal()
+        await simpan.pengisi.tambah_kandidat(k)
+        assert k.id_dokumen_sumber in await simpan.pengisi.dokumen_dikenal()
+
+    jalankan(uji())

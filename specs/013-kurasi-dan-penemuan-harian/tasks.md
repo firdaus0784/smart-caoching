@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Tiga dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Empat dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -56,10 +56,10 @@ Agen **tidak** mengisi antrean dengan butir karangan di luar uji dan bukti.
 
 **Kebutuhan:** R-04; K-3, K-4; FR-I07.
 
-- [ ] Uji lebih dulu: `isi` menolak berkas yang tidak lolos `ButirPengetahuan`
+- [x] Uji lebih dulu: `isi` menolak berkas yang tidak lolos `ButirPengetahuan`
       dan L1–L3; `status dicabut` memperbarui kandidat dan menarik butir tayang
-- [ ] `perkakas/kurasi.py` tersambung sebagai `peran_pengisi_antrean`
-- [ ] Mutasi M-5 sisi perkakas
+- [x] `perkakas/kurasi.py` tersambung sebagai `peran_pengisi_antrean`
+- [x] Mutasi M-5 sisi perkakas
 
 ## T-5 · Rute kurasi
 

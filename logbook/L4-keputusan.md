@@ -2843,3 +2843,18 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | Dua modul baru dan dua berkas uji. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Catatan sesudah pemeriksaan | `make check` pertama gagal: cakupan turun dari penanda 99.87 menjadi 99.49 — cabang penolakan bentuk (alasan kosong, peran pemutus lain, status dan kategori di luar daftar, pemicu tak dikenal) dan cabang pelaksana memori belum diuji. Ditambah tujuh uji perilaku atas kedua pelaksana; kedua modul 100 %. Penanda tidak diturunkan (C-11). |
+
+## KB-183 · T-4 fitur 013 — perkakas kurasi; TK-72 antrean tertahan L4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | T-4 `tasks.md` fitur 013, atas pendelegasian KB-168 dalam batas `plan.md` (KB-179). |
+| Keputusan | `perkakas/kurasi.py` (`isi`, `status`) tersambung sebagai `peran_pengisi_antrean`; model `SumberButir` pada `src/ingest/kurasi/sumber.py` (K-3); `dokumen_dikenal()` pada penyimpan pengisi bagi lapis L2. Berkas diperiksa utuh sebelum apa pun ditulis; keluaran hanya jumlah, isi butir tidak dikutip. `status diubah\|dicabut` menarik otomatis butir tayang bersumber dokumen itu. |
+| **Temuan — TK-72** | `saring()` fitur 010 menahan setiap kandidat di L4 sampai ambang relevansi dikalibrasi (BT-24); tidak satu pun berstatus `MASUK_ANTREAN`. Spec P-2 menulis "lolos penyaringan L1–L3", tetapi meloloskan yang tertahan di L4 berarti memilih ambang longgar — pilihan yang uraian `saring.py` tolak dan yang menyentuh C-16, salah satu batas yang KB-168 kecualikan dari pendelegasian. **Agen tidak mengambilnya.** Perkakas memasukkan hanya yang `boleh_masuk_antrean`, sehingga hari ini antrean tidak terisi lewat jalur sah; pertanyaannya diajukan kepada pemegang gerbang dan penanggung jawab teknis. Kode lain tidak bergantung pada jawabannya. |
+| **Penyimpangan kecil dari plan** | Plan Bagian 4 menyebut penarikan otomatis "lewat `tinjau()`". Fungsi itu menuntut `ButirTayang` utuh beserta putusannya; menyusun ulang putusan dari baris tersimpan demi satu pemetaan adalah memalsukan putusan. Aturannya sama dan diterapkan langsung: regulasi berstatus `diubah` atau `dicabut` menarik. |
+| Mutasi | M-5 sisi perkakas (status tidak diperbarui) dan mutan "kandidat tertahan L4 masuk antrean" — keduanya memerahkan uji. |
+| Alternatif | Memasukkan kandidat L1–L3 sesuai kalimat spec — ditunda kepada tim (TK-72). Menyimpan kandidat tertahan pada tabel tersendiri — tidak dipilih; menambah tabel di luar plan bagi keadaan yang mungkin diputus lain. |
+| Dampak | `perkakas/kurasi.py`, `src/ingest/kurasi/sumber.py`, `src/penyimpanan/kurasi.py`; dua berkas uji; D-00 2.78 (TK-72). |
+| Pemutus | Agen atas pendelegasian KB-168; TK-72 menunggu tim |
+| Catatan sesudah pemeriksaan | `make check` pertama gagal: cakupan 99.859 di bawah penanda 99.87 — cabang penolakan `SumberButir` belum diuji, sebab uji perkakas berada di luar sumber cakupan (`perkakas/`). Ditambah `tests/ingest/kurasi/test_sumber.py`; penanda tidak diturunkan. |
