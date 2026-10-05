@@ -2933,3 +2933,14 @@ ditegakkan uji, bukan kebiasaan.
 | Keputusan | Fitur 013 dinyatakan selesai sembilan dari sembilan tugas dan **diajukan ke Gerbang 4**; status `tasks.md` menyatakannya. Agen tidak meluluskannya sendiri (KB-168). |
 | Alternatif | Menjalankan bukti dengan antrean kosong — ditolak; bukti tanpa butir tidak membuktikan C-06 dari ujung ke ujung. Memasukkan butir lewat SQL langsung — ditolak; perkakas `isi` sungguhan dipakai agar L1 s.d. L3 tetap berjalan. |
 | Dampak | `specs/013-kurasi-dan-penemuan-harian/bukti/` (skrip, tujuh tangkapan layar), `tasks.md`, `perkakas/jalankan_lokal.py` (rute kurasi dan beranda pada titik jalan pengembangan), `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. Catatan: ketiga bidang ini ditambahkan sesudah pemeriksa bentuk L4 menolak entri tanpa mereka. |
+
+## KB-189 · Gerbang 4 fitur 013 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-05 |
+| Konteks | Laporan KB-188 mengajukan fitur 013 ke Gerbang 4, beserta penyimpangan hak penayang (KB-185) dan pendaratan di Beranda (K-7). Ditanyakan tegas lewat pilihan; Gerbang 4 tidak didelegasikan (KB-168). |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"**. Fitur 013 selesai; jumlah fitur lolos Gerbang 4 menjadi **26 dari 35**. Penyimpangan KB-185 dan perubahan pendaratan diterima bersamanya. |
+| Alternatif | Menunda dengan perbaikan — tidak dipilih pemegang gerbang. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 013; penanda dokumen HKI. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |

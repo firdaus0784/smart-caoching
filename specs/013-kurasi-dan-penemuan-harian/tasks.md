@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Sembilan dari sembilan tugas selesai — **menunggu Gerbang 4 manusia** (KB-188) |
+| Status | **Gerbang 4 lolos** — 5 Oktober 2026 (KB-189). Sembilan dari sembilan tugas selesai |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum

@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-G01, FR-G02, FR-G03, FR-G04, FR-G05, FR-G07, FR-G08; FR-I01, FR-I02, FR-I03, FR-I06, FR-I07; NFR-19; C-02, C-03, C-06, C-07, C-13, C-14, C-15, C-20 |
 | Dokumen terkait | D-05 Bagian 4, 5.3, 6, 7, 8 (S-05, S-06, S-15, S-16) · D-06 Bagian 5 dan 7 · D-14 Bagian 3.3 dan 3.4 · D-12 Bagian 7 |
-| Status | **Gerbang 1 lolos** — 5 Oktober 2026 (KB-178). Gerbang 2 dan 3 atas pendelegasian KB-168 (KB-179) |
+| Status | **Gerbang 4 lolos** — 5 Oktober 2026 (KB-189). Sembilan dari sembilan tugas selesai |
 
 ## Mengapa fitur ini diusulkan, dan mengapa bukan 013 sisa utuh
 
