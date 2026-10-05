@@ -254,19 +254,25 @@ async def putuskan(
 # ── penarikan ────────────────────────────────────────────────────────
 
 
-def _butir_tayang(t: BarisTayang) -> ButirTayang:
+def bentuk_ulang(t: BarisTayang, *, status_terkini: bool = False) -> ButirTayang:
     """`ButirTayang` lewat gerbangnya sendiri — `terapkan()` atas putusan tersimpan.
 
     Konstruktornya tidak dipanggil di sini: pemeriksa C-06 membatasi pembentukan
     `ButirTayang` pada modul putusan, dan `terapkan()` adalah satu-satunya jalan
     sah ke sana. Yang diterapkan putusan **yang sungguh tercatat** — jenis,
     peran, dan waktunya dibaca dari basis data — sehingga penjaga C-06 dan C-07
-    berjalan ulang pada butir yang hendak ditarik.
+    berjalan ulang.
+
+    `status_terkini` memakai salinan status yang diperbarui perkakas (K-4);
+    regulasi yang tidak lagi berlaku kemudian melempar `GalatPutusan`. Feed
+    memakainya; penarikan tidak, sebab butir yang hendak ditarik justru yang
+    regulasinya baru dicabut.
     """
     jenis = None if t.putusan is None else JenisPutusan(t.putusan.jenis)
     if t.putusan is None or jenis not in _JENIS_MENYETUJUI:
         raise RuntimeError("baris tayang tanpa putusan yang menyetujui — penyimpan rusak")
-    butir = ButirPengetahuan.model_validate(t.butir)
+    isi = {**t.butir, "status_keberlakuan": t.status_keberlakuan} if status_terkini else t.butir
+    butir = ButirPengetahuan.model_validate(isi)
     putusan = Putusan(
         jenis=jenis,
         id_butir=t.id_butir,
@@ -310,7 +316,7 @@ async def tarik(
         raise ValueError("status terkini hanya milik pemicu regulasi")
     try:
         hasil = tinjau(
-            _butir_tayang(baris),
+            bentuk_ulang(baris),
             pemicu=permintaan.pemicu,
             status_terkini=permintaan.status_terkini,
             angka_berubah_bermakna=permintaan.angka_berubah_bermakna,

@@ -72,7 +72,7 @@ prioritas tambah-saja. Pemilik tiap baris wajib berpola pseudonim akun.
 |---|---|---|
 | `peran_pengisi_antrean` (perkakas tim) | menambah kandidat; memperbarui salinan status regulasi; menarik otomatis | menayangkan; memutus; mengubah isi kandidat |
 | `peran_kurasi` (rute kurator) | membaca antrean; mencatat putusan dan penarikan; menayangkan | menambah kandidat; mengubah status regulasi; menyunting butir tayang; membaca perilaku pengguna |
-| `peran_penayangan` (rute pengguna) | membaca butir tayang; mencatat butir hari ini dan "belum relevan" | membaca antrean, putusan, penarikan; menulis butir tayang |
+| `peran_penayangan` (rute pengguna) | membaca butir tayang beserta jenis, peran, dan waktu putusannya; mencatat butir hari ini dan "belum relevan" | membaca antrean, pemutus dan alasan putusan, penarikan; menulis butir tayang |
 
 **C-06 ditegakkan peladen dua kali.** Peran yang menayangkan tidak dapat
 membaca kandidat, dan butir tayang hanya dapat merujuk putusan yang

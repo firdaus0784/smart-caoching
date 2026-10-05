@@ -102,7 +102,9 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
         "PESAN_BUTIR_TIDAK_ADA",
     ):
         assert baru in nama, baru
-    assert len(ditemukan) == 24, f"{len(ditemukan)} untai terbaca, seharusnya 24"
+    # 25 sejak T-6: alasan "belum relevan" yang tidak sah.
+    assert "PESAN_ALASAN_TIDAK_SAH" in nama
+    assert len(ditemukan) == 25, f"{len(ditemukan)} untai terbaca, seharusnya 25"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

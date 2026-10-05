@@ -4,9 +4,10 @@ Bentuk tabelnya D-14 Bagian 4.6 dan 5.1 dan `perkakas/basis_data/09-kurasi.sql`.
 
 ## Yang dapat dibaca penayang
 
-Butir tayang saja (R-02). Permukaan ini **tidak memiliki** cara membaca
-kandidat, putusan, maupun penarikan — bukan dilarang, melainkan tidak ada; dan
-peladen menolaknya pula (T-2). Butir yang ditarik tidak pernah tersedia bagi
+Butir tayang beserta tiga kolom putusan yang menayangkannya — jenis, peran,
+waktu (R-02, KB-185). Permukaan ini **tidak memiliki** cara membaca kandidat,
+penarikan, maupun pemutus dan alasan putusan — bukan dilarang, melainkan tidak
+ada; dan peladen menolaknya pula (T-2). Butir yang ditarik tidak pernah tersedia bagi
 pemilihan, tetapi `baca_tayang` tetap menyebutnya beserta waktu tariknya, agar
 rute dapat menjawab satu bentuk bagi "ditarik" dan "tidak dikenal".
 
@@ -46,8 +47,17 @@ class PenyimpanPenemuan(Protocol):
     async def catatan_hari_ini(self, pemilik: str, tanggal: date) -> tuple[str, ...]: ...
 
     async def catat_hari_ini(
-        self, pemilik: str, tanggal: date, id_butir: tuple[str, ...], *, sekarang: datetime
-    ) -> None: ...
+        self,
+        pemilik: str,
+        tanggal: date,
+        id_butir: tuple[str, ...],
+        *,
+        sekarang: datetime,
+        mulai: int = 1,
+    ) -> None:
+        """Catat butir baru hari itu dengan urutan sejak `mulai` — butir yang
+        menyusul pada hari yang sama berada di belakang yang sudah tampil."""
+        ...
 
     async def pernah_tayang(self, pemilik: str) -> frozenset[str]: ...
 
@@ -101,12 +111,18 @@ class PenemuanMemori:
         return tuple(i for _, i in sorted(hari))
 
     async def catat_hari_ini(
-        self, pemilik: str, tanggal: date, id_butir: tuple[str, ...], *, sekarang: datetime
+        self,
+        pemilik: str,
+        tanggal: date,
+        id_butir: tuple[str, ...],
+        *,
+        sekarang: datetime,
+        mulai: int = 1,
     ) -> None:
         _pemilik(pemilik)
         _utc(sekarang)
         satu = self._milik.setdefault(pemilik, _Milik())
-        for urutan, i in enumerate(id_butir, start=1):
+        for urutan, i in enumerate(id_butir, start=mulai):
             satu.tayang.setdefault(i, (tanggal, urutan))
 
     async def pernah_tayang(self, pemilik: str) -> frozenset[str]:
@@ -134,16 +150,14 @@ class PenemuanPostgres:
         self._sambungan = sambungan
 
     async def baca_tayang(self, id_butir: str) -> BarisTayang | None:
-        b = await self._sambungan.fetchrow(
-            f"SELECT {KOLOM_TAYANG} FROM kurasi.butir_tayang WHERE id_butir = $1", id_butir
-        )
+        b = await self._sambungan.fetchrow(f"SELECT {KOLOM_TAYANG} WHERE b.id_butir = $1", id_butir)
         return None if b is None else baris_tayang(b)
 
     async def tayang_menurut_kategori(self, kategori: tuple[str, ...]) -> tuple[BarisTayang, ...]:
         baris = await self._sambungan.fetch(
-            f"SELECT {KOLOM_TAYANG} FROM kurasi.butir_tayang "
-            "WHERE ditarik_pada IS NULL AND kategori = ANY($1::text[]) "
-            "ORDER BY tayang_pada, id_butir",
+            f"SELECT {KOLOM_TAYANG} "
+            "WHERE b.ditarik_pada IS NULL AND b.kategori = ANY($1::text[]) "
+            "ORDER BY b.tayang_pada, b.id_butir",
             list(kategori),
         )
         return tuple(baris_tayang(b) for b in baris)
@@ -158,19 +172,26 @@ class PenemuanPostgres:
         return tuple(str(b["id_butir"]) for b in baris)
 
     async def catat_hari_ini(
-        self, pemilik: str, tanggal: date, id_butir: tuple[str, ...], *, sekarang: datetime
+        self,
+        pemilik: str,
+        tanggal: date,
+        id_butir: tuple[str, ...],
+        *,
+        sekarang: datetime,
+        mulai: int = 1,
     ) -> None:
         _pemilik(pemilik)
         _utc(sekarang)
         await self._sambungan.execute(
             "INSERT INTO penemuan.tayang_harian (id_pengguna, tanggal, id_butir, urutan, "
-            "ditayangkan_pada) SELECT $1, $2, x.id, x.n::smallint, $4 "
+            "ditayangkan_pada) SELECT $1, $2, x.id, (x.n + $5 - 1)::smallint, $4 "
             "FROM unnest($3::text[]) WITH ORDINALITY AS x(id, n) "
             "ON CONFLICT (id_pengguna, id_butir) DO NOTHING",
             pemilik,
             tanggal,
             list(id_butir),
             sekarang,
+            mulai,
         )
 
     async def pernah_tayang(self, pemilik: str) -> frozenset[str]:

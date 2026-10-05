@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 5 Oktober 2026 (KB-178); P-1 s.d. P-7 sesuai anjuran |
 | Plan | Gerbang 2 lolos 5 Oktober 2026 atas pendelegasian KB-168 (KB-179); K-1 s.d. K-8 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Lima dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-179). Enam dari sembilan tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-13; FR-G01 s.d. G05, G07, G08; FR-I01 s.d. I03, I05 s.d. I07; C-02, C-03, C-05, C-06, C-07, C-13, C-14, C-15, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -73,9 +73,9 @@ Agen **tidak** mengisi antrean dengan butir karangan di luar uji dan bukti.
 
 **Kebutuhan:** R-02, R-05 s.d. R-08; K-2.
 
-- [ ] Uji lebih dulu, termasuk C-06 ujung ke ujung dan C-14
-- [ ] `src/api/penemuan.py`, pemasangan di `aplikasi.py`, `POLA_*`
-- [ ] Mutasi M-1, M-8, M-9, M-12, M-13
+- [x] Uji lebih dulu, termasuk C-06 ujung ke ujung dan C-14
+- [x] `src/api/penemuan.py`, pemasangan di `aplikasi.py`, `POLA_*`
+- [x] Mutasi M-1, M-8, M-9, M-12, M-13
 
 ## T-7 · Layar S-05 dan S-06
 

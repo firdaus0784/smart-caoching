@@ -541,8 +541,29 @@ def test_daftar_tayang_kurator_membawa_putusannya(simpan: Tiga) -> None:
             "kurator",
             T0,
         )
-        # Penayang tidak menerima putusan (R-02).
+        # Penayang menerima ketiga kolom yang sama — tanpa pemutus (KB-185).
         baris = await simpan.penemuan.baca_tayang(k.id_butir)
-        assert baris is not None and baris.putusan is None
+        assert baris is not None and baris.putusan == putusan
+        assert not hasattr(baris.putusan, "pseudonim_kurator")
+
+    jalankan(uji())
+
+
+def test_butir_yang_menyusul_berurutan_di_belakang(simpan: Tiga) -> None:
+    async def uji() -> None:
+        p = _psd()
+        ks = [_kandidat() for _ in range(3)]
+        for k in ks:
+            await simpan.pengisi.tambah_kandidat(k)
+            await simpan.kurasi.setujui(_putusan(k.id_butir, "setujui"), butir=k.butir)
+        await simpan.penemuan.catat_hari_ini(p, HARI, (ks[2].id_butir,), sekarang=T0)
+        await simpan.penemuan.catat_hari_ini(
+            p, HARI, (ks[0].id_butir, ks[1].id_butir), sekarang=T0, mulai=2
+        )
+        assert await simpan.penemuan.catatan_hari_ini(p, HARI) == (
+            ks[2].id_butir,
+            ks[0].id_butir,
+            ks[1].id_butir,
+        )
 
     jalankan(uji())

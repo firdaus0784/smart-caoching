@@ -9,7 +9,8 @@
 --   C-06            Butir tayang hanya dapat merujuk putusan yang MENYETUJUI
 --                   butir itu sendiri — kunci asing gabungan atas
 --                   (nomor, id_butir, menyetujui). Peran yang menayangkan tidak
---                   dapat membaca antrean maupun menulis butir tayang.
+--                   dapat membaca antrean, pemutus, maupun alasan putusan, dan
+--                   tidak dapat menulis butir tayang.
 --   FR-I07          Kandidat hanya ditambahkan perkakas tim, sesudah penyaringan
 --                   L1–L3. Layar kurator tidak dapat menambahkannya.
 --   C-07            Salinan status regulasi hanya diperbarui perkakas tim (K-4).
@@ -157,7 +158,12 @@ GRANT UPDATE (ditarik_pada, alasan_tarik, perlu_tinjauan_pada)
   ON kurasi.butir_tayang TO peran_kurasi;
 GRANT SELECT, INSERT ON kurasi.penarikan TO peran_kurasi;
 
--- Rute pengguna: membaca butir tayang saja, mencatat butir hari ini.
+-- Rute pengguna: membaca butir tayang, mencatat butir hari ini. Atas putusan
+-- hanya kolom yang membuktikan PERSETUJUAN-nya — jenis, peran, waktu — agar
+-- `ButirTayang` dibentuk lewat `terapkan()` fitur 010, bukan dikarang.
+-- Pemutus (`pseudonim_kurator`) dan `alasan` tetap ditolak peladen.
 GRANT USAGE ON SCHEMA kurasi, penemuan TO peran_penayangan;
 GRANT SELECT ON kurasi.butir_tayang TO peran_penayangan;
+GRANT SELECT (nomor, id_butir, jenis, menyetujui, peran, waktu)
+  ON kurasi.putusan TO peran_penayangan;
 GRANT SELECT, INSERT ON penemuan.tayang_harian, penemuan.belum_relevan TO peran_penayangan;

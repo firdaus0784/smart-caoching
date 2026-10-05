@@ -539,7 +539,7 @@ def _catatan(id_butir: str, jenis: str = "setujui") -> Any:
 def test_baris_tayang_tanpa_putusan_setuju_adalah_kerusakan(putusan: Any) -> None:
     """Penyimpan yang menyerahkan butir tayang tanpa persetujuan tidak dibaca
     sebagai butir yang boleh ditinjau — ia kerusakan, dan berhenti terang."""
-    from src.api.kurasi import _butir_tayang
+    from src.api.kurasi import bentuk_ulang
     from src.penyimpanan.kurasi import BarisTayang, PutusanTayang
 
     b = butir("b-1")
@@ -554,7 +554,7 @@ def test_baris_tayang_tanpa_putusan_setuju_adalah_kerusakan(putusan: Any) -> Non
         putusan=None if putusan is None else PutusanTayang(*putusan, waktu=T0),
     )
     with pytest.raises(RuntimeError):
-        _butir_tayang(baris)
+        bentuk_ulang(baris)
 
 
 def test_persetujuan_tanpa_butir_tayang_dihentikan() -> None:

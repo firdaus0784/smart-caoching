@@ -891,7 +891,12 @@ DITOLAK_KURASI = [
         ("peran_penayangan", "smart_coaching", kueri, sebab)
         for kueri, sebab in (
             ("select * from kurasi.kandidat", "C-06 — penayang tidak membaca antrean"),
-            ("select * from kurasi.putusan", "penayang tidak membaca putusan"),
+            ("select * from kurasi.putusan", "penayang tidak membaca putusan utuh"),
+            (
+                "select pseudonim_kurator from kurasi.putusan",
+                "C-05 — penayang tidak membaca pemutus",
+            ),
+            ("select alasan from kurasi.putusan", "penayang tidak membaca alasan putusan"),
             ("select * from kurasi.penarikan", "penayang tidak membaca penarikan"),
             (
                 "insert into kurasi.butir_tayang (id_butir) values ('x')",
@@ -1041,6 +1046,11 @@ def test_peran_kurasi_berjalan_pada_haknya(basis_data_siap: None) -> None:
     _jalan("peran_penayangan", "select * from kurasi.butir_tayang")
     _jalan(
         "peran_penayangan",
+        "select b.id_butir, p.jenis, p.peran, p.waktu from kurasi.butir_tayang b "
+        "join kurasi.putusan p on p.nomor = b.nomor_putusan",
+    )
+    _jalan(
+        "peran_penayangan",
         "insert into penemuan.tayang_harian (id_pengguna, tanggal, id_butir, urutan, "
         f"ditayangkan_pada) values ('{_PSD}', current_date, 'b-jalan', 1, now())",
     )
@@ -1107,6 +1117,7 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
     assert kolom.stdout.split() == [
         "peran_kurasi:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,perlu_tinjauan_pada",
         "peran_kurasi:kandidat:UPDATE:kembali_pada",
+        "peran_penayangan:putusan:SELECT:id_butir,jenis,menyetujui,nomor,peran,waktu",
         "peran_pengisi_antrean:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,status_keberlakuan",
         "peran_pengisi_antrean:kandidat:UPDATE:status_keberlakuan",
     ]

@@ -77,9 +77,11 @@ class BarisKandidat:
 class PutusanTayang:
     """Putusan yang menayangkan sebuah butir, sebagaimana tersimpan.
 
-    Dibaca peran kurasi saja — penayang tidak membaca putusan (R-02). Dengan
-    ini rute penarikan membentuk ulang `ButirTayang` fitur 010 dari baris
-    sungguhan, alih-alih menyusun putusan karangan demi memanggil `tinjau()`.
+    Tiga kolom yang membuktikan **persetujuan**-nya, tanpa pemutus maupun
+    alasan. Dengan ini rute penarikan dan feed membentuk `ButirTayang` fitur 010
+    lewat `terapkan()` atas putusan sungguhan, alih-alih putusan karangan.
+    Peran penayang membaca ketiga kolom ini saja; pemutus dan alasan ditolak
+    peladen (T-6, KB-185).
     """
 
     jenis: str
@@ -99,7 +101,7 @@ class BarisTayang:
     ditarik_pada: datetime | None = None
     perlu_tinjauan_pada: datetime | None = None
     putusan: PutusanTayang | None = None
-    """Terisi hanya pada `PenyimpanKurasi.tayang_aktif`."""
+    """Putusan yang menayangkannya; `None` hanya bila penyimpan rusak."""
 
 
 @dataclass(frozen=True)
@@ -360,9 +362,8 @@ class KurasiMemori:
         return True
 
     def baris_tayang(self) -> dict[str, BarisTayang]:
-        """Bagi `PenemuanMemori` — salinan tanpa putusan, sebab penayang tidak
-        membaca putusan (R-02)."""
-        return {k: replace(t, putusan=None) for k, t in self._isi.tayang.items()}
+        """Bagi `PenemuanMemori` — salinan, bukan rujukan ke isi."""
+        return dict(self._isi.tayang)
 
     def jejak(self) -> tuple[CatatanPutusan, ...]:
         """Seluruh putusan tercatat — bagi uji jejak FR-I05."""
@@ -376,9 +377,11 @@ _KOLOM_KANDIDAT: Final = (
     "k.status_keberlakuan, k.masuk_pada, k.kembali_pada"
 )
 KOLOM_TAYANG: Final = (
-    "id_butir, butir, sumber, id_dokumen_sumber, kategori, status_keberlakuan, "
-    "tayang_pada, ditarik_pada, perlu_tinjauan_pada"
+    "b.id_butir, b.butir, b.sumber, b.id_dokumen_sumber, b.kategori, b.status_keberlakuan, "
+    "b.tayang_pada, b.ditarik_pada, b.perlu_tinjauan_pada, p.jenis, p.peran, p.waktu "
+    "FROM kurasi.butir_tayang b JOIN kurasi.putusan p ON p.nomor = b.nomor_putusan"
 )
+"""Kolom butir tayang beserta putusan yang menayangkannya — `SELECT` + ini."""
 
 _MENUNGGU: Final = f"""
 SELECT {_KOLOM_KANDIDAT} FROM kurasi.kandidat k
@@ -473,6 +476,7 @@ def _baris_kandidat(b: Any) -> BarisKandidat:
 
 
 def baris_tayang(b: Any) -> BarisTayang:
+    """Baris hasil `KOLOM_TAYANG`."""
     return BarisTayang(
         id_butir=str(b["id_butir"]),
         butir=json_dari(b["butir"]),
@@ -483,6 +487,7 @@ def baris_tayang(b: Any) -> BarisTayang:
         tayang_pada=b["tayang_pada"],
         ditarik_pada=b["ditarik_pada"],
         perlu_tinjauan_pada=b["perlu_tinjauan_pada"],
+        putusan=PutusanTayang(jenis=str(b["jenis"]), peran=str(b["peran"]), waktu=b["waktu"]),
     )
 
 
@@ -548,23 +553,9 @@ class KurasiPostgres:
 
     async def tayang_aktif(self) -> tuple[BarisTayang, ...]:
         baris = await self._sambungan.fetch(
-            "SELECT b.id_butir, b.butir, b.sumber, b.id_dokumen_sumber, b.kategori, "
-            "b.status_keberlakuan, b.tayang_pada, b.ditarik_pada, b.perlu_tinjauan_pada, "
-            "p.jenis, p.peran, p.waktu FROM kurasi.butir_tayang b "
-            "JOIN kurasi.putusan p ON p.nomor = b.nomor_putusan "
-            "WHERE b.ditarik_pada IS NULL ORDER BY b.tayang_pada, b.id_butir"
+            f"SELECT {KOLOM_TAYANG} WHERE b.ditarik_pada IS NULL ORDER BY b.tayang_pada, b.id_butir"
         )
-        return tuple(
-            replace(
-                baris_tayang(b),
-                putusan=PutusanTayang(
-                    jenis=str(b["jenis"]),
-                    peran=str(b["peran"]),
-                    waktu=b["waktu"],  # type: ignore[arg-type]
-                ),
-            )
-            for b in baris
-        )
+        return tuple(baris_tayang(b) for b in baris)
 
     async def _putuskan(self, kueri: str, catatan: CatatanPutusan, *lebih: object) -> bool:
         b = await self._sambungan.fetchrow(

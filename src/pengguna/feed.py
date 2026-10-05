@@ -114,7 +114,13 @@ class UmpanBalikRelevansi(BaseModel):
         return nilai
 
 
-def _boleh_teks_penuh(butir: ButirPengetahuan) -> bool:
+def boleh_teks_penuh(butir: ButirPengetahuan) -> bool:
+    """FR-G08, C-02 — satu tempat bagi feed **dan** detail butir (fitur 013 T-6).
+
+    Publik sejak fitur 013: detail butir S-06 menuntut jawaban yang sama dengan
+    feed, dan jawaban kedua yang ditulis di tempat lain akan berbeda pada hari
+    daftar lisensinya berubah.
+    """
     return butir.lisensi.strip() in LISENSI_TERBUKA
 
 
@@ -152,7 +158,7 @@ def susun_feed(
             terpilih.append(
                 ButirFeed(
                     butir=tayang.butir,
-                    boleh_teks_penuh=_boleh_teks_penuh(tayang.butir),
+                    boleh_teks_penuh=boleh_teks_penuh(tayang.butir),
                 )
             )
             if len(terpilih) == sisa:

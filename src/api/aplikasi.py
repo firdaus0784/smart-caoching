@@ -79,8 +79,17 @@ from src.api.kurasi import (
     putuskan,
     tarik,
 )
+from src.api.penemuan import (
+    PESAN_ALASAN_TIDAK_SAH,
+    ButirTidakTampil,
+    beranda,
+    detail,
+    tolak,
+)
 from src.api.peran import (
     POLA_ANTREAN,
+    POLA_BERANDA,
+    POLA_BUTIR,
     POLA_DAFTAR_PERCAKAPAN,
     POLA_KELUAR,
     POLA_MASUK,
@@ -91,6 +100,7 @@ from src.api.peran import (
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
     POLA_TARIK,
+    POLA_TOLAK_BUTIR,
     boleh,
 )
 from src.api.percakapan import Giliran, giliran_sah
@@ -107,6 +117,7 @@ from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
 from src.penyimpanan.kurasi import PenyimpanKurasi
+from src.penyimpanan.penemuan import PenyimpanPenemuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
 
@@ -200,6 +211,7 @@ def susun_aplikasi(
     pengguna: PenyimpanPengguna | None = None,
     versi_naskah: str | None = None,
     kurasi: PenyimpanKurasi | None = None,
+    penemuan: PenyimpanPenemuan | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -218,8 +230,13 @@ def susun_aplikasi(
     `None` berarti naskah belum ada, dan setiap persetujuan ditolak (C-04).
 
     `kurasi` sama: tanpa penyimpan, rute kurator D-14 Bagian 3.4 tidak
-    terpasang (fitur 013).
+    terpasang (fitur 013). `penemuan` juga, dan ia **menuntut** `pengguna`:
+    beranda disaring terhadap prioritas yang tinggal di sana (FR-G01). Tanpa
+    penyimpan pengguna aplikasi tidak dapat disusun, bukan disusun lalu
+    menayangkan feed acak.
     """
+    if penemuan is not None and pengguna is None:
+        raise ValueError("rute penemuan menuntut penyimpan pengguna (FR-G01)")
     aplikasi = FastAPI(
         title="Smart-Coaching Adaptif",
         docs_url=None,
@@ -367,6 +384,8 @@ def susun_aplikasi(
         _pasang_rute_saya(aplikasi, pengguna, _identitas_atau_tolak, versi_naskah, sekarang)
     if kurasi is not None:
         _pasang_rute_kurasi(aplikasi, kurasi, _identitas_atau_tolak, sekarang)
+    if penemuan is not None and pengguna is not None:
+        _pasang_rute_penemuan(aplikasi, penemuan, pengguna, _identitas_atau_tolak, sekarang)
 
     return aplikasi
 
@@ -570,3 +589,59 @@ def _pasang_rute_kurasi(
                 400, KodeGalat.VALIDASI_GAGAL, PESAN_TARIK_TIDAK_SAH, rute=POLA_TARIK
             )
         return JSONResponse(status_code=200, content=await antrean(simpan, sekarang=kini))
+
+
+def _pasang_rute_penemuan(
+    aplikasi: FastAPI,
+    penemuan: PenyimpanPenemuan,
+    pengguna: PenyimpanPengguna,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    sekarang: Callable[[], datetime],
+) -> None:
+    """Rute D-14 Bagian 3.3 bagi beranda dan butir — bentuknya Bagian 4.6. Hanya
+    menerjemahkan; aturannya milik `src/api/penemuan.py` dan fitur 011."""
+
+    def _tidak_ada(pola: str) -> JSONResponse:
+        return tanggapan_galat(404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_BUTIR_TIDAK_ADA, rute=pola)
+
+    @aplikasi.get(POLA_BERANDA)
+    async def baca_beranda(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_BERANDA)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        isi = await beranda(penemuan, pengguna, siapa.pemilik, sekarang=sekarang())
+        return JSONResponse(status_code=200, content=isi)
+
+    @aplikasi.get(POLA_BUTIR)
+    async def baca_butir(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_BUTIR)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            isi = await detail(penemuan, siapa.pemilik, id)
+        except ButirTidakTampil:
+            return _tidak_ada(POLA_BUTIR)
+        return JSONResponse(status_code=200, content=isi)
+
+    @aplikasi.post(POLA_TOLAK_BUTIR)
+    async def tolak_butir(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_TOLAK_BUTIR)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        kini = sekarang()
+        try:
+            if not _berbadan_json(permintaan):
+                raise ValueError("bukan JSON")
+            try:
+                badan = await permintaan.json()
+            except ValueError:
+                badan = None
+            await tolak(penemuan, siapa.pemilik, id, badan, sekarang=kini)
+        except ButirTidakTampil:
+            return _tidak_ada(POLA_TOLAK_BUTIR)
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_ALASAN_TIDAK_SAH, rute=POLA_TOLAK_BUTIR
+            )
+        isi = await beranda(penemuan, pengguna, siapa.pemilik, sekarang=kini)
+        return JSONResponse(status_code=200, content=isi)
