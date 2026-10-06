@@ -577,3 +577,8 @@ Fitur ini menguatkan enam pasal yang sudah lulus:
 
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 035 tidak menyentuh jalur penjawaban.
+
+*Koreksi atas baris C-13 fitur 035 di atas:* untai layar baru berjumlah
+**empat puluh delapan** — empat puluh dua kunci `MIKROKOPI` dan enam label
+metrik tertunda — ditambah empat fungsi penyusun, bukan empat puluh lima.
+Baris di atas tidak disunting (tambah-saja).
