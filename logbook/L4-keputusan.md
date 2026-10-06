@@ -3256,3 +3256,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menahan untuk ditinjau — tidak dipilih pemegang gerbang. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 033; penanda dokumen HKI. Nol baris kode. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-214 · Usulan `spec.md` fitur 035 — analitik penelitian; TK-77
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Sesudah Gerbang 4 fitur 033 (KB-213) pemegang gerbang menjawab "setuju dan lanjutkan". Baris tersisa: 031 (tertahan TK-71), 032, 035. |
+| Keputusan | Mengusulkan **035 lebih dulu**: sejak 034 dan 033 peristiwa tersimpan dan dapat ditarik, tetapi belum ada cara tim membacanya selain kueri tangan pengelola. Usulan dipersempit ke analitik (S-18, FR-J03, FR-J04). Delapan kebutuhan yang tidak bergantung pertanyaan; lima pertanyaan beserta anjuran — P-1 B (aduan dan penilaian menjadi baris baru 036), P-2 isi ringkasan dan definisi retensi berkohort, P-3 ekspor CSV per rentang tanggal WIB, P-4 B (setiap ekspor tercatat dan disebut perkakas penarikan), P-5 S-18 berbentuk tabel tanpa pustaka grafik. |
+| **Temuan — TK-77** | FR-F07 (penilaian jawaban) tidak dimiliki baris mana pun; rantai penyerahan 009 → 010 → 021 → 023 tertulis pada spec masing-masing. Aduan S-17 karena itu tidak memiliki sumber. Dicatat pada D-00 2.86. |
+| Alternatif | 032 lebih dulu — tidak dianjurkan; S-11 membutuhkan rute daftar koleksi yang tidak ada pada D-14 Bagian 3, sehingga 032 sendiri akan tertahan putusan rute. |
+| Dampak | `specs/035-analitik-penelitian/spec.md`; `docs/D00.md`. Nol baris kode. |
+| Pemutus | Agen mengusulkan; Gerbang 1 menunggu pemegang Gerbang 1–4 |
