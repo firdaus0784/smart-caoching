@@ -79,11 +79,11 @@ Sumber: D-04 Bagian 5. Kolom keadaan diperiksa terhadap commit `9c0b138`.
 |---|---|---|---|
 | Aplikasi web | React + TypeScript, PWA | **Sebagian** | Layar Tanya (S-09) terbangun beserta keadaan memuat, kosong, galat, luring, dan tidak-ditemukan; draf pertanyaan bertahan saat koneksi putus; cangkang dapat terbuka tanpa koneksi; kebijakan keamanan konten membatasi seluruh sumber ke asal sendiri (fitur 027, lolos Gerbang 4 pada 28 September 2026). Riwayat percakapan tersambung (fitur 028). Layar S-01 Masuk dan tombol Keluar terbangun (fitur 029, lolos Gerbang 4 pada 4 Oktober 2026). Layar lain belum (fitur 013). Alur aktivasi J1 — persetujuan penelitian (S-02), pengenalan empat layar (S-03), profil dan prioritas (S-04) — terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026); naskah persetujuan menunggu ET-02. Beranda (S-05) dan detail butir (S-06) dengan salinan luring, navigasi Beranda · Tanya, beserta layar kurator S-15 dan S-16 terbangun (fitur 013, lolos Gerbang 4 pada 5 Oktober 2026) |
 | Panel internal | React | **Sebagian** | Antrean kurasi (S-15) dan penyuntingan butir (S-16) terbangun dalam aplikasi yang sama, dikenali dari peran akun (fitur 013, lolos Gerbang 4 pada 5 Oktober 2026); aduan (S-17) dan analitik (S-18) belum (baris 035) |
-| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Riwayat percakapan kini tercatat dan tersaring pemilik berpseudonim; pertanyaan berdata pribadi ditolak sebelum dijawab; galat berbentuk D-14 Bagian 4.2 (fitur 028, lolos Gerbang 4 pada 1 Oktober 2026). Autentikasi terbangun (FR-A01, fitur 029, lolos Gerbang 4 pada 4 Oktober 2026): akun berpseudonim buatan tim, sandi `scrypt`, sesi di peladen yang dapat dicabut, kuki `HttpOnly`/`Secure`/`SameSite=Strict`; tanpa sesi sah setiap rute menjawab 401. Rute `/saya/profil`, `/saya/prioritas`, `/saya/persetujuan` terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026). Rute beranda, detail butir, belum relevan, antrean kurasi, putusan, dan penarikan terbangun (fitur 013, lolos Gerbang 4 pada 5 Oktober 2026); kandidat hanya masuk lewat perkakas tim — sampai lapis relevansi L4 berjalan, kurator menjadi penyaringnya dalam batas pagu harian (TK-72 B) |
+| Layanan API | FastAPI | **Sebagian** | Rute `/api/v1/tanya` terbangun (fitur 021, 023). Riwayat percakapan kini tercatat dan tersaring pemilik berpseudonim; pertanyaan berdata pribadi ditolak sebelum dijawab; galat berbentuk D-14 Bagian 4.2 (fitur 028, lolos Gerbang 4 pada 1 Oktober 2026). Autentikasi terbangun (FR-A01, fitur 029, lolos Gerbang 4 pada 4 Oktober 2026): akun berpseudonim buatan tim, sandi `scrypt`, sesi di peladen yang dapat dicabut, kuki `HttpOnly`/`Secure`/`SameSite=Strict`; tanpa sesi sah setiap rute menjawab 401. Rute `/saya/profil`, `/saya/prioritas`, `/saya/persetujuan` terbangun (fitur 030, lolos Gerbang 4 pada 5 Oktober 2026). Rute beranda, detail butir, belum relevan, antrean kurasi, putusan, dan penarikan terbangun (fitur 013, lolos Gerbang 4 pada 5 Oktober 2026); kandidat hanya masuk lewat perkakas tim — sampai lapis relevansi L4 berjalan, kurator menjadi penyaringnya dalam batas pagu harian (TK-72 B). Peristiwa penelitian direkam pada rute yang sudah ada — sesi, Tanya, beranda, butir — hanya bagi pengguna yang menyetujui, dibaca ulang setiap permintaan sehingga pencabutan berlaku seketika; teks pengguna tersimpan sebagai ukurannya saja (fitur 034, **menunggu Gerbang 4**) |
 | Layanan NLP | Python | **Sebagian** | Praproses, OCR, dan deteksi data pribadi berpola terbangun (fitur 015); **model NER dan klasifikasi belum** (fitur 017) |
 | Layanan RAG | Python | **Sebagian** | Lihat Bagian 4 |
 | Pekerja latar | Python | **Sebagian** | Ingesti kanal dan penyematan korpus ada sebagai fungsi (fitur 002, 010, 026); **antrean tugas dan penjadwal belum** |
-| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026). Peran keenam `peran_riwayat` — hanya membaca dan menambah riwayat — dibangun fitur 028, lolos Gerbang 4 pada 1 Oktober 2026. Peran ketujuh dan kedelapan — `peran_autentikasi` dan `peran_pengelola_akun`, dipisah dengan hak per kolom — dibangun fitur 029, lolos Gerbang 4 pada 4 Oktober 2026. Peran kesembilan `peran_pengguna` — profil, prioritas tambah-saja, persetujuan yang hanya dapat dicabut — dibangun fitur 030, lolos Gerbang 4 pada 5 Oktober 2026. Peran kesepuluh sampai kedua belas — `peran_kurasi`, `peran_penayangan`, `peran_pengisi_antrean` — dibangun fitur 013, lolos Gerbang 4 pada 5 Oktober 2026; butir tayang hanya dapat merujuk putusan yang menyetujuinya, ditegakkan kunci asing |
+| Basis data | PostgreSQL 16 + pgvector 0.6.0 | **Terbangun** | Lima peran basis data, skema terpisah per area dan per indeks (fitur 024, 019, 026). Peran keenam `peran_riwayat` — hanya membaca dan menambah riwayat — dibangun fitur 028, lolos Gerbang 4 pada 1 Oktober 2026. Peran ketujuh dan kedelapan — `peran_autentikasi` dan `peran_pengelola_akun`, dipisah dengan hak per kolom — dibangun fitur 029, lolos Gerbang 4 pada 4 Oktober 2026. Peran kesembilan `peran_pengguna` — profil, prioritas tambah-saja, persetujuan yang hanya dapat dicabut — dibangun fitur 030, lolos Gerbang 4 pada 5 Oktober 2026. Peran kesepuluh sampai kedua belas — `peran_kurasi`, `peran_penayangan`, `peran_pengisi_antrean` — dibangun fitur 013, lolos Gerbang 4 pada 5 Oktober 2026; butir tayang hanya dapat merujuk putusan yang menyetujuinya, ditegakkan kunci asing. Peran ketiga belas `peran_telemetri` — hanya menambah dan membaca peristiwa, tanpa jalur ke basis data pseudonim — dibangun fitur 034, **menunggu Gerbang 4** |
 | Penyimpanan berkas | Sistem berkas, area karantina terpisah | **Sebagian** | Pemisahan area karantina dan korpus terbangun **pada basis data**; penyimpanan berkas asli pada sistem berkas belum |
 | Perangkat anotasi | Label Studio, dipasang mandiri | **Sebagian** | Pembacaan ekspor terbangun (fitur 016); pemasangan perangkatnya pekerjaan operasi |
 
@@ -171,6 +171,7 @@ menuntut penolakan:
 | Kunci pseudonim pada basis data terpisah, tidak terjangkau layanan aplikasi | C-05 |
 | Jalur penjawaban tanpa hak tulis, termasuk hak tulis indeks | C-17 |
 | Jalur penyematan menulis dua kolom vektor saja; tidak menjangkau korpus, karantina, maupun basis data pseudonim | C-03, C-05 |
+| Peristiwa telemetri tambah-saja: tanpa hak ubah, hapus, maupun kosongkan; tanpa jangkauan skema lain dan basis data pseudonim (fitur 034) | C-04, C-05 |
 
 Setiap peran juga diuji **berjalan** dengan haknya sendiri, bukan hanya
 ditolak: pencarian vektor dan penyematan korpus masing-masing dijalankan
@@ -180,13 +181,13 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 
 ## 8. Mutu dan verifikasi
 
-| Ukuran | Keadaan commit `8790ce2` |
+| Ukuran | Keadaan commit `a5608d0` |
 |---|---|
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
-| Jumlah uji otomatis | 2.828 pada backend dan perkakas; 253 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 26 dari 35 |
-| Anggaran muat aplikasi web | 83.756 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
+| Jumlah uji otomatis | 2.918 pada backend dan perkakas; 255 pada aplikasi web |
+| Fitur lolos Gerbang 4 | 26 dari 35 (fitur 034 menunggu Gerbang 4) |
+| Anggaran muat aplikasi web | 83.802 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,
 rancangan, daftar tugas, verifikasi) dan uji mutasi yang dilaporkan apa
@@ -208,6 +209,7 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 | VS-03, VS-05, VS-07 | Bobot model dan kalibrasi (fitur 020) |
 | Ambang kecukupan bukti dan validator | *Gold set* BT-35 (fitur 025) |
 | Adaptor penyedia model sungguhan | Keputusan penyedia (ADR-12) |
+| Peristiwa yang hanya teramati peramban — lama baca, sitasi dibuka — sehingga rasio penuntasan belum terhitung | Putusan rute penerima peristiwa (TK-73) |
 
 ---
 

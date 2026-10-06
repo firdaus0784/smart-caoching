@@ -69,6 +69,7 @@ from src.penyimpanan.riwayat import (
     RiwayatMemori,
     RiwayatPostgres,
 )
+from src.penyimpanan.telemetri import PERAN_TELEMETRI, PenyimpanTelemetri, TelemetriPostgres
 from src.rag.jawaban.tanggapan import StatusDasar, Tanggapan, Versi
 
 ALAMAT_AMAN = "127.0.0.1"
@@ -87,6 +88,11 @@ VERSI_PENGEMBANGAN = Versi(
     kode="pengembangan-lokal",
 )
 """Penanda versi yang menyatakan dirinya. Lihat penjagaan nomor 2."""
+
+VERSI_APLIKASI_PENGEMBANGAN = "pengembangan"
+"""`versi_aplikasi` peristiwa telemetri dari titik jalan ini — fitur 034, K-4.
+Sama dengan penanda versinya: peristiwa dari mesin pengembang tidak dapat
+tertukar dengan peristiwa pilot saat analisis."""
 
 
 class PenjawabBelumSiap:
@@ -184,6 +190,7 @@ def susun_untuk_pengembangan(
     versi_naskah: str | None = None,
     kurasi: PenyimpanKurasi | None = None,
     penemuan: PenyimpanPenemuan | None = None,
+    telemetri: PenyimpanTelemetri | None = None,
 ) -> FastAPI:
     """Rakit aplikasi dengan pengganti pengembangan.
 
@@ -194,7 +201,9 @@ def susun_untuk_pengembangan(
     Dengan `akun`, identitas dibaca dari sesi dan rute masuk terpasang
     (fitur 029); tanpanya, penentu tiruan tanpa pemeriksaan dipakai.
     `turunan_tiruan` disuntikkan hanya oleh uji. `kurasi` dan `penemuan`
-    memasang rute kurator dan beranda (fitur 013).
+    memasang rute kurator dan beranda (fitur 013). `telemetri` merekam
+    peristiwa bagi pengguna yang menyetujui, bertanda versi `pengembangan`
+    (fitur 034).
     """
     if akun is None:
         return susun_aplikasi(
@@ -211,6 +220,8 @@ def susun_untuk_pengembangan(
         versi_naskah=versi_naskah,
         kurasi=kurasi,
         penemuan=penemuan,
+        telemetri=telemetri,
+        versi_aplikasi=VERSI_APLIKASI_PENGEMBANGAN if telemetri is not None else None,
     )
 
 
@@ -263,7 +274,16 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
     pengguna: PenyimpanPengguna | None = None
     kurasi: PenyimpanKurasi | None = None
     penemuan: PenyimpanPenemuan | None = None
+    telemetri: PenyimpanTelemetri | None = None
     if argumen.autentikasi == "sesi":
+        # Fitur 034: peristiwa tambah-saja, sebagai peran_telemetri.
+        telemetri = TelemetriPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN),
+                int(os.environ.get("PGPORT", "5432")),
+                PERAN_TELEMETRI,
+            )
+        )
         # Fitur 013: kurator dan penayang, masing-masing dengan perannya.
         kurasi = KurasiPostgres(
             SambunganPerKueri(
@@ -296,7 +316,9 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
         keterangan_identitas = (
             "sesi sungguhan — masuk dengan akun buatan `python -m perkakas.akun buat`."
         )
+        keterangan_telemetri = "peran_telemetri — hanya bagi pengguna yang menyetujui."
     else:
+        keterangan_telemetri = "tidak merekam."
         keterangan_identitas = (
             f"TANPA AUTENTIKASI — {PEMILIK_PENGEMBANGAN}, satu pemilik bagi semua pemanggil."
         )
@@ -306,6 +328,7 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
         f"  Alamat    : http://{argumen.alamat}:{argumen.porta}\n"
         f"  Identitas : {keterangan_identitas}\n"
         f"  Riwayat   : {keterangan_riwayat}\n"
+        f"  Telemetri : {keterangan_telemetri}\n"
         "\n"
         "  Jawaban selalu 'tidak ditemukan' karena korpus kosong.\n"
     )
@@ -317,6 +340,7 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
             versi_naskah=versi_naskah_terpasang(),
             kurasi=kurasi,
             penemuan=penemuan,
+            telemetri=telemetri,
         ),
         host=argumen.alamat,
         port=argumen.porta,

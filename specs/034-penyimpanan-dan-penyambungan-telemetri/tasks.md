@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-192); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-193); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Enam dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Tujuh dari tujuh tugas selesai — **menunggu Gerbang 4 manusia** (KB-201) |
 | Kebutuhan | R-01 s.d. R-10; FR-J01, FR-J02, FR-J05, FR-A05; C-04, C-05, C-09, C-14 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -76,7 +76,7 @@ sebelum T-6, karena bukti T-6 yang menemukannya.
 
 ## T-6 · Titik jalan, bukti, penutupan
 
-- [ ] `perkakas/jalankan_lokal.py`: penyimpan telemetri sebagai `peran_telemetri`
-- [ ] Playwright Bagian 9.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] `perkakas/jalankan_lokal.py`: penyimpan telemetri sebagai `peran_telemetri`
+- [x] Playwright Bagian 9.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

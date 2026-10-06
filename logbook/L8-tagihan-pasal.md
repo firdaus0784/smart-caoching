@@ -505,3 +505,26 @@ pertama kali ditegakkan **peladen basis data** pada jalur penayangan:
 
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 013 tidak menyentuh jalur penjawaban.
+
+### Fitur 034 — 6 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 013. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan enam pasal yang sudah lulus. C-04 untuk pertama kali
+**berlaku pada data sungguhan**: sebelum fitur ini gerbang `rekam()` ada,
+tetapi tidak ada yang memanggilnya.
+
+| Pasal | Yang bertambah pada fitur 034 |
+|---|---|
+| C-04 | Persetujuan dibaca dari penyimpan pengguna pada **setiap** pemanggilan perekam; tanpa persetujuan nol peristiwa, sesudah mencabut nol peristiwa baru — diuji lewat HTTP (M-1, M-2) dan lewat peramban terhadap PostgreSQL |
+| C-05 | Pemilik peristiwa berpola pseudonim, ditegakkan batasan tabel dan perekam (M-3); `peran_telemetri` tanpa `CONNECT` basis data pseudonim (M-5) |
+| C-09 | Setiap peristiwa membawa versi aplikasi dan versi model; peristiwa jawaban membawa versi model tanggapan (M-9) |
+| C-14 | Pemilihan beranda dan jalur penjawab tidak membaca peristiwa — diuji dengan menghitung pembacaan penyimpan telemetri: nol |
+| C-17 | Perekam hanya menulis tabel peristiwa; jalur penjawaban tidak menerimanya |
+| C-20 | Bentuk tanggapan tidak berubah dengan maupun tanpa persetujuan; satu tajuk permintaan opsional ditulis ke D-14 0.14 sebelum kodenya (KB-199) |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 034 tidak menyentuh jalur penjawaban.

@@ -223,3 +223,57 @@ def test_titik_jalan_bersesi_memasang_rute_kurasi_dan_penemuan() -> None:
         base_url="https://testserver",
     )
     assert tanpa.get("/api/v1/beranda").status_code == 404
+
+
+def test_titik_jalan_bersesi_merekam_dengan_versi_pengembangan() -> None:
+    """Fitur 034, K-4: `versi_aplikasi` titik jalan berbunyi `pengembangan`,
+    sama dengan penanda versinya; persetujuan tetap yang memutus (C-04)."""
+    from datetime import UTC, datetime
+
+    from src.api import sandi
+    from src.penyimpanan.akun import AkunMemori, BarisAkun
+    from src.penyimpanan.pengguna import PenggunaMemori
+    from src.penyimpanan.telemetri import TelemetriMemori
+    from tests.konftes_asinkron import jalankan
+
+    from perkakas.jalankan_lokal import VERSI_APLIKASI_PENGEMBANGAN
+
+    murah = sandi.ParameterScrypt(n=2**4, r=8, p=1)
+    akun = AkunMemori()
+    for nomor, huruf in (("ks-017", "a"), ("ks-018", "b")):
+        akun.pasang_akun(
+            BarisAkun(
+                id=nomor,
+                pseudonim="psd_" + huruf * 16,
+                peran="pengguna",
+                status_aktif=True,
+                turunan_sandi=sandi.turunkan("abcd-efgh-jkmn-pqrs", parameter=murah),
+                gagal_beruntun=0,
+                ditahan_sampai=None,
+            )
+        )
+    pengguna, telemetri = PenggunaMemori(), TelemetriMemori()
+    jalankan(
+        pengguna.catat_persetujuan(
+            "psd_" + "a" * 16, versi_naskah="v-uji", disetujui=True, sekarang=datetime.now(UTC)
+        )
+    )
+    klien = TestClient(
+        susun_untuk_pengembangan(
+            akun=akun,
+            pengguna=pengguna,
+            versi_naskah="v-uji",
+            telemetri=telemetri,
+            turunan_tiruan=sandi.turunkan("t", parameter=murah),
+        ),
+        base_url="https://testserver",
+    )
+    for nomor in ("ks-017", "ks-018"):
+        jawab = klien.post(
+            "/api/v1/auth/masuk", json={"nama_pengguna": nomor, "sandi": "abcd-efgh-jkmn-pqrs"}
+        )
+        assert jawab.status_code == 204
+    (awal,) = jalankan(telemetri.milik("psd_" + "a" * 16))
+    assert (awal.jenis, awal.versi_aplikasi) == ("session_start", "pengembangan")
+    assert VERSI_APLIKASI_PENGEMBANGAN == "pengembangan"
+    assert jalankan(telemetri.milik("psd_" + "b" * 16)) == ()

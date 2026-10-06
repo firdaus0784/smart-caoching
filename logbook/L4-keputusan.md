@@ -3086,3 +3086,20 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Tajuk dengan nilai bebas yang dibandingkan tanpa membedakan huruf besar-kecil — ditolak; nilai yang tepat satu lebih mudah diperiksa, dan nilai lain berarti direkam seperti biasa. |
 | Dampak | `src/api/penemuan.py`, `src/api/aplikasi.py`; `web/src/klien.ts`, `web/src/penemuan/LayarBeranda.tsx`; uji HTTP dan uji layar; `tasks.md`. |
 | Pemutus | Agen dalam batas KB-199 |
+
+## KB-201 · T-6 fitur 034 — titik jalan, bukti, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-6 `tasks.md` fitur 034, atas pendelegasian KB-168 dalam batas `plan.md` (KB-193) dan putusan KB-199. Gerbang 4 tidak didelegasikan. |
+| Keputusan | `make jalan` bersesi memasang penyimpan telemetri sebagai `peran_telemetri` dengan `versi_aplikasi` = `pengembangan`; uji titik jalan ditulis lebih dulu dan merah karena tetapannya belum ada. Fitur 034 dinyatakan selesai tujuh dari tujuh tugas dan **diajukan ke Gerbang 4**. Agen tidak meluluskannya sendiri. |
+| Putaran mutasi | Tiga belas mutasi `plan.md` Bagian 9.3 dan 12, dijalankan pada tugas tempat kodenya lahir. **Menyala 13 dari 13**: M-4, M-5 (KB-195); M-1, M-2, M-3, M-7, M-8 (KB-197); M-6, M-9, M-10 (KB-198); M-11, M-12, M-13 (KB-200). |
+| Bukti | `bukti/ujung_ke_ujung.mjs` terhadap `make jalan` dengan PostgreSQL: kurator menyetujui empat butir; pengguna baru menyetujui naskah **uji**, mengisi profil, keluar, masuk lagi, bertanya, membuka beranda dan memuatnya ulang, membuka satu butir, menandainya belum relevan, keluar. Sepuluh peristiwa dibaca dari tabel dan cocok urutannya; satu butir dibuka menghasilkan satu `discovery_opened`. Sesudah mencabut, tanya, beranda, butir, dan keluar tidak menambah peristiwa (tetap 11). `bukti/peristiwa.json` memuat peristiwa dengan pseudonim dipenggal; tangkapan layar sesudah mencabut. |
+| **Yang ditemukan bukti** | TK-74 — pengambilan latar beranda terekam sebagai butir dibuka. Uji HTTP tidak menangkapnya karena tidak menjalankan layar. Agen berhenti dan bertanya; diputus KB-199, diterapkan T-7. |
+| **Yang dilewati bukti, dinyatakan** | Naskah persetujuan adalah naskah **uji** bertanda tegas, dipasang sementara lalu dihapus, tidak di-commit (KB-164). Antrean diisi `isi_antrean_bukti.py` fitur 013; butirnya buatan. Jawaban selalu "tidak ditemukan" karena korpus kosong, sehingga `answer_rejected_validator` tidak teramati di peramban — ia diuji lewat HTTP (KB-198). Build `web/dist` dibangun ulang tanpa naskah uji sesudahnya. |
+| Penutupan | L8: tagihan pasal tidak menyusut (19 lulus, 0 gagal, 1 belum); enam pasal dikuatkan. Dokumen HKI: layanan API, basis data, keamanan, mutu, yang belum terbangun; uji 2.918 dan 255; anggaran muat 83.802 dari 153.600 bait. |
+| Yang menunggu | **Gerbang 4** oleh pemegang gerbang. **TK-73** (rute peristiwa peramban) oleh tim: tanpanya rasio penuntasan tidak terhitung. **Naskah ET-02** oleh tim: tanpanya persetujuan di lapangan selalu ditolak dan telemetri tidak merekam siapa pun. |
+| Alternatif | Membaca peristiwa lewat penyimpan aplikasi pada bukti — ditolak; bukti membaca tabel langsung agar yang dicocokkan adalah yang tersimpan. |
+| Dampak | `perkakas/jalankan_lokal.py`, `tests/perkakas/test_jalankan_lokal.py`; `specs/034-penyimpanan-dan-penyambungan-telemetri/bukti/`, `tasks.md`; `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

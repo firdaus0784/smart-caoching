@@ -1,0 +1,105 @@
+[
+  {
+    "pseudonim": "psd_…",
+    "jenis": "session_end",
+    "properti": {},
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "session_start",
+    "properti": {},
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "discovery_served",
+    "properti": {
+      "id_butir": "bukti-013-1",
+      "kategori": "K1",
+      "jenis_sumber": "riset"
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "discovery_served",
+    "properti": {
+      "id_butir": "bukti-013-2",
+      "kategori": "K1",
+      "jenis_sumber": "praktik_baik"
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "discovery_served",
+    "properti": {
+      "id_butir": "bukti-013-3",
+      "kategori": "K5",
+      "jenis_sumber": "regulasi"
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "question_asked",
+    "properti": {
+      "panjang_pertanyaan": 71
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "answer_served",
+    "properti": {
+      "status_dasar": "tidak_ditemukan",
+      "jumlah_sitasi": 0,
+      "waktu_tanggap_ms": 0
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "belum-dipasang-pengembangan"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "discovery_opened",
+    "properti": {
+      "id_butir": "bukti-013-2",
+      "menit_sejak_tayang": 0
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "discovery_dismissed",
+    "properti": {
+      "id_butir": "bukti-013-2",
+      "panjang_alasan": 32
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "session_end",
+    "properti": {
+      "durasi_menit": 0
+    },
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  },
+  {
+    "pseudonim": "psd_…",
+    "jenis": "session_start",
+    "properti": {},
+    "versi_aplikasi": "pengembangan",
+    "versi_model": "tanpa_model"
+  }
+]
