@@ -438,3 +438,20 @@ def test_rekam_atas_penyimpan_rusak_tidak_melempar(caplog: pytest.LogCaptureFixt
     (catatan,) = [r.getMessage() for r in caplog.records]
     assert "question_asked" in catatan and "RuntimeError" in catatan
     assert A.pseudonim not in catatan
+
+
+def test_butir_dibuka_tanpa_waktu_tayang_tidak_menebak_menitnya() -> None:
+    telemetri = TelemetriMemori()
+    perekam, pengguna = _perekam(telemetri)
+    jalankan(
+        pengguna.catat_persetujuan(
+            A.pseudonim, versi_naskah=VERSI_NASKAH, disetujui=True, sekarang=T0
+        )
+    )
+
+    async def tidak_diketahui() -> datetime | None:
+        return None
+
+    jalankan(perekam.rekam_dibuka(A.pseudonim, "btr-1", tidak_diketahui, sekarang=T0))
+    (dibuka,) = telemetri._baris
+    assert (dibuka.jenis, dibuka.properti) == ("discovery_opened", {"id_butir": "btr-1"})

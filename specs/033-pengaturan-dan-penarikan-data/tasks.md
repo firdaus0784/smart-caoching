@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Empat dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Lima dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -56,12 +56,12 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 **Kebutuhan:** R-02, R-03, R-04, R-09; K-1, K-7.
 
-- [ ] Uji lebih dulu terhadap PostgreSQL: dua pengguna berdata pada sepuluh
+- [x] Uji lebih dulu terhadap PostgreSQL: dua pengguna berdata pada sepuluh
       tabel dan pemetaan; sesudah `jalankan`, satu kosong dan satu utuh;
       baris permintaan tanpa pseudonim; keluaran dan log tanpa pseudonim
-- [ ] `src/penyimpanan/penarikan.py`; `perkakas/penarikan.py`
-- [ ] Uji arah: layanan aplikasi tidak mengimpor penyimpan penarikan
-- [ ] Mutasi M-3, M-4, M-5, M-7
+- [x] `src/penyimpanan/penarikan.py`; `perkakas/penarikan.py`
+- [x] Uji arah: layanan aplikasi tidak mengimpor penyimpan penarikan
+- [x] Mutasi M-3, M-4, M-5, M-7
 
 ## T-6 · S-14 Pengaturan
 

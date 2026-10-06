@@ -3200,3 +3200,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membuang pencabutan dan bersandar pada pembacaan saja — ditolak; janji kontrak dan satu penjagaan berkurang. |
 | Dampak | `src/api/aplikasi.py`, `src/api/autentikasi.py`, `src/api/peran.py`, `src/api/saya.py`; `tests/api/test_penarikan_http.py`, `tests/penyimpanan/test_akun.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-210 · T-5 fitur 033 — penghapusan dan perkakas penarikan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-5 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205). |
+| Keputusan | `src/penyimpanan/penarikan.py`: `PenarikanPostgres` dengan dua sambungan — `peran_penarikan` dan `peran_penarikan_pseudonim`. `jalankan(nomor)` menghapus pemetaan lebih dulu, lalu satu pernyataan CTE menghapus sepuluh tabel, mengosongkan pseudonim pada baris permintaan, dan mengisi waktu dipenuhi serta jumlah baris per tabel. `perkakas/penarikan.py`: `daftar` (umur, tanda melewati 14 hari NFR-09) dan `jalankan`; keluaran tanpa pseudonim. Uji ditulis lebih dulu terhadap PostgreSQL dengan kedua peran: dua pengguna berdata pada sepuluh tabel dan pemetaan, satu kosong dan satu utuh sesudahnya. |
+| **Kunci asing dalam satu pernyataan** | Giliran dan percakapan, sesi dan akun, terhapus dalam pernyataan yang sama. Pemeriksaan kunci asing berjalan di akhir pernyataan, sehingga urutan CTE tidak menentukan — terbukti uji, bukan diandaikan. |
+| **Data uji** | Dimasukkan pengelola dengan `session_replication_role = replica` sesaat, sebab butir hari ini dan "belum relevan" merujuk butir tayang; rantai kurasi lengkap tidak menambah apa pun pada yang diuji. Dinyatakan pada uraian modul uji. |
+| Mutasi | M-3 (satu tabel terlewat) 2 uji merah; M-4 (tanpa saringan pemilik) 1; M-5 (pseudonim tidak dikosongkan) 4 — batasan peladen menolaknya; M-7 (layanan aplikasi mengimpor penyimpan penarikan) 1. |
+| Alternatif | Penghapusan per tabel dengan pernyataan terpisah — ditolak; kegagalan di tengah meninggalkan separuh data tanpa catatan. Mencetak pseudonim agar tim dapat mencocokkan — ditolak; nomor permintaan cukup, dan pseudonim di terminal tersalin ke tempat yang tidak dijaga. |
+| Dampak | `src/penyimpanan/penarikan.py`, `perkakas/penarikan.py`; `tests/penyimpanan/test_penarikan_simpan.py`, `tests/perkakas/test_penarikan_perkakas.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Cakupan | Tiga uji perilaku tambahan menjaga cakupan pada penanda 99,87: badan JSON rusak pada rute penarikan; perkakas yang didahului perkakas lain tidak melaporkan dipenuhi dan tidak menimpa bukti; `discovery_opened` tanpa waktu tayang tidak menebak menitnya (cabang fitur 034 yang sebelumnya hanya tersentuh kebetulan). Penanda tidak diturunkan. |

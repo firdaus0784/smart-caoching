@@ -151,3 +151,16 @@ def test_tanpa_sesi_401_dan_kurator_403() -> None:
 
 def test_pesan_memenuhi_c13() -> None:
     assert not kalimat_terlalu_panjang(PESAN_PENARIKAN_TIDAK_SAH)
+
+
+def test_badan_json_rusak_ditolak() -> None:
+    ling = Lingkungan()
+    ling.masuk()
+    rusak = ling.minta(
+        "DELETE",
+        DATA,
+        content=b'{"konfirmasi": tr',
+        headers_tambahan={"Content-Type": "application/json"},
+    )
+    assert rusak.status_code == 400
+    assert ling.minta("GET", "/api/v1/saya/profil").status_code == 200
