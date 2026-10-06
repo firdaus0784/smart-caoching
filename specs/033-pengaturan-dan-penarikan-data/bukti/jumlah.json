@@ -1,0 +1,26 @@
+{
+  "sebelum": {
+    "akun.pengguna": 1,
+    "akun.sesi": 1,
+    "pengguna.profil_sekolah": 1,
+    "pengguna.prioritas_manajerial": 2,
+    "pengguna.persetujuan": 1,
+    "riwayat.percakapan": 1,
+    "riwayat.giliran": 1,
+    "penemuan.tayang_harian": 3,
+    "penemuan.belum_relevan": 1,
+    "telemetri.peristiwa": 7
+  },
+  "sesudah": {
+    "akun.pengguna": 0,
+    "akun.sesi": 0,
+    "pengguna.profil_sekolah": 0,
+    "pengguna.prioritas_manajerial": 0,
+    "pengguna.persetujuan": 0,
+    "riwayat.percakapan": 0,
+    "riwayat.giliran": 0,
+    "penemuan.tayang_harian": 0,
+    "penemuan.belum_relevan": 0,
+    "telemetri.peristiwa": 0
+  }
+}

@@ -277,3 +277,24 @@ def test_titik_jalan_bersesi_merekam_dengan_versi_pengembangan() -> None:
     assert (awal.jenis, awal.versi_aplikasi) == ("session_start", "pengembangan")
     assert VERSI_APLIKASI_PENGEMBANGAN == "pengembangan"
     assert jalankan(telemetri.milik("psd_" + "b" * 16)) == ()
+
+
+def test_titik_jalan_bersesi_memasang_rute_penarikan_tanpa_peran_penghapus() -> None:
+    """Fitur 033: `DELETE /saya/data` terpasang bersama sesi dan penyimpan
+    pengguna — rute itu hanya mencatat. Peran penghapus tidak pernah dipasang
+    titik jalan (uji arah T-5); tanpa penyimpan pengguna rutenya tidak ada."""
+    from src.penyimpanan.akun import AkunMemori
+    from src.penyimpanan.pengguna import PenggunaMemori
+
+    bersesi = TestClient(
+        susun_untuk_pengembangan(akun=AkunMemori(), pengguna=PenggunaMemori()),
+        base_url="https://testserver",
+    )
+    assert (
+        bersesi.request("DELETE", "/api/v1/saya/data", json={"konfirmasi": True}).status_code == 401
+    )
+    tanpa = TestClient(susun_untuk_pengembangan(akun=AkunMemori()), base_url="https://testserver")
+    assert tanpa.request("DELETE", "/api/v1/saya/data", json={"konfirmasi": True}).status_code in (
+        404,
+        405,
+    )

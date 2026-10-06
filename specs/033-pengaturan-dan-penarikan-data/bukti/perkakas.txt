@@ -1,0 +1,16 @@
+$ python -m perkakas.penarikan daftar
+#10 · diminta 2026-10-06 · 0 hari
+
+$ python -m perkakas.penarikan jalankan
+#10 dipenuhi — 19 baris terhapus:
+  telemetri.peristiwa: 7
+  riwayat.giliran: 1
+  riwayat.percakapan: 1
+  penemuan.tayang_harian: 3
+  penemuan.belum_relevan: 1
+  pengguna.profil_sekolah: 1
+  pengguna.prioritas_manajerial: 2
+  pengguna.persetujuan: 1
+  akun.sesi: 1
+  akun.pengguna: 1
+  pemetaan pseudonim: 0

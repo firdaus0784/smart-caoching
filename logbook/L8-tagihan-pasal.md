@@ -528,3 +528,31 @@ tetapi tidak ada yang memanggilnya.
 
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 034 tidak menyentuh jalur penjawaban.
+
+### Fitur 033 — 6 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 034. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan lima pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 033 |
+|---|---|
+| C-04 | Perekaman berhenti seketika saat penarikan diminta — seluruh sesi dicabut, sehingga tidak ada pemilik bagi peristiwa berikutnya; diuji lewat HTTP dengan pengguna yang menyetujui |
+| C-05 | Dua peran penarikan, masing-masing tanpa jangkauan ke basis data lainnya (M-6); bukti permintaan tanpa pseudonim sesudah dipenuhi, ditegakkan batasan tabel (M-5); keluaran perkakas tanpa pseudonim |
+| C-13 | Satu kalimat peladen dan dua puluh untai layar baru melewati pemeriksa; penjaga jumlah untai peladen naik ke 26 |
+| C-17 | Jalur penjawaban dan seluruh peran aplikasi tetap tanpa hak hapus; uji arah menjaga bahwa layanan aplikasi tidak mengimpor penyimpan penarikan (M-7) |
+| C-20 | Bentuk `DELETE /saya/data` dan tabel `permintaan_penarikan` ditulis ke D-14 0.15 sebelum kodenya |
+
+**Yang tidak dijangkau sistem, dinyatakan:** pasangan akun dengan orang
+sungguhan dipegang tim di luar sistem, sehingga penarikan baru utuh bila
+prosedur tim ikut menghapusnya (TK-76).
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 033 tidak menyentuh jalur penjawaban.
+
+*Koreksi atas baris C-13 di atas:* untai layar baru berjumlah **dua puluh
+lima** — delapan belas kunci `MIKROKOPI` dan tujuh butir daftar data — bukan
+dua puluh. Baris di atas tidak disunting (tambah-saja).

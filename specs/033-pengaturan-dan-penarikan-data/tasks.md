@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Enam dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Tujuh dari tujuh tugas selesai — **menunggu Gerbang 4 manusia** (KB-212) |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -75,7 +75,7 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 ## T-7 · Titik jalan, bukti, penutupan
 
-- [ ] `make jalan` memasang rute penarikan bersama sesi
-- [ ] Playwright Bagian 10.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] `make jalan` memasang rute penarikan bersama sesi
+- [x] Playwright Bagian 10.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

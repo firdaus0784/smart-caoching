@@ -398,3 +398,16 @@ a {
   color: var(--huruf-redup);
   background: var(--latar-permukaan);
 }
+
+/* S-14 — konfirmasi penarikan (fitur 033): dua pilihan setara, berjarak sama,
+   tanpa satu pun yang ditonjolkan (RE-04). */
+.konfirmasi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.konfirmasi > p {
+  flex-basis: 100%;
+  margin: 0;
+}

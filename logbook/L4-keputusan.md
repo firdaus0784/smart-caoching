@@ -3228,3 +3228,20 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Halaman penarikan tersendiri di luar Pengaturan — tidak dipilih; D-05 meletakkannya pada S-14. Tombol konfirmasi berwarna peringatan — ditolak; dua pilihan setara bentuknya (RE-04). |
 | Dampak | `web/src/pengaturan/`, `web/src/Aplikasi.tsx`, `web/src/aktivasi/LayarProfil.tsx`, `web/src/tanya/LayarTanya.tsx`, `web/src/klien.ts`, `web/src/kontrak.ts`, `web/src/mikrokopi.ts`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-212 · T-7 fitur 033 — titik jalan, bukti, penutupan; menunggu Gerbang 4; TK-76
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-7 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205). Gerbang 4 tidak didelegasikan. |
+| Keputusan | Rute penarikan terpasang pada `make jalan` bersesi tanpa perubahan titik jalan — ia lahir dari penjaga masuk dan penyimpan pengguna; uji titik jalan menjaganya (ditulis sesudah, sebab tidak ada kode baru untuk didahului — dinyatakan). Fitur 033 dinyatakan selesai tujuh dari tujuh tugas dan **diajukan ke Gerbang 4**. |
+| Putaran mutasi | Sembilan mutasi `plan.md` Bagian 10.3. **Menyala 9 dari 9**: M-6 (KB-207); M-2 (KB-208); M-1 sesudah uji diperbaiki, M-8 (KB-209); M-3, M-4, M-5, M-7 (KB-210); M-9 (KB-211). M-1 sempat hidup dan sebabnya dicatat pada KB-209. |
+| Bukti | `bukti/ujung_ke_ujung.mjs` terhadap `make jalan` dengan PostgreSQL: kurator menyetujui tiga butir; pengguna baru menyetujui naskah **uji**, mengisi profil, bertanya, membuka dan menolak butir; dari S-14 menyunting wilayah (tersimpan lewat rute fitur 030), lalu menarik data. Sebelum perkakas, sepuluh tabel memuat datanya (`bukti/jumlah.json`); masuk lagi ditolak dengan kalimat sandi salah; `perkakas.penarikan` mencetak nomor dan jumlah tanpa pseudonim (`bukti/perkakas.txt`); sesudahnya sepuluh tabel kosong darinya dan bukti permintaan tidak menunjuk pseudonim. Tiga tangkapan layar. Satu pemeriksaan sempat gagal karena dibaca sebelum berkas penjelasan dimuat; penantiannya diperbaiki dan bukti diulang dari data bersih. Jarak kedua tombol konfirmasi diperbaiki pada CSS dan bukti diulang lagi. |
+| **Temuan — TK-76** | Langkah pemetaan menghapus nol baris: akun buatan `perkakas.akun` tidak mendaftar ke `peta_pseudonim`, dan pasangan akun dengan orang sungguhan dipegang tim di luar sistem (fitur 029). Data di dalam sistem terhapus seluruhnya, tetapi penarikan baru utuh bila prosedur tim menghapus pasangan itu. Dicatat pada D-00 2.85; agen tidak dapat menjangkaunya. |
+| **Yang dilewati bukti, dinyatakan** | Kedua naskah adalah naskah **uji** bertanda tegas, dipasang sementara lalu dihapus, tidak di-commit. Antrean diisi `isi_antrean_bukti.py` fitur 013. Build `web/dist` dibangun ulang tanpa naskah uji. |
+| Penutupan | L8: tagihan pasal tidak menyusut (19 lulus, 0 gagal, 1 belum); lima pasal dikuatkan. Dokumen HKI: aplikasi web, layanan API, basis data, keamanan, mutu, yang belum terbangun; uji 2.978 dan 267; anggaran muat 84.991 dari 153.600 bait. |
+| Yang menunggu | **Gerbang 4** oleh pemegang gerbang. **TK-75** (catatan persetujuan) oleh tim etik. **TK-76** (pasangan di luar sistem) oleh tim. Kalimat penjelasan penarikan (`naskah/penarikan.json`) oleh tim. |
+| Alternatif | Mengisi `peta_pseudonim` saat akun dibuat agar langkah pemetaan bermakna — tidak dipilih; mengubah fitur 029 di luar `plan.md`, dan pasangan dengan orang sungguhan tetap di luar sistem. |
+| Dampak | `tests/perkakas/test_jalankan_lokal.py`; `web/src/gaya.css`; `specs/033-pengaturan-dan-penarikan-data/bukti/`, `tasks.md`; `docs/D00.md`; `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
