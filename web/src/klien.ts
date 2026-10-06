@@ -20,11 +20,13 @@ import type {
   Beranda,
   ButirLengkap,
   ButirRingkas,
+  HasilAnalitik,
   HasilAntrean,
   HasilBaca,
   HasilBeranda,
   HasilButir,
   HasilDaftar,
+  HasilEkspor,
   HasilMasuk,
   HasilNaskah,
   HasilPenarikan,
@@ -38,9 +40,11 @@ import type {
   KeadaanPersetujuan,
   Naskah,
   Pemicu,
+  PermintaanEkspor,
   PermintaanProfil,
   PermintaanTarik,
   Ringkasan,
+  RingkasanAnalitik,
   SatuPercakapan,
   StatusDasar,
   StatusKeberlakuan,
@@ -60,6 +64,8 @@ export const JALUR_PERSETUJUAN = "/api/v1/saya/persetujuan";
 export const JALUR_DATA_SAYA = "/api/v1/saya/data";
 export const JALUR_BERANDA = "/api/v1/beranda";
 export const JALUR_ANTREAN = "/api/v1/kurasi/antrean";
+export const JALUR_ANALITIK_RINGKAS = "/api/v1/analitik/ringkas";
+export const JALUR_ANALITIK_EKSPOR = "/api/v1/analitik/ekspor";
 /** Berkas statis yang diisi tim (K-4 fitur 030), bukan rute API. */
 export const JALUR_NASKAH = "/naskah/persetujuan.json";
 /** Penjelasan penarikan data milik tim (P-4 B fitur 033), bukan rute API. */
@@ -726,3 +732,51 @@ export const PEMICU: readonly Pemicu[] = [
   "kekeliruan_isi_dilaporkan",
   "data_sumber_diperbarui",
 ];
+
+// ── fitur 035 · analitik penelitian — D-14 Bagian 4.8 ───────────────────
+
+function apakahRingkasanAnalitik(nilai: unknown): nilai is RingkasanAnalitik {
+  if (typeof nilai !== "object" || nilai === null) return false;
+  const r = nilai as Record<string, unknown>;
+  const k = r["keterlibatan"] as Record<string, unknown> | undefined;
+  return (
+    typeof r["dihitung_pada"] === "string" &&
+    typeof k === "object" &&
+    k !== null &&
+    Array.isArray(k["aktif_harian"]) &&
+    Array.isArray(k["aktif_mingguan"]) &&
+    Array.isArray(k["retensi"]) &&
+    typeof k["sesi"] === "object" &&
+    typeof r["penemuan"] === "object" &&
+    Array.isArray(r["belum_terukur"]) &&
+    typeof r["integritas"] === "object"
+  );
+}
+
+/** `GET /api/v1/analitik/ringkas` — peran peneliti (fitur 035). */
+export async function bacaAnalitik(pemanggil: Pemanggil): Promise<HasilAnalitik> {
+  const hasil = await ambil(pemanggil, JALUR_ANALITIK_RINGKAS, { method: "GET" });
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  return apakahRingkasanAnalitik(hasil.badan)
+    ? { jenis: "ringkasan", ringkasan: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+const NAMA_BERKAS = /filename="([^"]+)"/;
+
+/** `POST /api/v1/analitik/ekspor` — berkas CSV beserta namanya dari peladen. */
+export async function unduhEkspor(
+  permintaan: PermintaanEkspor,
+  pemanggil: Pemanggil,
+): Promise<HasilEkspor> {
+  let jawaban: Response;
+  try {
+    jawaban = await pemanggil(JALUR_ANALITIK_EKSPOR, kirimJson("POST", permintaan));
+  } catch {
+    return { jenis: "galat", galat: "luring" };
+  }
+  if (!jawaban.ok) return { jenis: "galat", galat: petakanStatus(jawaban.status) };
+  const nama = NAMA_BERKAS.exec(jawaban.headers.get("Content-Disposition") ?? "")?.[1];
+  if (nama === undefined) return { jenis: "galat", galat: "sistem" };
+  return { jenis: "berkas", isi: await jawaban.blob(), nama };
+}

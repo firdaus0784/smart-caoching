@@ -28,7 +28,8 @@
  *
  * **Kurator dikenali tanpa rute baru (K-8 fitur 013).** Ringkasan akun hanya
  * terbuka bagi peran `pengguna`; 403 di sana diikuti `GET /kurasi/antrean`.
- * 200 membuka S-15; selainnya kalimat bahwa akun tidak dikenali, beserta
+ * 200 membuka S-15; 403 di sana diikuti `GET /analitik/ringkas`, yang 200-nya
+ * membuka S-18 bagi peneliti (fitur 035); selainnya kalimat bahwa akun tidak dikenali, beserta
  * tombol keluar. Rute "siapa saya" tidak ditambahkan (AG-02).
  */
 
@@ -38,8 +39,9 @@ import { LayarPengenalan } from "./aktivasi/LayarPengenalan";
 import { LayarPersetujuan } from "./aktivasi/LayarPersetujuan";
 import { LayarProfil } from "./aktivasi/LayarProfil";
 import { hapusDraf, type Simpanan } from "./draf";
-import { bacaAntrean, bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
-import type { Antrean, HasilNaskah, KeadaanPersetujuan, Ringkasan } from "./kontrak";
+import { LayarAnalitik } from "./analitik/LayarAnalitik";
+import { bacaAnalitik, bacaAntrean, bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
+import type { Antrean, HasilNaskah, KeadaanPersetujuan, Ringkasan, RingkasanAnalitik } from "./kontrak";
 import { LayarKurasi } from "./kurasi/LayarKurasi";
 import { LayarMasuk } from "./masuk/LayarMasuk";
 import { MIKROKOPI } from "./mikrokopi";
@@ -67,6 +69,7 @@ type Tahap =
   | { readonly jenis: "butir"; readonly idButir: string }
   | { readonly jenis: "kurasi"; readonly antrean: Antrean }
   | { readonly jenis: "kurasi_galat"; readonly luring: boolean }
+  | { readonly jenis: "analitik"; readonly ringkasan: RingkasanAnalitik }
   | { readonly jenis: "tidak_dikenali" }
   | { readonly jenis: "pengaturan"; readonly asal: "beranda" | "tanya" }
   | { readonly jenis: "tanya" };
@@ -111,6 +114,10 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
     if (antrean.jenis === "galat" && (antrean.galat === "luring" || antrean.galat === "sistem")) {
       return { jenis: "kurasi_galat", luring: antrean.galat === "luring" };
     }
+    // Fitur 035 (P-5): bukan kurator — mungkin peneliti.
+    const analitik = await bacaAnalitik(pemanggil);
+    if (analitik.jenis === "ringkasan") return { jenis: "analitik", ringkasan: analitik.ringkasan };
+    if (analitik.galat === "belum_masuk") return { jenis: "masuk", pemberitahuan: null };
     return { jenis: "tidak_dikenali" };
   }
 
@@ -217,6 +224,16 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
     return (
       <LayarKurasi
         awal={tahap.antrean}
+        belumMasuk={perluMasuk}
+        keluar={() => void keluarkan()}
+        pemanggil={pemanggil}
+      />
+    );
+  }
+  if (tahap.jenis === "analitik") {
+    return (
+      <LayarAnalitik
+        awal={tahap.ringkasan}
         belumMasuk={perluMasuk}
         keluar={() => void keluarkan()}
         pemanggil={pemanggil}

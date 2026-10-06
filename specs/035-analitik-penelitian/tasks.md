@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-216); K-1 s.d. K-5 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Lima dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Enam dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-08; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -61,10 +61,10 @@ berubah.** Tanpa paket baru (C-12).
 
 **Kebutuhan:** R-04, R-05; K-5; C-13.
 
-- [ ] Uji lebih dulu: peneliti dikenali, tabel, `null` bukan nol, belum
+- [x] Uji lebih dulu: peneliti dikenali, tabel, `null` bukan nol, belum
       terukur bersebab, unduhan CSV, galat dan luring
-- [ ] `web/src/analitik/`; cangkang; mikrokopi
-- [ ] Mutasi M-10
+- [x] `web/src/analitik/`; cangkang; mikrokopi
+- [x] Mutasi M-10
 
 ## T-7 · Titik jalan, bukti, penutupan
 

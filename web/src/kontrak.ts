@@ -306,3 +306,87 @@ export type HasilAntrean =
   | { readonly jenis: "antrean"; readonly antrean: Antrean }
   | { readonly jenis: "tidak_ada" }
   | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+/**
+ * Analitik penelitian — D-14 Bagian 4.8, fitur 035. Angka `null` berarti
+ * belum dapat diukur, bukan nol; layar tidak menukarnya.
+ */
+export type MetrikTertunda =
+  | "rasio_penuntasan"
+  | "rasio_penelusuran_sumber"
+  | "rasio_verifikasi"
+  | "rasio_komitmen"
+  | "rasio_penerapan"
+  | "akurasi_qa";
+
+export interface AktifHarian {
+  readonly tanggal: string;
+  readonly pengguna: number;
+}
+
+export interface AktifMingguan {
+  readonly mulai: string;
+  readonly pengguna: number;
+}
+
+export interface Retensi {
+  readonly hari: number;
+  readonly kohort: number;
+  readonly kembali: number;
+  readonly rasio: number | null;
+}
+
+export interface RingkasanSesi {
+  readonly jumlah: number;
+  readonly median_menit: number | null;
+  readonly rerata_menit: number | null;
+}
+
+export interface Keterlibatan {
+  readonly aktif_harian: readonly AktifHarian[];
+  readonly aktif_mingguan: readonly AktifMingguan[];
+  readonly retensi: readonly Retensi[];
+  readonly sesi: RingkasanSesi;
+}
+
+export interface RasioPenemuan {
+  readonly disajikan: number;
+  readonly dibuka: number;
+  readonly rasio: number | null;
+}
+
+export interface BelumTerukur {
+  readonly metrik: MetrikTertunda;
+  readonly sebab: string;
+}
+
+export interface Integritas {
+  readonly per_jenis: Readonly<Record<string, number>>;
+  readonly per_versi_aplikasi: Readonly<Record<string, number>>;
+  readonly per_versi_model: Readonly<Record<string, number>>;
+  readonly pertama: string | null;
+  readonly terakhir: string | null;
+  readonly pengembangan: number;
+}
+
+export interface RingkasanAnalitik {
+  readonly dihitung_pada: string;
+  readonly keterlibatan: Keterlibatan;
+  readonly penemuan: RasioPenemuan;
+  readonly belum_terukur: readonly BelumTerukur[];
+  readonly integritas: Integritas;
+}
+
+export interface PermintaanEkspor {
+  readonly dari: string;
+  readonly sampai: string;
+  readonly termasuk_pengembangan: boolean;
+}
+
+export type HasilAnalitik =
+  | { readonly jenis: "ringkasan"; readonly ringkasan: RingkasanAnalitik }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilEkspor =
+  | { readonly jenis: "berkas"; readonly isi: Blob; readonly nama: string }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };

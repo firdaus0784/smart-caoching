@@ -11,7 +11,7 @@
  * di sini: ia milik peladen dan sudah dijaga di sana.
  */
 
-import type { JenisGalat, StatusDasar } from "./kontrak";
+import type { JenisGalat, MetrikTertunda, StatusDasar } from "./kontrak";
 
 export const MIKROKOPI = {
   judulLayar: "Tanya",
@@ -168,6 +168,51 @@ export const MIKROKOPI = {
   // D-05 S-15 Antrean kurasi dan S-16 Penyuntingan — fitur 013. Kurator
   // dikenali tanpa rute baru (K-8); skor relevansi tidak tampil (BT-24, C-16).
   akunTidakDikenali: "Akun Anda tidak dapat membuka bagian mana pun di aplikasi ini.",
+
+  // D-05 S-18 Analitik penelitian — fitur 035. Bagi tim peneliti; angka yang
+  // belum dapat diukur disebut demikian, tidak pernah ditulis nol.
+  judulAnalitik: "Analitik penelitian",
+  keteranganTanggalAnalitik: "Tanggal dihitung menurut Waktu Indonesia Barat; pekan dimulai hari Senin.",
+  judulKeterlibatan: "Keterlibatan",
+  judulAktifHarian: "Pengguna aktif harian",
+  judulAktifMingguan: "Pengguna aktif mingguan",
+  judulRetensi: "Retensi",
+  keteranganRetensi: "Kembali tepat pada hari ke-N sejak hari pertama. Kohort yang belum berumur N hari tidak dihitung.",
+  judulSesi: "Panjang sesi",
+  judulPenemuanAnalitik: "Rasio penemuan",
+  judulBelumTerukur: "Belum terukur",
+  judulIntegritas: "Integritas data",
+  judulPerJenis: "Per jenis peristiwa",
+  judulPerVersiAplikasi: "Per versi aplikasi",
+  judulPerVersiModel: "Per versi model",
+  kolomTanggal: "Tanggal",
+  kolomMulaiPekan: "Pekan mulai",
+  kolomPengguna: "Pengguna",
+  kolomHariKe: "Hari ke",
+  kolomKohort: "Kohort",
+  kolomKembali: "Kembali",
+  kolomRasio: "Rasio",
+  kolomKode: "Kode",
+  kolomJumlah: "Jumlah",
+  labelJumlahSesi: "Sesi berdurasi",
+  labelMedianMenit: "Median (menit)",
+  labelRerataMenit: "Rerata (menit)",
+  labelDisajikan: "Butir disajikan",
+  labelDibuka: "Butir dibuka",
+  labelPertama: "Peristiwa pertama",
+  labelTerakhir: "Peristiwa terakhir",
+  labelPengembangan: "Peristiwa pengembangan, dipisah dari angka di atas",
+  belumDapatDihitung: "Belum dapat dihitung",
+  belumAdaData: "Belum ada data.",
+  judulEkspor: "Unduh data peristiwa",
+  keteranganEkspor: "Berkas berisi nilai yang dipisah koma, terbaca di R dan Python.",
+  labelDari: "Tanggal awal",
+  labelSampai: "Tanggal akhir",
+  labelTermasukPengembangan: "Sertakan peristiwa pengembangan",
+  tombolUnduhCsv: "Unduh berkas data",
+  eksporRentang: "Isi tanggal awal dan akhir; tanggal awal tidak boleh sesudah tanggal akhir.",
+  eksporLuring: "Sedang tidak terhubung. Berkas belum terunduh; coba lagi saat sinyal kembali.",
+  eksporGangguan: "Berkas belum dapat dibuat. Coba lagi sebentar lagi.",
   judulKurasi: "Antrean kurasi",
   judulMenunggu: "Menunggu putusan",
   judulSedangTayang: "Sedang tayang",
@@ -220,6 +265,35 @@ export const DATA_DITARIK: readonly string[] = [
 export const DATA_TIDAK_DITARIK: readonly string[] = [
   "Catatan bahwa permintaan ini pernah ada, tanpa akun maupun nama Anda",
 ];
+
+/** Nama metrik D-01 Bagian 9.1 yang belum terukur — fitur 035. */
+export const LABEL_METRIK_TERTUNDA: Readonly<Record<MetrikTertunda, string>> = {
+  rasio_penuntasan: "Rasio penuntasan bacaan",
+  rasio_penelusuran_sumber: "Rasio penelusuran sumber",
+  rasio_verifikasi: "Rasio pemeriksaan pemahaman",
+  rasio_komitmen: "Rasio komitmen",
+  rasio_penerapan: "Rasio penerapan",
+  akurasi_qa: "Ketepatan jawaban menurut penilaian pengguna",
+};
+
+/** Rasio sebagai persen berdesimal koma — fitur 035. */
+export function persen(rasio: number): string {
+  return `${(rasio * 100).toFixed(1).replace(".", ",")}%`;
+}
+
+/** Angka berdesimal koma. */
+export function angkaDesimal(nilai: number): string {
+  return nilai.toFixed(1).replace(".", ",");
+}
+
+/** Waktu peladen apa adanya, dinyatakan zonanya. */
+export function waktuUniversal(iso: string): string {
+  return `${iso.replace("T", " ").replace("Z", "").slice(0, 16)} waktu universal`;
+}
+
+export function dihitungPada(iso: string): string {
+  return `Dihitung pada ${waktuUniversal(iso)}.`;
+}
 
 export const LABEL_ALASAN_TOLAK = {
   "TL-01": "Tidak relevan dengan konteks sekolah dasar Indonesia",

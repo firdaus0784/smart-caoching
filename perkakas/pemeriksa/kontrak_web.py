@@ -35,6 +35,19 @@ from enum import Enum
 from pathlib import Path
 
 from pydantic import BaseModel
+from src.api.analitik import (
+    AktifHarian,
+    AktifMingguan,
+    BelumTerukur,
+    Integritas,
+    Keterlibatan,
+    MetrikTertunda,
+    PermintaanEkspor,
+    RasioPenemuan,
+    Retensi,
+    RingkasanAnalitik,
+    RingkasanSesi,
+)
 from src.api.kurasi import Antrean, KandidatTampil, PermintaanTarik, Suntingan, TayangTampil
 from src.api.penemuan import Beranda, ButirLengkap, ButirRingkas, KeadaanBeranda, PermintaanTolak
 from src.api.percakapan import Giliran
@@ -82,6 +95,17 @@ MODEL: tuple[type[BaseModel], ...] = (
     Antrean,
     Suntingan,
     PermintaanTarik,
+    # Fitur 035: analitik penelitian, D-14 Bagian 4.8.
+    AktifHarian,
+    AktifMingguan,
+    Retensi,
+    RingkasanSesi,
+    Keterlibatan,
+    RasioPenemuan,
+    BelumTerukur,
+    Integritas,
+    RingkasanAnalitik,
+    PermintaanEkspor,
 )
 ENUM: tuple[type[Enum], ...] = (
     StatusDasar,
@@ -95,6 +119,8 @@ ENUM: tuple[type[Enum], ...] = (
     KeadaanBeranda,
     AlasanTolak,
     Pemicu,
+    # Fitur 035.
+    MetrikTertunda,
 )
 
 _ANTARMUKA = re.compile(r"^export interface (\w+) \{\n(.*?)^\}", re.MULTILINE | re.DOTALL)

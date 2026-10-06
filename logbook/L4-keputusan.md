@@ -3356,3 +3356,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyebut ekspor pada keluaran `jalankan` — tidak dipilih; sesudah dijalankan pseudonim sudah dikosongkan, dan tim perlu tahu sebelum memutuskan. |
 | Dampak | `src/penyimpanan/penarikan.py`, `perkakas/penarikan.py`; `tests/perkakas/test_penarikan_perkakas.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-222 · T-6 fitur 035 — layar S-18 Analitik penelitian
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-6 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216) dan putusan P-5 (KB-215). |
+| Keputusan | `web/src/analitik/LayarAnalitik.tsx`: satu halaman tabel — keaktifan harian dan mingguan, retensi beserta keterangan definisinya, panjang sesi, rasio penemuan, metrik belum terukur bernama dan bersebab, integritas dengan peristiwa `pengembangan` terpisah — dan isian rentang tanggal untuk mengunduh berkas. Angka `null` tampil "Belum dapat dihitung". Cangkang mengenali peneliti sesudah 403 pada ringkasan akun dan antrean kurasi, lewat `GET /analitik/ringkas`. Antarmuka `kontrak.ts` didaftarkan pada pemeriksa kontrak web bersama sepuluh model dan satu enum. Uji layar ditulis lebih dulu dan merah karena layar dan klien belum ada. |
+| **Singkatan diuraikan** | "CSV" dan "UTC" tidak dipakai mentah pada mikrokopi: tombolnya "Unduh berkas data", keterangannya menguraikan CSV, dan waktu ditulis "waktu universal" (C-13). |
+| Mutasi | M-10 (`null` ditampilkan sebagai nol) memerahkan 1 uji. |
+| Alternatif | Grafik garis keaktifan — ditolak pada Gerbang 1 (P-5); menuntut pustaka grafik baru (C-12). |
+| Dampak | `web/src/analitik/`, `web/src/Aplikasi.tsx`, `web/src/klien.ts`, `web/src/kontrak.ts`, `web/src/mikrokopi.ts`; `perkakas/pemeriksa/kontrak_web.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Koreksi | Baris "Singkatan diuraikan" di atas: pemeriksa C-13 menolak "CSV" bahkan beserta uraiannya, sehingga kata itu dihapus seluruhnya dari mikrokopi — keterangannya kini "nilai yang dipisah koma". Aplikasi rujukan pemeriksa rute web juga dipasangi penyimpan analitik agar kedua rute peneliti terbaca terpasang. |
