@@ -3245,3 +3245,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengisi `peta_pseudonim` saat akun dibuat agar langkah pemetaan bermakna — tidak dipilih; mengubah fitur 029 di luar `plan.md`, dan pasangan dengan orang sungguhan tetap di luar sistem. |
 | Dampak | `tests/perkakas/test_jalankan_lokal.py`; `web/src/gaya.css`; `specs/033-pengaturan-dan-penarikan-data/bukti/`, `tasks.md`; `docs/D00.md`; `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-213 · Gerbang 4 fitur 033 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Laporan KB-212 mengajukan fitur 033 ke Gerbang 4, beserta mutan M-1 yang sempat hidup (KB-209) dan temuan TK-76. Ditanyakan tegas lewat pilihan; Gerbang 4 tidak didelegasikan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"**. Fitur 033 selesai; jumlah fitur lolos Gerbang 4 menjadi **28 dari 35**. TK-75 dan TK-76 tetap terbuka bagi tim. |
+| Alternatif | Menahan untuk ditinjau — tidak dipilih pemegang gerbang. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 033; penanda dokumen HKI. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |

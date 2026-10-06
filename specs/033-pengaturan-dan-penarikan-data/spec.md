@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-A06, NFR-09, RE-04; KM-02; C-04, C-05, C-13, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 7 dan 8 · D-05 S-14 · D-14 Bagian 3.1, 4.5, 5.1 dan KM-02 · D-04 KA-03, KA-06 · spec fitur 029, 030, 034 |
-| Status | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-204). Gerbang 2 dan 3 atas pendelegasian KB-168 |
+| Status | **Gerbang 4 lolos** — 6 Oktober 2026 (KB-213). Tujuh dari tujuh tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 
