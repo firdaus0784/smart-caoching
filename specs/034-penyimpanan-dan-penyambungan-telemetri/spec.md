@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-J01, FR-J02, FR-J05; FR-A05; NFR-15; C-04, C-05, C-09, C-14, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 dan 9.1 · D-04 Bagian 7.4 (`peristiwa`) · D-14 Bagian 3 dan 5.1 · D-12 Bagian 7 · spec fitur 012 |
-| Status | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-192). Gerbang 2 dan 3 atas pendelegasian KB-168 |
+| Status | **Gerbang 4 lolos** — 6 Oktober 2026 (KB-202). Tujuh dari tujuh tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 

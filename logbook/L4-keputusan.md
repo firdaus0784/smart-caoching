@@ -3103,3 +3103,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membaca peristiwa lewat penyimpan aplikasi pada bukti — ditolak; bukti membaca tabel langsung agar yang dicocokkan adalah yang tersimpan. |
 | Dampak | `perkakas/jalankan_lokal.py`, `tests/perkakas/test_jalankan_lokal.py`; `specs/034-penyimpanan-dan-penyambungan-telemetri/bukti/`, `tasks.md`; `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-202 · Gerbang 4 fitur 034 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Laporan KB-201 mengajukan fitur 034 ke Gerbang 4, beserta temuan TK-74 dan putusannya (KB-199, T-7). Ditanyakan tegas lewat pilihan; Gerbang 4 tidak didelegasikan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"**. Fitur 034 selesai; jumlah fitur lolos Gerbang 4 menjadi **27 dari 35**. Perubahan `web/` dan D-14 0.14 dari KB-199 diterima bersamanya. |
+| Alternatif | Menahan untuk ditinjau — tidak dipilih pemegang gerbang. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 034; penanda dokumen HKI. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
