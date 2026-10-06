@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-192); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-193); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Tiga dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Empat dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-10; FR-J01, FR-J02, FR-J05, FR-A05; C-04, C-05, C-09, C-14 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -46,10 +46,10 @@ Agen **tidak** menulis naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-01 s.d. R-04, R-07, R-08; K-2, K-4, K-5.
 
-- [ ] Uji lebih dulu lewat `TestClient`: C-04 ujung ke ujung pada masuk dan
+- [x] Uji lebih dulu lewat `TestClient`: C-04 ujung ke ujung pada masuk dan
       keluar, cabut seketika, galat penyimpan tidak mengubah tanggapan
-- [ ] `src/api/rekaman.py`; `PenjagaMasuk.pemilik_sesi`; `susun_aplikasi`
-- [ ] Mutasi M-1, M-2, M-3, M-7, M-8
+- [x] `src/api/rekaman.py`; `PenjagaMasuk.pemilik_sesi`; `susun_aplikasi`
+- [x] Mutasi M-1, M-2, M-3, M-7, M-8
 
 ## T-5 · Peristiwa Tanya dan penemuan
 

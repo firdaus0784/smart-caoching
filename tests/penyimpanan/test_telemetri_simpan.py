@@ -101,3 +101,22 @@ def test_kode_salinan_sama_dengan_taksonomi() -> None:
     from src.telemetri.peristiwa import JenisPeristiwa
 
     assert {j.value for j in JenisPeristiwa} == telemetri._KODE
+
+
+def test_properti_bukan_objek_ditolak_saat_dibaca_postgres() -> None:
+    """Baris yang lolos ke tabel tanpa lewat `tambah` tidak diterjemahkan diam-diam."""
+
+    async def uji() -> None:
+        sambungan = SambunganPeran(PERAN_TELEMETRI)
+        pemilik = _psd()
+        await sambungan.execute(
+            "INSERT INTO telemetri.peristiwa (pseudonim, jenis, waktu, properti, "
+            "versi_aplikasi, versi_model) VALUES ($1, 'session_start', $2, '[]'::jsonb, 'uji', "
+            "'tanpa_model')",
+            pemilik,
+            T0,
+        )
+        with pytest.raises(TypeError, match="bukan objek"):
+            await TelemetriPostgres(sambungan).milik(pemilik)  # type: ignore[arg-type]
+
+    jalankan(uji())

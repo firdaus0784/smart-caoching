@@ -104,6 +104,7 @@ from src.api.peran import (
     boleh,
 )
 from src.api.percakapan import Giliran, giliran_sah
+from src.api.rekaman import Perekam
 from src.api.saya import (
     PESAN_PERSETUJUAN_TIDAK_SAH,
     PESAN_PRIORITAS_TIDAK_SAH,
@@ -120,6 +121,7 @@ from src.penyimpanan.kurasi import PenyimpanKurasi
 from src.penyimpanan.penemuan import PenyimpanPenemuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
+from src.penyimpanan.telemetri import PenyimpanTelemetri
 
 PESAN_TIDAK_BERHAK = "Akun Anda tidak dapat membuka bagian ini."
 PESAN_TIDAK_LENGKAP = "Pertanyaan belum lengkap. Tulis ulang dengan kalimat utuh."
@@ -212,6 +214,8 @@ def susun_aplikasi(
     versi_naskah: str | None = None,
     kurasi: PenyimpanKurasi | None = None,
     penemuan: PenyimpanPenemuan | None = None,
+    telemetri: PenyimpanTelemetri | None = None,
+    versi_aplikasi: str | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -234,9 +238,19 @@ def susun_aplikasi(
     beranda disaring terhadap prioritas yang tinggal di sana (FR-G01). Tanpa
     penyimpan pengguna aplikasi tidak dapat disusun, bukan disusun lalu
     menayangkan feed acak.
+
+    `telemetri` boleh kosong: tanpa penyimpan, rute berjalan seperti sebelum
+    fitur 034 dan tidak satu peristiwa pun tersimpan. Bila diberikan, ia
+    **menuntut** `pengguna` — persetujuan yang dibaca C-04 tinggal di sana —
+    dan `versi_aplikasi` yang terisi (FR-J02, K-4).
     """
     if penemuan is not None and pengguna is None:
         raise ValueError("rute penemuan menuntut penyimpan pengguna (FR-G01)")
+    perekam: Perekam | None = None
+    if telemetri is not None:
+        if pengguna is None:
+            raise ValueError("telemetri menuntut penyimpan persetujuan pengguna (C-04)")
+        perekam = Perekam(pengguna, telemetri, versi_aplikasi=versi_aplikasi or "")
     aplikasi = FastAPI(
         title="Smart-Coaching Adaptif",
         docs_url=None,
@@ -379,7 +393,7 @@ def susun_aplikasi(
         )
 
     if masuk is not None:
-        _pasang_rute_masuk(aplikasi, masuk, identitas)
+        _pasang_rute_masuk(aplikasi, masuk, identitas, perekam, sekarang)
     if pengguna is not None:
         _pasang_rute_saya(aplikasi, pengguna, _identitas_atau_tolak, versi_naskah, sekarang)
     if kurasi is not None:
@@ -391,9 +405,16 @@ def susun_aplikasi(
 
 
 def _pasang_rute_masuk(
-    aplikasi: FastAPI, penjaga: PenjagaMasuk, identitas: PenentuIdentitas
+    aplikasi: FastAPI,
+    penjaga: PenjagaMasuk,
+    identitas: PenentuIdentitas,
+    perekam: Perekam | None,
+    sekarang: Callable[[], datetime],
 ) -> None:
-    """Rute D-14 Bagian 3.1 — bentuknya Bagian 4.4. Hanya menerjemahkan."""
+    """Rute D-14 Bagian 3.1 — bentuknya Bagian 4.4. Hanya menerjemahkan.
+
+    Peristiwa sesi direkam **sesudah** tanggapan ditentukan; perekam tidak
+    melempar, sehingga tanggapan tidak bergantung padanya (R-03, R-07)."""
 
     @aplikasi.post(POLA_MASUK)
     async def masuk(permintaan: Request) -> Response:
@@ -416,6 +437,8 @@ def _pasang_rute_masuk(
         lama = permintaan.cookies.get(NAMA_KUKI)
         if lama:
             await penjaga.keluar(lama)
+        if perekam is not None:
+            await perekam.mulai_sesi(lambda: penjaga.pemilik_sesi(pengenal), sekarang=sekarang())
         tanggapan = Response(status_code=204)
         tanggapan.set_cookie(
             NAMA_KUKI,
@@ -441,6 +464,8 @@ def _pasang_rute_masuk(
             )
         # Identitas sudah lolos, sehingga kukinya pasti ada.
         await penjaga.keluar(permintaan.cookies.get(NAMA_KUKI, ""))
+        if perekam is not None:
+            await perekam.akhiri_sesi(siapa.pemilik, sekarang=sekarang())
         tanggapan = Response(status_code=204)
         tanggapan.delete_cookie(NAMA_KUKI, path="/", secure=True, httponly=True, samesite="strict")
         return tanggapan

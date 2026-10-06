@@ -177,6 +177,18 @@ class PenjagaMasuk:
         )
         return pengenal
 
+    async def pemilik_sesi(self, pengenal: str) -> str | None:
+        """Pseudonim pemilik sesi yang sah, atau `None` — K-5 fitur 034.
+
+        Rute masuk menerbitkan sesi sebelum identitas dapat dibaca dari kuki;
+        peristiwa `session_start` membutuhkan pemiliknya dari sesi itu sendiri,
+        lewat penyimpan akun yang sama dengan `PenentuSesi`.
+        """
+        sesi = await self._akun.baca_sesi(
+            turunan_pengenal(pengenal), sekarang=self._sekarang(), batas_diam=BATAS_DIAM
+        )
+        return None if sesi is None else sesi.pseudonim
+
     async def keluar(self, pengenal: str) -> None:
         """Cabut sesi di peladen (R-06). Pengenal tak dikenal tidak melempar."""
         await self._akun.cabut_sesi(turunan_pengenal(pengenal), sekarang=self._sekarang())

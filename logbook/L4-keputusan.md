@@ -3032,3 +3032,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Penyimpan menerima `Peristiwa` fitur 012 langsung — ditolak; membalik arah lapisan (AGENTS.md). |
 | Dampak | `src/penyimpanan/telemetri.py`, `src/penyimpanan/penemuan.py`; `tests/penyimpanan/test_telemetri_simpan.py`, `tests/penyimpanan/test_kurasi_simpan.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-197 · T-4 fitur 034 — perekam dan peristiwa sesi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-4 `tasks.md` fitur 034, atas pendelegasian KB-168 dalam batas `plan.md` (KB-193). |
+| Keputusan | `src/api/rekaman.py`: `Perekam` membaca persetujuan lewat `keadaan_persetujuan()` pada setiap pemanggilan, meneruskannya ke `rekam()` fitur 012, menyimpan hasilnya, dan menelan galat dengan log yang hanya memuat jenis peristiwa dan kelas galat. `PenjagaMasuk.pemilik_sesi` (K-5). `susun_aplikasi(telemetri=, versi_aplikasi=)`; telemetri menuntut penyimpan pengguna dan versi terisi. `return_visit` lalu `session_start` pada rute masuk; `session_end` pada rute keluar. Uji HTTP ditulis lebih dulu dan merah karena modulnya belum ada. |
+| **Durasi tidak ditebak** | `durasi_menit` diisi hanya bila `session_start` terakhir terekam dan tidak lebih tua dari `MASA_SESI` (8 jam, KB-153). Awal yang lebih tua pasti milik sesi lain — misalnya bila persetujuan diberikan di tengah sesi. Batasnya tetapan yang sudah diputus, bukan angka baru. |
+| **Urutan pemeriksaan** | Metode sesi berhenti sebelum membaca peristiwa lama bila persetujuan tidak mengizinkan, mengikuti uraian `gerbang.py`. Gerbang tetap menerima keadaan yang sama dan tetap yang memutus. |
+| Mutasi | M-1 (persetujuan disimpan sekali) memerahkan 4 uji, termasuk pencabutan seketika; M-2 (persetujuan dilewati) 3; M-3 (`pengguna.id` sebagai pemilik) 7; M-7 (galat diteruskan) 1; M-8 (tanpa ambang 24 jam) 1. Kelimanya merah. |
+| Alternatif | Perekam sebagai *middleware* yang merekam tiap permintaan — ditolak; peristiwa D-01 Bagian 9 bermakna per rute, dan *middleware* tidak mengetahui hasil rute tanpa membaca tanggapannya. |
+| Dampak | `src/api/rekaman.py`, `src/api/autentikasi.py`, `src/api/aplikasi.py`; `tests/api/test_rekaman_http.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| Cakupan | Uji tambahan menjaga cabang perekam di luar rute — properti beridentitas ditolak dan dicatat tanpa muatan, pencari pemilik kosong atau rusak, penyimpan rusak pada `rekam` — serta baris properti bukan objek pada PostgreSQL. Penanda 99,87 tidak diturunkan. |
