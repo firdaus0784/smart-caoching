@@ -61,6 +61,10 @@ class PenyimpanPenemuan(Protocol):
 
     async def pernah_tayang(self, pemilik: str) -> frozenset[str]: ...
 
+    async def kapan_tayang(self, pemilik: str, id_butir: str) -> datetime | None:
+        """Kapan butir itu tampil bagi pemilik — bagi `discovery_opened` (fitur 034)."""
+        ...
+
     async def ditolak(self, pemilik: str) -> frozenset[str]: ...
 
     async def catat_belum_relevan(
@@ -82,6 +86,7 @@ def _utc(waktu: datetime) -> None:
 @dataclass
 class _Milik:
     tayang: dict[str, tuple[date, int]] = field(default_factory=dict)
+    waktu: dict[str, datetime] = field(default_factory=dict)
     ditolak: set[str] = field(default_factory=set)
 
 
@@ -124,6 +129,7 @@ class PenemuanMemori:
         satu = self._milik.setdefault(pemilik, _Milik())
         for urutan, i in enumerate(id_butir, start=mulai):
             satu.tayang.setdefault(i, (tanggal, urutan))
+            satu.waktu.setdefault(i, sekarang)
 
     async def pernah_tayang(self, pemilik: str) -> frozenset[str]:
         satu = self._milik.get(pemilik)
@@ -132,6 +138,10 @@ class PenemuanMemori:
     async def ditolak(self, pemilik: str) -> frozenset[str]:
         satu = self._milik.get(pemilik)
         return frozenset() if satu is None else frozenset(satu.ditolak)
+
+    async def kapan_tayang(self, pemilik: str, id_butir: str) -> datetime | None:
+        satu = self._milik.get(pemilik)
+        return None if satu is None else satu.waktu.get(id_butir)
 
     async def catat_belum_relevan(
         self, pemilik: str, id_butir: str, alasan: str, *, sekarang: datetime
@@ -199,6 +209,15 @@ class PenemuanPostgres:
             "SELECT id_butir FROM penemuan.tayang_harian WHERE id_pengguna = $1", pemilik
         )
         return frozenset(str(b["id_butir"]) for b in baris)
+
+    async def kapan_tayang(self, pemilik: str, id_butir: str) -> datetime | None:
+        b = await self._sambungan.fetchrow(
+            "SELECT ditayangkan_pada FROM penemuan.tayang_harian "
+            "WHERE id_pengguna = $1 AND id_butir = $2",
+            pemilik,
+            id_butir,
+        )
+        return None if b is None else b["ditayangkan_pada"]  # type: ignore[return-value]
 
     async def ditolak(self, pemilik: str) -> frozenset[str]:
         baris = await self._sambungan.fetch(

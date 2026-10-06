@@ -584,3 +584,19 @@ def test_jumlah_masuk_antrean_dalam_rentang(simpan: Tiga) -> None:
         assert await simpan.pengisi.jumlah_masuk(sejak=awal, sampai=akhir) == 2
 
     jalankan(uji())
+
+
+def test_kapan_tayang_bagi_menit_sejak_ditayangkan(simpan: Tiga) -> None:
+    """Fitur 034: `discovery_opened` membawa menit sejak butir tampil."""
+
+    async def uji() -> None:
+        p = _psd()
+        k = _kandidat()
+        await simpan.pengisi.tambah_kandidat(k)
+        await simpan.kurasi.setujui(_putusan(k.id_butir, "setujui"), butir=k.butir)
+        assert await simpan.penemuan.kapan_tayang(p, k.id_butir) is None
+        await simpan.penemuan.catat_hari_ini(p, HARI, (k.id_butir,), sekarang=T0)
+        assert await simpan.penemuan.kapan_tayang(p, k.id_butir) == T0
+        assert await simpan.penemuan.kapan_tayang(_psd(), k.id_butir) is None
+
+    jalankan(uji())

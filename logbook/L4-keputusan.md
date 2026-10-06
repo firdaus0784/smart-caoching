@@ -3019,3 +3019,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menegakkan C-04 di peladen dengan kebijakan baris yang membaca persetujuan — tidak dipilih; menuntut peran telemetri membaca skema `pengguna`, dan gerbang fitur 012 sudah memegangnya. |
 | Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `10-telemetri.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-196 · T-3 fitur 034 — penyimpan telemetri; `kapan_tayang`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-3 `tasks.md` fitur 034, atas pendelegasian KB-168 dalam batas `plan.md` (KB-193). |
+| Keputusan | `src/penyimpanan/telemetri.py`: `BarisPeristiwa`, protokol `PenyimpanTelemetri` dengan `tambah`, `terakhir`, dan `milik`; pelaksana memori dan PostgreSQL sebagai `peran_telemetri`. Keduanya menolak bentuk yang sama sebelum menulis: pemilik bukan pseudonim, kode di luar taksonomi, waktu bukan UTC, versi kosong. `PenyimpanPenemuan.kapan_tayang` membaca waktu butir pertama kali tampil, bagi `menit_sejak_tayang`. Uji ditulis lebih dulu dan merah karena modulnya belum ada. |
+| **Salinan kode, dijaga uji** | Lapisan penyimpanan tidak mengimpor `src/telemetri/`, sehingga dua puluh kode disalin; `test_kode_salinan_sama_dengan_taksonomi` membandingkannya dengan `JenisPeristiwa` setiap kali — pola yang sama dengan salinan enum kurasi. |
+| **`milik` di luar `tasks.md`** | Metode baca ketiga, `milik(pemilik)`, ditambahkan bagi uji ujung ke ujung T-4 dan T-5 yang harus menghitung peristiwa lewat penyimpan yang sama dengan yang dipakai rute. Ia tidak diberikan kepada pemilihan beranda maupun jawaban (R-09, C-14). |
+| Alternatif | Penyimpan menerima `Peristiwa` fitur 012 langsung — ditolak; membalik arah lapisan (AGENTS.md). |
+| Dampak | `src/penyimpanan/telemetri.py`, `src/penyimpanan/penemuan.py`; `tests/penyimpanan/test_telemetri_simpan.py`, `tests/penyimpanan/test_kurasi_simpan.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
