@@ -106,6 +106,20 @@ class Pasangan:
         self.tambah = tambah
         self.nonaktifkan = nonaktifkan
 
+    async def sesi_hidup(self, id_akun: str) -> int:
+        """Jumlah sesi tersimpan yang belum dicabut — dibaca di bawah penyimpan."""
+        if isinstance(self.penyimpan, AkunMemori):
+            return sum(
+                1
+                for sesi in self.penyimpan._sesi.values()
+                if sesi.id_pengguna == id_akun and sesi.dicabut_pada is None
+            )
+        b = await SambunganPeran("peran_pengelola_akun").fetchrow(
+            "SELECT count(*) AS n FROM akun.sesi WHERE id_pengguna = $1 AND dicabut_pada IS NULL",
+            id_akun,
+        )
+        return int(b["n"])  # type: ignore[index]
+
     async def akun(self) -> BarisAkun:
         # Nama acak dapat bertabrakan dengan baris uji lama; cari yang kosong.
         while True:
@@ -467,6 +481,11 @@ def test_penarikan_mencabut_seluruh_sesi_akun_itu_saja(pasangan: Pasangan) -> No
         for t in milik:
             assert await p.baca_sesi(t, sekarang=kini, batas_diam=BATAS_DIAM) is None
         assert await p.baca_sesi(sesi_lain, sekarang=kini, batas_diam=BATAS_DIAM) is not None
+        # Dicabut **tersimpan**, bukan hanya tidak terbaca: `baca_sesi` juga
+        # menolak akun tertunda, sehingga lewat pembacaan saja keduanya tidak
+        # dapat dibedakan (M-1, KB-209). D-14 Bagian 4.5 menjanjikan pencabutan.
+        assert await pasangan.sesi_hidup(akun.id) == 0
+        assert await pasangan.sesi_hidup(lain.id) == 1
 
     jalankan(uji())
 

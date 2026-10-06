@@ -93,6 +93,7 @@ from src.api.peran import (
     POLA_BERANDA,
     POLA_BUTIR,
     POLA_DAFTAR_PERCAKAPAN,
+    POLA_DATA_SAYA,
     POLA_KELUAR,
     POLA_MASUK,
     POLA_PERSETUJUAN,
@@ -108,9 +109,11 @@ from src.api.peran import (
 from src.api.percakapan import Giliran, giliran_sah
 from src.api.rekaman import Perekam
 from src.api.saya import (
+    PESAN_PENARIKAN_TIDAK_SAH,
     PESAN_PERSETUJUAN_TIDAK_SAH,
     PESAN_PRIORITAS_TIDAK_SAH,
     PESAN_PROFIL_TIDAK_SAH,
+    penarikan_sah,
     prioritas_sah,
     profil_sah,
     putuskan_persetujuan,
@@ -407,6 +410,8 @@ def susun_aplikasi(
         _pasang_rute_masuk(aplikasi, masuk, identitas, perekam, sekarang)
     if pengguna is not None:
         _pasang_rute_saya(aplikasi, pengguna, _identitas_atau_tolak, versi_naskah, sekarang)
+    if masuk is not None and pengguna is not None:
+        _pasang_rute_penarikan(aplikasi, masuk, _identitas_atau_tolak)
     if kurasi is not None:
         _pasang_rute_kurasi(aplikasi, kurasi, _identitas_atau_tolak, sekarang)
     if penemuan is not None and pengguna is not None:
@@ -559,6 +564,38 @@ def _pasang_rute_saya(
                 400, KodeGalat.VALIDASI_GAGAL, PESAN_PERSETUJUAN_TIDAK_SAH, rute=POLA_PERSETUJUAN
             )
         return JSONResponse(status_code=200, content=await ringkasan(simpan, siapa.pemilik))
+
+
+def _pasang_rute_penarikan(
+    aplikasi: FastAPI,
+    penjaga: PenjagaMasuk,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+) -> None:
+    """`DELETE /saya/data` — D-14 Bagian 4.5, fitur 033. Hanya menerjemahkan:
+    mencatat permintaan dan mencabut sesi milik penjaga masuk; penghapusannya
+    milik perkakas tim dengan peran yang tidak dipegang layanan ini (K-1)."""
+
+    @aplikasi.delete(POLA_DATA_SAYA)
+    async def tarik_data(permintaan: Request) -> Response:
+        siapa = await identitas_atau_tolak(permintaan, POLA_DATA_SAYA)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            if not _berbadan_json(permintaan):
+                raise ValueError("bukan JSON")
+            try:
+                badan = await permintaan.json()
+            except ValueError:
+                badan = None
+            penarikan_sah(badan)
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_PENARIKAN_TIDAK_SAH, rute=POLA_DATA_SAYA
+            )
+        await penjaga.minta_penarikan(siapa.pemilik)
+        tanggapan = Response(status_code=202)
+        tanggapan.delete_cookie(NAMA_KUKI, path="/", secure=True, httponly=True, samesite="strict")
+        return tanggapan
 
 
 def _pasang_rute_kurasi(

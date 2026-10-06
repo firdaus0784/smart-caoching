@@ -189,6 +189,11 @@ class PenjagaMasuk:
         )
         return None if sesi is None else sesi.pseudonim
 
+    async def minta_penarikan(self, pemilik: str) -> None:
+        """Catat permintaan penarikan data dan cabut seluruh sesi akun itu —
+        fitur 033, R-01, K-1. Penghapusannya milik perkakas tim, bukan di sini."""
+        await self._akun.catat_penarikan(pemilik, sekarang=self._sekarang())
+
     async def keluar(self, pengenal: str) -> None:
         """Cabut sesi di peladen (R-06). Pengenal tak dikenal tidak melempar."""
         await self._akun.cabut_sesi(turunan_pengenal(pengenal), sekarang=self._sekarang())

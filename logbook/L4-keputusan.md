@@ -3186,3 +3186,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menonaktifkan akun lewat `status_aktif` — ditolak; menuntut `peran_autentikasi` memegang `UPDATE (status_aktif)`, hak yang sengaja hanya dipegang perkakas pengelola akun (fitur 029). |
 | Dampak | `src/penyimpanan/akun.py`; `tests/penyimpanan/test_akun.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-209 · T-4 fitur 033 — rute `DELETE /saya/data`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-4 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205). |
+| Keputusan | Rute terpasang bila penjaga masuk dan penyimpan pengguna ada. Ia hanya menerjemahkan: identitas, `application/json`, `PermintaanPenarikan` (`{"konfirmasi": true}` tepat), lalu `PenjagaMasuk.minta_penarikan` dan 202 dengan kuki dihapus. Pesan penolakan C-13 tanpa mengutip masukan. Uji HTTP ditulis lebih dulu dan merah karena pesan dan rutenya belum ada. |
+| **`Literal[True]` menerima `1`** | Pydantic membandingkan literal dengan kesamaan, dan `1 == True` di Python; mode ketat tidak mengubahnya. Uji parametris menangkapnya; validator kini menuntut `is True`. |
+| **M-1 sempat hidup** | `baca_sesi` juga menolak akun berpermintaan tertunda, sehingga lewat pembacaan atau HTTP pencabutan sesi tidak dapat dibedakan dari ketiadaannya — dua penjagaan, satu tak teramati. Pencabutan tetap dipertahankan karena D-14 Bagian 4.5 menjanjikannya dan karena ia satu-satunya penjagaan yang tidak bergantung pada pembacaan permintaan; uji penyimpan kini membaca sesi tersimpan yang belum dicabut lewat peran pengelola akun. Sesudah itu M-1 merah pada kedua pelaksana. |
+| Mutasi | M-1 (sesi tidak dicabut) 2 uji merah sesudah perbaikan; M-8 (tanpa konfirmasi) 6. |
+| Alternatif | Membuang pencabutan dan bersandar pada pembacaan saja — ditolak; janji kontrak dan satu penjagaan berkurang. |
+| Dampak | `src/api/aplikasi.py`, `src/api/autentikasi.py`, `src/api/peran.py`, `src/api/saya.py`; `tests/api/test_penarikan_http.py`, `tests/penyimpanan/test_akun.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

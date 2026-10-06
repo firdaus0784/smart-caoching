@@ -104,7 +104,9 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
         assert baru in nama, baru
     # 25 sejak T-6: alasan "belum relevan" yang tidak sah.
     assert "PESAN_ALASAN_TIDAK_SAH" in nama
-    assert len(ditemukan) == 25, f"{len(ditemukan)} untai terbaca, seharusnya 25"
+    # 26 sejak fitur 033 T-4: penarikan data tanpa konfirmasi tegas.
+    assert "PESAN_PENARIKAN_TIDAK_SAH" in nama
+    assert len(ditemukan) == 26, f"{len(ditemukan)} untai terbaca, seharusnya 26"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

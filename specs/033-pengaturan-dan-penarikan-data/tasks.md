@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Tiga dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Empat dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -47,10 +47,10 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 **Kebutuhan:** R-01, R-05, R-08; K-5.
 
-- [ ] Uji lebih dulu lewat `TestClient`: 202, kuki dihapus, sesi lain ditolak,
+- [x] Uji lebih dulu lewat `TestClient`: 202, kuki dihapus, sesi lain ditolak,
       masuk ditolak sama dengan sandi salah, tanpa konfirmasi 400
-- [ ] `DELETE /saya/data` pada `src/api/aplikasi.py`
-- [ ] Mutasi M-1, M-8
+- [x] `DELETE /saya/data` pada `src/api/aplikasi.py`
+- [x] Mutasi M-1, M-8
 
 ## T-5 · Penghapusan dan perkakas
 

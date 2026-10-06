@@ -240,6 +240,7 @@ _INDEKS: dict[tuple[str, str], Rute] = {(r.metode, r.jalur): r for r in PETA_RUT
 POLA_PROFIL = _INDEKS["GET", "/api/v1/saya/profil"].jalur
 POLA_PRIORITAS = _INDEKS["PUT", "/api/v1/saya/prioritas"].jalur
 POLA_PERSETUJUAN = _INDEKS["POST", "/api/v1/saya/persetujuan"].jalur
+POLA_DATA_SAYA = _INDEKS["DELETE", "/api/v1/saya/data"].jalur
 POLA_MASUK = _INDEKS["POST", "/api/v1/auth/masuk"].jalur
 POLA_KELUAR = _INDEKS["POST", "/api/v1/auth/keluar"].jalur
 POLA_TANYA = _INDEKS["POST", "/api/v1/tanya"].jalur

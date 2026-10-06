@@ -26,9 +26,16 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 
 from src.nlp.anotasi.skema import KategoriMasalah
 from src.pengguna.persetujuan import CatatanPersetujuan, JenisPersetujuan, KeadaanPersetujuan
@@ -38,6 +45,9 @@ from src.penyimpanan.pengguna import BarisProfil, PenyimpanPengguna
 
 PESAN_PROFIL_TIDAK_SAH: Final = "Isian profil belum sesuai. Periksa lagi setiap isian."
 PESAN_PRIORITAS_TIDAK_SAH: Final = "Pilih tiga sampai lima prioritas yang berbeda."
+PESAN_PENARIKAN_TIDAK_SAH: Final = (
+    "Penarikan data perlu dikonfirmasi lebih dulu. Coba lagi dari Pengaturan."
+)
 PESAN_PERSETUJUAN_TIDAK_SAH: Final = (
     "Persetujuan belum dapat dicatat. Muat ulang halaman, lalu coba lagi."
 )
@@ -87,6 +97,35 @@ class PermintaanPrioritas(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid", hide_input_in_errors=True)
 
     kategori: list[KategoriMasalah]
+
+
+class PermintaanPenarikan(BaseModel):
+    """Badan `DELETE /saya/data` — D-14 Bagian 4.5, K-5 fitur 033.
+
+    Tepat `{"konfirmasi": true}`. Badan kosong, `false`, angka `1`, maupun
+    bidang tambahan ditolak: rute yang memicu penghapusan tidak boleh terpicu
+    permintaan yang terkirim tanpa sengaja.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid", strict=True)
+
+    konfirmasi: Literal[True]
+
+    @field_validator("konfirmasi", mode="before")
+    @classmethod
+    def _tepat_benar(cls, nilai: Any) -> Any:
+        # `Literal[True]` menerima `1`, sebab `1 == True` di Python.
+        if nilai is not True:
+            raise ValueError("konfirmasi wajib bernilai true")
+        return nilai
+
+
+def penarikan_sah(badan: Any) -> None:
+    """`ValueError` bila badan bukan konfirmasi tegas."""
+    try:
+        PermintaanPenarikan.model_validate(badan)
+    except ValidationError as galat:
+        raise ValueError("konfirmasi penarikan tidak sah") from galat
 
 
 class PermintaanPersetujuan(BaseModel):
