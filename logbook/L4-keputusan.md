@@ -3114,3 +3114,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menahan untuk ditinjau — tidak dipilih pemegang gerbang. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 034; penanda dokumen HKI. Nol baris kode. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-203 · Usulan `spec.md` fitur 033 — pengaturan dan penarikan data
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Sesudah Gerbang 4 fitur 034 (KB-202) pemegang gerbang menjawab "setuju dan lanjutkan". Baris yang tidak tertahan putusan tim: 032, 033, 035; 031 menunggu TK-71. |
+| Keputusan | Mengusulkan **033 lebih dulu**: sejak 034 data perilaku sungguhan tersimpan, tabelnya tambah-saja ditegakkan peladen, dan NFR-09 (penarikan ≤ 14 hari) tidak dapat ditepati sama sekali. Pemetaan data milik pengguna dibaca dari katalog basis data. Sembilan kebutuhan yang tidak bergantung pertanyaan; lima pertanyaan terbuka beserta anjuran — P-1 B (perkakas berkredensial terpisah), P-2 B (seluruh data, akun dinonaktifkan), P-3 diserahkan ke tim etik, P-4 B (kalimat penjelasan dari berkas tim), P-5 tombol di samping Keluar. |
+| Alternatif | 035 lebih dulu — tidak dianjurkan; analitik membaca data yang belum dapat ditarik pesertanya. 032 — tidak menyangkut hak peserta. |
+| Dampak | `specs/033-pengaturan-dan-penarikan-data/spec.md`. Nol baris kode. |
+| Pemutus | Agen mengusulkan; Gerbang 1 menunggu pemegang Gerbang 1–4 |
