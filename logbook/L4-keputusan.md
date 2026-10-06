@@ -3292,3 +3292,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyimpan metrik harian sebagai tabel — ditolak; spec fitur 034 menetapkan metrik dihitung saat analisis, dan angka tersimpan tidak ikut terhapus ketika peserta menarik datanya. |
 | Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 035. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-217 · T-1 fitur 035 — kontrak analitik
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-1 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216). |
+| Keputusan | D-14 0.16 Bagian 4.8: bentuk `GET /analitik/ringkas` (keterlibatan, penemuan, belum terukur bersebab, integritas) dan `POST /analitik/ekspor` (CSV berkolom model, rentang tanggal WIB, jejak sebelum berkas). Retensi berkohort dan aturan `null` bukan nol ditulis sebagai aturan kontrak, bukan rincian kode. Bagian 5.1: tabel `ekspor` tambah-saja. D-00 2.88. |
+| **Enam metrik belum terukur** | `spec.md` menyebut lima golongan; kontrak menamai enam kode, sebab rasio penerapan — variabel hasil utama D-01 Bagian 9.1 — menunggu baris 031 dan harus tampil bernama, bukan tersirat di bawah "komitmen". |
+| Alternatif | Retensi sebagai satu angka tanpa penyebut — ditolak; tanpa `kohort` pembaca tidak dapat menilai apakah 100% berarti satu orang. |
+| Dampak | `docs/D14.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168 |

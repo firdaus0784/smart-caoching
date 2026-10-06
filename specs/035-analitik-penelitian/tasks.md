@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-216); K-1 s.d. K-5 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Nol dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Satu dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-08; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -18,9 +18,9 @@ berubah.** Tanpa paket baru (C-12).
 
 **Kebutuhan:** R-01, R-06, R-08; K-3.
 
-- [ ] D-14 Bagian 4.8: bentuk `GET /analitik/ringkas` dan `POST /analitik/ekspor`
-- [ ] D-14 Bagian 5.1: tabel `ekspor`; definisi retensi
-- [ ] Register D-00
+- [x] D-14 Bagian 4.8: bentuk `GET /analitik/ringkas` dan `POST /analitik/ekspor`
+- [x] D-14 Bagian 5.1: tabel `ekspor`; definisi retensi
+- [x] Register D-00
 
 ## T-2 · Peladen
 
