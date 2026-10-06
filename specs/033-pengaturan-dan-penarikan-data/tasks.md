@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Satu dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Dua dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -26,12 +26,12 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 **Kebutuhan:** R-02, R-04; K-2, K-3.
 
-- [ ] Uji lebih dulu: penolakan kedua peran baru dengan sebab
+- [x] Uji lebih dulu: penolakan kedua peran baru dengan sebab
       `permission denied`; katalog hak persis; batasan baris permintaan
-- [ ] `01-peran-dan-basis-data.sql` + dua peran; `11-penarikan.sql`
-- [ ] Katalog hak uji fitur 028, 030, 013, 034: `peran_penarikan` disebut
+- [x] `01-peran-dan-basis-data.sql` + dua peran; `11-penarikan.sql`
+- [x] Katalog hak uji fitur 028, 030, 013, 034: `peran_penarikan` disebut
       tegas sebagai satu-satunya pemegang `DELETE`
-- [ ] Mutasi M-6
+- [x] Mutasi M-6
 
 ## T-3 · Penyimpan akun
 

@@ -154,3 +154,12 @@ def siapkan() -> None:
     hasil = psql("smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "10-telemetri.sql"))
     if hasil.returncode != 0:
         raise RuntimeError(f"10-telemetri.sql gagal: {hasil.stderr}")
+
+    # 11 — penarikan data (fitur 033), pada kedua basis data.
+    for nama, basis in (
+        ("11-penarikan.sql", "smart_coaching"),
+        ("11b-penarikan-pseudonim.sql", "smart_coaching_pseudonim"),
+    ):
+        hasil = psql(basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
+        if hasil.returncode != 0:
+            raise RuntimeError(f"{nama} gagal: {hasil.stderr}")

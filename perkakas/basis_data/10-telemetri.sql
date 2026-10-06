@@ -5,7 +5,9 @@
 --
 -- Yang ditegakkan PELADEN (plan Bagian 4):
 --
---   Tambah-saja     Tidak satu peran pun memegang UPDATE, DELETE, atau TRUNCATE.
+--   Tambah-saja     Tidak satu peran APLIKASI pun memegang UPDATE, DELETE, atau
+--                   TRUNCATE; hapus per pemilik hanya oleh `peran_penarikan`
+--                   perkakas tim (fitur 033, `11-penarikan.sql`).
 --                   Peristiwa yang dapat diubah sesudah terekam tidak
 --                   membuktikan apa pun tentang apa yang terjadi (R-07 fitur 012).
 --   C-05            Pemilik berpola pseudonim akun; `peran_telemetri` tanpa

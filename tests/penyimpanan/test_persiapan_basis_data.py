@@ -62,6 +62,8 @@ def basis_data_siap() -> None:
         "peran_penayangan",
         "peran_pengisi_antrean",
         "peran_telemetri",
+        "peran_penarikan",
+        "peran_penarikan_pseudonim",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -134,6 +136,15 @@ def basis_data_siap() -> None:
         PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "10-telemetri.sql")
     )
     assert hasil.returncode == 0, hasil.stderr
+
+    # Penarikan data (fitur 033): `11` pada basis data utama, `11b` pada
+    # basis data pseudonim — dua peran, dua basis data, tanpa saling menjangkau.
+    for nama, basis in (
+        ("11-penarikan.sql", "smart_coaching"),
+        ("11b-penarikan-pseudonim.sql", "smart_coaching_pseudonim"),
+    ):
+        hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
+        assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
 
 
 def _boleh(peran: str, basis_data: str, kueri: str) -> bool:
@@ -456,6 +467,22 @@ def test_hak_peran_riwayat_persis_baca_dan_tambah(basis_data_siap: None) -> None
         "group by table_name order by table_name",
     )
     assert hasil.stdout.split() == ["giliran:INSERT,SELECT", "percakapan:INSERT,SELECT"]
+    # Fitur 033: satu-satunya pemegang hapus atas riwayat adalah peran
+    # penarikan, yang tidak dipegang layanan aplikasi.
+    lain = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where table_schema = 'riwayat' and grantee like 'peran\\_%' "
+        "and grantee <> 'peran_riwayat' group by grantee, table_name order by 1",
+    )
+    assert lain.stdout.split() == [
+        "peran_penarikan:giliran:DELETE",
+        "peran_penarikan:percakapan:DELETE",
+    ]
 
 
 def test_giliran_menolak_pertanyaan_kosong_dan_percakapan_tak_ada(basis_data_siap: None) -> None:
@@ -664,7 +691,10 @@ def test_hak_peran_akun_persis_menurut_katalog(basis_data_siap: None) -> None:
     )
     assert tabel.stdout.split() == [
         "peran_autentikasi:pengguna:SELECT",
+        "peran_autentikasi:permintaan_penarikan:INSERT",
         "peran_autentikasi:sesi:INSERT,SELECT",
+        "peran_penarikan:pengguna:DELETE",
+        "peran_penarikan:sesi:DELETE",
         "peran_pengelola_akun:pengguna:INSERT",
     ]
     kolom = _psql(
@@ -682,7 +712,12 @@ def test_hak_peran_akun_persis_menurut_katalog(basis_data_siap: None) -> None:
     )
     assert kolom.stdout.split() == [
         "peran_autentikasi:pengguna:UPDATE:ditahan_sampai,gagal_beruntun",
+        "peran_autentikasi:permintaan_penarikan:SELECT:dipenuhi_pada,pseudonim",
         "peran_autentikasi:sesi:UPDATE:dicabut_pada,terakhir_aktif",
+        "peran_penarikan:pengguna:SELECT:id,pseudonim",
+        "peran_penarikan:permintaan_penarikan:SELECT:diminta_pada,dipenuhi_pada,nomor,pseudonim",
+        "peran_penarikan:permintaan_penarikan:UPDATE:dipenuhi_pada,jumlah_baris,pseudonim",
+        "peran_penarikan:sesi:SELECT:id_pengguna",
         "peran_pengelola_akun:pengguna:SELECT:id,status_aktif",
         "peran_pengelola_akun:pengguna:UPDATE:ditahan_sampai,gagal_beruntun,status_aktif,turunan_sandi",
         "peran_pengelola_akun:sesi:SELECT:dicabut_pada,id_pengguna",
@@ -824,6 +859,9 @@ def test_hak_peran_pengguna_persis_menurut_katalog(basis_data_siap: None) -> Non
         "group by grantee, table_name order by 1",
     )
     assert tabel.stdout.split() == [
+        "peran_penarikan:persetujuan:DELETE",
+        "peran_penarikan:prioritas_manajerial:DELETE",
+        "peran_penarikan:profil_sekolah:DELETE",
         "peran_pengguna:persetujuan:INSERT,SELECT",
         "peran_pengguna:prioritas_manajerial:INSERT,SELECT",
         "peran_pengguna:profil_sekolah:INSERT,SELECT",
@@ -842,6 +880,9 @@ def test_hak_peran_pengguna_persis_menurut_katalog(basis_data_siap: None) -> Non
         "group by a.rolname, c.relname, x.privilege_type order by 1",
     )
     assert kolom.stdout.split() == [
+        "peran_penarikan:persetujuan:SELECT:id_pengguna",
+        "peran_penarikan:prioritas_manajerial:SELECT:id_pengguna",
+        "peran_penarikan:profil_sekolah:SELECT:id_pengguna",
         "peran_pengguna:persetujuan:UPDATE:dicabut_pada",
         "peran_pengguna:profil_sekolah:UPDATE:jabatan,jalur_akreditasi,jumlah_ptk,"
         "jumlah_rombel,masa_kerja,tanggal_perbarui,wilayah",
@@ -1101,6 +1142,8 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "peran_kurasi:kurasi.kandidat:SELECT",
         "peran_kurasi:kurasi.penarikan:INSERT,SELECT",
         "peran_kurasi:kurasi.putusan:INSERT,SELECT",
+        "peran_penarikan:penemuan.belum_relevan:DELETE",
+        "peran_penarikan:penemuan.tayang_harian:DELETE",
         "peran_penayangan:kurasi.butir_tayang:SELECT",
         "peran_penayangan:penemuan.belum_relevan:INSERT,SELECT",
         "peran_penayangan:penemuan.tayang_harian:INSERT,SELECT",
@@ -1124,6 +1167,8 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
     assert kolom.stdout.split() == [
         "peran_kurasi:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,perlu_tinjauan_pada",
         "peran_kurasi:kandidat:UPDATE:kembali_pada",
+        "peran_penarikan:belum_relevan:SELECT:id_pengguna",
+        "peran_penarikan:tayang_harian:SELECT:id_pengguna",
         "peran_penayangan:putusan:SELECT:id_butir,jenis,menyetujui,nomor,peran,waktu",
         "peran_pengisi_antrean:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,status_keberlakuan",
         "peran_pengisi_antrean:kandidat:UPDATE:status_keberlakuan",
@@ -1287,7 +1332,10 @@ def test_hak_peran_telemetri_persis_menurut_katalog(basis_data_siap: None) -> No
         "where table_schema = 'telemetri' and grantee like 'peran\\_%' "
         "group by grantee, table_name order by 1",
     )
-    assert tabel.stdout.split() == ["peran_telemetri:peristiwa:INSERT,SELECT"]
+    assert tabel.stdout.split() == [
+        "peran_penarikan:peristiwa:DELETE",
+        "peran_telemetri:peristiwa:INSERT,SELECT",
+    ]
 
 
 def test_batasan_tabel_peristiwa(basis_data_siap: None) -> None:
@@ -1311,3 +1359,204 @@ def test_kode_peristiwa_sql_sama_dengan_taksonomi() -> None:
     sql = (BERKAS / "10-telemetri.sql").read_text(encoding="utf-8")
     blok = sql[sql.index("jenis IN (") : sql.index(")", sql.index("jenis IN ("))]
     assert set(re.findall(r"'([a-z_]+)'", blok)) == {j.value for j in JenisPeristiwa}
+
+
+# ── Penarikan data — fitur 033 ───────────────────────────────────────
+#
+# Dua peran di luar layanan aplikasi: `peran_penarikan` menghapus data milik
+# satu pseudonim pada basis data utama; `peran_penarikan_pseudonim` menghapus
+# pemetaannya pada basis data pseudonim. Tidak satu pun menjangkau basis data
+# yang lain (C-05), dan bukti permintaan tidak dapat dihapus siapa pun.
+
+_PSD_TARIK = "psd_tttttttttttttttt"
+_MINTA = (
+    "insert into akun.permintaan_penarikan (pseudonim, diminta_pada) "
+    f"values ('{_PSD_TARIK}', now())"
+)
+
+DITOLAK_PENARIKAN = [
+    *[
+        ("peran_penarikan", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            ("select turunan_sandi from akun.pengguna", "tidak membaca sandi"),
+            ("update akun.pengguna set status_aktif = false where false", "tidak mengubah akun"),
+            ("select properti from telemetri.peristiwa", "tidak membaca isi peristiwa"),
+            ("select pertanyaan from riwayat.giliran", "tidak membaca pertanyaan"),
+            ("select alasan from penemuan.belum_relevan", "tidak membaca alasan"),
+            (_PERISTIWA, "tidak menambah peristiwa"),
+            ("truncate telemetri.peristiwa", "menghapus per pemilik, tidak mengosongkan"),
+            ("delete from akun.permintaan_penarikan where false", "bukti tidak dihapus"),
+            ("delete from kurasi.putusan where false", "jejak kurasi bukan data peserta"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+        )
+    ],
+    (
+        "peran_penarikan",
+        "smart_coaching_pseudonim",
+        "select 1",
+        "C-05 — tanpa basis data pseudonim",
+    ),
+    (
+        "peran_penarikan_pseudonim",
+        "smart_coaching",
+        "select 1",
+        "C-05 — pemegang pemetaan tidak menjangkau data perilaku",
+    ),
+    *[
+        ("peran_penarikan_pseudonim", "smart_coaching_pseudonim", kueri, sebab)
+        for kueri, sebab in (
+            ("select id_pengguna from pseudonim.peta_pseudonim", "tidak membaca identitas"),
+            (
+                "insert into pseudonim.peta_pseudonim (id_pengguna, pseudonim) "
+                f"values ('ks-999', '{_PSD_TARIK}')",
+                "tidak menambah pemetaan",
+            ),
+        )
+    ],
+    *[
+        (peran, "smart_coaching", kueri, sebab)
+        for peran, kueri, sebab in (
+            (
+                "peran_autentikasi",
+                "delete from akun.permintaan_penarikan where false",
+                "tidak dihapus",
+            ),
+            (
+                "peran_autentikasi",
+                "update akun.permintaan_penarikan set dipenuhi_pada = now() where false",
+                "pemenuhan milik perkakas",
+            ),
+            (
+                "peran_autentikasi",
+                "select diminta_pada from akun.permintaan_penarikan",
+                "kolom lain",
+            ),
+            ("peran_pengguna", "select * from akun.permintaan_penarikan", "di luar peran pengguna"),
+            ("peran_telemetri", "select * from akun.permintaan_penarikan", "di luar telemetri"),
+            ("peran_penjawaban", "select * from akun.permintaan_penarikan", "C-17"),
+        )
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_PENARIKAN)
+def test_peladen_menolak_hak_penarikan(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    """M-6: `GRANT CONNECT` basis data pseudonim kepada `peran_penarikan`."""
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_peran_penarikan_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """Tiap peran menjalankan tepat yang menjadi tugasnya — hapus per pemilik."""
+    langkah = [
+        ("peran_autentikasi", "smart_coaching", _MINTA),
+        (
+            "peran_autentikasi",
+            "smart_coaching",
+            f"select dipenuhi_pada from akun.permintaan_penarikan where pseudonim = '{_PSD_TARIK}'",
+        ),
+        *[
+            ("peran_penarikan", "smart_coaching", kueri)
+            for kueri in (
+                f"delete from telemetri.peristiwa where pseudonim = '{_PSD_TARIK}'",
+                "delete from riwayat.giliran where id_percakapan in (select id_percakapan "
+                f"from riwayat.percakapan where pemilik = '{_PSD_TARIK}')",
+                f"delete from riwayat.percakapan where pemilik = '{_PSD_TARIK}'",
+                f"delete from penemuan.tayang_harian where id_pengguna = '{_PSD_TARIK}'",
+                f"delete from penemuan.belum_relevan where id_pengguna = '{_PSD_TARIK}'",
+                f"delete from pengguna.profil_sekolah where id_pengguna = '{_PSD_TARIK}'",
+                f"delete from pengguna.prioritas_manajerial where id_pengguna = '{_PSD_TARIK}'",
+                f"delete from pengguna.persetujuan where id_pengguna = '{_PSD_TARIK}'",
+                "delete from akun.sesi where id_pengguna in (select id from akun.pengguna "
+                f"where pseudonim = '{_PSD_TARIK}')",
+                f"delete from akun.pengguna where pseudonim = '{_PSD_TARIK}'",
+                "update akun.permintaan_penarikan set pseudonim = null, dipenuhi_pada = now(), "
+                f"jumlah_baris = '{{}}' where pseudonim = '{_PSD_TARIK}' and dipenuhi_pada is null",
+                "select nomor, diminta_pada, dipenuhi_pada from akun.permintaan_penarikan",
+            )
+        ],
+        (
+            "peran_penarikan_pseudonim",
+            "smart_coaching_pseudonim",
+            f"delete from pseudonim.peta_pseudonim where pseudonim = '{_PSD_TARIK}'",
+        ),
+    ]
+    for peran, basis, kueri in langkah:
+        hasil = _psql(peran, basis, "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, f"{peran}: {kueri}\n{hasil.stderr}"
+
+
+def test_batasan_tabel_permintaan_penarikan(basis_data_siap: None) -> None:
+    psd = "psd_bbbbbbbbbbbbbbbb"
+    minta = _MINTA.replace(_PSD_TARIK, psd)
+    assert _psql("peran_autentikasi", "smart_coaching", "-c", minta).returncode == 0
+    for peran, kueri, sebab, pesan in (
+        ("peran_autentikasi", minta, "satu permintaan tertunda per pseudonim", "duplicate key"),
+        (
+            "peran_autentikasi",
+            _MINTA.replace(_PSD_TARIK, "ks-017"),
+            "C-05 — nama akun",
+            "violates check constraint",
+        ),
+        (
+            "peran_penarikan",
+            "update akun.permintaan_penarikan set dipenuhi_pada = now(), jumlah_baris = '{}' "
+            f"where pseudonim = '{psd}'",
+            "M-5 — dipenuhi tanpa mengosongkan pseudonim",
+            "violates check constraint",
+        ),
+        (
+            "peran_penarikan",
+            "update akun.permintaan_penarikan set pseudonim = null, dipenuhi_pada = now() "
+            f"where pseudonim = '{psd}'",
+            "dipenuhi tanpa jumlah baris",
+            "violates check constraint",
+        ),
+    ):
+        hasil = _psql(peran, "smart_coaching", "-c", kueri)
+        assert pesan in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+
+def test_hak_peran_penarikan_persis_menurut_katalog(basis_data_siap: None) -> None:
+    """Hak tingkat tabel kedua peran baru di seluruh skema — termasuk yang
+    tidak terpikir: tidak ada `TRUNCATE`, `TRIGGER`, maupun `REFERENCES`."""
+    utama = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_schema || '.' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where grantee in ('peran_penarikan', 'peran_penarikan_pseudonim') "
+        "group by grantee, table_schema, table_name order by 1",
+    )
+    assert utama.stdout.split() == [
+        "peran_penarikan:akun.pengguna:DELETE",
+        "peran_penarikan:akun.sesi:DELETE",
+        "peran_penarikan:penemuan.belum_relevan:DELETE",
+        "peran_penarikan:penemuan.tayang_harian:DELETE",
+        "peran_penarikan:pengguna.persetujuan:DELETE",
+        "peran_penarikan:pengguna.prioritas_manajerial:DELETE",
+        "peran_penarikan:pengguna.profil_sekolah:DELETE",
+        "peran_penarikan:riwayat.giliran:DELETE",
+        "peran_penarikan:riwayat.percakapan:DELETE",
+        "peran_penarikan:telemetri.peristiwa:DELETE",
+    ]
+    pseudonim = _psql(
+        PENGELOLA,
+        "smart_coaching_pseudonim",
+        "-c",
+        "select grantee || ':' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where grantee like 'peran\\_%' group by grantee, table_name order by 1",
+    )
+    assert pseudonim.stdout.split() == [
+        "peran_penarikan_pseudonim:peta_pseudonim:DELETE",
+        "peran_pseudonim:peta_pseudonim:INSERT,SELECT",
+    ]

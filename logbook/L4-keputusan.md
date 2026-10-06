@@ -3161,3 +3161,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis bentuk tanggapan berbadan dengan perkiraan tanggal pemenuhan — ditolak; tanggal itu janji yang belum tentu ditepati perkakas yang dijalankan manusia, dan NFR-09 sudah menyebut batasnya. |
 | Dampak | `docs/D14.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-207 · T-2 fitur 033 — peladen: dua peran penarikan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-2 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205). |
+| Keputusan | `11-penarikan.sql`: tabel `akun.permintaan_penarikan` dengan batasan pola pseudonim, tertunda-berpemilik, dipenuhi-berjumlah, dan satu tertunda per pseudonim; `peran_autentikasi` hanya `INSERT` dan `SELECT (pseudonim, dipenuhi_pada)`; `peran_penarikan` `DELETE` atas sepuluh tabel data pengguna dengan `SELECT` kolom pemilik saja. `11b-penarikan-pseudonim.sql`: `peran_penarikan_pseudonim` `DELETE` atas `peta_pseudonim` dengan `SELECT (pseudonim)` saja. Uji ditulis lebih dulu dan merah karena berkasnya belum ada: 21 penolakan dengan sebab `permission denied`, kedua peran berjalan pada haknya, batasan, katalog hak persis. |
+| **Katalog hak fitur lain** | Uji katalog fitur 028, 029, 030, 013, dan 034 kini menyebut `peran_penarikan` tegas pada setiap tabel yang ia hapus — bukan dilonggarkan menjadi "abaikan peran ini". Uji riwayat memperoleh pemeriksaan bahwa selain `peran_riwayat` hanya `peran_penarikan` yang memegang hak di sana. |
+| Mutasi | M-6 (`GRANT CONNECT` basis data pseudonim kepada `peran_penarikan`) memerahkan uji penolakan C-05. |
+| Alternatif | Satu peran yang menjangkau kedua basis data — ditolak; satu kredensial akan memegang data perilaku dan kunci pemetaannya sekaligus (C-05). `TRUNCATE` atau `DELETE` tanpa batasan kolom — ditolak; peran penghapus tidak perlu membaca isi yang ia hapus. |
+| Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `10-telemetri.sql` (uraian), `11-penarikan.sql`, `11b-penarikan-pseudonim.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

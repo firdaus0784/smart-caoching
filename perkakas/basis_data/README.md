@@ -22,6 +22,8 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 07-akun.sq
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 08-pengguna.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 09-kurasi.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 10-telemetri.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 11-penarikan.sql
+psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 11b-penarikan-pseudonim.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -87,6 +89,21 @@ basis data pseudonim.
 atas `telemetri.peristiwa`. Tanpa ubah dan hapus; tanpa skema lain; tanpa
 `CONNECT` ke basis data pseudonim. Persetujuan (C-04) tidak ditegakkan di sini
 — ia dibaca gerbang `rekam()` fitur 012 pada setiap peristiwa.
+
+## Penarikan data — dua peran di luar aplikasi (fitur 033)
+
+`11-penarikan.sql` membuat `akun.permintaan_penarikan`: layanan aplikasi
+(`peran_autentikasi`) hanya mencatat permintaan dan membaca apakah ada yang
+tertunda. `peran_penarikan` satu-satunya pemegang `DELETE` atas sepuluh tabel
+data pengguna — dan hanya membaca kolom pemiliknya, tidak isinya.
+`11b-penarikan-pseudonim.sql` memberi `peran_penarikan_pseudonim` hapus atas
+`peta_pseudonim` pada basis data pseudonim.
+
+**Kedua peran dipegang perkakas tim (`python -m perkakas.penarikan`), tidak
+pernah layanan aplikasi.** Tidak satu pun menjangkau basis data yang lain
+(C-05). Baris permintaan tidak dapat dihapus siapa pun; sesudah dipenuhi
+pseudonimnya kosong, dan batasan tabel menolak pemenuhan yang lupa
+mengosongkannya.
 
 ## Ekstensi pgvector — batas kode dan operasi
 
