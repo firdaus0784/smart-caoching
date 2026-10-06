@@ -3343,3 +3343,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Retensi dihitung di basis data dengan SQL — ditolak; definisinya lebih mudah diperiksa sebagai fungsi murni berdata buatan, dan ukuran pilot tidak menuntutnya. |
 | Dampak | `src/api/analitik.py`, `src/api/aplikasi.py`, `src/api/peran.py`; `tests/api/test_analitik.py`, `tests/api/test_analitik_http.py`, `tests/pemeriksa/test_bahasa_antarmuka.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-221 · T-5 fitur 035 — perkakas penarikan menyebut ekspor terkait
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-5 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216) dan putusan P-4 B (KB-215). |
+| Keputusan | `PenarikanPostgres.ekspor_terkait(nomor)`: nomor ekspor yang rentang tanggal WIB-nya memuat satu atau lebih peristiwa pemilik permintaan tertunda, dengan geser tetap UTC+7 seperti `src/api/hari.py`. `perkakas.penarikan daftar` menambahkan "ekspor yang mungkin memuatnya" pada baris permintaan; tanpa pseudonim. Uji ditulis lebih dulu terhadap PostgreSQL dengan tiga ekspor — memuat, di luar, dan tepat sesudah — dan merah karena metodenya belum ada. |
+| **Menyebut berlebih, tidak luput** | Ekspor yang tidak menyertakan peristiwa `pengembangan` tetap disebut bila rentangnya kena. Menyaring lebih halus menuntut hak baca tambahan, dan yang dipertaruhkan adalah berkas yang terlupa dibersihkan. |
+| Mutasi | M-8 (perkakas tidak menyebut ekspor terkait) memerahkan 1 uji. |
+| Alternatif | Menyebut ekspor pada keluaran `jalankan` — tidak dipilih; sesudah dijalankan pseudonim sudah dikosongkan, dan tim perlu tahu sebelum memutuskan. |
+| Dampak | `src/penyimpanan/penarikan.py`, `perkakas/penarikan.py`; `tests/perkakas/test_penarikan_perkakas.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

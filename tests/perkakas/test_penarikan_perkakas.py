@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import io
 import re
-from datetime import timedelta
+from datetime import date, timedelta
 from pathlib import Path
 
 from tests.konftes_asinkron import jalankan
@@ -86,3 +86,45 @@ def test_layanan_aplikasi_tidak_memakai_penyimpan_penarikan() -> None:
     assert pemakai == []
     assert "penyimpanan.penarikan" in (AKAR / "perkakas" / "penarikan.py").read_text("utf-8")
     assert "PERAN_PENARIKAN" not in (AKAR / "perkakas" / "jalankan_lokal.py").read_text("utf-8")
+
+
+# ── fitur 035 · ekspor yang mungkin memuat data peserta (P-4 B) ──────
+
+
+def _ekspor(dari: str, sampai: str) -> int:
+    from src.penyimpanan.analitik import PERAN_ANALITIK
+    from tests.penyimpanan.test_penarikan_simpan import Sambungan
+
+    async def catat() -> int:
+        b = await Sambungan(PERAN_ANALITIK).fetchrow(
+            "INSERT INTO telemetri.ekspor (peneliti, diekspor_pada, dari, sampai, "
+            "termasuk_pengembangan, jumlah_baris) VALUES ($1, now(), $2::date, $3::date, "
+            "false, 1) RETURNING nomor",
+            _psd(),
+            date.fromisoformat(dari),
+            date.fromisoformat(sampai),
+        )
+        return int(b["nomor"])
+
+    return jalankan(catat())
+
+
+def test_daftar_menyebut_ekspor_yang_rentangnya_memuat_peristiwa_tertunda() -> None:
+    """M-8: tanpa ini tim tidak tahu berkas mana di luar sistem yang perlu dibersihkan."""
+    a = _psd()
+    jalankan(_isi(a))  # satu peristiwa pada 6 Oktober 2026 WIB
+    nomor = jalankan(_minta(a))
+    memuat = _ekspor("2026-10-06", "2026-10-06")
+    di_luar = _ekspor("2026-09-01", "2026-09-30")
+    tepi = _ekspor("2026-10-07", "2026-10-31")
+    terkait = jalankan(_penarikan().ekspor_terkait(nomor))
+    assert memuat in terkait
+    assert di_luar not in terkait and tepi not in terkait
+
+    kode, teks = _jalan("daftar")
+    assert kode == 0
+    (baris,) = [b for b in teks.splitlines() if b.startswith(f"#{nomor} ")]
+    assert "ekspor yang mungkin memuatnya: " in baris
+    assert str(memuat) in baris.split("ekspor yang mungkin memuatnya: ", 1)[1].split(", ")
+    assert "psd_" not in teks
+    assert jalankan(_penarikan().ekspor_terkait(10**12)) == ()

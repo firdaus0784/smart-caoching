@@ -106,6 +106,22 @@ SELECT (SELECT isi FROM jumlah) AS jumlah, (SELECT count(*) FROM tandai) AS dita
 """
 
 
+_EKSPOR_TERKAIT: Final = """
+SELECT e.nomor
+  FROM telemetri.ekspor e
+ WHERE EXISTS (
+       SELECT 1
+         FROM akun.permintaan_penarikan r
+         JOIN telemetri.peristiwa p ON p.pseudonim = r.pseudonim
+        WHERE r.nomor = $1 AND r.dipenuhi_pada IS NULL
+          AND ((p.waktu AT TIME ZONE 'UTC') + interval '7 hours')::date
+              BETWEEN e.dari AND e.sampai)
+ ORDER BY e.nomor
+"""
+"""Tanggal WIB dihitung dengan geser tetap UTC+7 — sama dengan `src/api/hari.py`,
+tanpa bergantung pada basis data zona waktu peladen."""
+
+
 @dataclass(frozen=True)
 class PermintaanTertunda:
     nomor: int
@@ -149,6 +165,16 @@ class PenarikanPostgres:
             PermintaanTertunda(nomor=int(b["nomor"]), diminta_pada=b["diminta_pada"])  # type: ignore[call-overload, arg-type]
             for b in baris
         )
+
+    async def ekspor_terkait(self, nomor: int) -> tuple[int, ...]:
+        """Nomor ekspor penelitian yang rentang tanggal WIB-nya memuat satu atau
+        lebih peristiwa pemilik permintaan tertunda — fitur 035, P-4 B.
+
+        "Mungkin memuat": ekspor tanpa peristiwa `pengembangan` tetap disebut
+        bila rentangnya kena. Menyebut berlebih aman; luput tidak.
+        """
+        baris = await self._utama.fetch(_EKSPOR_TERKAIT, nomor)
+        return tuple(int(b["nomor"]) for b in baris)  # type: ignore[call-overload]
 
     async def jalankan(self, nomor: int, *, sekarang: datetime) -> HasilPenarikan | None:
         """Penuhi satu permintaan; `None` bila tidak ada atau sudah dipenuhi."""

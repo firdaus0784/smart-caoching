@@ -14,6 +14,12 @@ Nomor permintaan, umurnya, dan jumlah baris terhapus per tabel. **Pseudonim
 tidak pernah dicetak** (R-09): orang yang menjalankan perkakas tidak
 membutuhkannya, dan keluaran terminal tersalin ke tempat yang tidak dijaga.
 
+## Ekspor yang mungkin memuatnya (fitur 035, P-4 B)
+
+`daftar` menyebut nomor ekspor penelitian yang rentang tanggalnya memuat
+peristiwa pemilik permintaan. Berkas itu berada di luar sistem; membersihkannya
+milik prosedur tim etik, dan nomornya yang memberi tahu berkas mana.
+
 ## Empat belas hari
 
 `daftar` menandai permintaan yang umurnya melampaui batas NFR-09. Perkakas
@@ -63,8 +69,15 @@ async def _jalankan(
         for p in tertunda:
             umur = (kini - p.diminta_pada).days
             tanda = f" · melewati {BATAS_HARI} hari (NFR-09)" if umur > BATAS_HARI else ""
+            terkait = await penarikan.ekspor_terkait(p.nomor)
+            ekspor = (
+                " · ekspor yang mungkin memuatnya: " + ", ".join(str(n) for n in terkait)
+                if terkait
+                else ""
+            )
             print(
-                f"#{p.nomor} · diminta {p.diminta_pada.date().isoformat()} · {umur} hari{tanda}",
+                f"#{p.nomor} · diminta {p.diminta_pada.date().isoformat()} · {umur} hari"
+                f"{tanda}{ekspor}",
                 file=keluar,
             )
         return 0
