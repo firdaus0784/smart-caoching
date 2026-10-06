@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-192); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-193); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Nol dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Satu dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-10; FR-J01, FR-J02, FR-J05, FR-A05; C-04, C-05, C-09, C-14 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -18,11 +18,11 @@ Agen **tidak** menulis naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-04, R-05; K-1.
 
-- [ ] D-14 Bagian 5.1: tabel `peristiwa` — tambah-saja, pseudonim, `tanpa_model`;
+- [x] D-14 Bagian 5.1: tabel `peristiwa` — tambah-saja, pseudonim, `tanpa_model`;
       catatan bahwa peristiwa direkam di rute yang ada (TK-73)
-- [ ] AGENTS.md: tepi `api → telemetri` satu jurusan beserta alasannya;
+- [x] AGENTS.md: tepi `api → telemetri` satu jurusan beserta alasannya;
       pemeriksa arah tetap lulus
-- [ ] Register D-00
+- [x] Register D-00
 
 ## T-2 · Peladen menegakkan tambah-saja
 

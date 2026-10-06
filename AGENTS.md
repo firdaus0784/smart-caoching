@@ -121,6 +121,14 @@ kedua ada karena pendeteksi data pribadi FR-B04 menjaga `peristiwa.properti`
 perilaku membalik arah C-04 — yang seharusnya persetujuan menentukan
 perekaman, bukan perekaman menentukan profil.
 
+`api` boleh memanggil `telemetri`, satu jurusan — `telemetri` tidak memanggil
+`api`. Tepi ini dituliskan pada fitur 034, ketika peristiwa penelitian mulai
+direkam. Alasannya dapat dinyatakan umum, dan itu yang membuatnya bukan
+perkecualian — `api` satu-satunya titik masuk, sehingga setiap peristiwa yang
+**teramati pada sebuah rute** wajib direkam dari sana, lewat gerbang yang
+menegakkan C-04. Arah sebaliknya terlarang: telemetri yang memanggil `api`
+membuat perekaman bergantung pada bentuk HTTP.
+
 `api` boleh memanggil `pengguna`, satu jurusan — `pengguna` tidak memanggil
 `api`. Tepi ini dituliskan pada fitur 030, ketika rute `/saya/*` menerima
 profil, prioritas, dan persetujuan. Alasannya dapat dinyatakan umum, dan itu

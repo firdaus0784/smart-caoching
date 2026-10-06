@@ -2995,3 +2995,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengumpulkan peristiwa lalu menulis berkelompok — tidak dipilih; peristiwa yang tertahan di memori hilang saat peladen dimulai ulang, dan pencabutan di antara pengumpulan dan penulisan tidak lagi "seketika". |
 | Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 034. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-194 · T-1 fitur 034 — kontrak lebih dulu; tepi `api → telemetri`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-1 `tasks.md` fitur 034, atas pendelegasian KB-168 dalam batas `plan.md` (KB-193). |
+| Keputusan | D-14 0.13 Bagian 5.1: tabel `peristiwa` tambah-saja, pemilik berpseudonim, properti tanpa teks pengguna, `tanpa_model`, dan catatan bahwa D-14 tidak memuat rute penerima peristiwa (TK-73). AGENTS.md: tepi `api → telemetri` satu jurusan beserta alasan umumnya (P-3, K-1). D-00 2.81. |
+| Alternatif | Menulis tepi sebagai perkecualian rute Tanya saja — ditolak; tiap rute yang mengamati peristiwa membutuhkannya, dan alasan umum yang membuatnya bukan kebiasaan. |
+| Dampak | `docs/D14.md`, `AGENTS.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168 |
