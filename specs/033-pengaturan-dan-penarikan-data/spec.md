@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-A06, NFR-09, RE-04; KM-02; C-04, C-05, C-13, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 7 dan 8 · D-05 S-14 · D-14 Bagian 3.1, 4.5, 5.1 dan KM-02 · D-04 KA-03, KA-06 · spec fitur 029, 030, 034 |
-| Status | **Usulan** — menunggu Gerbang 1 |
+| Status | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-204). Gerbang 2 dan 3 atas pendelegasian KB-168 |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -117,6 +117,18 @@ naskah persetujuan ET-02 yang tidak ditulis agen (KB-164).
 menjadikannya tiga, atau satu tombol di samping "Keluar". **Anjuran:** di
 samping "Keluar" — navigasi utama tetap dua, sesuai D-05 Bagian 4.
 
+## Putusan Gerbang 1 (KB-204)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **B** — rute mencatat permintaan dan seketika mencabut sesi; penghapusan keras oleh perkakas tim dengan `peran_penarikan` yang tidak ada pada layanan aplikasi |
+| P-2 | **B** — seluruh data milik pengguna, akun, dan pemetaan pseudonim; tersisa baris permintaan tanpa pseudonim |
+| P-3 | Catatan persetujuan **dihapus bersama** sampai tim etik memutus lain (TK-75) |
+| P-4 | **B** — kalimat penjelasan penarikan dibaca dari berkas naskah milik tim; agen menulis mikrokopi pengaturan |
+| P-5 | Tombol Pengaturan di samping Keluar; navigasi utama tetap dua |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -132,7 +144,7 @@ samping "Keluar" — navigasi utama tetap dua, sesuai D-05 Bagian 4.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-5 diputus pada Gerbang 1
+- [x] P-1 s.d. P-5 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Penghapusan diuji terhadap peladen PostgreSQL: setiap tabel dalam cakupan kosong dari pemilik itu, tabel lain dan pemilik lain utuh
 - [ ] `peran_penarikan` tidak terjangkau layanan aplikasi — diuji

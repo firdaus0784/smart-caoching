@@ -3125,3 +3125,28 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | 035 lebih dulu — tidak dianjurkan; analitik membaca data yang belum dapat ditarik pesertanya. 032 — tidak menyangkut hak peserta. |
 | Dampak | `specs/033-pengaturan-dan-penarikan-data/spec.md`. Nol baris kode. |
 | Pemutus | Agen mengusulkan; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-204 · Gerbang 1 fitur 033 lolos; TK-75
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Usulan KB-203 diajukan dengan lima pertanyaan beserta anjuran; ditanyakan tegas lewat pilihan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan: P-1 B (perkakas tim, `peran_penarikan` di luar aplikasi), P-2 B (seluruh data, akun, dan pemetaan), P-3 catatan persetujuan dihapus bersama sampai tim etik memutus lain, P-4 B (kalimat penjelasan dari berkas tim), P-5 tombol di samping Keluar. **TK-75** dibuka pada D-00 2.83 bagi P-3. |
+| Alternatif | Lihat tabel pertanyaan `spec.md`. |
+| Dampak | `spec.md` fitur 033; `docs/D00.md`. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-205 · `plan.md` dan `tasks.md` fitur 033; Gerbang 2 dan 3 atas pendelegasian KB-168
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Lanjutan KB-204; pendelegasian KB-168 belum dicabut. |
+| Keputusan | `plan.md` dengan enam keputusan rancangan K-1 s.d. K-6, sembilan mutasi, tujuh tugas. **Gerbang 2 dan 3 dinyatakan lolos atas pendelegasian KB-168**, dengan batas yang sama; Gerbang 4 tidak. Tanpa rute baru (`DELETE /saya/data` sudah ada pada D-14 Bagian 3.1), tanpa paket baru, tanpa ambang, tanpa perubahan `src/rag/`, `src/llm/`, `src/telemetri/`, `src/ingest/`. |
+| **R-01 lewat pencabutan sesi** | Perekaman berhenti karena tanpa sesi tidak ada pemilik, bukan karena persetujuan dicabut. Rute tidak menyentuh persetujuan; ia terhapus bersama data lain (P-3). |
+| **Pemetaan dihapus lebih dulu** | Bila penghapusan utama gagal sesudahnya, perkakas diulang tanpa kehilangan apa pun; urutan sebaliknya meninggalkan pemetaan tanpa pseudonim untuk mencarinya. |
+| **Penolakan masuk sama** | Akun berpermintaan tertunda terbaca nonaktif, sehingga penolakannya sama dengan keempat penolakan fitur 029 — kalimat tersendiri akan memberi tahu orang lain bahwa akun itu sedang menarik datanya. |
+| Alternatif | Mencabut persetujuan pada rute — tidak dipilih; menambah satu penulisan yang terhapus kemudian, sementara pencabutan sesi sudah menghentikan perekaman. 204 alih-alih 202 — tidak dipilih; penghapusannya belum terjadi. |
+| Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 033. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
