@@ -32,6 +32,7 @@ disentuh — yang dibangun di sini pemanggilnya dan tempat simpannya.
 `HasilTanya` yang sudah dikembalikan jalur.
 
 **Tanpa perubahan `web/`.** Seluruh peristiwa teramati peladen (P-1 C).
+**Kecuali K-7** (KB-199): satu tajuk pada pengambilan latar beranda — Bagian 12.
 
 ## 2. K-1 · Tepi `api → telemetri`
 
@@ -185,3 +186,23 @@ peristiwa tidak bertambah.
 | Peristiwa tampak perlu dibaca untuk menyesuaikan beranda atau jawaban | Berhenti; C-14 |
 | Naskah persetujuan tampak perlu ditulis agen | Berhenti; ET-02 |
 | Paket baru tampak perlu | Berhenti; C-12 |
+
+## 12. K-7 · Pengambilan latar bukan butir dibuka (KB-199, TK-74)
+
+Ditemukan bukti Playwright T-6, sesudah Gerbang 3. Layar beranda mengambil isi
+lengkap setiap butir hari ini di latar bagi salinan luring (P-7 fitur 013), dan
+`GET /butir/{id}` itu tidak dapat dibedakan peladen dari butir yang dibuka.
+Pada K-6, `discovery_opened` karena itu tercatat tiga kali setiap beranda
+dimuat, dan rasio penemuan selalu ≥ 100%.
+
+**Putusan pemegang gerbang: klien menandai.** Pengambilan latar mengirim tajuk
+`X-Tujuan: salinan`; peladen tidak merekam `discovery_opened` untuknya.
+Tanggapan sama persis dengan atau tanpa tajuk; nilai lain diabaikan. Tajuk
+hanya dapat **mengurangi** perekaman — pemanggil yang memalsukannya hanya
+menghilangkan rekamannya sendiri, sehingga C-04 tidak tersentuh. D-14 ke 0.14.
+
+| Kode | Mutasi | Uji yang wajib merah |
+|---|---|---|
+| M-11 | Peladen mengabaikan tajuk | pengambilan latar tidak tercatat dibuka |
+| M-12 | Layar beranda tidak mengirim tajuk | uji P-7 layar beranda |
+| M-13 | Layar S-06 mengirim tajuk | uji detail mencatat dibuka |

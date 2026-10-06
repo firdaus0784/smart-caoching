@@ -3062,3 +3062,27 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membaca waktu tanggap dari jalur penjawab — ditolak; menuntut perubahan `src/rag/`. Waktu diukur di rute, mencakup jalur saja, tanpa pencatatan riwayat. |
 | Dampak | `src/api/rekaman.py`, `src/api/aplikasi.py`, `src/api/penemuan.py`; `tests/api/test_rekaman_tanya_penemuan_http.py`, `tests/api/test_rekaman_http.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-199 · TK-74 — pengambilan latar beranda bukan butir dibuka; klien menandai
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Bukti Playwright T-6 fitur 034 terhadap `make jalan`. `discovery_opened` tercatat tiga kali setiap beranda dimuat: layar beranda mengambil isi lengkap tiap butir di latar bagi salinan luring (P-7 fitur 013), dan peladen tidak dapat membedakannya dari butir yang dibuka. Rasio penemuan D-01 Bagian 9.1 akan selalu ≥ 100%. Uji HTTP T-5 tidak menangkapnya karena tidak menjalankan layar. Agen berhenti dan bertanya: perbaikannya menyentuh `web/` dan D-14, di luar `plan.md` yang disetujui. |
+| Keputusan | **Klien menandai** (dipilih pemegang gerbang dari tiga pilihan, sesuai anjuran). Pengambilan latar mengirim tajuk `X-Tujuan: simpanan`; peladen tidak merekam `discovery_opened` untuknya; tanggapan sama. D-14 0.14 Bagian 4.6; D-00 2.82 TK-74; `plan.md` Bagian 12 (K-7, M-11 s.d. M-13); `tasks.md` T-7, dikerjakan sebelum T-6. |
+| Alternatif | Menunda `discovery_opened` sampai rute peristiwa peramban (TK-73) — tidak dipilih; rasio penemuan tidak terukur selama pilot. Mengubah P-7 fitur 013 — tidak dipilih; mengurangi kemampuan luring. |
+| Dampak | `docs/D14.md`, `docs/D00.md`, `plan.md`, `tasks.md` fitur 034. Kode menyusul pada T-7. |
+| Pemutus | Pemegang Gerbang 1–4 |
+| Penggantian nilai | Nilai tajuk menjadi `X-Tujuan: salinan`, bukan `simpanan` seperti contoh pada pertanyaan. Penjaga web fitur 029 (`halaman.test.ts`) melarang berkas yang menyebut sandi — termasuk `klien.ts` — menyebut "simpanan", agar tidak ada sandi yang disimpan lokal. Penjaganya yang benar; nilainya yang diganti. Arti putusan tidak berubah. |
+
+## KB-200 · T-7 fitur 034 — penanda pengambilan salinan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-7 `tasks.md` fitur 034, atas putusan KB-199. |
+| Keputusan | Peladen: `bukan_butir_dibuka()` pada `src/api/penemuan.py` membaca tajuk `X-Tujuan`; `GET /butir/{id}` tidak merekam `discovery_opened` bila nilainya tepat `salinan`, dan tanggapannya tidak berubah. Web: `bacaButir` menerima tujuan opsional; hanya pengambilan latar `LayarBeranda` yang mengirimnya, S-06 tidak. Uji ditulis lebih dulu: uji HTTP merah pada dua kasus bertajuk, uji layar beranda merah karena tetapan belum ada. |
+| Mutasi | M-11 (peladen mengabaikan tajuk), M-12 (beranda tidak mengirim tajuk), M-13 (S-06 mengirim tajuk) — ketiganya merah. |
+| Alternatif | Tajuk dengan nilai bebas yang dibandingkan tanpa membedakan huruf besar-kecil — ditolak; nilai yang tepat satu lebih mudah diperiksa, dan nilai lain berarti direkam seperti biasa. |
+| Dampak | `src/api/penemuan.py`, `src/api/aplikasi.py`; `web/src/klien.ts`, `web/src/penemuan/LayarBeranda.tsx`; uji HTTP dan uji layar; `tasks.md`. |
+| Pemutus | Agen dalam batas KB-199 |

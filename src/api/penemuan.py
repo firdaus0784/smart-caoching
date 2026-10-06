@@ -24,6 +24,7 @@ Pemilihan tidak membaca apa pun selain prioritas yang ia pilih sendiri (C-14).
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import date, datetime
 from enum import Enum
 from typing import Any, Final
@@ -44,6 +45,18 @@ from src.penyimpanan.pengguna import PenyimpanPengguna
 
 PESAN_ALASAN_TIDAK_SAH: Final = "Tulis alasan singkat tanpa nomor pribadi, lalu kirim lagi."
 """C-13: ≤ 20 kata, tanpa istilah teknis, **tanpa mengutip masukan**."""
+
+
+TAJUK_TUJUAN: Final = "x-tujuan"
+TUJUAN_SALINAN: Final = "salinan"
+"""Tajuk penanda pengambilan latar bagi salinan luring — K-7 fitur 034, KB-199,
+D-14 Bagian 4.6. Ia hanya menentukan apakah `discovery_opened` direkam; bentuk
+tanggapan tidak bergantung padanya. Nilai lain diabaikan."""
+
+
+def bukan_butir_dibuka(tajuk: Mapping[str, str]) -> bool:
+    """Pengambilan latar beranda (P-7 fitur 013), bukan butir yang dibuka (TK-74)."""
+    return tajuk.get(TAJUK_TUJUAN) == TUJUAN_SALINAN
 
 
 class ButirTidakTampil(Exception):

@@ -9,7 +9,15 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, expect, test, vi } from "vitest";
 
 import type { Simpanan } from "../draf";
-import { JALUR_BERANDA, apakahBeranda, jalurButir, jalurTolakButir, type Pemanggil } from "../klien";
+import {
+  JALUR_BERANDA,
+  TAJUK_TUJUAN,
+  TUJUAN_SALINAN,
+  apakahBeranda,
+  jalurButir,
+  jalurTolakButir,
+  type Pemanggil,
+} from "../klien";
 import type { Beranda, ButirLengkap, ButirRingkas } from "../kontrak";
 import { LABEL_JENIS_SUMBER, MIKROKOPI, waktuBaca } from "../mikrokopi";
 import { LayarBeranda } from "./LayarBeranda";
@@ -56,14 +64,16 @@ function json(isi: unknown, status = 200): Response {
 function peladen(jawab: Record<string, () => Response | Promise<Response>>) {
   const panggilan: string[] = [];
   const badan: unknown[] = [];
+  const tujuan: (string | null)[] = [];
   const pemanggil: Pemanggil = async (jalur, init) => {
     panggilan.push(`${init?.method ?? "GET"} ${jalur}`);
+    tujuan.push(new Headers(init?.headers).get(TAJUK_TUJUAN));
     if (typeof init?.body === "string") badan.push(JSON.parse(init.body));
     const satu = jawab[jalur];
     if (satu === undefined) return json({}, 500);
     return satu();
   };
-  return { pemanggil, panggilan, badan };
+  return { pemanggil, panggilan, badan, tujuan };
 }
 
 const luring = () => Promise.reject(new TypeError("Failed to fetch"));
@@ -168,6 +178,20 @@ test("P-7: beranda dan isi lengkap butirnya disimpan setelah dimuat", async () =
   expect(salinanBeranda(simpanan)).toEqual(BERISI);
 });
 
+test("K-7 fitur 034: pengambilan latar bagi salinan bertanda salinan, beranda tidak", async () => {
+  const p = peladen({
+    [JALUR_BERANDA]: () => json(BERISI),
+    [jalurButir("b-1")]: () => json(LENGKAP),
+  });
+  beranda(p.pemanggil);
+  await waitFor(() => expect(p.panggilan).toContain(`GET ${jalurButir("b-1")}`));
+  const latar = p.panggilan.indexOf(`GET ${jalurButir("b-1")}`);
+  expect(p.tujuan[latar]).toBe(TUJUAN_SALINAN);
+  expect(p.tujuan[p.panggilan.indexOf(`GET ${JALUR_BERANDA}`)]).toBeNull();
+  expect(TAJUK_TUJUAN).toBe("X-Tujuan");
+  expect(TUJUAN_SALINAN).toBe("salinan");
+});
+
 // ── S-06 ─────────────────────────────────────────────────────────────
 
 function detail(pemanggil: Pemanggil, simpanan: Simpanan | null = simpananPeta()) {
@@ -229,6 +253,14 @@ test("tanpa tautan, tidak ada tautan sumber", async () => {
   );
   await screen.findByRole("heading", { level: 1, name: LENGKAP.judul });
   expect(screen.queryByRole("link")).toBeNull();
+});
+
+test("K-7 fitur 034: membuka butir tidak bertanda salinan — itulah yang tercatat dibuka", async () => {
+  const p = peladen({ [jalurButir("b-1")]: () => json(LENGKAP) });
+  detail(p.pemanggil);
+  await screen.findByRole("heading", { level: 1, name: LENGKAP.judul });
+  expect(p.panggilan).toEqual([`GET ${jalurButir("b-1")}`]);
+  expect(p.tujuan).toEqual([null]);
 });
 
 test("KL-G: butir yang sudah tidak tersedia adalah keadaan sah, bukan galat", async () => {

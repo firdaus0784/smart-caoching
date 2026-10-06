@@ -14,7 +14,7 @@
 import { useEffect, useState } from "react";
 
 import type { Simpanan } from "../draf";
-import { bacaBeranda, bacaButir, type Pemanggil } from "../klien";
+import { TUJUAN_SALINAN, bacaBeranda, bacaButir, type Pemanggil } from "../klien";
 import type { Beranda, ButirRingkas } from "../kontrak";
 import { LABEL_JENIS_SUMBER, MIKROKOPI, waktuBaca } from "../mikrokopi";
 import { salinanBeranda, simpanBeranda, simpanButir } from "./salinan";
@@ -55,8 +55,9 @@ export function LayarBeranda({
         setKeadaan({ jenis: "beranda", beranda: hasil.beranda, salinan: false });
         simpanBeranda(simpanan, hasil.beranda);
         // P-7: isi lengkap ikut disimpan agar S-06 dapat dibaca tanpa koneksi.
+        // Bertanda salinan: ini bukan butir dibuka (K-7 fitur 034, TK-74).
         for (const butir of hasil.beranda.butir) {
-          const lengkap = await bacaButir(butir.id_butir, pemanggil);
+          const lengkap = await bacaButir(butir.id_butir, pemanggil, TUJUAN_SALINAN);
           if (lengkap.jenis === "butir") simpanButir(simpanan, lengkap.butir);
         }
         return;

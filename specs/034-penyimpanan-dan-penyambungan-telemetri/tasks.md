@@ -4,12 +4,13 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-192); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-193); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Lima dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Enam dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-10; FR-J01, FR-J02, FR-J05, FR-A05; C-04, C-05, C-09, C-14 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
 implementasinya. `make check` lulus sesudah entri L4 ditulis, tepat sebelum
-commit. **`src/telemetri/`, `src/rag/`, `src/llm/`, dan `web/` tidak berubah.**
+commit. **`src/telemetri/`, `src/rag/`, `src/llm/`, dan `web/` tidak berubah** — kecuali
+T-7: satu tajuk pada pengambilan latar beranda (K-7, KB-199).
 Agen **tidak** menulis naskah persetujuan (ET-02).
 
 ---
@@ -59,6 +60,19 @@ Agen **tidak** menulis naskah persetujuan (ET-02).
       dengan dan tanpa persetujuan
 - [x] Rute Tanya; `src/api/penemuan.py`
 - [x] Mutasi M-6, M-9, M-10
+
+## T-7 · Penanda pengambilan salinan (K-7, KB-199)
+
+Ditambahkan sesudah Gerbang 3 atas putusan pemegang gerbang; dikerjakan
+sebelum T-6, karena bukti T-6 yang menemukannya.
+
+**Kebutuhan:** R-03, R-09; FR-J01; TK-74.
+
+- [x] D-14 0.14 Bagian 4.6; D-00 TK-74
+- [x] Uji lebih dulu: peladen tidak merekam `discovery_opened` bagi tajuk
+      `X-Tujuan: salinan`, tanggapan sama; layar beranda mengirimnya, S-06 tidak
+- [x] `src/api/aplikasi.py`; `web/src/klien.ts`, `LayarBeranda.tsx`
+- [x] Mutasi M-11, M-12, M-13
 
 ## T-6 · Titik jalan, bukti, penutupan
 

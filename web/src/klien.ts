@@ -536,8 +536,23 @@ export async function bacaBeranda(pemanggil: Pemanggil): Promise<HasilBeranda> {
 }
 
 /** `GET /api/v1/butir/{id}` — bentuk lengkap, atau `tidak_ada`. */
-export async function bacaButir(idButir: string, pemanggil: Pemanggil): Promise<HasilButir> {
-  const hasil = await ambil013(pemanggil, jalurButir(idButir), { method: "GET" });
+/**
+ * Tajuk penanda pengambilan latar bagi salinan luring — K-7 fitur 034, KB-199,
+ * D-14 Bagian 4.6. Peladen tidak merekam `discovery_opened` untuknya; tanpa
+ * penanda ini setiap muatan beranda terbaca sebagai butir dibuka (TK-74).
+ */
+export const TAJUK_TUJUAN = "X-Tujuan";
+export const TUJUAN_SALINAN = "salinan";
+
+/** `GET /api/v1/butir/{id}`. `salinan` hanya bagi pengambilan latar beranda (P-7). */
+export async function bacaButir(
+  idButir: string,
+  pemanggil: Pemanggil,
+  tujuan?: typeof TUJUAN_SALINAN,
+): Promise<HasilButir> {
+  const init: RequestInit =
+    tujuan === undefined ? { method: "GET" } : { method: "GET", headers: { [TAJUK_TUJUAN]: tujuan } };
+  const hasil = await ambil013(pemanggil, jalurButir(idButir), init);
   if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
   if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
   if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };

@@ -83,6 +83,7 @@ from src.api.kurasi import (
 from src.api.penemuan import (
     PESAN_ALASAN_TIDAK_SAH,
     ButirTidakTampil,
+    bukan_butir_dibuka,
     detail,
     susun_beranda,
     tolak,
@@ -665,7 +666,7 @@ def _pasang_rute_penemuan(
             isi = await detail(penemuan, siapa.pemilik, id)
         except ButirTidakTampil:
             return _tidak_ada(POLA_BUTIR)
-        if perekam is not None:
+        if perekam is not None and not bukan_butir_dibuka(permintaan.headers):
             pemilik = siapa.pemilik
             await perekam.rekam_dibuka(
                 pemilik, id, lambda: penemuan.kapan_tayang(pemilik, id), sekarang=sekarang()

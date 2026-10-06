@@ -112,10 +112,11 @@ class Lingkungan:
             self.kuki = tanggapan.headers["set-cookie"].split(";", 1)[0].split("=", 1)[1]
         return tanggapan
 
-    def minta(self, metode: str, jalur: str, **lain: Any) -> Any:
-        tanggapan = self.klien.request(
-            metode, jalur, headers={"Cookie": f"{NAMA_KUKI}={self.kuki}"}, **lain
-        )
+    def minta(
+        self, metode: str, jalur: str, headers_tambahan: dict[str, str] | None = None, **lain: Any
+    ) -> Any:
+        tajuk = {"Cookie": f"{NAMA_KUKI}={self.kuki}", **(headers_tambahan or {})}
+        tanggapan = self.klien.request(metode, jalur, headers=tajuk, **lain)
         self.klien.cookies.clear()
         return tanggapan
 

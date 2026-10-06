@@ -381,3 +381,31 @@ def test_tanya_dan_penemuan_tidak_membaca_peristiwa() -> None:
     ling.tolak("btr-2")
     assert telemetri.dibaca == dibaca_saat_masuk
     assert ling.jalur.pertanyaan_terakhir == PERTANYAAN
+
+
+# ── K-7 · pengambilan latar bukan butir dibuka (KB-199, TK-74) ──────
+
+
+@pytest.mark.parametrize(
+    ("tajuk", "tercatat"),
+    [
+        ({"X-Tujuan": "salinan"}, 0),
+        ({"x-tujuan": "salinan"}, 0),
+        ({}, 1),
+        ({"X-Tujuan": "lain"}, 1),
+        ({"X-Tujuan": "Salinan"}, 1),
+    ],
+)
+def test_pengambilan_latar_bagi_salinan_tidak_tercatat_dibuka(
+    tajuk: dict[str, str], tercatat: int
+) -> None:
+    """M-11: peladen yang mengabaikan tajuk mencatat setiap muatan beranda sebagai dibuka."""
+    ling = Alur()
+    ling.setujui("btr-1")
+    ling.setuju()
+    ling.masuk()
+    ling.beranda()
+    tanggapan = ling.minta("GET", "/api/v1/butir/btr-1", headers_tambahan=tajuk)
+    assert tanggapan.status_code == 200
+    assert _sama(tanggapan) == _sama(ling.buka("btr-1"))
+    assert len(ling.properti("discovery_opened")) == tercatat + 1
