@@ -22,6 +22,10 @@
  * Luring atau galat lain saat memeriksa tetap membuka Tanya (K-6): pengguna
  * masih dapat menulis draf (KL-E), dan aktivasi ditanyakan lagi lain kali.
  *
+ * **S-14 Pengaturan (fitur 033)** terbuka dari tombol di samping Keluar,
+ * bukan dari navigasi utama (P-5). Sesudah penarikan diterima, peramban
+ * dibersihkan sama dengan keluar, lalu S-01 menyatakan permintaannya diterima.
+ *
  * **Kurator dikenali tanpa rute baru (K-8 fitur 013).** Ringkasan akun hanya
  * terbuka bagi peran `pengguna`; 403 di sana diikuti `GET /kurasi/antrean`.
  * 200 membuka S-15; selainnya kalimat bahwa akun tidak dikenali, beserta
@@ -42,6 +46,7 @@ import { MIKROKOPI } from "./mikrokopi";
 import { LayarBeranda } from "./penemuan/LayarBeranda";
 import { LayarButir } from "./penemuan/LayarButir";
 import { hapusSalinan } from "./penemuan/salinan";
+import { LayarPengaturan } from "./pengaturan/LayarPengaturan";
 import { lupakanPercakapan } from "./percakapan";
 import { LayarTanya } from "./tanya/LayarTanya";
 
@@ -53,7 +58,7 @@ type Tahap =
       readonly keadaan: KeadaanPersetujuan;
       readonly naskah: HasilNaskah;
       /** Dari mana S-02 dibuka: alur aktivasi, atau tautan pada layar utama. */
-      readonly asal: "aktivasi" | "tanya" | "beranda";
+      readonly asal: "aktivasi" | "tanya" | "beranda" | "pengaturan";
       readonly profilAda: boolean;
     }
   | { readonly jenis: "pengenalan" }
@@ -63,6 +68,7 @@ type Tahap =
   | { readonly jenis: "kurasi"; readonly antrean: Antrean }
   | { readonly jenis: "kurasi_galat"; readonly luring: boolean }
   | { readonly jenis: "tidak_dikenali" }
+  | { readonly jenis: "pengaturan"; readonly asal: "beranda" | "tanya" }
   | { readonly jenis: "tanya" };
 
 export interface PropertiAplikasi {
@@ -119,7 +125,7 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
     // `periksa` dibentuk ulang tiap render; yang menentukan hanya pemanggil.
   }, [pemanggil]);
 
-  async function bukaPersetujuan(asal: "tanya" | "beranda") {
+  async function bukaPersetujuan(asal: "tanya" | "beranda" | "pengaturan") {
     const [hasil, naskah] = await Promise.all([bacaRingkasan(pemanggil), muatNaskah(pemanggil)]);
     if (hasil.jenis !== "ringkasan") return;
     setTahap({
@@ -131,13 +137,17 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
     });
   }
 
-  async function keluarkan() {
-    await keluar(pemanggil);
+  function bersihkanPeramban() {
     // K-6: peramban sekolah dapat dipakai bergantian — termasuk salinan
     // butir hari ini, yang memperlihatkan prioritas penggunanya (fitur 013).
     hapusDraf(simpanan);
     lupakanPercakapan(simpanan);
     hapusSalinan(simpanan);
+  }
+
+  async function keluarkan() {
+    await keluar(pemanggil);
+    bersihkanPeramban();
     setTahap({ jenis: "masuk", pemberitahuan: null });
   }
 
@@ -190,7 +200,8 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
         selesai={(r) => {
           // Menolak pun melanjutkan alur (FR-A05); dari layar utama, kembali ke sana.
           const profilAda = r === null ? tahap.profilAda : r.profil !== null;
-          if (tahap.asal !== "aktivasi") setTahap({ jenis: tahap.asal });
+          if (tahap.asal === "pengaturan") setTahap({ jenis: "pengaturan", asal: "beranda" });
+          else if (tahap.asal !== "aktivasi") setTahap({ jenis: tahap.asal });
           else setTahap(profilAda ? { jenis: "beranda" } : { jenis: "pengenalan" });
         }}
       />
@@ -235,6 +246,21 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
       </main>
     );
   }
+  if (tahap.jenis === "pengaturan") {
+    const asal = tahap.asal;
+    return (
+      <LayarPengaturan
+        belumMasuk={perluMasuk}
+        bukaPersetujuan={() => void bukaPersetujuan("pengaturan")}
+        ditarik={() => {
+          bersihkanPeramban();
+          setTahap({ jenis: "masuk", pemberitahuan: MIKROKOPI.penarikanDiterima });
+        }}
+        kembali={() => setTahap({ jenis: asal })}
+        pemanggil={pemanggil}
+      />
+    );
+  }
   if (tahap.jenis === "beranda") {
     return (
       <>
@@ -242,6 +268,13 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
         <div className="kepala-layar">
           <button className="tombol-kedua" onClick={() => void keluarkan()} type="button">
             {MIKROKOPI.tombolKeluar}
+          </button>
+          <button
+            className="tombol-kedua"
+            onClick={() => setTahap({ jenis: "pengaturan", asal: "beranda" })}
+            type="button"
+          >
+            {MIKROKOPI.tombolPengaturan}
           </button>
           <button className="tombol-kedua" onClick={() => void bukaPersetujuan("beranda")} type="button">
             {MIKROKOPI.tautanPersetujuan}
@@ -282,6 +315,7 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
           pemberitahuan: tersimpan ? MIKROKOPI.perluMasukLagi : MIKROKOPI.perluMasukLagiSaja,
         })
       }
+      bukaPengaturan={() => setTahap({ jenis: "pengaturan", asal: "tanya" })}
       bukaPersetujuan={() => void bukaPersetujuan("tanya")}
       keluar={() => void keluarkan()}
       pemanggil={pemanggil}

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Lima dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Enam dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -67,11 +67,11 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 **Kebutuhan:** R-05, R-06, R-07; K-6; C-13.
 
-- [ ] Uji lebih dulu: formulir terisi dan tersimpan lewat rute fitur 030;
+- [x] Uji lebih dulu: formulir terisi dan tersimpan lewat rute fitur 030;
       persetujuan; daftar data; dua tombol setara; tanpa permintaan sebelum
       konfirmasi; luring tidak mengirim; naskah tim dibaca bila ada
-- [ ] `web/src/pengaturan/`; tombol di samping Keluar; mikrokopi
-- [ ] Mutasi M-9
+- [x] `web/src/pengaturan/`; tombol di samping Keluar; mikrokopi
+- [x] Mutasi M-9
 
 ## T-7 · Titik jalan, bukti, penutupan
 

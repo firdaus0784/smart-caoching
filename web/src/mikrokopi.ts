@@ -70,6 +70,7 @@ export const MIKROKOPI = {
   perluMasukLagiSaja: "Anda perlu masuk lagi.",
   memeriksaAkun: "Sedang memeriksa akun Anda.",
   tombolKeluar: "Keluar",
+  tombolPengaturan: "Pengaturan",
 
   // D-05 S-02 — fitur 030. Naskahnya sendiri milik ketua peneliti (ET-02) dan
   // tidak ditulis di sini; layar memuatnya dari berkas yang diisi tim.
@@ -105,6 +106,26 @@ export const MIKROKOPI = {
   profilDitolak: "Isian profil belum sesuai. Periksa lagi setiap isian.",
   prioritasDitolak: "Pilih tiga sampai lima prioritas yang berbeda.",
   profilGangguan: "Profil belum tersimpan. Isian Anda masih di layar, coba simpan lagi.",
+
+  // D-05 S-14 Pengaturan — fitur 033. Kalimat penjelasan penarikan milik tim
+  // (P-4 B) dimuat dari berkasnya; yang di sini mikrokopi pengaturan saja.
+  judulPengaturan: "Pengaturan",
+  pengaturanMemuat: "Pengaturan sedang dimuat.",
+  pengaturanGangguan: "Pengaturan belum dapat dimuat. Coba lagi sebentar lagi.",
+  judulBagianProfil: "Profil dan prioritas",
+  tombolUbahProfil: "Ubah profil dan prioritas",
+  tombolSimpanPerubahan: "Simpan perubahan",
+  profilTersimpan: "Profil dan prioritas tersimpan.",
+  judulBagianPenarikan: "Tarik data saya",
+  pengantarPenarikan: "Anda dapat meminta seluruh data Anda dihapus. Tim menghapusnya paling lambat 14 hari.",
+  judulDataDitarik: "Yang dihapus",
+  judulDataTidakDitarik: "Yang tidak dihapus",
+  tombolTarikData: "Tarik data saya",
+  konfirmasiPenarikan: "Tarik seluruh data Anda? Sesudahnya akun ini tidak dapat dipakai masuk lagi.",
+  tombolYaTarik: "Ya, tarik data saya",
+  penarikanDiterima: "Permintaan penarikan data diterima. Data Anda dihapus paling lambat 14 hari.",
+  penarikanLuring: "Sedang tidak terhubung. Permintaan belum terkirim; coba lagi saat sinyal kembali.",
+  penarikanGangguan: "Permintaan belum terkirim. Coba lagi sebentar lagi.",
 
   // Navigasi — D-05 Bagian 3.1 pada fitur 013 (K-7): dua tujuan sampai isi
   // "Milik saya" dibangun pada baris 031 dan 032.
@@ -185,6 +206,21 @@ export const MIKROKOPI = {
 /** Alasan penolakan baku D-06 Bagian 7.4 — kodenya tidak tampil (C-13).
  * Kalimat D-06 apa adanya, kecuali dua rujukan bersingkatan yang dilepas:
  * contoh "BAN-S/M" pada TL-11 dan "(NFR-19)" pada TL-07. */
+/** Daftar data yang dihapus pada penarikan — tabel `spec.md` fitur 033,
+ * dalam bahasa pengguna. Ia menyebut apa, bukan bagaimana (P-4 B). */
+export const DATA_DITARIK: readonly string[] = [
+  "Akun dan sandi Anda",
+  "Profil sekolah dan prioritas pengelolaan",
+  "Catatan persetujuan penelitian",
+  "Pertanyaan yang pernah Anda ajukan",
+  "Butir yang tampil bagi Anda, beserta alasan belum relevan",
+  "Catatan penggunaan untuk penelitian",
+];
+
+export const DATA_TIDAK_DITARIK: readonly string[] = [
+  "Catatan bahwa permintaan ini pernah ada, tanpa akun maupun nama Anda",
+];
+
 export const LABEL_ALASAN_TOLAK = {
   "TL-01": "Tidak relevan dengan konteks sekolah dasar Indonesia",
   "TL-02": "Lisensi tidak jelas atau tidak mengizinkan penggunaan",

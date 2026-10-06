@@ -3215,3 +3215,16 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `src/penyimpanan/penarikan.py`, `perkakas/penarikan.py`; `tests/penyimpanan/test_penarikan_simpan.py`, `tests/perkakas/test_penarikan_perkakas.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Cakupan | Tiga uji perilaku tambahan menjaga cakupan pada penanda 99,87: badan JSON rusak pada rute penarikan; perkakas yang didahului perkakas lain tidak melaporkan dipenuhi dan tidak menimpa bukti; `discovery_opened` tanpa waktu tayang tidak menebak menitnya (cabang fitur 034 yang sebelumnya hanya tersentuh kebetulan). Penanda tidak diturunkan. |
+
+## KB-211 · T-6 fitur 033 — layar S-14 Pengaturan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-6 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205) dan putusan P-4 B, P-5 (KB-204). |
+| Keputusan | `web/src/pengaturan/LayarPengaturan.tsx`: profil dan prioritas lewat formulir S-04 yang kini menerima isian awal dan label simpan (FR-A06), persetujuan lewat S-02 yang sama, penarikan data dengan daftar yang dihapus dan yang tidak, konfirmasi berdua-pilihan setara, luring tidak diantrekan, galat dengan satu tindakan, 401 ke S-01. Penjelasan tim dimuat dari `naskah/penarikan.json` bila ada; tanpanya penarikan tetap dapat diminta. Tombol Pengaturan di samping Keluar pada Beranda dan Tanya; navigasi utama tetap dua. Sesudah 202, peramban dibersihkan sama dengan keluar. Uji layar ditulis lebih dulu dan merah (12 gagal). |
+| **Daftar data ditulis agen** | Daftar "yang dihapus" dan "yang tidak dihapus" adalah fakta dari tabel `spec.md`, bukan janji kepada peserta; kalimat penjelasan dan akibatnya milik berkas tim (P-4 B). Agen tidak menulis berkas itu; bukti memakai berkas uji yang tidak di-commit. |
+| Mutasi | M-9 (layar mengirim sebelum konfirmasi) memerahkan 2 uji. |
+| Alternatif | Halaman penarikan tersendiri di luar Pengaturan — tidak dipilih; D-05 meletakkannya pada S-14. Tombol konfirmasi berwarna peringatan — ditolak; dua pilihan setara bentuknya (RE-04). |
+| Dampak | `web/src/pengaturan/`, `web/src/Aplikasi.tsx`, `web/src/aktivasi/LayarProfil.tsx`, `web/src/tanya/LayarTanya.tsx`, `web/src/klien.ts`, `web/src/kontrak.ts`, `web/src/mikrokopi.ts`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

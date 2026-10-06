@@ -12,7 +12,7 @@
 import { useState, type FormEvent } from "react";
 
 import { simpanProfil, tetapkanPrioritas, type Pemanggil } from "../klien";
-import type { JalurAkreditasi } from "../kontrak";
+import type { JalurAkreditasi, Ringkasan } from "../kontrak";
 import { LABEL_KATEGORI, MIKROKOPI } from "../mikrokopi";
 
 type Kode = keyof typeof LABEL_KATEGORI;
@@ -22,17 +22,25 @@ const KODE = Object.keys(LABEL_KATEGORI) as Kode[];
 export function LayarProfil({
   pemanggil,
   selesai,
+  awal = null,
+  labelSimpan = MIKROKOPI.tombolSimpanProfil,
 }: {
   readonly pemanggil: Pemanggil;
   readonly selesai: () => void;
+  /** Fitur 033 (FR-A06): isian terisi dari ringkasan saat disunting dari S-14. */
+  readonly awal?: Ringkasan | null;
+  readonly labelSimpan?: string;
 }) {
-  const [jabatan, setJabatan] = useState("");
-  const [masaKerja, setMasaKerja] = useState("");
-  const [rombel, setRombel] = useState("");
-  const [ptk, setPtk] = useState("");
-  const [jalur, setJalur] = useState<JalurAkreditasi | null>(null);
-  const [wilayah, setWilayah] = useState("");
-  const [pilihan, setPilihan] = useState<readonly Kode[]>([]);
+  const profil = awal?.profil ?? null;
+  const [jabatan, setJabatan] = useState(profil?.jabatan ?? "");
+  const [masaKerja, setMasaKerja] = useState(profil === null ? "" : String(profil.masa_kerja));
+  const [rombel, setRombel] = useState(profil === null ? "" : String(profil.jumlah_rombel));
+  const [ptk, setPtk] = useState(profil === null ? "" : String(profil.jumlah_ptk));
+  const [jalur, setJalur] = useState<JalurAkreditasi | null>(profil?.jalur_akreditasi ?? null);
+  const [wilayah, setWilayah] = useState(profil?.wilayah ?? "");
+  const [pilihan, setPilihan] = useState<readonly Kode[]>(() =>
+    (awal?.prioritas ?? []).filter((k): k is Kode => k in LABEL_KATEGORI),
+  );
   const [pesan, setPesan] = useState<string | null>(null);
   const [mengirim, setMengirim] = useState(false);
 
@@ -140,7 +148,7 @@ export function LayarProfil({
         </fieldset>
 
         <button disabled={mengirim} type="submit">
-          {MIKROKOPI.tombolSimpanProfil}
+          {labelSimpan}
         </button>
       </form>
       {pesan !== null && (

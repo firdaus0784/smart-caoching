@@ -43,6 +43,8 @@ export interface PropertiLayarTanya {
   readonly keluar?: () => void;
   /** Fitur 030 P-5: membuka S-02 lagi — setuju sesudah menolak, atau mencabut. */
   readonly bukaPersetujuan?: () => void;
+  /** Fitur 033 P-5: S-14, di samping Keluar. */
+  readonly bukaPengaturan?: () => void;
 }
 
 export function LayarTanya({
@@ -52,6 +54,7 @@ export function LayarTanya({
   belumMasuk,
   keluar,
   bukaPersetujuan,
+  bukaPengaturan,
 }: PropertiLayarTanya) {
   const [pertanyaan, setPertanyaan] = useState(() => bacaDraf(simpanan));
   const [keadaan, setKeadaan] = useState<Keadaan>({ jenis: "kosong" });
@@ -135,9 +138,16 @@ export function LayarTanya({
     <main className="layar-tanya">
       <h1>{MIKROKOPI.judulLayar}</h1>
       {keluar !== undefined && (
-        <button className="tombol-kedua" onClick={keluar} type="button">
-          {MIKROKOPI.tombolKeluar}
-        </button>
+        <div className="kepala-layar">
+          <button className="tombol-kedua" onClick={keluar} type="button">
+            {MIKROKOPI.tombolKeluar}
+          </button>
+          {bukaPengaturan !== undefined && (
+            <button className="tombol-kedua" onClick={bukaPengaturan} type="button">
+              {MIKROKOPI.tombolPengaturan}
+            </button>
+          )}
+        </div>
       )}
       {bukaPersetujuan !== undefined && (
         <button className="tombol-kedua" onClick={bukaPersetujuan} type="button">

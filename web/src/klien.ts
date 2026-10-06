@@ -21,32 +21,33 @@ import type {
   ButirLengkap,
   ButirRingkas,
   HasilAntrean,
+  HasilBaca,
   HasilBeranda,
   HasilButir,
+  HasilDaftar,
+  HasilMasuk,
+  HasilNaskah,
+  HasilPenarikan,
+  HasilRingkasan,
+  HasilTanya,
+  JenisGalat,
   JenisSumberButir,
   KandidatTampil,
   KategoriMasalah,
   KeadaanBeranda,
-  Pemicu,
-  PermintaanTarik,
-  Suntingan,
-  SumberButir,
-  TayangTampil,
-  HasilBaca,
-  HasilDaftar,
-  HasilMasuk,
-  HasilNaskah,
-  HasilRingkasan,
   KeadaanPersetujuan,
   Naskah,
+  Pemicu,
   PermintaanProfil,
+  PermintaanTarik,
   Ringkasan,
-  HasilTanya,
-  JenisGalat,
   SatuPercakapan,
   StatusDasar,
   StatusKeberlakuan,
+  SumberButir,
+  Suntingan,
   Tanggapan,
+  TayangTampil,
 } from "./kontrak";
 
 export const JALUR_TANYA = "/api/v1/tanya";
@@ -56,10 +57,13 @@ export const JALUR_KELUAR = "/api/v1/auth/keluar";
 export const JALUR_PROFIL = "/api/v1/saya/profil";
 export const JALUR_PRIORITAS = "/api/v1/saya/prioritas";
 export const JALUR_PERSETUJUAN = "/api/v1/saya/persetujuan";
+export const JALUR_DATA_SAYA = "/api/v1/saya/data";
 export const JALUR_BERANDA = "/api/v1/beranda";
 export const JALUR_ANTREAN = "/api/v1/kurasi/antrean";
 /** Berkas statis yang diisi tim (K-4 fitur 030), bukan rute API. */
 export const JALUR_NASKAH = "/naskah/persetujuan.json";
+/** Penjelasan penarikan data milik tim (P-4 B fitur 033), bukan rute API. */
+export const JALUR_NASKAH_PENARIKAN = "/naskah/penarikan.json";
 
 export type Pemanggil = (jalur: string, init?: RequestInit) => Promise<Response>;
 
@@ -234,9 +238,12 @@ export function putuskanPersetujuan(
  * halaman pengganti — dibaca "belum ada", bukan galat: tanpa naskah memang
  * tidak ada yang dapat disetujui, dan peladen API menolak setiap persetujuan.
  */
-export async function muatNaskah(pemanggil: Pemanggil): Promise<HasilNaskah> {
+export async function muatNaskah(
+  pemanggil: Pemanggil,
+  jalur: typeof JALUR_NASKAH | typeof JALUR_NASKAH_PENARIKAN = JALUR_NASKAH,
+): Promise<HasilNaskah> {
   try {
-    const jawaban = await pemanggil(JALUR_NASKAH, { method: "GET" });
+    const jawaban = await pemanggil(jalur, { method: "GET" });
     if (!jawaban.ok) return { jenis: "belum_ada" };
     const badan: unknown = await jawaban.json();
     return apakahNaskah(badan) ? { jenis: "naskah", naskah: badan } : { jenis: "belum_ada" };
@@ -286,6 +293,23 @@ function apakahNaskah(nilai: unknown): nilai is Naskah {
 
 function galat(jenis: JenisGalat): HasilTanya {
   return { jenis: "galat", galat: jenis };
+}
+
+/**
+ * `DELETE /api/v1/saya/data` — D-14 Bagian 4.5, fitur 033. Konfirmasi dikirim
+ * tegas; 202 berarti diterima, penghapusannya menyusul paling lambat 14 hari.
+ * Luring **tidak diantrekan**: permintaan yang menghapus tidak boleh terkirim
+ * diam-diam kemudian.
+ */
+export async function tarikData(pemanggil: Pemanggil): Promise<HasilPenarikan> {
+  let jawaban: Response;
+  try {
+    jawaban = await pemanggil(JALUR_DATA_SAYA, kirimJson("DELETE", { konfirmasi: true }));
+  } catch {
+    return { jenis: "galat", galat: "luring" };
+  }
+  if (jawaban.status === 202) return { jenis: "diterima" };
+  return { jenis: "galat", galat: petakanStatus(jawaban.status) };
 }
 
 function petakanStatus(status: number): JenisGalat {

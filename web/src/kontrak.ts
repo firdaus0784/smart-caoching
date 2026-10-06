@@ -160,6 +160,11 @@ export type HasilRingkasan =
   | { readonly jenis: "ringkasan"; readonly ringkasan: Ringkasan }
   | { readonly jenis: "galat"; readonly galat: JenisGalat };
 
+/** Hasil `DELETE /api/v1/saya/data` — D-14 Bagian 4.5, fitur 033. */
+export type HasilPenarikan =
+  | { readonly jenis: "diterima" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
 export type HasilNaskah =
   | { readonly jenis: "naskah"; readonly naskah: Naskah }
   | { readonly jenis: "belum_ada" };
