@@ -3268,3 +3268,27 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | 032 lebih dulu — tidak dianjurkan; S-11 membutuhkan rute daftar koleksi yang tidak ada pada D-14 Bagian 3, sehingga 032 sendiri akan tertahan putusan rute. |
 | Dampak | `specs/035-analitik-penelitian/spec.md`; `docs/D00.md`. Nol baris kode. |
 | Pemutus | Agen mengusulkan; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-215 · Gerbang 1 fitur 035 lolos; baris D-12 036; TK-77 beralamat
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Usulan KB-214 diajukan dengan lima pertanyaan beserta anjuran; ditanyakan tegas lewat pilihan. P-1 menuntut penyisipan baris D-12, yang tidak didelegasikan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan: P-1 B — 035 menjadi analitik penelitian saja dan **baris D-12 036 "Penilaian jawaban dan aduan kurator" disisipkan** (D-12 0.38); P-2 isi ringkasan dan retensi berkohort tepat hari ke-N; P-3 ekspor CSV per rentang tanggal WIB; P-4 B setiap ekspor tercatat dan disebut perkakas penarikan; P-5 S-18 tabel tanpa pustaka grafik. TK-77 memperoleh pemilik (baris 036); D-00 2.87. |
+| Alternatif | Lihat tabel pertanyaan `spec.md`. |
+| Dampak | `spec.md` fitur 035; `docs/D12.md`, `docs/D00.md`. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-216 · `plan.md` dan `tasks.md` fitur 035; Gerbang 2 dan 3 atas pendelegasian KB-168
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Lanjutan KB-215; pendelegasian KB-168 belum dicabut. |
+| Keputusan | `plan.md` dengan lima keputusan rancangan K-1 s.d. K-5, sepuluh mutasi, tujuh tugas. **Gerbang 2 dan 3 dinyatakan lolos atas pendelegasian KB-168**, dengan batas yang sama; Gerbang 4 tidak. Tanpa rute baru (kedua rute ada pada D-14 Bagian 3.4), tanpa paket baru, tanpa ambang. |
+| **Letak metrik** | `src/api/analitik.py`, bukan `src/telemetri/`: tepi `telemetri → penyimpanan` tidak ada pada AGENTS.md, dan menambahkannya bukan keputusan fitur ini. `ke_csv` fitur 012 menerima baris tersimpan lewat Protocol, sehingga `Peristiwa` tetap hanya dibentuk gerbang `rekam()` (C-04). |
+| **Jejak ekspor sebelum berkas** | Ekspor tercatat sebelum berkasnya dikirim: ekspor gagal yang tercatat lebih aman daripada berkas yang terkirim tanpa jejak. |
+| Alternatif | Menyimpan metrik harian sebagai tabel — ditolak; spec fitur 034 menetapkan metrik dihitung saat analisis, dan angka tersimpan tidak ikut terhapus ketika peserta menarik datanya. |
+| Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 035. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

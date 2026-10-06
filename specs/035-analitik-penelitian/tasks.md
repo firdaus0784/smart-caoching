@@ -1,0 +1,74 @@
+# Tasks: 035-analitik-penelitian
+
+| | |
+|---|---|
+| Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
+| Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-216); K-1 s.d. K-5 |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Nol dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Kebutuhan | R-01 s.d. R-08; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
+
+Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
+implementasinya. `make check` lulus sesudah entri L4 ditulis, tepat sebelum
+commit. **`src/rag/`, `src/llm/`, `src/ingest/`, dan `src/pengguna/` tidak
+berubah.** Tanpa paket baru (C-12).
+
+---
+
+## T-1 · Kontrak lebih dulu
+
+**Kebutuhan:** R-01, R-06, R-08; K-3.
+
+- [ ] D-14 Bagian 4.8: bentuk `GET /analitik/ringkas` dan `POST /analitik/ekspor`
+- [ ] D-14 Bagian 5.1: tabel `ekspor`; definisi retensi
+- [ ] Register D-00
+
+## T-2 · Peladen
+
+**Kebutuhan:** R-02; K-1.
+
+- [ ] Uji lebih dulu: penolakan `peran_analitik` dengan sebab
+      `permission denied`; katalog hak persis; batasan tabel ekspor
+- [ ] `01-peran-dan-basis-data.sql` + `peran_analitik`; `12-analitik.sql`
+- [ ] Mutasi M-1
+
+## T-3 · Penyimpan analitik
+
+**Kebutuhan:** R-02, R-05, R-06; K-1.
+
+- [ ] Uji lebih dulu atas memori **dan** PostgreSQL sebagai `peran_analitik`
+- [ ] `src/penyimpanan/analitik.py`; `ke_csv` atas baris berbidang sama
+- [ ] Mutasi M-7
+
+## T-4 · Metrik dan rute
+
+**Kebutuhan:** R-01, R-03, R-04, R-05, R-07; K-2, K-3.
+
+- [ ] Uji lebih dulu: metrik atas peristiwa buatan yang dihitung tangan;
+      lewat HTTP 403, ekspor tercatat, CSV, `pengembangan` terpisah
+- [ ] `src/api/analitik.py`; rute pada `src/api/aplikasi.py`
+- [ ] Mutasi M-2, M-3, M-4, M-5, M-6, M-9
+
+## T-5 · Perkakas penarikan menyebut ekspor
+
+**Kebutuhan:** P-4 B; K-4.
+
+- [ ] Uji lebih dulu terhadap PostgreSQL: ekspor yang rentangnya memuat
+      peristiwa permintaan tertunda disebut, yang lain tidak; tanpa pseudonim
+- [ ] `PenarikanPostgres.ekspor_terkait`; `perkakas/penarikan.py`
+- [ ] Mutasi M-8
+
+## T-6 · S-18 Analitik
+
+**Kebutuhan:** R-04, R-05; K-5; C-13.
+
+- [ ] Uji lebih dulu: peneliti dikenali, tabel, `null` bukan nol, belum
+      terukur bersebab, unduhan CSV, galat dan luring
+- [ ] `web/src/analitik/`; cangkang; mikrokopi
+- [ ] Mutasi M-10
+
+## T-7 · Titik jalan, bukti, penutupan
+
+- [ ] `perkakas/jalankan_lokal.py`: penyimpan analitik sebagai `peran_analitik`
+- [ ] Playwright Bagian 8.2 plan; keluaran ke `bukti/`
+- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+      menunggu Gerbang 4

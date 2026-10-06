@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-J03, FR-J04; D-01 Bagian 9.1; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 dan 9.1 · D-04 ADR-07, peran Peneliti · D-05 S-18 · D-14 Bagian 3.4 dan 5.1 · spec fitur 012, 034, 033 |
-| Status | **Usulan** — menunggu Gerbang 1 |
+| Status | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-215). Gerbang 2 dan 3 atas pendelegasian KB-168 |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -105,6 +105,18 @@ etik, sejajar TK-76.
 dengan tombol unduh CSV per rentang tanggal; angka ditampilkan sebagai tabel,
 bukan grafik — tanpa pustaka grafik baru (C-12).
 
+## Putusan Gerbang 1 (KB-215)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **B** — 035 analitik saja; baris D-12 **036** "Penilaian jawaban dan aduan kurator" disisipkan (D-12 0.38) |
+| P-2 | Isi ringkasan sesuai anjuran; retensi berkohort tanggal WIB, kembali **tepat** pada hari ke-N, kohort yang belum berumur N dikeluarkan dari penyebut |
+| P-3 | Ekspor CSV `{"dari", "sampai"}` tanggal WIB inklusif; peristiwa `pengembangan` dikeluarkan kecuali diminta; Parquet tetap tertahan C-12 |
+| P-4 | **B** — setiap ekspor tercatat; `perkakas.penarikan daftar` menyebut ekspor yang rentangnya memuat peristiwa permintaan tertunda |
+| P-5 | S-18 satu halaman tabel, tanpa pustaka grafik baru; peneliti dikenali seperti kurator |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -120,7 +132,7 @@ bukan grafik — tanpa pustaka grafik baru (C-12).
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-5 diputus pada Gerbang 1
+- [x] P-1 s.d. P-5 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Peran analitik diuji terhadap peladen: membaca peristiwa, ditolak di tempat lain
 - [ ] Retensi diuji dengan kohort buatan yang jawabannya dihitung tangan
