@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Nol dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Satu dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -18,9 +18,9 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 **Kebutuhan:** R-03, R-08; K-3, K-5.
 
-- [ ] D-14 Bagian 4.5: bentuk `DELETE /saya/data` — konfirmasi, 202, kuki
-- [ ] D-14 Bagian 5.1: `permintaan_penarikan`; KM-02 dirujuk; dua peran
-- [ ] Register D-00
+- [x] D-14 Bagian 4.5: bentuk `DELETE /saya/data` — konfirmasi, 202, kuki
+- [x] D-14 Bagian 5.1: `permintaan_penarikan`; KM-02 dirujuk; dua peran
+- [x] Register D-00
 
 ## T-2 · Peladen
 

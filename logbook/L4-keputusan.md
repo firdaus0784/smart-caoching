@@ -3150,3 +3150,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mencabut persetujuan pada rute — tidak dipilih; menambah satu penulisan yang terhapus kemudian, sementara pencabutan sesi sudah menghentikan perekaman. 204 alih-alih 202 — tidak dipilih; penghapusannya belum terjadi. |
 | Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 033. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-206 · T-1 fitur 033 — kontrak penarikan data
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-1 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205). |
+| Keputusan | D-14 0.15 Bagian 4.5: bentuk `DELETE /saya/data` — `{"konfirmasi": true}`, 202 tanpa badan, kuki dihapus, seluruh sesi dicabut dalam satu penulisan, penolakan masuk yang sama dengan sandi salah, penghapusan keras oleh perkakas dengan peran di luar aplikasi. Bagian 5.1: tabel `permintaan_penarikan` yang pseudonimnya dikosongkan sesudah dipenuhi. D-00 2.84. |
+| Alternatif | Menulis bentuk tanggapan berbadan dengan perkiraan tanggal pemenuhan — ditolak; tanggal itu janji yang belum tentu ditepati perkakas yang dijalankan manusia, dan NFR-09 sudah menyebut batasnya. |
+| Dampak | `docs/D14.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168 |
