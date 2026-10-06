@@ -140,3 +140,32 @@ def test_tidak_ada_ekspor_parquet_yang_berpura_pura() -> None:
         "permukaan modul memuat nama parquet di luar pernyataan tertahannya: "
         f"{sorted(menyebut_parquet - {'ALASAN_PARQUET_TERTAHAN', 'parquet_tertahan'})}"
     )
+
+
+# ── fitur 035 · baris tersimpan ─────────────────────────────────────
+
+
+def test_baris_tersimpan_menghasilkan_csv_yang_sama_dengan_peristiwa() -> None:
+    """T-3 fitur 035: analitik membaca baris tersimpan, bukan `Peristiwa` —
+    yang hanya boleh dibentuk gerbang `rekam()` (C-04). Berkasnya wajib sama."""
+    from src.penyimpanan.telemetri import BarisPeristiwa
+
+    asli = _peristiwa()
+    tersimpan = BarisPeristiwa(
+        pseudonim=asli.pseudonim,
+        jenis=asli.jenis.value,
+        waktu=asli.waktu,
+        properti=dict(asli.properti),
+        versi_aplikasi=asli.versi_aplikasi,
+        versi_model=asli.versi_model,
+    )
+    assert ke_csv([tersimpan]) == ke_csv([asli])
+
+
+def test_bidang_baris_tersimpan_sama_dengan_kolom() -> None:
+    """M-7: kolom yang ditulis tangan dan bertambah terbaca di sini."""
+    from dataclasses import fields
+
+    from src.penyimpanan.telemetri import BarisPeristiwa
+
+    assert tuple(f.name for f in fields(BarisPeristiwa)) == KOLOM

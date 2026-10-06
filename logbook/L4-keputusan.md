@@ -3316,3 +3316,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Peran analitik yang membaca persetujuan untuk menghitung partisipasi — ditolak; menuntut jangkauan skema pengguna, dan partisipasi dapat dihitung tim dari daftar akunnya sendiri. |
 | Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `12-analitik.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-219 · T-3 fitur 035 — penyimpan analitik; CSV atas baris tersimpan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-3 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216). |
+| Keputusan | `src/penyimpanan/analitik.py`: `peristiwa(mulai, sebelum)` setengah terbuka, terlama lebih dulu, dan `catat_ekspor` dengan validasi yang sama dengan batasan tabel; pelaksana memori dan PostgreSQL sebagai `peran_analitik`. `src/telemetri/ekspor.py`: `ke_csv` menerima `BarisEkspor` (Protocol) — berkas dari baris tersimpan sama persis dengan berkas dari `Peristiwa`, sehingga `Peristiwa` tetap hanya dibentuk gerbang `rekam()`. Uji ditulis lebih dulu dan merah. |
+| **Baris rusak ditolak keras** | Basis data uji bersama memuat baris berproperti bukan objek buatan uji fitur 034; pembacaan analitik menolaknya dengan galat, tidak melewatinya. Melewati diam-diam membuat integritas S-18 melaporkan angka yang tidak mencakup seluruh tabel. |
+| Mutasi | M-7 (kolom ekspor bertambah `id_pengguna`) memerahkan 3 uji. |
+| Alternatif | Membentuk `Peristiwa` dari baris tersimpan — ditolak; pemeriksa C-04 membatasi pembentukannya pada gerbang, dan gerbang akan memeriksa ulang persetujuan atas data yang sudah lewat gerbang. |
+| Dampak | `src/penyimpanan/analitik.py`, `src/telemetri/ekspor.py`; `tests/penyimpanan/test_analitik_simpan.py`, `tests/telemetri/test_ekspor.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+| **Uji goyah fitur 034** | `make check` sempat merah pada `test_tanggapan_masuk_dan_keluar_sama_dengan_dan_tanpa_persetujuan`, lalu lulus enam kali berturut-turut saat diulang. Sebabnya atribut `expires` yang Starlette tulis dari jam dinding: dua permintaan pada detik berbeda memiliki `expires` berbeda walau `Max-Age` sama. Perbandingan kini mengabaikan `expires`; `Max-Age` tetap dibandingkan. |

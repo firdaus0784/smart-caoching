@@ -32,8 +32,11 @@ from __future__ import annotations
 
 import csv
 import json
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
+from datetime import datetime
+from enum import Enum
 from io import StringIO
+from typing import Any, Protocol
 
 from src.telemetri.peristiwa import Peristiwa
 
@@ -66,7 +69,30 @@ def parquet_tertahan() -> str:
     return ALASAN_PARQUET_TERTAHAN
 
 
-def ke_csv(peristiwa: Sequence[Peristiwa] | Iterable[Peristiwa]) -> str:
+class BarisEkspor(Protocol):
+    """Baris berbidang sama dengan `Peristiwa` — fitur 035.
+
+    Analitik membaca baris **tersimpan**, bukan `Peristiwa`: model itu hanya
+    boleh dibentuk gerbang `rekam()` (C-04), dan membentuknya ulang dari tabel
+    akan menjalankan gerbang atas data yang sudah lewat gerbang. Kesamaan
+    bidangnya dengan `KOLOM` dijaga uji, bukan kepercayaan.
+    """
+
+    @property
+    def pseudonim(self) -> str: ...
+    @property
+    def jenis(self) -> Any: ...
+    @property
+    def waktu(self) -> datetime: ...
+    @property
+    def properti(self) -> Mapping[str, Any]: ...
+    @property
+    def versi_aplikasi(self) -> str: ...
+    @property
+    def versi_model(self) -> str: ...
+
+
+def ke_csv(peristiwa: Sequence[Peristiwa | BarisEkspor] | Iterable[Peristiwa | BarisEkspor]) -> str:
     """Susun CSV dari peristiwa — FR-J03 separuh.
 
     `properti` ditulis sebagai JSON pada satu kolom: memekarkannya menjadi
@@ -83,7 +109,7 @@ def ke_csv(peristiwa: Sequence[Peristiwa] | Iterable[Peristiwa]) -> str:
         penulis.writerow(
             [
                 satu.pseudonim,
-                satu.jenis.value,
+                satu.jenis.value if isinstance(satu.jenis, Enum) else str(satu.jenis),
                 satu.waktu.isoformat(),
                 json.dumps(satu.properti, ensure_ascii=False, sort_keys=True),
                 satu.versi_aplikasi,

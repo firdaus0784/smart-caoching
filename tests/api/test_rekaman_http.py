@@ -135,9 +135,13 @@ class Lingkungan:
 
 
 def _bentuk(tanggapan: Any) -> tuple[int, bytes, list[str]]:
-    """Status, badan, dan atribut kuki — tanpa nilai pengenal yang acak."""
+    """Status, badan, dan atribut kuki — tanpa nilai pengenal yang acak, dan
+    tanpa `expires`: Starlette menulisnya dari jam dinding sungguhan, sehingga
+    dua permintaan pada detik berbeda berbeda di sana walau `Max-Age` sama.
+    Uji ini sempat goyah karenanya (KB-219)."""
     kuki = tanggapan.headers.get("set-cookie", "")
-    return tanggapan.status_code, tanggapan.content, kuki.split(";")[1:]
+    atribut = [a for a in kuki.split(";")[1:] if not a.strip().lower().startswith("expires=")]
+    return tanggapan.status_code, tanggapan.content, atribut
 
 
 # ── C-04 · tanpa persetujuan, nol ───────────────────────────────────
