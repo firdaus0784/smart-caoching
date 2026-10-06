@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-216); K-1 s.d. K-5 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Satu dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Dua dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-08; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -26,10 +26,10 @@ berubah.** Tanpa paket baru (C-12).
 
 **Kebutuhan:** R-02; K-1.
 
-- [ ] Uji lebih dulu: penolakan `peran_analitik` dengan sebab
+- [x] Uji lebih dulu: penolakan `peran_analitik` dengan sebab
       `permission denied`; katalog hak persis; batasan tabel ekspor
-- [ ] `01-peran-dan-basis-data.sql` + `peran_analitik`; `12-analitik.sql`
-- [ ] Mutasi M-1
+- [x] `01-peran-dan-basis-data.sql` + `peran_analitik`; `12-analitik.sql`
+- [x] Mutasi M-1
 
 ## T-3 · Penyimpan analitik
 

@@ -3304,3 +3304,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Retensi sebagai satu angka tanpa penyebut — ditolak; tanpa `kohort` pembaca tidak dapat menilai apakah 100% berarti satu orang. |
 | Dampak | `docs/D14.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-218 · T-2 fitur 035 — peladen: `peran_analitik` dan jejak ekspor
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-2 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216). |
+| Keputusan | `12-analitik.sql`: tabel `telemetri.ekspor` tambah-saja dengan batasan pola peneliti, rentang, dan jumlah; `peran_analitik` `SELECT` atas peristiwa, `SELECT` dan `INSERT` atas ekspor; `peran_penarikan` memperoleh baca kolom `waktu` peristiwa dan kolom rentang ekspor (P-4). Uji ditulis lebih dulu dan merah karena berkasnya belum ada: 17 penolakan dengan sebab `permission denied`, kedua peran berjalan pada haknya, batasan, katalog hak skema telemetri. |
+| Mutasi | M-1 (`GRANT SELECT` atas `akun.pengguna` kepada `peran_analitik`) memerahkan uji penolakan C-05. Hak sisa mutan dicabut dari basis data uji sesudahnya. |
+| Alternatif | Peran analitik yang membaca persetujuan untuk menghitung partisipasi — ditolak; menuntut jangkauan skema pengguna, dan partisipasi dapat dihitung tim dari daftar akunnya sendiri. |
+| Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `12-analitik.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

@@ -35,7 +35,7 @@ BEGIN
                               'peran_pengguna','peran_kurasi',
                               'peran_penayangan','peran_pengisi_antrean',
                               'peran_telemetri','peran_penarikan',
-                              'peran_penarikan_pseudonim'] LOOP
+                              'peran_penarikan_pseudonim','peran_analitik'] LOOP
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
       EXECUTE format('CREATE ROLE %I LOGIN', nama);
     END IF;
@@ -61,7 +61,7 @@ GRANT CONNECT ON DATABASE smart_coaching
   TO peran_penjawaban, peran_verifikasi, peran_pemanggil_llm, peran_penyematan,
      peran_riwayat, peran_autentikasi, peran_pengelola_akun, peran_pengguna,
      peran_kurasi, peran_penayangan, peran_pengisi_antrean, peran_telemetri,
-     peran_penarikan;
+     peran_penarikan, peran_analitik;
 
 -- `peran_penyematan` (fitur 026, TK-63) sengaja TIDAK diberi CONNECT ke basis
 -- data pseudonim. Jalur penyematan tidak membutuhkannya, dan C-05 menuntut

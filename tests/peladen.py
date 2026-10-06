@@ -159,6 +159,7 @@ def siapkan() -> None:
     for nama, basis in (
         ("11-penarikan.sql", "smart_coaching"),
         ("11b-penarikan-pseudonim.sql", "smart_coaching_pseudonim"),
+        ("12-analitik.sql", "smart_coaching"),
     ):
         hasil = psql(basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         if hasil.returncode != 0:

@@ -64,6 +64,7 @@ def basis_data_siap() -> None:
         "peran_telemetri",
         "peran_penarikan",
         "peran_penarikan_pseudonim",
+        "peran_analitik",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -142,6 +143,7 @@ def basis_data_siap() -> None:
     for nama, basis in (
         ("11-penarikan.sql", "smart_coaching"),
         ("11b-penarikan-pseudonim.sql", "smart_coaching_pseudonim"),
+        ("12-analitik.sql", "smart_coaching"),
     ):
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
@@ -1333,6 +1335,8 @@ def test_hak_peran_telemetri_persis_menurut_katalog(basis_data_siap: None) -> No
         "group by grantee, table_name order by 1",
     )
     assert tabel.stdout.split() == [
+        "peran_analitik:ekspor:INSERT,SELECT",
+        "peran_analitik:peristiwa:SELECT",
         "peran_penarikan:peristiwa:DELETE",
         "peran_telemetri:peristiwa:INSERT,SELECT",
     ]
@@ -1560,3 +1564,84 @@ def test_hak_peran_penarikan_persis_menurut_katalog(basis_data_siap: None) -> No
         "peran_penarikan_pseudonim:peta_pseudonim:DELETE",
         "peran_pseudonim:peta_pseudonim:INSERT,SELECT",
     ]
+
+
+# ── Analitik penelitian — fitur 035 ──────────────────────────────────
+#
+# `peran_analitik` membaca peristiwa dan mencatat ekspor — tidak menjangkau
+# akun, profil, riwayat, maupun basis data pseudonim, sehingga pemegang
+# ekspor tidak dapat menautkan pseudonim ke akun (C-05). Catatan ekspor
+# tambah-saja: jejak ke mana data pergi.
+
+_EKSPOR = (
+    "insert into telemetri.ekspor (peneliti, diekspor_pada, dari, sampai, "
+    "termasuk_pengembangan, jumlah_baris) values "
+    f"('{_PSD}', now(), '2026-10-01', '2026-10-06', false, 3)"
+)
+
+DITOLAK_ANALITIK = [
+    *[
+        ("peran_analitik", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            ("update telemetri.peristiwa set jenis = 'session_end' where false", "tidak diubah"),
+            ("delete from telemetri.peristiwa where false", "tidak dihapus"),
+            ("truncate telemetri.peristiwa", "tidak dikosongkan"),
+            (_PERISTIWA, "analitik tidak menambah peristiwa"),
+            ("update telemetri.ekspor set jumlah_baris = 0 where false", "jejak tidak diubah"),
+            ("delete from telemetri.ekspor where false", "jejak tidak dihapus"),
+            ("select * from akun.pengguna", "C-05 — tidak menautkan pseudonim ke akun"),
+            ("select * from pengguna.profil_sekolah", "tidak membaca profil"),
+            ("select * from riwayat.giliran", "tidak membaca pertanyaan"),
+            ("select * from penemuan.belum_relevan", "tidak membaca alasan"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+        )
+    ],
+    ("peran_analitik", "smart_coaching_pseudonim", "select 1", "C-05 — tanpa basis data pseudonim"),
+    *[
+        (peran, "smart_coaching", kueri, sebab)
+        for peran, kueri, sebab in (
+            ("peran_telemetri", "select * from telemetri.ekspor", "perekam tidak membaca ekspor"),
+            ("peran_pengguna", "select * from telemetri.ekspor", "di luar peran pengguna"),
+            ("peran_penjawaban", "select * from telemetri.ekspor", "C-17"),
+            ("peran_penarikan", "delete from telemetri.ekspor where false", "jejak tidak dihapus"),
+            ("peran_penarikan", "select peneliti from telemetri.ekspor", "tidak membaca peneliti"),
+        )
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_ANALITIK)
+def test_peladen_menolak_hak_analitik(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    """M-1: `GRANT SELECT` atas `akun.pengguna` kepada `peran_analitik`."""
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_peran_analitik_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    for peran, kueri in (
+        ("peran_analitik", "select pseudonim, jenis, waktu, properti from telemetri.peristiwa"),
+        ("peran_analitik", _EKSPOR),
+        ("peran_analitik", "select nomor, peneliti, jumlah_baris from telemetri.ekspor"),
+        ("peran_penarikan", "select nomor, diekspor_pada, dari, sampai from telemetri.ekspor"),
+        ("peran_penarikan", f"select waktu from telemetri.peristiwa where pseudonim = '{_PSD}'"),
+    ):
+        hasil = _psql(peran, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, f"{peran}: {kueri}\n{hasil.stderr}"
+
+
+def test_batasan_tabel_ekspor(basis_data_siap: None) -> None:
+    for kueri, sebab in (
+        (_EKSPOR.replace(_PSD, "ks-017"), "C-05 — nama akun sebagai peneliti"),
+        (
+            _EKSPOR.replace("'2026-10-01', '2026-10-06'", "'2026-10-06', '2026-10-01'"),
+            "dari > sampai",
+        ),
+        (_EKSPOR.replace("false, 3)", "false, -1)"), "jumlah baris negatif"),
+    ):
+        hasil = _psql("peran_analitik", "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"

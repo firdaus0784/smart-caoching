@@ -24,6 +24,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 09-kurasi.
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 10-telemetri.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 11-penarikan.sql
 psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 11b-penarikan-pseudonim.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 12-analitik.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -104,6 +105,13 @@ pernah layanan aplikasi.** Tidak satu pun menjangkau basis data yang lain
 (C-05). Baris permintaan tidak dapat dihapus siapa pun; sesudah dipenuhi
 pseudonimnya kosong, dan batasan tabel menolak pemenuhan yang lupa
 mengosongkannya.
+
+## Analitik penelitian — baca saja (fitur 035)
+
+`12-analitik.sql` memberi `peran_analitik` `SELECT` atas `telemetri.peristiwa`
+dan `SELECT`, `INSERT` atas `telemetri.ekspor` — jejak tambah-saja setiap
+ekspor. Tanpa akun, profil, riwayat, maupun basis data pseudonim: pemegang
+ekspor tidak dapat menautkan pseudonim ke akun (C-05).
 
 ## Ekstensi pgvector — batas kode dan operasi
 
