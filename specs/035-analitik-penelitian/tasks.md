@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-216); K-1 s.d. K-5 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Enam dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Tujuh dari tujuh tugas selesai — **menunggu Gerbang 4 manusia** (KB-223) |
 | Kebutuhan | R-01 s.d. R-08; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -68,7 +68,7 @@ berubah.** Tanpa paket baru (C-12).
 
 ## T-7 · Titik jalan, bukti, penutupan
 
-- [ ] `perkakas/jalankan_lokal.py`: penyimpan analitik sebagai `peran_analitik`
-- [ ] Playwright Bagian 8.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] `perkakas/jalankan_lokal.py`: penyimpan analitik sebagai `peran_analitik`
+- [x] Playwright Bagian 8.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

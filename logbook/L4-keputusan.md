@@ -3370,3 +3370,20 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `web/src/analitik/`, `web/src/Aplikasi.tsx`, `web/src/klien.ts`, `web/src/kontrak.ts`, `web/src/mikrokopi.ts`; `perkakas/pemeriksa/kontrak_web.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Koreksi | Baris "Singkatan diuraikan" di atas: pemeriksa C-13 menolak "CSV" bahkan beserta uraiannya, sehingga kata itu dihapus seluruhnya dari mikrokopi — keterangannya kini "nilai yang dipisah koma". Aplikasi rujukan pemeriksa rute web juga dipasangi penyimpan analitik agar kedua rute peneliti terbaca terpasang. |
+
+## KB-223 · T-7 fitur 035 — titik jalan, bukti, penutupan; menunggu Gerbang 4; TK-78
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-7 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216). Gerbang 4 tidak didelegasikan. |
+| Keputusan | `make jalan` bersesi memasang penyimpan analitik sebagai `peran_analitik`; uji titik jalan ditulis lebih dulu dan merah. Fitur 035 dinyatakan selesai tujuh dari tujuh tugas dan **diajukan ke Gerbang 4**. |
+| Putaran mutasi | Sepuluh mutasi `plan.md` Bagian 8.3. **Menyala 10 dari 10**: M-1 (KB-218); M-7 (KB-219); M-2 s.d. M-6, M-9 (KB-220); M-8 (KB-221); M-10 (KB-222). |
+| Bukti | `bukti/ujung_ke_ujung.mjs` terhadap `make jalan` dengan PostgreSQL: pengguna baru menyetujui naskah **uji**, bertanya, masuk dua kali; peneliti dikenali tanpa rute baru dan membuka S-18. Karena `make jalan` menandai setiap peristiwa `pengembangan`, keterlibatan kosong dan integritas menghitung lima peristiwa pengembangan — pemisahan R-05 teramati. Ekspor tanpa centang memuat 0 baris, dengan centang 5; keduanya tercatat. Sesudah pengguna menarik datanya, `perkakas.penarikan daftar` menyebut kedua ekspor itu tanpa pseudonim (`bukti/ekspor-dan-penarikan.txt`, tangkapan layar S-18). |
+| **Temuan — TK-78** | Putaran bukti pertama lulus seluruh pemeriksaan tetapi mencatat dua galat 500 pada beranda pengguna: satu butir tayang rusak sisa uji peladen fitur 013 menjatuhkan `GET /beranda`, sebab `_tayang_sah` tidak menangkap `ValidationError`. Perbaikannya menyentuh fitur yang sudah lolos Gerbang 4, sehingga dicatat pada D-00 2.89 dan diajukan, bukan dikerjakan. |
+| **Penyiapan basis data uji, dinyatakan** | Sebelum bukti: tabel peristiwa dan ekspor serta tabel kurasi dan penemuan dikosongkan pengelola (sisa uji), dan **satu baris permintaan penarikan tertunda sisa uji dihapus** pengelola. Ketiganya pada basis data uji, bukan data peserta; penghapusan baris permintaan melewati sifat tambah-saja yang dijaga peladen bagi peran aplikasi, dan dinyatakan di sini karena itu. Naskah uji dihapus dan `web/dist` dibangun ulang sesudahnya. |
+| Penutupan | L8: tagihan pasal tidak menyusut (19 lulus, 0 gagal, 1 belum); enam pasal dikuatkan. Dokumen HKI: panel internal, layanan API, basis data, keamanan, mutu (28 dari 36 baris kini, sesudah baris 036), yang belum terbangun; uji 3.043 dan 276; anggaran muat 87.076 dari 153.600 bait. |
+| Yang menunggu | **Gerbang 4** oleh pemegang gerbang. **TK-78** oleh pemegang gerbang (perbaikan fitur 013). Baris 036 dan 031, 032 menunggu gilirannya. |
+| Alternatif | Memperbaiki `_tayang_sah` sekalian — tidak dipilih; di luar `plan.md` fitur 035 dan menyentuh fitur yang sudah lolos Gerbang 4. |
+| Dampak | `perkakas/jalankan_lokal.py`; `tests/perkakas/test_jalankan_lokal.py`; `specs/035-analitik-penelitian/bukti/`, `tasks.md`; `docs/D00.md`; `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

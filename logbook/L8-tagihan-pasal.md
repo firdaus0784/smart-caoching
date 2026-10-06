@@ -556,3 +556,24 @@ dan BT-29"`. Fitur 033 tidak menyentuh jalur penjawaban.
 *Koreksi atas baris C-13 di atas:* untai layar baru berjumlah **dua puluh
 lima** — delapan belas kunci `MIKROKOPI` dan tujuh butir daftar data — bukan
 dua puluh. Baris di atas tidak disunting (tambah-saja).
+
+### Fitur 035 — 6 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 033. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan enam pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 035 |
+|---|---|
+| C-04 | Analitik hanya membaca peristiwa yang lahir lewat gerbang `rekam()`; ekspor menulis CSV dari baris tersimpan tanpa membentuk ulang `Peristiwa` di luar gerbang |
+| C-05 | `peran_analitik` tanpa akun, profil, riwayat, maupun basis data pseudonim (M-1); jejak ekspor mencatat pseudonim peneliti, bukan nama |
+| C-12 | Ekspor Parquet tetap tertahan; S-18 berupa tabel tanpa pustaka grafik |
+| C-13 | Satu kalimat peladen dan empat puluh lima untai layar baru melewati pemeriksa; "CSV" dihapus dari mikrokopi karena pemeriksa menolaknya sebagai singkatan sistem |
+| C-14 | Metrik dihitung saat diminta dan tidak dibaca pemilihan beranda maupun jawaban |
+| C-20 | Bentuk kedua rute dan tabel `ekspor` ditulis ke D-14 0.16 sebelum kodenya; sepuluh model dan satu enum didaftarkan pada pemeriksa kontrak web |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 035 tidak menyentuh jalur penjawaban.

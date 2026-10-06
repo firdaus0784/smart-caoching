@@ -298,3 +298,18 @@ def test_titik_jalan_bersesi_memasang_rute_penarikan_tanpa_peran_penghapus() -> 
         404,
         405,
     )
+
+
+def test_titik_jalan_bersesi_memasang_rute_analitik() -> None:
+    """Fitur 035: rute peneliti terpasang bersama penyimpan analitik; tanpanya tidak ada."""
+    from src.penyimpanan.akun import AkunMemori
+    from src.penyimpanan.analitik import AnalitikMemori
+    from src.penyimpanan.telemetri import TelemetriMemori
+
+    dengan = TestClient(
+        susun_untuk_pengembangan(akun=AkunMemori(), analitik=AnalitikMemori(TelemetriMemori())),
+        base_url="https://testserver",
+    )
+    assert dengan.get("/api/v1/analitik/ringkas").status_code == 401
+    tanpa = TestClient(susun_untuk_pengembangan(akun=AkunMemori()), base_url="https://testserver")
+    assert tanpa.get("/api/v1/analitik/ringkas").status_code == 404

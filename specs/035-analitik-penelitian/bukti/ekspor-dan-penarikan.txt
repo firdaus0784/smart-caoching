@@ -1,0 +1,20 @@
+Ekspor tanpa peristiwa pengembangan: peristiwa-2026-10-06-2026-10-06-10.csv — 0 baris
+Ekspor dengan peristiwa pengembangan: peristiwa-2026-10-06-2026-10-06-11.csv — 5 baris
+Kepala kolom: pseudonim,jenis,waktu,properti,versi_aplikasi,versi_model
+
+$ python -m perkakas.penarikan daftar
+#10 · diminta 2026-10-06 · 0 hari · ekspor yang mungkin memuatnya: 10, 11
+
+$ python -m perkakas.penarikan jalankan
+#10 dipenuhi — 15 baris terhapus:
+  telemetri.peristiwa: 6
+  riwayat.giliran: 1
+  riwayat.percakapan: 1
+  penemuan.tayang_harian: 0
+  penemuan.belum_relevan: 0
+  pengguna.profil_sekolah: 1
+  pengguna.prioritas_manajerial: 1
+  pengguna.persetujuan: 1
+  akun.sesi: 3
+  akun.pengguna: 1
+  pemetaan pseudonim: 0

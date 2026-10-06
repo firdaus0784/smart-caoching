@@ -60,6 +60,7 @@ from src.api.peran import Peran
 from src.api.saya import baca_naskah
 from src.api.tanya import AlasanBerhenti, HasilTanya
 from src.penyimpanan.akun import PERAN_AUTENTIKASI, AkunPostgres, PenyimpanAkun
+from src.penyimpanan.analitik import PERAN_ANALITIK, AnalitikPostgres, PenyimpanAnalitik
 from src.penyimpanan.kurasi import PERAN_KURASI, KurasiPostgres, PenyimpanKurasi
 from src.penyimpanan.penemuan import PERAN_PENAYANGAN, PenemuanPostgres, PenyimpanPenemuan
 from src.penyimpanan.pengguna import PERAN_PENGGUNA, PenggunaPostgres, PenyimpanPengguna
@@ -191,6 +192,7 @@ def susun_untuk_pengembangan(
     kurasi: PenyimpanKurasi | None = None,
     penemuan: PenyimpanPenemuan | None = None,
     telemetri: PenyimpanTelemetri | None = None,
+    analitik: PenyimpanAnalitik | None = None,
 ) -> FastAPI:
     """Rakit aplikasi dengan pengganti pengembangan.
 
@@ -203,7 +205,7 @@ def susun_untuk_pengembangan(
     `turunan_tiruan` disuntikkan hanya oleh uji. `kurasi` dan `penemuan`
     memasang rute kurator dan beranda (fitur 013). `telemetri` merekam
     peristiwa bagi pengguna yang menyetujui, bertanda versi `pengembangan`
-    (fitur 034).
+    (fitur 034). `analitik` memasang rute peneliti (fitur 035).
     """
     if akun is None:
         return susun_aplikasi(
@@ -222,6 +224,7 @@ def susun_untuk_pengembangan(
         penemuan=penemuan,
         telemetri=telemetri,
         versi_aplikasi=VERSI_APLIKASI_PENGEMBANGAN if telemetri is not None else None,
+        analitik=analitik,
     )
 
 
@@ -275,7 +278,16 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
     kurasi: PenyimpanKurasi | None = None
     penemuan: PenyimpanPenemuan | None = None
     telemetri: PenyimpanTelemetri | None = None
+    analitik: PenyimpanAnalitik | None = None
     if argumen.autentikasi == "sesi":
+        # Fitur 035: rute peneliti, membaca peristiwa sebagai peran_analitik.
+        analitik = AnalitikPostgres(
+            SambunganPerKueri(
+                os.environ.get("PGHOST", ALAMAT_AMAN),
+                int(os.environ.get("PGPORT", "5432")),
+                PERAN_ANALITIK,
+            )
+        )
         # Fitur 034: peristiwa tambah-saja, sebagai peran_telemetri.
         telemetri = TelemetriPostgres(
             SambunganPerKueri(
@@ -341,6 +353,7 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
             kurasi=kurasi,
             penemuan=penemuan,
             telemetri=telemetri,
+            analitik=analitik,
         ),
         host=argumen.alamat,
         port=argumen.porta,
