@@ -3330,3 +3330,16 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `src/penyimpanan/analitik.py`, `src/telemetri/ekspor.py`; `tests/penyimpanan/test_analitik_simpan.py`, `tests/telemetri/test_ekspor.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | **Uji goyah fitur 034** | `make check` sempat merah pada `test_tanggapan_masuk_dan_keluar_sama_dengan_dan_tanpa_persetujuan`, lalu lulus enam kali berturut-turut saat diulang. Sebabnya atribut `expires` yang Starlette tulis dari jam dinding: dua permintaan pada detik berbeda memiliki `expires` berbeda walau `Max-Age` sama. Perbandingan kini mengabaikan `expires`; `Max-Age` tetap dibandingkan. |
+
+## KB-220 · T-4 fitur 035 — metrik dan rute analitik
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-4 `tasks.md` fitur 035, atas pendelegasian KB-168 dalam batas `plan.md` (KB-216). |
+| Keputusan | `src/api/analitik.py`: `ringkasan()` fungsi murni atas baris peristiwa — keaktifan harian dan mingguan WIB, retensi berkohort tepat hari ke-N, panjang sesi, rasio penemuan, enam metrik tertunda bernama dan bersebab, integritas dengan `pengembangan` dihitung terpisah; `ekspor()` memvalidasi rentang, menyaring `pengembangan` kecuali diminta, mencatat jejak, lalu menyusun CSV fitur 012. Model tanggapan bernama sesuai D-14 4.8. Rute `GET /analitik/ringkas` dan `POST /analitik/ekspor` terpasang bila penyimpan analitik ada. Uji ditulis lebih dulu dengan peristiwa buatan yang jawabannya dihitung tangan (kalender Maret 2031 tertulis pada uraian uji) dan merah karena modulnya belum ada. |
+| **Nama yang bertabrakan** | `ringkasan` sudah dipakai `src/api/saya.py` di `aplikasi.py`; pengurut impor sempat menimpanya tanpa galat statis. Uji HTTP yang menangkapnya; impor analitik kini bernama `ringkasan_analitik`. |
+| Mutasi | M-2 (retensi "pada atau sesudah") 1 uji merah; M-3 (kohort belum berumur di penyebut) 1; M-4 (`pengembangan` tercampur) 10; M-5 (tanpa penyebut bernilai 0) 2; M-6 (ekspor tidak tercatat) 3; M-9 (rute terbuka bagi `pengguna`) 12. |
+| Alternatif | Retensi dihitung di basis data dengan SQL — ditolak; definisinya lebih mudah diperiksa sebagai fungsi murni berdata buatan, dan ukuran pilot tidak menuntutnya. |
+| Dampak | `src/api/analitik.py`, `src/api/aplikasi.py`, `src/api/peran.py`; `tests/api/test_analitik.py`, `tests/api/test_analitik_http.py`, `tests/pemeriksa/test_bahasa_antarmuka.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

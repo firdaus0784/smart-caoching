@@ -59,6 +59,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from src.api.analitik import PESAN_EKSPOR_TIDAK_SAH, ekspor
+from src.api.analitik import ringkasan as ringkasan_analitik
 from src.api.autentikasi import (
     MASA_SESI,
     NAMA_KUKI,
@@ -89,6 +91,8 @@ from src.api.penemuan import (
     tolak,
 )
 from src.api.peran import (
+    POLA_ANALITIK_EKSPOR,
+    POLA_ANALITIK_RINGKAS,
     POLA_ANTREAN,
     POLA_BERANDA,
     POLA_BUTIR,
@@ -122,6 +126,7 @@ from src.api.saya import (
 from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
+from src.penyimpanan.analitik import PenyimpanAnalitik
 from src.penyimpanan.kurasi import PenyimpanKurasi
 from src.penyimpanan.penemuan import PenyimpanPenemuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
@@ -221,6 +226,7 @@ def susun_aplikasi(
     penemuan: PenyimpanPenemuan | None = None,
     telemetri: PenyimpanTelemetri | None = None,
     versi_aplikasi: str | None = None,
+    analitik: PenyimpanAnalitik | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -248,6 +254,9 @@ def susun_aplikasi(
     fitur 034 dan tidak satu peristiwa pun tersimpan. Bila diberikan, ia
     **menuntut** `pengguna` — persetujuan yang dibaca C-04 tinggal di sana —
     dan `versi_aplikasi` yang terisi (FR-J02, K-4).
+
+    `analitik` sama: tanpa penyimpan, rute peneliti D-14 Bagian 3.4 tidak
+    terpasang (fitur 035).
     """
     if penemuan is not None and pengguna is None:
         raise ValueError("rute penemuan menuntut penyimpan pengguna (FR-G01)")
@@ -412,6 +421,8 @@ def susun_aplikasi(
         _pasang_rute_saya(aplikasi, pengguna, _identitas_atau_tolak, versi_naskah, sekarang)
     if masuk is not None and pengguna is not None:
         _pasang_rute_penarikan(aplikasi, masuk, _identitas_atau_tolak)
+    if analitik is not None:
+        _pasang_rute_analitik(aplikasi, analitik, _identitas_atau_tolak, sekarang)
     if kurasi is not None:
         _pasang_rute_kurasi(aplikasi, kurasi, _identitas_atau_tolak, sekarang)
     if penemuan is not None and pengguna is not None:
@@ -596,6 +607,47 @@ def _pasang_rute_penarikan(
         tanggapan = Response(status_code=202)
         tanggapan.delete_cookie(NAMA_KUKI, path="/", secure=True, httponly=True, samesite="strict")
         return tanggapan
+
+
+def _pasang_rute_analitik(
+    aplikasi: FastAPI,
+    simpan: PenyimpanAnalitik,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    sekarang: Callable[[], datetime],
+) -> None:
+    """Rute D-14 Bagian 3.4 milik peneliti — bentuknya Bagian 4.8. Hanya
+    menerjemahkan; metrik dan ekspor milik `src/api/analitik.py` (fitur 035)."""
+
+    @aplikasi.get(POLA_ANALITIK_RINGKAS)
+    async def ringkas(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_ANALITIK_RINGKAS)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        isi = ringkasan_analitik(await simpan.peristiwa(), sekarang=sekarang())
+        return JSONResponse(status_code=200, content=isi.model_dump(mode="json"))
+
+    @aplikasi.post(POLA_ANALITIK_EKSPOR)
+    async def unduh(permintaan: Request) -> Response:
+        siapa = await identitas_atau_tolak(permintaan, POLA_ANALITIK_EKSPOR)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            if not _berbadan_json(permintaan):
+                raise ValueError("bukan JSON")
+            try:
+                badan = await permintaan.json()
+            except ValueError:
+                badan = None
+            isi, nama = await ekspor(simpan, badan, peneliti=siapa.pemilik, sekarang=sekarang())
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_EKSPOR_TIDAK_SAH, rute=POLA_ANALITIK_EKSPOR
+            )
+        return Response(
+            content=isi,
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{nama}"'},
+        )
 
 
 def _pasang_rute_kurasi(

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-216); K-1 s.d. K-5 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Tiga dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-216). Empat dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-08; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -43,10 +43,10 @@ berubah.** Tanpa paket baru (C-12).
 
 **Kebutuhan:** R-01, R-03, R-04, R-05, R-07; K-2, K-3.
 
-- [ ] Uji lebih dulu: metrik atas peristiwa buatan yang dihitung tangan;
+- [x] Uji lebih dulu: metrik atas peristiwa buatan yang dihitung tangan;
       lewat HTTP 403, ekspor tercatat, CSV, `pengembangan` terpisah
-- [ ] `src/api/analitik.py`; rute pada `src/api/aplikasi.py`
-- [ ] Mutasi M-2, M-3, M-4, M-5, M-6, M-9
+- [x] `src/api/analitik.py`; rute pada `src/api/aplikasi.py`
+- [x] Mutasi M-2, M-3, M-4, M-5, M-6, M-9
 
 ## T-5 · Perkakas penarikan menyebut ekspor
 
