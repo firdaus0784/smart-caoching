@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-J01, FR-J02, FR-J05; FR-A05; NFR-15; C-04, C-05, C-09, C-14, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 dan 9.1 · D-04 Bagian 7.4 (`peristiwa`) · D-14 Bagian 3 dan 5.1 · D-12 Bagian 7 · spec fitur 012 |
-| Status | **Usulan** — menunggu Gerbang 1 |
+| Status | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-192). Gerbang 2 dan 3 atas pendelegasian KB-168 |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -113,6 +113,20 @@ itu, bukan dari `session_end` saja.
 tanpa jangkauan skema lain maupun basis data pseudonim. `SELECT` dibutuhkan
 `return_visit`; peran ekspor bagi peneliti milik baris 035.
 
+## Putusan Gerbang 1 (KB-192)
+
+Pemegang Gerbang 1–4 menjawab **"setuju dan lanjutkan"** atas laporan yang
+menyebut anjuran tiap pertanyaan. Seluruh anjuran berlaku:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **C** — peristiwa yang teramati peladen direkam di rute yang sudah ada; rute peristiwa dari peramban diajukan tersendiri sesudah putusan D-14 (TK-73 tetap terbuka) |
+| P-2 | Sembilan kode pada tabel P-2; properti yang belum tersedia tidak diisi |
+| P-3 | Tepi `api → telemetri` satu jurusan pada AGENTS.md |
+| P-4 | `versi_model` bernilai `tanpa_model` bagi peristiwa tanpa model; `versi_aplikasi` dari titik jalan |
+| P-5 | `session_end` hanya pada keluar tegas; durasi dihitung saat analisis |
+| P-6 | Skema `telemetri` dan `peran_telemetri` — `INSERT` dan `SELECT` saja |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -130,7 +144,7 @@ tanpa jangkauan skema lain maupun basis data pseudonim. `SELECT` dibutuhkan
 
 ## Kriteria penerimaan
 
-- [ ] Baris D-12 034 dan TK-73 dibahas; P-1 s.d. P-6 diputus pada Gerbang 1
+- [x] Baris D-12 034 dan TK-73 dibahas; P-1 s.d. P-6 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] C-04 diuji ujung ke ujung lewat HTTP: tanpa persetujuan nol baris; sesudah mencabut, nol baris baru pada permintaan berikutnya
 - [ ] R-05 diuji terhadap peladen PostgreSQL dengan sebab penolakannya

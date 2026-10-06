@@ -2971,3 +2971,27 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membangun rute peristiwa sekalian (P-1 B) — tidak dianjurkan sebelum putusan D-14; rute yang menerima masukan bebas dari klien juga menambah permukaan serangan. |
 | Dampak | Berkas baru `spec.md` fitur 034; `docs/D00.md` 2.80. Nol baris kode. |
 | Pemutus | Agen menyusun; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-192 · Gerbang 1 fitur 034 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Laporan KB-191 mengajukan P-1 s.d. P-6 beserta anjurannya dan menyebut bahwa "setuju" memberlakukan seluruh anjuran. Pemegang Gerbang 1–4 menjawab **"setuju dan lanjutkan"**. |
+| Keputusan | **Gerbang 1 fitur 034 lolos; P-1 s.d. P-6 sesuai anjuran.** P-1 C: peristiwa yang teramati peladen direkam di rute yang ada; TK-73 tetap terbuka dan rute peristiwa peramban diajukan tersendiri. P-3: tepi `api → telemetri` disetujui. |
+| Alternatif | Rute peristiwa sekalian (P-1 B) — tidak dipilih. |
+| Dampak | Status `spec.md` fitur 034. Nol baris kode. |
+| Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-193 · `plan.md` dan `tasks.md` fitur 034; Gerbang 2 dan 3 atas pendelegasian KB-168
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | Lanjutan KB-192; pendelegasian KB-168 belum dicabut. |
+| Keputusan | `plan.md` dengan enam keputusan rancangan K-1 s.d. K-6, sepuluh mutasi, enam tugas. **Gerbang 2 dan 3 dinyatakan lolos atas pendelegasian KB-168**, dengan batas yang sama; Gerbang 4 tidak. Tidak satu keputusan pun menyentuh batas itu: tanpa rute baru, tanpa paket baru, tanpa ambang, tanpa perubahan `src/telemetri/`. Tepi `api → telemetri` sudah diputus pada Gerbang 1 (P-3). |
+| **Temuan — pemilik saat masuk** | Rute masuk menerbitkan sesi sebelum identitas dapat dibaca dari kuki, sehingga `session_start` tidak memiliki pemilik. K-5: `PenjagaMasuk.pemilik_sesi(pengenal)` membaca pseudonim dari sesi yang baru diterbitkan lewat penyimpan akun yang sama — permukaan fitur 029 bertambah satu metode baca, tanpa mengubah yang ada. |
+| **Bentuk galat telemetri** | Perekam menelan galatnya dan mencatat jenis peristiwa serta kelas galat saja. Ini satu-satunya tempat pada proyek yang sengaja menelan galat; alasannya FR-A05 — telemetri yang menjatuhkan rute membuat persetujuan berbiaya bagi penggunanya. |
+| Alternatif | Mengumpulkan peristiwa lalu menulis berkelompok — tidak dipilih; peristiwa yang tertahan di memori hilang saat peladen dimulai ulang, dan pencabutan di antara pengumpulan dan penulisan tidak lagi "seketika". |
+| Dampak | Berkas baru `plan.md` dan `tasks.md` fitur 034. Nol baris kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
