@@ -61,6 +61,7 @@ def basis_data_siap() -> None:
         "peran_kurasi",
         "peran_penayangan",
         "peran_pengisi_antrean",
+        "peran_telemetri",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -125,6 +126,12 @@ def basis_data_siap() -> None:
     # Kurasi dan penemuan (fitur 013) memakai DDL `09-kurasi.sql`.
     hasil = _psql(
         PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "09-kurasi.sql")
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
+    # Telemetri (fitur 034) memakai DDL `10-telemetri.sql`.
+    hasil = _psql(
+        PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "10-telemetri.sql")
     )
     assert hasil.returncode == 0, hasil.stderr
 
@@ -1213,3 +1220,94 @@ def test_butir_tayang_sekali_bagi_orang_yang_sama(basis_data_siap: None) -> None
     _jalan("peran_penayangan", sisip % 0)
     hasil = _psql("peran_penayangan", "smart_coaching", "-c", sisip % 1)
     assert "duplicate key" in hasil.stderr, hasil.stderr
+
+
+# ── Fitur 034 · telemetri ─────────────────────────────────────────────
+#
+# Tabel peristiwa tambah-saja, ditegakkan peladen; peran telemetri tanpa
+# jangkauan skema lain maupun basis data pseudonim (C-05).
+
+_PERISTIWA = (
+    "insert into telemetri.peristiwa (pseudonim, jenis, waktu, properti, versi_aplikasi, "
+    f"versi_model) values ('{_PSD}', 'session_start', now(), '{{}}', 'uji', 'tanpa_model')"
+)
+
+DITOLAK_TELEMETRI = [
+    *[
+        ("peran_telemetri", "smart_coaching", kueri, sebab)
+        for kueri, sebab in (
+            ("update telemetri.peristiwa set jenis = 'session_end' where false", "tidak diubah"),
+            ("delete from telemetri.peristiwa where false", "tidak dihapus"),
+            ("truncate telemetri.peristiwa", "tidak dikosongkan"),
+            ("create table telemetri.titipan (a int)", "tanpa CREATE pada skema telemetri"),
+            ("select * from pengguna.persetujuan", "persetujuan dibaca peran pengguna, bukan ini"),
+            ("select * from akun.pengguna", "tidak membaca akun"),
+            ("select * from penemuan.tayang_harian", "tidak membaca penemuan"),
+            ("select * from karantina.dokumen_sumber", "C-03 — tidak menjangkau karantina"),
+        )
+    ],
+    (
+        "peran_telemetri",
+        "smart_coaching_pseudonim",
+        "select 1",
+        "C-05 — tanpa basis data pseudonim",
+    ),
+    *[
+        (peran, "smart_coaching", "select * from telemetri.peristiwa", f"telemetri di luar {peran}")
+        for peran in ("peran_penjawaban", "peran_pengguna", "peran_penayangan", "peran_kurasi")
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_TELEMETRI)
+def test_peladen_menolak_hak_telemetri(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_peran_telemetri_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    for kueri in (_PERISTIWA, "select jenis, waktu from telemetri.peristiwa"):
+        hasil = _psql("peran_telemetri", "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, f"{kueri}\n{hasil.stderr}"
+
+
+def test_hak_peran_telemetri_persis_menurut_katalog(basis_data_siap: None) -> None:
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where table_schema = 'telemetri' and grantee like 'peran\\_%' "
+        "group by grantee, table_name order by 1",
+    )
+    assert tabel.stdout.split() == ["peran_telemetri:peristiwa:INSERT,SELECT"]
+
+
+def test_batasan_tabel_peristiwa(basis_data_siap: None) -> None:
+    for kueri, sebab in (
+        (_PERISTIWA.replace(_PSD, "ks-017"), "C-05 — nama akun sebagai pemilik"),
+        (_PERISTIWA.replace("'session_start'", "'klik_iklan'"), "kode di luar taksonomi"),
+        (_PERISTIWA.replace("'tanpa_model'", "' '"), "versi model kosong"),
+    ):
+        hasil = _psql("peran_telemetri", "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+
+def test_kode_peristiwa_sql_sama_dengan_taksonomi() -> None:
+    """Dua puluh kode pada batasan tabel dibaca dari `JenisPeristiwa`, bukan
+    dipercaya — salinan yang hanyut menolak peristiwa sah atau menerima kode
+    kedua puluh satu."""
+    import re
+
+    from src.telemetri.peristiwa import JenisPeristiwa
+
+    sql = (BERKAS / "10-telemetri.sql").read_text(encoding="utf-8")
+    blok = sql[sql.index("jenis IN (") : sql.index(")", sql.index("jenis IN ("))]
+    assert set(re.findall(r"'([a-z_]+)'", blok)) == {j.value for j in JenisPeristiwa}

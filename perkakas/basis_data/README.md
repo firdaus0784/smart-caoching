@@ -21,6 +21,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 06-riwayat
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 07-akun.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 08-pengguna.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 09-kurasi.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 10-telemetri.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -79,6 +80,13 @@ membaca kandidat, dan butir tayang hanya dapat merujuk putusan yang
 **menyetujui** butir itu sendiri — kunci asing gabungan atas `(nomor,
 id_butir, menyetujui)`. Ketiga peran tidak menjangkau karantina, korpus, maupun
 basis data pseudonim.
+
+## Telemetri — tambah-saja (fitur 034)
+
+`10-telemetri.sql` memberi `peran_telemetri` **hanya** `SELECT` dan `INSERT`
+atas `telemetri.peristiwa`. Tanpa ubah dan hapus; tanpa skema lain; tanpa
+`CONNECT` ke basis data pseudonim. Persetujuan (C-04) tidak ditegakkan di sini
+— ia dibaca gerbang `rekam()` fitur 012 pada setiap peristiwa.
 
 ## Ekstensi pgvector — batas kode dan operasi
 

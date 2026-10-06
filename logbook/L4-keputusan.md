@@ -3006,3 +3006,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis tepi sebagai perkecualian rute Tanya saja — ditolak; tiap rute yang mengamati peristiwa membutuhkannya, dan alasan umum yang membuatnya bukan kebiasaan. |
 | Dampak | `docs/D14.md`, `AGENTS.md`, `docs/D00.md`, `tasks.md`. Nol baris kode. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-195 · T-2 fitur 034 — peladen menegakkan peristiwa tambah-saja
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-2 `tasks.md` fitur 034, atas pendelegasian KB-168 dalam batas `plan.md` (KB-193). |
+| Keputusan | `10-telemetri.sql`: skema `telemetri`, tabel `peristiwa`, batasan pola pseudonim dan dua puluh kode taksonomi; `peran_telemetri` pada `01-peran-dan-basis-data.sql` dengan `SELECT` dan `INSERT` saja. Uji ditulis lebih dulu dan merah karena berkasnya belum ada: 13 penolakan dengan sebab `permission denied`, peran berjalan pada haknya, katalog hak persis, batasan tabel. |
+| **Daftar kode dari sumbernya** | Dua puluh kode pada batasan tabel dibangkitkan dari `JenisPeristiwa` saat berkas ditulis, dan uji `test_kode_peristiwa_sql_sama_dengan_taksonomi` membandingkan keduanya setiap kali — salinan yang hanyut menolak peristiwa sah atau menerima kode kedua puluh satu. |
+| Mutasi | M-4 (`GRANT UPDATE, DELETE` atas peristiwa) memerahkan tiga uji; M-5 (`GRANT CONNECT` basis data pseudonim) memerahkan satu. |
+| Alternatif | Menegakkan C-04 di peladen dengan kebijakan baris yang membaca persetujuan — tidak dipilih; menuntut peran telemetri membaca skema `pengguna`, dan gerbang fitur 012 sudah memegangnya. |
+| Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `10-telemetri.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

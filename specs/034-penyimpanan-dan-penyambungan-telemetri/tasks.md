@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-192); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-193); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Satu dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Dua dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-10; FR-J01, FR-J02, FR-J05, FR-A05; C-04, C-05, C-09, C-14 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -28,11 +28,11 @@ Agen **tidak** menulis naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-04, R-05; K-3.
 
-- [ ] Uji lebih dulu: penolakan `UPDATE`, `DELETE`, `TRUNCATE`, skema lain,
+- [x] Uji lebih dulu: penolakan `UPDATE`, `DELETE`, `TRUNCATE`, skema lain,
       basis data pseudonim — sebab `permission denied`; katalog hak persis;
       batasan pola pseudonim dan dua puluh kode
-- [ ] `01-peran-dan-basis-data.sql` + `peran_telemetri`; `10-telemetri.sql`
-- [ ] Mutasi M-4, M-5
+- [x] `01-peran-dan-basis-data.sql` + `peran_telemetri`; `10-telemetri.sql`
+- [x] Mutasi M-4, M-5
 
 ## T-3 · Penyimpan telemetri
 

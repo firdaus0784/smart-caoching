@@ -149,3 +149,8 @@ def siapkan() -> None:
     hasil = psql("smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "09-kurasi.sql"))
     if hasil.returncode != 0:
         raise RuntimeError(f"09-kurasi.sql gagal: {hasil.stderr}")
+
+    # 10 — telemetri (fitur 034).
+    hasil = psql("smart_coaching", "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / "10-telemetri.sql"))
+    if hasil.returncode != 0:
+        raise RuntimeError(f"10-telemetri.sql gagal: {hasil.stderr}")
