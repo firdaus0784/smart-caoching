@@ -3174,3 +3174,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Satu peran yang menjangkau kedua basis data — ditolak; satu kredensial akan memegang data perilaku dan kunci pemetaannya sekaligus (C-05). `TRUNCATE` atau `DELETE` tanpa batasan kolom — ditolak; peran penghapus tidak perlu membaca isi yang ia hapus. |
 | Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `10-telemetri.sql` (uraian), `11-penarikan.sql`, `11b-penarikan-pseudonim.sql`, README; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-208 · T-3 fitur 033 — penyimpan akun mencatat penarikan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-3 `tasks.md` fitur 033, atas pendelegasian KB-168 dalam batas `plan.md` (KB-205). |
+| Keputusan | `PenyimpanAkun.catat_penarikan(pseudonim)`: satu pernyataan CTE mencatat permintaan (`ON CONFLICT DO NOTHING` atas indeks tertunda) dan mencabut seluruh sesi akun itu; `True` hanya bagi permintaan baru. `baca_akun` dan `baca_sesi` membaca akun berpermintaan tertunda sebagai nonaktif. Pelaksana memori dan PostgreSQL sebagai `peran_autentikasi`; uji ditulis lebih dulu dan merah karena metodenya belum ada. |
+| Mutasi | M-2 (akun tertunda dapat masuk) memerahkan uji pembacaan akun pada kedua pelaksana. |
+| Alternatif | Menonaktifkan akun lewat `status_aktif` — ditolak; menuntut `peran_autentikasi` memegang `UPDATE (status_aktif)`, hak yang sengaja hanya dipegang perkakas pengelola akun (fitur 029). |
+| Dampak | `src/penyimpanan/akun.py`; `tests/penyimpanan/test_akun.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

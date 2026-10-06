@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-204); P-1 s.d. P-5 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-205); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Dua dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-205). Tiga dari tujuh tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-09; FR-A06, NFR-09, RE-04, KM-02; C-04, C-05, C-13, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -37,11 +37,11 @@ berubah.** Agen **tidak** menulis kalimat penjelasan penarikan (P-4 B).
 
 **Kebutuhan:** R-01, R-05; K-4.
 
-- [ ] Uji lebih dulu atas memori **dan** PostgreSQL sebagai
+- [x] Uji lebih dulu atas memori **dan** PostgreSQL sebagai
       `peran_autentikasi`: mencatat sekaligus mencabut seluruh sesi; akun
       tertunda terbaca nonaktif
-- [ ] `catat_penarikan`; `baca_akun`
-- [ ] Mutasi M-2
+- [x] `catat_penarikan`; `baca_akun`
+- [x] Mutasi M-2
 
 ## T-4 · Rute
 

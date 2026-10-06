@@ -446,3 +446,66 @@ def test_mencabut_dua_kali_dan_sesi_tak_dikenal_tidak_melempar(pasangan: Pasanga
         assert await p.baca_sesi(t, sekarang=T0, batas_diam=BATAS_DIAM) is None
 
     jalankan(uji())
+
+
+# ── T-3 fitur 033 · permintaan penarikan data ────────────────────────
+
+
+def test_penarikan_mencabut_seluruh_sesi_akun_itu_saja(pasangan: Pasangan) -> None:
+    """R-01: tanpa sesi tidak ada pemilik, dan perekaman berhenti. M-1 rute."""
+
+    async def uji() -> None:
+        akun, lain = await pasangan.akun(), await pasangan.akun()
+        p = pasangan.penyimpan
+        milik = [_turunan(), _turunan()]
+        sesi_lain = _turunan()
+        for t in milik:
+            await p.buat_sesi(t, akun.id, sekarang=T0, kedaluwarsa_pada=T0 + MASA)
+        await p.buat_sesi(sesi_lain, lain.id, sekarang=T0, kedaluwarsa_pada=T0 + MASA)
+        kini = T0 + timedelta(minutes=5)
+        assert await p.catat_penarikan(akun.pseudonim, sekarang=kini) is True
+        for t in milik:
+            assert await p.baca_sesi(t, sekarang=kini, batas_diam=BATAS_DIAM) is None
+        assert await p.baca_sesi(sesi_lain, sekarang=kini, batas_diam=BATAS_DIAM) is not None
+
+    jalankan(uji())
+
+
+def test_akun_berpermintaan_tertunda_terbaca_nonaktif(pasangan: Pasangan) -> None:
+    """K-4, M-2: penolakan masuknya sama dengan akun nonaktif — tanpa sebab baru."""
+
+    async def uji() -> None:
+        akun, lain = await pasangan.akun(), await pasangan.akun()
+        p = pasangan.penyimpan
+        await p.catat_penarikan(akun.pseudonim, sekarang=T0)
+        baca = await p.baca_akun(akun.id)
+        assert baca == replace(akun, status_aktif=False)
+        assert await p.baca_akun(lain.id) == lain
+        # Sesi yang terbit sesudahnya pun tidak terbaca.
+        t = _turunan()
+        await p.buat_sesi(t, akun.id, sekarang=T0, kedaluwarsa_pada=T0 + MASA)
+        assert await p.baca_sesi(t, sekarang=T0, batas_diam=BATAS_DIAM) is None
+
+    jalankan(uji())
+
+
+def test_permintaan_kedua_tidak_menambah_dan_tidak_melempar(pasangan: Pasangan) -> None:
+    async def uji() -> None:
+        akun = await pasangan.akun()
+        p = pasangan.penyimpan
+        assert await p.catat_penarikan(akun.pseudonim, sekarang=T0) is True
+        assert await p.catat_penarikan(akun.pseudonim, sekarang=T0) is False
+
+    jalankan(uji())
+
+
+def test_permintaan_menuntut_pseudonim_dan_waktu_utc(pasangan: Pasangan) -> None:
+    async def uji() -> None:
+        akun = await pasangan.akun()
+        p = pasangan.penyimpan
+        with pytest.raises(ValueError):
+            await p.catat_penarikan(akun.id, sekarang=T0)
+        with pytest.raises(ValueError):
+            await p.catat_penarikan(akun.pseudonim, sekarang=T0.replace(tzinfo=None))
+
+    jalankan(uji())

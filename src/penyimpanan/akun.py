@@ -31,6 +31,7 @@ per kolom `peran_autentikasi` (T-2), bukan hanya oleh ketiadaan metode.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from typing import Final, Protocol
@@ -114,6 +115,12 @@ class PenyimpanAkun(Protocol):
         """Perbarui `terakhir_aktif`. Sesi yang dicabut tidak dihidupkan."""
         ...
 
+    async def catat_penarikan(self, pseudonim: str, *, sekarang: datetime) -> bool:
+        """Catat permintaan penarikan data dan cabut **seluruh** sesi akun itu —
+        fitur 033, R-01, K-1. `True` bila permintaan baru tercatat, `False` bila
+        sudah ada yang tertunda. Akun berpermintaan tertunda terbaca nonaktif."""
+        ...
+
     async def cabut_sesi(self, turunan_pengenal: bytes, *, sekarang: datetime) -> None:
         """Sesi tidak berlaku seketika (R-06). Yang sudah dicabut tidak disentuh."""
         ...
@@ -124,6 +131,14 @@ def _utc(*waktu: datetime) -> None:
         offset = w.utcoffset()
         if offset is None or offset.total_seconds():
             raise ValueError("waktu wajib berzona UTC (KM-01)")
+
+
+_POLA_PSEUDONIM: Final = re.compile(r"psd_[a-z]{16}")
+
+
+def _pseudonim_sah(pseudonim: str) -> None:
+    if _POLA_PSEUDONIM.fullmatch(pseudonim) is None:
+        raise ValueError("permintaan penarikan wajib berpemilik pseudonim (C-05)")
 
 
 def _turunan_sah(turunan_pengenal: bytes) -> None:
@@ -147,13 +162,17 @@ class AkunMemori:
     def __init__(self) -> None:
         self._akun: dict[str, BarisAkun] = {}
         self._sesi: dict[bytes, _SesiMemori] = {}
+        self._tertunda: set[str] = set()
 
     def pasang_akun(self, akun: BarisAkun) -> None:
         """Penyiapan uji — peran perkakas tim pada pelaksana memori."""
         self._akun[akun.id] = akun
 
     async def baca_akun(self, id_akun: str) -> BarisAkun | None:
-        return self._akun.get(id_akun)
+        akun = self._akun.get(id_akun)
+        if akun is not None and akun.pseudonim in self._tertunda:
+            return replace(akun, status_aktif=False)
+        return akun
 
     async def catat_gagal(
         self, id_akun: str, *, sekarang: datetime, ambang: int, lama_tahan: timedelta
@@ -205,7 +224,7 @@ class AkunMemori:
         if sesi.kedaluwarsa_pada <= sekarang or sesi.terakhir_aktif <= sekarang - batas_diam:
             return None
         akun = self._akun[sesi.id_pengguna]
-        if not akun.status_aktif:
+        if not akun.status_aktif or akun.pseudonim in self._tertunda:
             return None
         return SesiSah(
             id_pengguna=akun.id,
@@ -227,6 +246,18 @@ class AkunMemori:
         sesi = self._sesi.get(turunan_pengenal)
         if sesi is not None and sesi.dicabut_pada is None:
             sesi.dicabut_pada = sekarang
+
+    async def catat_penarikan(self, pseudonim: str, *, sekarang: datetime) -> bool:
+        _pseudonim_sah(pseudonim)
+        _utc(sekarang)
+        milik = {a.id for a in self._akun.values() if a.pseudonim == pseudonim}
+        for sesi in self._sesi.values():
+            if sesi.id_pengguna in milik and sesi.dicabut_pada is None:
+                sesi.dicabut_pada = sekarang
+        if pseudonim in self._tertunda:
+            return False
+        self._tertunda.add(pseudonim)
+        return True
 
 
 _CATAT_GAGAL: Final = """
@@ -253,7 +284,35 @@ SELECT s.id_pengguna, p.pseudonim, p.peran, s.dibuat_pada, s.terakhir_aktif,
    AND s.kedaluwarsa_pada > $2
    AND s.terakhir_aktif > $2 - $3::interval
    AND p.status_aktif
+   AND NOT EXISTS (SELECT 1 FROM akun.permintaan_penarikan r
+                    WHERE r.pseudonim = p.pseudonim AND r.dipenuhi_pada IS NULL)
 """
+
+_CATAT_PENARIKAN: Final = """
+WITH minta AS (
+    INSERT INTO akun.permintaan_penarikan (pseudonim, diminta_pada) VALUES ($1, $2)
+    ON CONFLICT (pseudonim) WHERE dipenuhi_pada IS NULL DO NOTHING
+    RETURNING pseudonim
+), cabut AS (
+    UPDATE akun.sesi SET dicabut_pada = $2
+     WHERE id_pengguna IN (SELECT id FROM akun.pengguna WHERE pseudonim = $1)
+       AND dicabut_pada IS NULL
+)
+SELECT count(*) AS baru FROM minta
+"""
+"""Satu pernyataan: permintaan tercatat dan sesi dicabut bersama, atau tidak
+sama sekali (`SambunganAktif` tanpa transaksi, fitur 024)."""
+
+_BACA_AKUN: Final = """
+SELECT p.id, p.pseudonim, p.peran, p.turunan_sandi, p.gagal_beruntun, p.ditahan_sampai,
+       p.status_aktif AND NOT EXISTS (
+           SELECT 1 FROM akun.permintaan_penarikan r
+            WHERE r.pseudonim = p.pseudonim AND r.dipenuhi_pada IS NULL
+       ) AS status_aktif
+  FROM akun.pengguna p WHERE p.id = $1
+"""
+"""Akun berpermintaan tertunda terbaca nonaktif — penolakan masuknya sama
+dengan akun nonaktif (K-4 fitur 033)."""
 
 
 class AkunPostgres:
@@ -265,11 +324,7 @@ class AkunPostgres:
         self._sambungan = sambungan
 
     async def baca_akun(self, id_akun: str) -> BarisAkun | None:
-        b = await self._sambungan.fetchrow(
-            "SELECT id, pseudonim, peran, status_aktif, turunan_sandi, gagal_beruntun, "
-            "ditahan_sampai FROM akun.pengguna WHERE id = $1",
-            id_akun,
-        )
+        b = await self._sambungan.fetchrow(_BACA_AKUN, id_akun)
         if b is None:
             return None
         return BarisAkun(
@@ -347,6 +402,12 @@ class AkunPostgres:
             turunan_pengenal,
             sekarang,
         )
+
+    async def catat_penarikan(self, pseudonim: str, *, sekarang: datetime) -> bool:
+        _pseudonim_sah(pseudonim)
+        _utc(sekarang)
+        b = await self._sambungan.fetchrow(_CATAT_PENARIKAN, pseudonim, sekarang)
+        return b is not None and int(b["baru"]) > 0  # type: ignore[call-overload]
 
 
 # ── T-7 · pengelola akun bagi perkakas tim ───────────────────────────
