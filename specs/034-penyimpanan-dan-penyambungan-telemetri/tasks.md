@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 6 Oktober 2026 (KB-192); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 6 Oktober 2026 atas pendelegasian KB-168 (KB-193); K-1 s.d. K-6 |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Empat dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-193). Lima dari enam tugas selesai; Gerbang 4 menunggu pemegang gerbang |
 | Kebutuhan | R-01 s.d. R-10; FR-J01, FR-J02, FR-J05, FR-A05; C-04, C-05, C-09, C-14 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -55,10 +55,10 @@ Agen **tidak** menulis naskah persetujuan (ET-02).
 
 **Kebutuhan:** R-03, R-06, R-08, R-09; K-6.
 
-- [ ] Uji lebih dulu: tujuh kode, properti tanpa teks pengguna, tanggapan sama
+- [x] Uji lebih dulu: tujuh kode, properti tanpa teks pengguna, tanggapan sama
       dengan dan tanpa persetujuan
-- [ ] Rute Tanya; `src/api/penemuan.py`
-- [ ] Mutasi M-6, M-9, M-10
+- [x] Rute Tanya; `src/api/penemuan.py`
+- [x] Mutasi M-6, M-9, M-10
 
 ## T-6 · Titik jalan, bukti, penutupan
 

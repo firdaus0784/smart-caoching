@@ -123,17 +123,20 @@ def _isi(keadaan: KeadaanBeranda, butir: list[ButirRingkas]) -> dict[str, Any]:
     return Beranda(keadaan=keadaan, butir=butir).model_dump(mode="json")
 
 
-async def beranda(
+async def susun_beranda(
     penemuan: PenyimpanPenemuan,
     pengguna: PenyimpanPengguna,
     pemilik: str,
     *,
     sekarang: datetime,
-) -> dict[str, Any]:
-    """Bentuk tanggapan `GET /beranda` dan `POST /butir/{id}/tolak`."""
+) -> tuple[dict[str, Any], tuple[ButirRingkas, ...]]:
+    """Tanggapan `GET /beranda` dan `POST /butir/{id}/tolak`, beserta butir yang
+    **baru** tercatat pada pemanggilan ini — bagi `discovery_served` (fitur
+    034). Muat ulang tidak menghasilkan butir baru, sebab yang sudah tercatat
+    hari itu tidak dipilih lagi."""
     kode = await pengguna.baca_prioritas(pemilik)
     if not kode:
-        return _isi(KeadaanBeranda.BELUM_ADA_PRIORITAS, [])
+        return _isi(KeadaanBeranda.BELUM_ADA_PRIORITAS, []), ()
     hari = tanggal_wib(sekarang)
     hari_ini = await penemuan.catatan_hari_ini(pemilik, hari)
     pernah = await penemuan.pernah_tayang(pemilik)
@@ -170,10 +173,12 @@ async def beranda(
         tayang = None if baris is None else _tayang_sah(baris)
         if tayang is not None:
             tampil.append(_ringkas(tayang.butir))
+    tercatat = tuple(_ringkas(b.butir) for b in baru)
     if tampil:
-        return _isi(KeadaanBeranda.BERISI, tampil)
+        return _isi(KeadaanBeranda.BERISI, tampil), tercatat
     sudah_pernah = pernah or bool(hari_ini)
-    return _isi(KeadaanBeranda.HABIS if sudah_pernah else KeadaanBeranda.BELUM_ADA_BUTIR, [])
+    keadaan = KeadaanBeranda.HABIS if sudah_pernah else KeadaanBeranda.BELUM_ADA_BUTIR
+    return _isi(keadaan, []), tercatat
 
 
 async def detail(penemuan: PenyimpanPenemuan, pemilik: str, id_butir: str) -> dict[str, Any]:
@@ -202,9 +207,10 @@ async def tolak(
     badan: Any,
     *,
     sekarang: datetime,
-) -> None:
+) -> str:
     """ "Belum relevan" — `ButirTidakTampil` bila bukan butirnya; `ValueError`
-    bagi alasan yang tidak sah."""
+    bagi alasan yang tidak sah. Mengembalikan alasan sebagaimana tercatat, agar
+    perekam mengukur yang tersimpan, bukan masukan mentah (fitur 034)."""
     await detail(penemuan, pemilik, id_butir)
     try:
         permintaan = PermintaanTolak.model_validate(badan)
@@ -214,3 +220,4 @@ async def tolak(
     except (ValidationError, GalatFeed) as galat:
         raise ValueError("alasan tidak sah") from galat
     await penemuan.catat_belum_relevan(pemilik, id_butir, umpan.alasan, sekarang=sekarang)
+    return umpan.alasan

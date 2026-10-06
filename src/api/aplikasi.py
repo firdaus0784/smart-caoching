@@ -49,6 +49,7 @@ pengembangan di luar `src/` (R-10).
 
 from __future__ import annotations
 
+import time
 import uuid
 from collections.abc import Awaitable, Callable
 from datetime import UTC, datetime
@@ -82,8 +83,8 @@ from src.api.kurasi import (
 from src.api.penemuan import (
     PESAN_ALASAN_TIDAK_SAH,
     ButirTidakTampil,
-    beranda,
     detail,
+    susun_beranda,
     tolak,
 )
 from src.api.peran import (
@@ -331,8 +332,13 @@ def susun_aplikasi(
         ):
             return _tidak_ada(RUTE_TANYA)
 
+        if perekam is not None:
+            await perekam.rekam_pertanyaan(siapa.pemilik, badan.pertanyaan, sekarang=sekarang())
+
         # R-07, C-14: jalur menerima pertanyaan saja — tanpa giliran sebelumnya.
+        mulai = time.perf_counter()
         hasil = await jalur.jawab(badan.pertanyaan)
+        waktu_tanggap_ms = int((time.perf_counter() - mulai) * 1000)
 
         # R-01, TK-65: giliran dicatat sesudah tanggapan tersusun, oleh lapisan
         # ini — jalur penjawaban tidak memegang hak tulis (R-05, C-17).
@@ -351,6 +357,10 @@ def susun_aplikasi(
             # Pemilik lain membuka percakapan yang sama di antara pemeriksaan
             # dan pencatatan. Jawabannya tidak dikirim: ia tidak tercatat.
             return _tidak_ada(RUTE_TANYA)
+        if perekam is not None:
+            await perekam.rekam_jawaban(
+                siapa.pemilik, hasil, waktu_tanggap_ms=waktu_tanggap_ms, sekarang=sekarang()
+            )
         # R-03 fitur 023: tertahan atau tidak, bentuk dan statusnya sama. D-14
         # menetapkan `tidak_ditemukan` memakai bentuk jawaban yang sah, dan
         # status galat akan membuat layar menampilkannya sebagai kegagalan
@@ -399,7 +409,9 @@ def susun_aplikasi(
     if kurasi is not None:
         _pasang_rute_kurasi(aplikasi, kurasi, _identitas_atau_tolak, sekarang)
     if penemuan is not None and pengguna is not None:
-        _pasang_rute_penemuan(aplikasi, penemuan, pengguna, _identitas_atau_tolak, sekarang)
+        _pasang_rute_penemuan(
+            aplikasi, penemuan, pengguna, _identitas_atau_tolak, perekam, sekarang
+        )
 
     return aplikasi
 
@@ -621,10 +633,14 @@ def _pasang_rute_penemuan(
     penemuan: PenyimpanPenemuan,
     pengguna: PenyimpanPengguna,
     identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    perekam: Perekam | None,
     sekarang: Callable[[], datetime],
 ) -> None:
     """Rute D-14 Bagian 3.3 bagi beranda dan butir — bentuknya Bagian 4.6. Hanya
-    menerjemahkan; aturannya milik `src/api/penemuan.py` dan fitur 011."""
+    menerjemahkan; aturannya milik `src/api/penemuan.py` dan fitur 011.
+
+    Peristiwa direkam sesudah tanggapan tersusun dan tidak membacanya kembali
+    (R-09): pemilihan beranda tidak menerima perekam maupun penyimpannya."""
 
     def _tidak_ada(pola: str) -> JSONResponse:
         return tanggapan_galat(404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_BUTIR_TIDAK_ADA, rute=pola)
@@ -634,7 +650,10 @@ def _pasang_rute_penemuan(
         siapa = await identitas_atau_tolak(permintaan, POLA_BERANDA)
         if isinstance(siapa, JSONResponse):
             return siapa
-        isi = await beranda(penemuan, pengguna, siapa.pemilik, sekarang=sekarang())
+        kini = sekarang()
+        isi, baru = await susun_beranda(penemuan, pengguna, siapa.pemilik, sekarang=kini)
+        if perekam is not None:
+            await perekam.rekam_tayang(siapa.pemilik, baru, sekarang=kini)
         return JSONResponse(status_code=200, content=isi)
 
     @aplikasi.get(POLA_BUTIR)
@@ -646,6 +665,11 @@ def _pasang_rute_penemuan(
             isi = await detail(penemuan, siapa.pemilik, id)
         except ButirTidakTampil:
             return _tidak_ada(POLA_BUTIR)
+        if perekam is not None:
+            pemilik = siapa.pemilik
+            await perekam.rekam_dibuka(
+                pemilik, id, lambda: penemuan.kapan_tayang(pemilik, id), sekarang=sekarang()
+            )
         return JSONResponse(status_code=200, content=isi)
 
     @aplikasi.post(POLA_TOLAK_BUTIR)
@@ -661,12 +685,15 @@ def _pasang_rute_penemuan(
                 badan = await permintaan.json()
             except ValueError:
                 badan = None
-            await tolak(penemuan, siapa.pemilik, id, badan, sekarang=kini)
+            alasan = await tolak(penemuan, siapa.pemilik, id, badan, sekarang=kini)
         except ButirTidakTampil:
             return _tidak_ada(POLA_TOLAK_BUTIR)
         except ValueError:
             return tanggapan_galat(
                 400, KodeGalat.VALIDASI_GAGAL, PESAN_ALASAN_TIDAK_SAH, rute=POLA_TOLAK_BUTIR
             )
-        isi = await beranda(penemuan, pengguna, siapa.pemilik, sekarang=kini)
+        isi, baru = await susun_beranda(penemuan, pengguna, siapa.pemilik, sekarang=kini)
+        if perekam is not None:
+            await perekam.rekam_belum_relevan(siapa.pemilik, id, alasan, sekarang=kini)
+            await perekam.rekam_tayang(siapa.pemilik, baru, sekarang=kini)
         return JSONResponse(status_code=200, content=isi)

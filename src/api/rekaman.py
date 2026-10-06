@@ -33,13 +33,15 @@ atau, pada rute masuk, pseudonim dari sesi yang baru diterbitkan (K-5).
 
 from __future__ import annotations
 
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Sequence
 from datetime import datetime, timedelta
 from typing import Any, Final
 
 from src.api.autentikasi import MASA_SESI
 from src.api.galat import LOG_OPERASIONAL, id_jejak_baru
+from src.api.penemuan import ButirRingkas
 from src.api.saya import keadaan_persetujuan
+from src.api.tanya import AlasanBerhenti, HasilTanya
 from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.telemetri import BarisPeristiwa, PenyimpanTelemetri
@@ -81,9 +83,123 @@ class Perekam:
         versi_model: str = TANPA_MODEL,
     ) -> None:
         """Satu peristiwa bila persetujuan mengizinkan. Tidak pernah melempar."""
+        await self._rekam_semua(pemilik, ((jenis, properti, versi_model),), sekarang)
+
+    # ── K-6 · peristiwa Tanya dan penemuan ───────────────────────────
+    #
+    # Teks yang ditulis pengguna diterima di sini dan **hanya ukurannya** yang
+    # menjadi properti (R-06). Satu tempat yang menerjemahkan teks menjadi
+    # ukuran, agar tidak ada rute yang menyusun properti sendiri.
+
+    async def rekam_pertanyaan(self, pemilik: str, pertanyaan: str, *, sekarang: datetime) -> None:
+        """`question_asked` — panjang pertanyaan dalam karakter, bukan isinya."""
+        await self.rekam(
+            pemilik,
+            JenisPeristiwa.QUESTION_ASKED,
+            {"panjang_pertanyaan": len(pertanyaan)},
+            sekarang=sekarang,
+        )
+
+    async def rekam_jawaban(
+        self, pemilik: str, hasil: HasilTanya, *, waktu_tanggap_ms: int, sekarang: datetime
+    ) -> None:
+        """`answer_served`, dan `answer_rejected_validator` bila validator menahannya.
+
+        Keduanya membawa versi model dari tanggapan (K-4, FR-J02). Alasan
+        berhenti lain bukan penolakan validator: menamainya demikian membuat
+        laporan menyalahkan validator atas korpus yang kurang (C-16).
+        """
+        tanggapan = hasil.tanggapan
+        model = tanggapan.versi.model
+        daftar: list[tuple[JenisPeristiwa, dict[str, Any], str]] = [
+            (
+                JenisPeristiwa.ANSWER_SERVED,
+                {
+                    "status_dasar": tanggapan.status_dasar.value,
+                    "jumlah_sitasi": len(tanggapan.sitasi),
+                    "waktu_tanggap_ms": waktu_tanggap_ms,
+                },
+                model,
+            )
+        ]
+        if hasil.alasan_berhenti is AlasanBerhenti.DITAHAN_VALIDATOR:
+            daftar.append(
+                (
+                    JenisPeristiwa.ANSWER_REJECTED_VALIDATOR,
+                    {"alasan_berhenti": hasil.alasan_berhenti.value},
+                    model,
+                )
+            )
+        await self._rekam_semua(pemilik, daftar, sekarang)
+
+    async def rekam_tayang(
+        self, pemilik: str, butir: Sequence[ButirRingkas], *, sekarang: datetime
+    ) -> None:
+        """`discovery_served` bagi butir yang **baru** tercatat hari itu — sekali per butir."""
+        if not butir:
+            return
+        await self._rekam_semua(
+            pemilik,
+            [
+                (
+                    JenisPeristiwa.DISCOVERY_SERVED,
+                    {
+                        "id_butir": b.id_butir,
+                        "jenis_sumber": b.jenis_sumber.value,
+                        "kategori": b.kategori.value,
+                    },
+                    TANPA_MODEL,
+                )
+                for b in butir
+            ],
+            sekarang,
+        )
+
+    async def rekam_dibuka(
+        self,
+        pemilik: str,
+        id_butir: str,
+        kapan_tayang: Callable[[], Awaitable[datetime | None]],
+        *,
+        sekarang: datetime,
+    ) -> None:
+        """`discovery_opened` beserta menit sejak butir pertama kali tampil baginya."""
+        jenis = JenisPeristiwa.DISCOVERY_OPENED
         try:
             keadaan = await keadaan_persetujuan(self._pengguna, pemilik)
-            await self._simpan(keadaan, pemilik, jenis, properti, sekarang, versi_model)
+            if not keadaan.boleh_merekam:
+                return
+            kapan = await kapan_tayang()
+            properti: dict[str, Any] = {"id_butir": id_butir}
+            if kapan is not None:
+                properti["menit_sejak_tayang"] = (sekarang - kapan) // timedelta(minutes=1)
+            await self._simpan(keadaan, pemilik, jenis, properti, sekarang, TANPA_MODEL)
+        except Exception as galat:
+            _catat_gagal(jenis, galat)
+
+    async def rekam_belum_relevan(
+        self, pemilik: str, id_butir: str, alasan: str, *, sekarang: datetime
+    ) -> None:
+        """`discovery_dismissed` — panjang alasan, bukan isinya."""
+        await self.rekam(
+            pemilik,
+            JenisPeristiwa.DISCOVERY_DISMISSED,
+            {"id_butir": id_butir, "panjang_alasan": len(alasan)},
+            sekarang=sekarang,
+        )
+
+    async def _rekam_semua(
+        self,
+        pemilik: str,
+        daftar: Sequence[tuple[JenisPeristiwa, dict[str, Any], str]],
+        sekarang: datetime,
+    ) -> None:
+        """Persetujuan dibaca sekali bagi peristiwa yang lahir dari satu permintaan."""
+        jenis = daftar[0][0]
+        try:
+            keadaan = await keadaan_persetujuan(self._pengguna, pemilik)
+            for jenis, properti, versi_model in daftar:
+                await self._simpan(keadaan, pemilik, jenis, properti, sekarang, versi_model)
         except Exception as galat:
             _catat_gagal(jenis, galat)
 

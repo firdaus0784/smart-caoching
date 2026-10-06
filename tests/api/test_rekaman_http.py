@@ -63,6 +63,7 @@ class Lingkungan:
         *,
         telemetri: TelemetriMemori | None = None,
         rekam: bool = True,
+        jalur: Any = None,
     ) -> None:
         self.kini = T0
         self.akun = AkunMemori()
@@ -71,7 +72,7 @@ class Lingkungan:
         self.kurasi = KurasiMemori()
         self.penemuan = PenemuanMemori(self.kurasi)
         self.telemetri = telemetri if telemetri is not None else TelemetriMemori()
-        self.jalur = JalurPencatat()
+        self.jalur = jalur if jalur is not None else JalurPencatat()
         jam = lambda: self.kini  # noqa: E731
         self.klien = TestClient(
             susun_aplikasi(

@@ -3047,3 +3047,18 @@ ditegakkan uji, bukan kebiasaan.
 | Dampak | `src/api/rekaman.py`, `src/api/autentikasi.py`, `src/api/aplikasi.py`; `tests/api/test_rekaman_http.py`; `tasks.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
 | Cakupan | Uji tambahan menjaga cabang perekam di luar rute — properti beridentitas ditolak dan dicatat tanpa muatan, pencari pemilik kosong atau rusak, penyimpan rusak pada `rekam` — serta baris properti bukan objek pada PostgreSQL. Penanda 99,87 tidak diturunkan. |
+
+## KB-198 · T-5 fitur 034 — peristiwa Tanya dan penemuan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-06 |
+| Konteks | T-5 `tasks.md` fitur 034, atas pendelegasian KB-168 dalam batas `plan.md` (KB-193). |
+| Keputusan | Tujuh kode pada rute yang sudah ada: `question_asked` sesudah validasi dan pemeriksaan pemilik; `answer_served` sesudah giliran tercatat, beserta `answer_rejected_validator` hanya bila `alasan_berhenti` = `ditahan_validator`; `discovery_served` bagi butir yang baru tercatat; `discovery_opened` dengan menit sejak tayang; `discovery_dismissed` dengan panjang alasan. Uji HTTP ditulis lebih dulu dan merah (13 gagal) sebelum rute disambungkan. Tanpa rute baru, tanpa bidang tanggapan baru, tanpa perubahan `src/rag/`, `src/llm/`, `src/telemetri/`, maupun `web/`. |
+| **Teks menjadi ukuran di satu tempat** | Rute menyerahkan teks pertanyaan dan alasan kepada `Perekam`, dan hanya `Perekam` yang mengubahnya menjadi panjang. Tidak ada rute yang menyusun properti sendiri (R-06). |
+| **Butir baru dari pemilihan itu sendiri** | `susun_beranda` mengembalikan tanggapan beserta butir yang baru dicatat pada panggilan itu; `beranda` yang tidak lagi dipakai dihapus. `tolak` mengembalikan alasan sebagaimana tercatat, agar yang diukur adalah yang tersimpan. |
+| **R-09** | Uji menghitung pembacaan penyimpan telemetri selama tanya, beranda, butir, dan belum relevan: nol. Pemilihan beranda dan jalur penjawab tidak menerima perekam. |
+| Mutasi | M-6 (teks pertanyaan pada properti) memerahkan 2 uji; M-9 (`answer_served` bertanda `tanpa_model`) 2; M-10 (`discovery_served` bagi semua yang tampil) 3. Kelimanya dari T-4 diulang dan tetap merah. |
+| Alternatif | Membaca waktu tanggap dari jalur penjawab — ditolak; menuntut perubahan `src/rag/`. Waktu diukur di rute, mencakup jalur saja, tanpa pencatatan riwayat. |
+| Dampak | `src/api/rekaman.py`, `src/api/aplikasi.py`, `src/api/penemuan.py`; `tests/api/test_rekaman_tanya_penemuan_http.py`, `tests/api/test_rekaman_http.py`; `tasks.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
