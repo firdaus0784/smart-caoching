@@ -17,10 +17,11 @@
 
 import { useState, type FormEvent, type ReactNode } from "react";
 
-import { unduhEkspor, type Pemanggil } from "../klien";
+import { NILAI_PENILAIAN, unduhEkspor, type Pemanggil } from "../klien";
 import type { RingkasanAnalitik } from "../kontrak";
 import {
   LABEL_METRIK_TERTUNDA,
+  LABEL_NILAI,
   MIKROKOPI,
   angkaDesimal,
   dihitungPada,
@@ -196,6 +197,14 @@ export function LayarAnalitik({
           ]}
           judul={MIKROKOPI.judulPenemuanAnalitik}
           kolom={[MIKROKOPI.kolomKode, MIKROKOPI.kolomJumlah]}
+        />
+      </section>
+
+      <section>
+        <Tabel
+          baris={NILAI_PENILAIAN.map((n) => [LABEL_NILAI[n], String(r.penilaian.per_nilai[n])])}
+          judul={MIKROKOPI.judulPenilaianAnalitik}
+          kolom={[MIKROKOPI.kolomNilai, MIKROKOPI.kolomJumlah]}
         />
       </section>
 

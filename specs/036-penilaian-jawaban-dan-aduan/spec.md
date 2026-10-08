@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F07, FR-I04; NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 (`answer_rated`) · D-02 J5 · D-04 Bagian 7.4 (`pesan`, TK-69) · D-05 S-09 blok 6, S-09 keadaan tidak-ditemukan, S-17 · D-06 jadwal kurator · D-14 Bagian 3.2, 3.4, 4.1, 4.3 · spec fitur 028, 033, 034, 035 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Enam dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Tujuh dari delapan tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 

@@ -11,7 +11,13 @@
  * di sini: ia milik peladen dan sudah dijaga di sana.
  */
 
-import type { JenisGalat, MetrikTertunda, StatusDasar } from "./kontrak";
+import type {
+  JenisGalat,
+  MetrikTertunda,
+  NilaiPenilaian,
+  StatusDasar,
+  TindakLanjutAduan,
+} from "./kontrak";
 
 export const MIKROKOPI = {
   judulLayar: "Tanya",
@@ -246,7 +252,55 @@ export const MIKROKOPI = {
   labelImplikasi: "Implikasi tindakan, satu per baris",
   keteranganTetap: "Bagian berikut tidak dapat disunting karena mengubah butirnya, bukan parafrasenya.",
   tombolSimpanSetujui: "Simpan dan setujui",
+  // Fitur 036 — S-09 blok 6 "Nilai jawaban" dan S-17, kalimat D-05 0.7.
+  judulNilaiJawaban: "Nilai jawaban",
+  labelAlasanPenilaian: "Alasan, boleh dikosongkan",
+  petunjukAlasanPenilaian: "Tanpa nama atau nomor pribadi",
+  labelKirimKeKurator: "Kirim pertanyaan dan jawaban ini kepada kurator",
+  keteranganTanpaKirim: "Tanpa centang, penilaian hanya dipakai untuk penelitian.",
+  tombolKirimPenilaian: "Kirim penilaian",
+  tombolLaporkanSeharusnyaAda: "Laporkan bahwa ini seharusnya ada",
+  penilaianTersimpan: "Terima kasih, penilaian Anda tersimpan.",
+  penilaianLuring: "Penilaian belum terkirim. Periksa sambungan, lalu kirim lagi.",
+  penilaianDitolak: "Penilaian belum terkirim. Periksa pilihan dan alasan, lalu kirim lagi.",
+  penilaianGangguan: "Penilaian belum terkirim karena gangguan di sistem kami. Coba lagi.",
+  penilaianTidakAda: "Jawaban ini tidak dapat dinilai lagi.",
+  tombolAntreanKurasi: "Antrean kurasi",
+  tombolAduanJawaban: "Aduan jawaban",
+  judulAduan: "Aduan jawaban",
+  aduanMemuat: "Aduan sedang dimuat.",
+  aduanKosong: "Belum ada aduan.",
+  aduanGangguan: "Aduan belum dapat dimuat. Coba lagi sebentar lagi.",
+  labelDiadukanPada: "Diadukan",
+  labelPertanyaanAduan: "Pertanyaan peserta",
+  labelAlasanAduan: "Alasan peserta",
+  tanpaAlasanAduan: "Peserta tidak menulis alasan.",
+  keteranganJawabanSaatItu: "Ini jawaban pada saat diadukan, bukan jawaban sistem sekarang.",
+  labelTindakLanjut: "Tindak lanjut",
+  labelCatatanTindakLanjut: "Catatan tindak lanjut",
+  tombolSimpanTindakLanjut: "Simpan tindak lanjut",
+  tindakLanjutDitolak: "Tindak lanjut belum tersimpan. Pilih satu, lalu tulis catatan tanpa nomor pribadi.",
+  tindakLanjutLuring: "Sedang tidak terhubung. Tindak lanjut Anda belum terkirim.",
+  tindakLanjutGangguan: "Tindak lanjut belum tercatat karena gangguan di sistem kami. Coba lagi.",
+  aduanSudahDiambil: "Aduan ini sudah ditindaklanjuti atau digantikan. Daftar sudah dimuat ulang.",
+  judulPenilaianAnalitik: "Penilaian jawaban",
+  kolomNilai: "Nilai",
 } as const;
+
+/** Tiga nilai FR-F07, setara — urutan D-05 S-09 blok 6 (fitur 036). */
+export const LABEL_NILAI: Readonly<Record<NilaiPenilaian, string>> = {
+  membantu: "Membantu",
+  tidak_membantu: "Tidak membantu",
+  keliru: "Keliru",
+};
+
+/** Empat tindak lanjut aduan — D-05 S-17 (fitur 036). */
+export const LABEL_TINDAK_LANJUT: Readonly<Record<TindakLanjutAduan, string>> = {
+  sumber_diajukan: "Sumber diajukan lewat kanal",
+  butir_ditarik: "Butir ditarik",
+  jawaban_sesuai_dasar: "Jawaban sudah sesuai dasar",
+  di_luar_cakupan: "Di luar cakupan sistem",
+};
 
 /** Alasan penolakan baku D-06 Bagian 7.4 — kodenya tidak tampil (C-13).
  * Kalimat D-06 apa adanya, kecuali dua rujukan bersingkatan yang dilepas:
@@ -258,6 +312,7 @@ export const DATA_DITARIK: readonly string[] = [
   "Profil sekolah dan prioritas pengelolaan",
   "Catatan persetujuan penelitian",
   "Pertanyaan yang pernah Anda ajukan",
+  "Jawaban yang Anda terima, penilaian Anda, dan aduan yang Anda kirim kepada kurator",
   "Butir yang tampil bagi Anda, beserta alasan belum relevan",
   "Catatan penggunaan untuk penelitian",
 ];
@@ -288,6 +343,11 @@ export function angkaDesimal(nilai: number): string {
 /** Waktu peladen apa adanya, dinyatakan zonanya. */
 export function waktuUniversal(iso: string): string {
   return `${iso.replace("T", " ").replace("Z", "").slice(0, 16)} waktu universal`;
+}
+
+/** S-17: kapan aduan dikirim peserta — fitur 036. */
+export function diadukanPada(iso: string): string {
+  return `${MIKROKOPI.labelDiadukanPada} ${waktuUniversal(iso)}`;
 }
 
 export function dihitungPada(iso: string): string {

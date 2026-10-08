@@ -16,10 +16,13 @@
  */
 
 import type {
+  AduanTampil,
   Antrean,
   Beranda,
   ButirLengkap,
   ButirRingkas,
+  DaftarAduan,
+  HasilAduan,
   HasilAnalitik,
   HasilAntrean,
   HasilBaca,
@@ -30,6 +33,7 @@ import type {
   HasilMasuk,
   HasilNaskah,
   HasilPenarikan,
+  HasilPenilaian,
   HasilRingkasan,
   HasilTanya,
   JenisGalat,
@@ -39,10 +43,14 @@ import type {
   KeadaanBeranda,
   KeadaanPersetujuan,
   Naskah,
+  NilaiPenilaian,
   Pemicu,
+  Penilaian,
   PermintaanEkspor,
+  PermintaanPenilaian,
   PermintaanProfil,
   PermintaanTarik,
+  PermintaanTindakLanjut,
   Ringkasan,
   RingkasanAnalitik,
   SatuPercakapan,
@@ -66,6 +74,7 @@ export const JALUR_BERANDA = "/api/v1/beranda";
 export const JALUR_ANTREAN = "/api/v1/kurasi/antrean";
 export const JALUR_ANALITIK_RINGKAS = "/api/v1/analitik/ringkas";
 export const JALUR_ANALITIK_EKSPOR = "/api/v1/analitik/ekspor";
+export const JALUR_ADUAN = "/api/v1/kurasi/aduan";
 /** Berkas statis yang diisi tim (K-4 fitur 030), bukan rute API. */
 export const JALUR_NASKAH = "/naskah/persetujuan.json";
 /** Penjelasan penarikan data milik tim (P-4 B fitur 033), bukan rute API. */
@@ -735,6 +744,19 @@ export const PEMICU: readonly Pemicu[] = [
 
 // ── fitur 035 · analitik penelitian — D-14 Bagian 4.8 ───────────────────
 
+/** Fitur 036: ketiga nilai selalu ada — layar tidak mengisi yang hilang dengan nol. */
+function perNilaiSah(nilai: unknown): boolean {
+  if (typeof nilai !== "object" || nilai === null) return false;
+  const per = (nilai as Record<string, unknown>)["per_nilai"];
+  return (
+    typeof per === "object" &&
+    per !== null &&
+    ["membantu", "tidak_membantu", "keliru"].every((n) =>
+      Number.isInteger((per as Record<string, unknown>)[n]),
+    )
+  );
+}
+
 function apakahRingkasanAnalitik(nilai: unknown): nilai is RingkasanAnalitik {
   if (typeof nilai !== "object" || nilai === null) return false;
   const r = nilai as Record<string, unknown>;
@@ -748,7 +770,7 @@ function apakahRingkasanAnalitik(nilai: unknown): nilai is RingkasanAnalitik {
     Array.isArray(k["retensi"]) &&
     typeof k["sesi"] === "object" &&
     typeof r["penemuan"] === "object" &&
-    typeof r["penilaian"] === "object" &&
+    perNilaiSah(r["penilaian"]) &&
     Array.isArray(r["belum_terukur"]) &&
     typeof r["integritas"] === "object"
   );
@@ -780,4 +802,88 @@ export async function unduhEkspor(
   const nama = NAMA_BERKAS.exec(jawaban.headers.get("Content-Disposition") ?? "")?.[1];
   if (nama === undefined) return { jenis: "galat", galat: "sistem" };
   return { jenis: "berkas", isi: await jawaban.blob(), nama };
+}
+
+// ── fitur 036 · penilaian jawaban dan aduan — D-14 Bagian 4.9 ───────────
+
+/** Urutan tiga nilai FR-F07 — D-05 S-09 blok 6. */
+export const NILAI_PENILAIAN: readonly NilaiPenilaian[] = ["membantu", "tidak_membantu", "keliru"];
+
+export function jalurPenilaian(idPesan: string): string {
+  return `/api/v1/pesan/${encodeURIComponent(idPesan)}/penilaian`;
+}
+
+export function jalurTindakLanjut(nomor: number): string {
+  return `${JALUR_ADUAN}/${nomor}/tindak-lanjut`;
+}
+
+function apakahPenilaian(nilai: unknown): nilai is Penilaian {
+  return (
+    objekBerkunci(nilai, ["id_pesan", "nilai", "kirim_ke_kurator"]) &&
+    untai(nilai["id_pesan"]) &&
+    NILAI_PENILAIAN.includes(nilai["nilai"] as NilaiPenilaian) &&
+    typeof nilai["kirim_ke_kurator"] === "boolean"
+  );
+}
+
+/** Salinan tanggapan pada aduan: bentuk D-14 Bagian 4.1 **tanpa** `id_pesan`.
+ * Salinan yang membawanya ditolak — ia penaut ke peserta (R-06). */
+function apakahTanggapanAduan(nilai: unknown): boolean {
+  if (typeof nilai !== "object" || nilai === null || "id_pesan" in nilai) return false;
+  return apakahTanggapan({ ...nilai, id_pesan: "salinan-aduan" });
+}
+
+function apakahAduan(nilai: unknown): nilai is AduanTampil {
+  return (
+    objekBerkunci(nilai, ["nomor", "diadukan_pada", "pertanyaan", "alasan", "tanggapan"]) &&
+    Number.isInteger(nilai["nomor"]) &&
+    untai(nilai["diadukan_pada"]) &&
+    untai(nilai["pertanyaan"]) &&
+    untaiAtauKosong(nilai["alasan"]) &&
+    apakahTanggapanAduan(nilai["tanggapan"])
+  );
+}
+
+export function apakahDaftarAduan(nilai: unknown): nilai is DaftarAduan {
+  return objekBerkunci(nilai, ["aduan"]) && larikDari(nilai["aduan"], apakahAduan);
+}
+
+/** `POST /api/v1/pesan/{id}/penilaian`. Luring **tidak diantrekan**: centang
+ * kirim adalah keputusan saat itu, bukan keputusan yang terkirim kemudian. */
+export async function nilaiJawaban(
+  idPesan: string,
+  badan: PermintaanPenilaian,
+  pemanggil: Pemanggil,
+): Promise<HasilPenilaian> {
+  const hasil = await ambil013(pemanggil, jalurPenilaian(idPesan), kirimJson("POST", badan));
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahPenilaian(hasil.badan)
+    ? { jenis: "tersimpan", penilaian: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+async function aduanDari(pemanggil: Pemanggil, jalur: string, init: RequestInit): Promise<HasilAduan> {
+  const hasil = await ambil013(pemanggil, jalur, init);
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahDaftarAduan(hasil.badan)
+    ? { jenis: "aduan", aduan: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+/** `GET /api/v1/kurasi/aduan` — peran kurator. */
+export function bacaAduan(pemanggil: Pemanggil): Promise<HasilAduan> {
+  return aduanDari(pemanggil, JALUR_ADUAN, { method: "GET" });
+}
+
+/** `POST /api/v1/kurasi/aduan/{id}/tindak-lanjut` — antrean terbaru bila tercatat. */
+export function tindakLanjutiAduan(
+  nomor: number,
+  badan: PermintaanTindakLanjut,
+  pemanggil: Pemanggil,
+): Promise<HasilAduan> {
+  return aduanDari(pemanggil, jalurTindakLanjut(nomor), kirimJson("POST", badan));
 }

@@ -12,7 +12,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { Aplikasi } from "../Aplikasi";
 import { JALUR_ANALITIK_EKSPOR, JALUR_ANALITIK_RINGKAS, JALUR_ANTREAN, JALUR_PROFIL, type Pemanggil } from "../klien";
 import type { RingkasanAnalitik } from "../kontrak";
-import { LABEL_METRIK_TERTUNDA, MIKROKOPI, persen } from "../mikrokopi";
+import { LABEL_METRIK_TERTUNDA, LABEL_NILAI, MIKROKOPI, persen } from "../mikrokopi";
 import { LayarAnalitik } from "./LayarAnalitik";
 
 afterEach(cleanup);
@@ -30,7 +30,7 @@ const RINGKASAN: RingkasanAnalitik = {
     sesi: { jumlah: 0, median_menit: null, rerata_menit: null },
   },
   penemuan: { disajikan: 0, dibuka: 0, rasio: null },
-  penilaian: { per_nilai: { membantu: 0, tidak_membantu: 0, keliru: 0 } },
+  penilaian: { per_nilai: { membantu: 3, tidak_membantu: 1, keliru: 2 } },
   belum_terukur: [{ metrik: "rasio_penerapan", sebab: "Komitmen penerapan belum dibangun." }],
   integritas: {
     per_jenis: { session_start: 11 },
@@ -108,6 +108,17 @@ describe("S-18", () => {
     layar(peladen().pemanggil);
     expect(screen.getByText(LABEL_METRIK_TERTUNDA.rasio_penerapan)).toBeTruthy();
     expect(screen.getByText("Komitmen penerapan belum dibangun.")).toBeTruthy();
+  });
+
+  test("fitur 036: penilaian per nilai, berurutan tiga nilai", () => {
+    layar(peladen().pemanggil);
+    const tabel = screen.getByRole("table", { name: MIKROKOPI.judulPenilaianAnalitik });
+    const baris = within(tabel).getAllByRole("row").slice(1).map((b) => b.textContent);
+    expect(baris).toEqual([
+      `${LABEL_NILAI.membantu}3`,
+      `${LABEL_NILAI.tidak_membantu}1`,
+      `${LABEL_NILAI.keliru}2`,
+    ]);
   });
 
   test("R-05: integritas menyebut peristiwa pengembangan yang dipisah", () => {

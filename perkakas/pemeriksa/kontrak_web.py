@@ -51,12 +51,20 @@ from src.api.analitik import (
 )
 from src.api.kurasi import Antrean, KandidatTampil, PermintaanTarik, Suntingan, TayangTampil
 from src.api.penemuan import Beranda, ButirLengkap, ButirRingkas, KeadaanBeranda, PermintaanTolak
+from src.api.penilaian import (
+    AduanTampil,
+    DaftarAduan,
+    Penilaian,
+    PermintaanPenilaian,
+    PermintaanTindakLanjut,
+)
 from src.api.percakapan import Giliran
 from src.api.saya import Naskah, PermintaanProfil
 from src.ingest.kurasi.butir import JenisSumberButir
 from src.ingest.kurasi.penarikan import Pemicu
 from src.ingest.kurasi.putusan import AlasanTolak
 from src.ingest.kurasi.sumber import SumberButir
+from src.kamus.penilaian import NilaiPenilaian, TindakLanjutAduan
 from src.kamus.segmen import StatusKeberlakuan
 from src.nlp.anotasi.skema import KategoriMasalah
 from src.pengguna.persetujuan import KeadaanPersetujuan
@@ -107,8 +115,14 @@ MODEL: tuple[type[BaseModel], ...] = (
     Integritas,
     RingkasanAnalitik,
     PermintaanEkspor,
-    # Fitur 036: bagian penilaian pada ringkasan analitik.
+    # Fitur 036: bagian penilaian pada ringkasan analitik; penilaian dan aduan,
+    # D-14 Bagian 4.9.
     RingkasanPenilaian,
+    PermintaanPenilaian,
+    Penilaian,
+    AduanTampil,
+    DaftarAduan,
+    PermintaanTindakLanjut,
 )
 ENUM: tuple[type[Enum], ...] = (
     StatusDasar,
@@ -124,6 +138,9 @@ ENUM: tuple[type[Enum], ...] = (
     Pemicu,
     # Fitur 035.
     MetrikTertunda,
+    # Fitur 036.
+    NilaiPenilaian,
+    TindakLanjutAduan,
 )
 
 _ANTARMUKA = re.compile(r"^export interface (\w+) \{\n(.*?)^\}", re.MULTILINE | re.DOTALL)

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Enam dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Tujuh dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -76,10 +76,10 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 **Kebutuhan:** R-10; K-6; C-13.
 
-- [ ] Uji lebih dulu: tiga pilihan, centang hanya pada keliru, tidak-ditemukan,
+- [x] Uji lebih dulu: tiga pilihan, centang hanya pada keliru, tidak-ditemukan,
       penggantian, galat dan luring; S-17 daftar dan tindak lanjut; S-18 tabel
-- [ ] `web/src/tanya/`, `web/src/kurasi/`, `web/src/analitik/`; mikrokopi
-- [ ] Mutasi M-13
+- [x] `web/src/tanya/`, `web/src/kurasi/`, `web/src/analitik/`; mikrokopi
+- [x] Mutasi M-13
 
 ## T-8 · Titik jalan, bukti, penutupan
 

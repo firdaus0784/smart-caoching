@@ -42,7 +42,7 @@ import { hapusDraf, type Simpanan } from "./draf";
 import { LayarAnalitik } from "./analitik/LayarAnalitik";
 import { bacaAnalitik, bacaAntrean, bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
 import type { Antrean, HasilNaskah, KeadaanPersetujuan, Ringkasan, RingkasanAnalitik } from "./kontrak";
-import { LayarKurasi } from "./kurasi/LayarKurasi";
+import { CangkangKurator } from "./kurasi/CangkangKurator";
 import { LayarMasuk } from "./masuk/LayarMasuk";
 import { MIKROKOPI } from "./mikrokopi";
 import { LayarBeranda } from "./penemuan/LayarBeranda";
@@ -222,7 +222,7 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
   }
   if (tahap.jenis === "kurasi") {
     return (
-      <LayarKurasi
+      <CangkangKurator
         awal={tahap.antrean}
         belumMasuk={perluMasuk}
         keluar={() => void keluarkan()}

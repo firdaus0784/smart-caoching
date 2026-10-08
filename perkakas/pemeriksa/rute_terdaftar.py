@@ -164,6 +164,8 @@ def _rute_terpasang() -> set[str]:
         penemuan=_Kosong(),  # type: ignore[arg-type]
         # Fitur 035: rute peneliti terpasang bersama penyimpan analitik.
         analitik=_Kosong(),  # type: ignore[arg-type]
+        penilaian=_Kosong(),  # type: ignore[arg-type]
+        aduan=_Kosong(),  # type: ignore[arg-type]
     )
     return {_pola(rute.path) for rute in aplikasi.routes if isinstance(rute, APIRoute)}
 

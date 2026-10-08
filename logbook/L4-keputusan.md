@@ -3540,3 +3540,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Analitik membaca `riwayat.penilaian` — tidak dipilih; `peran_analitik` membaca peristiwa saja (R-02 fitur 035). |
 | Dampak | `src/penyimpanan/penarikan.py`, `src/api/analitik.py`, `perkakas/pemeriksa/kontrak_web.py`, `perkakas/basis_data/README.md`; `web/src/kontrak.ts`, `klien.ts`, `mikrokopi.ts`, `analitik/analitik.test.tsx`; `tests/penyimpanan/test_penarikan_simpan.py`, `tests/api/test_analitik.py`, `test_analitik_http.py`, `test_penilaian_http.py`; `tasks.md` fitur 036. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-236 · T-7 fitur 036 — layar S-09 blok "Nilai jawaban", S-17, tabel penilaian S-18
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-7 `tasks.md` fitur 036, atas pendelegasian KB-168 dalam batas `plan.md` K-6 (KB-229); kalimat D-05 0.7 (KB-230). |
+| Keputusan | `NilaiJawaban` tampil di dalam `BlokJawaban` pada keempat status dasar: tiga pilihan setara, alasan opsional, centang kirim yang hanya ada bersama `keliru` dan kosong kembali setiap kali nilai berganti, "Laporkan bahwa ini seharusnya ada" pada keadaan tidak-ditemukan; luring tidak diantrekan. `BlokJawaban` menerima salinan tanpa `id_pesan` dan tampil tanpa tindakan bila tanpa `salin` — dipakai S-17. `CangkangKurator` memberi dua tombol setara, bukan navigasi pengguna, dan memuat ulang antrean saat kembali kepadanya. `LayarAduan` (S-17) mendaftar aduan, menyatakan jawaban sebagai jawaban saat diadukan, dan mencatat tindak lanjut; klien **menolak** aduan yang membawa `id_pesan` (R-06) alih-alih menyembunyikannya. S-18 memperoleh tabel penilaian per nilai; penjaga bentuk klien menuntut ketiga nilai ada, sehingga layar tidak pernah mengisi yang hilang dengan nol. |
+| Daftar data yang ditarik (S-14) | Daftar `DATA_DITARIK` bertambah satu butir: jawaban yang diterima, penilaian, dan aduan — sebab penarikan kini menghapusnya (KB-235). Kalimat penjelasan penarikan pada naskah tim tidak disentuh. |
+| Putaran mutasi | **M-13** centang tampil pada nilai selain keliru → merah. Pemeriksaan tambahan **M-13b**: centang tidak dikosongkan saat nilai berganti → merah. |
+| Catatan perkakas | `prettier` dijalankan sekali lewat `npx` pada tiga berkas baru untuk merapikan baris; proyek tidak memakainya dan `package.json` maupun berkas kunci tidak berubah. |
+| Dampak | `web/src/tanya/NilaiJawaban.tsx`, `BlokJawaban.tsx`, `LayarTanya.tsx`, `nilai.test.tsx`; `web/src/kurasi/LayarAduan.tsx`, `CangkangKurator.tsx`, `aduan.test.tsx`; `web/src/Aplikasi.tsx`, `analitik/LayarAnalitik.tsx`, `analitik/analitik.test.tsx`, `klien.ts`, `kontrak.ts`, `mikrokopi.ts`; `perkakas/pemeriksa/kontrak_web.py`, `rute_terdaftar.py`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |

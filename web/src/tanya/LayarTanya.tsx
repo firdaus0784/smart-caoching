@@ -19,6 +19,7 @@ import type { Giliran, JenisGalat, Tanggapan } from "../kontrak";
 import { MIKROKOPI, PESAN_GALAT } from "../mikrokopi";
 import { jadikanAktif, percakapanAktif, percakapanBaru, tandaiDikenal } from "../percakapan";
 import { BlokJawaban } from "./BlokJawaban";
+import { NilaiJawaban } from "./NilaiJawaban";
 import { PercakapanTerdahulu, PertanyaanSebelumnya } from "./RiwayatPercakapan";
 
 type Keadaan =
@@ -207,7 +208,21 @@ export function LayarTanya({
         </div>
       )}
 
-      {keadaan.jenis === "jawaban" && <BlokJawaban salin={salin} tanggapan={keadaan.tanggapan} />}
+      {keadaan.jenis === "jawaban" && (
+        <BlokJawaban
+          nilai={
+            <NilaiJawaban
+              belumMasuk={() => belumMasuk?.(false)}
+              idPesan={keadaan.tanggapan.id_pesan}
+              key={keadaan.tanggapan.id_pesan}
+              pemanggil={pemanggil}
+              statusDasar={keadaan.tanggapan.status_dasar}
+            />
+          }
+          salin={salin}
+          tanggapan={keadaan.tanggapan}
+        />
+      )}
 
       <PertanyaanSebelumnya giliran={giliran} pilih={pilihPertanyaanLama} />
 

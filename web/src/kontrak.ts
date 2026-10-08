@@ -357,7 +357,7 @@ export interface RasioPenemuan {
 /** Fitur 036: jumlah per nilai atas penilaian terakhir tiap pesan; nol berarti
  * diukur dan tidak ada. Kuncinya ketiga nilai `NilaiPenilaian`. */
 export interface RingkasanPenilaian {
-  readonly per_nilai: Readonly<Record<string, number>>;
+  readonly per_nilai: Readonly<Record<NilaiPenilaian, number>>;
 }
 
 export interface BelumTerukur {
@@ -388,6 +388,61 @@ export interface PermintaanEkspor {
   readonly sampai: string;
   readonly termasuk_pengembangan: boolean;
 }
+
+/**
+ * Penilaian jawaban dan aduan kurator — D-14 Bagian 4.9, fitur 036. Aduan
+ * adalah salinan yang dikirim peserta, tanpa penaut ke peserta (R-06): tanpa
+ * `id_pesan`, pseudonim, maupun pengenal percakapan.
+ */
+export type NilaiPenilaian = "membantu" | "tidak_membantu" | "keliru";
+
+export type TindakLanjutAduan =
+  | "sumber_diajukan"
+  | "butir_ditarik"
+  | "jawaban_sesuai_dasar"
+  | "di_luar_cakupan";
+
+export interface PermintaanPenilaian {
+  readonly nilai: NilaiPenilaian;
+  readonly alasan?: string | null;
+  readonly kirim_ke_kurator?: boolean;
+}
+
+export interface Penilaian {
+  readonly id_pesan: string;
+  readonly nilai: NilaiPenilaian;
+  readonly kirim_ke_kurator: boolean;
+}
+
+/** Tanggapan D-14 Bagian 4.1 sebagaimana disalin ke aduan — tanpa `id_pesan`. */
+export type TanggapanAduan = Omit<Tanggapan, "id_pesan">;
+
+export interface AduanTampil {
+  readonly nomor: number;
+  readonly diadukan_pada: string;
+  readonly pertanyaan: string;
+  readonly alasan: string | null;
+  readonly tanggapan: TanggapanAduan;
+}
+
+export interface DaftarAduan {
+  readonly aduan: readonly AduanTampil[];
+}
+
+export interface PermintaanTindakLanjut {
+  readonly tindak_lanjut: TindakLanjutAduan;
+  readonly catatan: string;
+}
+
+export type HasilPenilaian =
+  | { readonly jenis: "tersimpan"; readonly penilaian: Penilaian }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilAduan =
+  | { readonly jenis: "aduan"; readonly aduan: DaftarAduan }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
 
 export type HasilAnalitik =
   | { readonly jenis: "ringkasan"; readonly ringkasan: RingkasanAnalitik }

@@ -14,9 +14,9 @@
  * memintanya, dan arti `peringkat_kepercayaan` belum diputus (TK-40).
  */
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
-import type { Tanggapan } from "../kontrak";
+import type { Tanggapan, TanggapanAduan } from "../kontrak";
 import { barisSitasi, MIKROKOPI, PENANDA_DASAR, teksPengganti } from "../mikrokopi";
 
 /** D-07 Bagian 5.1, FR-F05. Peladen sudah menjaganya; lapisan kedua di sini. */
@@ -31,11 +31,16 @@ function tautanAman(tautan: string | null): string | null {
 }
 
 export interface PropertiBlokJawaban {
-  readonly tanggapan: Tanggapan;
-  readonly salin: (teks: string) => Promise<void>;
+  /** Tanggapan `/tanya`, atau salinannya pada aduan S-17 — tanpa `id_pesan`. */
+  readonly tanggapan: Tanggapan | TanggapanAduan;
+  /** Tanpa `salin` tombol salin tidak tampil — jawaban lama pada S-17 tidak
+   * untuk disalin dan dijalankan (fitur 036). */
+  readonly salin?: (teks: string) => Promise<void>;
+  /** Blok 6 "Nilai jawaban" — S-09 saja, pada keempat status dasar (R-10). */
+  readonly nilai?: ReactNode;
 }
 
-export function BlokJawaban({ tanggapan, salin }: PropertiBlokJawaban) {
+export function BlokJawaban({ tanggapan, salin, nilai }: PropertiBlokJawaban) {
   const [keadaanSalin, setKeadaanSalin] = useState<KeadaanSalin>("diam");
 
   const ringkasan = tanggapan.ringkasan_tindakan.slice(0, BUTIR_RINGKASAN_MAKSIMUM);
@@ -45,6 +50,7 @@ export function BlokJawaban({ tanggapan, salin }: PropertiBlokJawaban) {
       : tanggapan.penjelasan;
 
   async function salinRingkasan() {
+    if (salin === undefined) return;
     try {
       await salin(ringkasan.join("\n"));
       setKeadaanSalin("berhasil");
@@ -128,7 +134,7 @@ export function BlokJawaban({ tanggapan, salin }: PropertiBlokJawaban) {
         </section>
       )}
 
-      {ringkasan.length > 0 && (
+      {ringkasan.length > 0 && salin !== undefined && (
         <div className="tindakan">
           <button onClick={() => void salinRingkasan()} type="button">
             {MIKROKOPI.tombolSalinRingkasan}
@@ -137,6 +143,8 @@ export function BlokJawaban({ tanggapan, salin }: PropertiBlokJawaban) {
           {keadaanSalin === "tidak_bisa" && <p role="status">{MIKROKOPI.salinTidakBisa}</p>}
         </div>
       )}
+
+      {nilai}
 
       <p className="penafian">{tanggapan.penafian}</p>
     </article>
