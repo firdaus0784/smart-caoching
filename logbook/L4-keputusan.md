@@ -3514,3 +3514,15 @@ ditegakkan uji, bukan kebiasaan.
 | Pemutus | Agen atas pendelegasian KB-168 |
 
 **Tambahan KB-233.** Pemeriksa cakupan menemukan cabang "tanggapan tanpa versi model" pada penyimpan penilaian tidak teruji — dan cabang itu melempar **sesudah** pernyataan PostgreSQL menulis penilaian, sehingga catatan rusak akan meninggalkan penilaian tersimpan di balik galat 500. Keadaan itu dibuat mustahil alih-alih ditangani: D-14 Bagian 4.1 sudah mewajibkan `versi` pada setiap tanggapan (KT-06), maka riwayat menolak mencatat tanggapan tanpa `versi.model` dan batasan `pesan_bermodel` menolaknya pada peladen; cabangnya dihapus. Batasan pertama ditulis `char_length(...) > 0` dan **meloloskan** tanggapan tanpa model, sebab CHECK lulus pada hasil NULL; uji batasan menangkapnya, dan batasan kini memakai `coalesce`. Baris uji yang sempat lolos tertinggal pada basis data uji bersama dan menggagalkan pemasangan ulang batasan; basis data uji dibangun ulang dari berkas persiapan. Pada basis data baru tidak ada baris lama. D-14 Bagian 5.1 `pesan.tanggapan` menyebut kewajiban itu. M-5 s.d. M-7 dijalankan ulang sesudahnya: tetap merah.
+
+## KB-234 · T-5 fitur 036 — rute penilaian, aduan, tindak lanjut; `answer_rated`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-5 `tasks.md` fitur 036, atas pendelegasian KB-168 dalam batas `plan.md` K-3, K-4 (KB-229). |
+| Keputusan | `src/api/penilaian.py` memegang aturan yang hanya terbaca pada teks: alasan dan catatan diperiksa pendeteksi FR-B04 sebelum penyimpan dipanggil, kirim hanya bersama keliru, alasan kosong menjadi ketiadaan; `kirim_ke_kurator` bertipe ketat, sebab untai `"true"` bukan persetujuan menyerahkan pertanyaan kepada orang lain. `susun_aplikasi` menerima `penilaian` dan `aduan` terpisah — tanpa penyimpannya, rutenya tidak terpasang. `Perekam.rekam_penilaian` merekam `answer_rated` berproperti `nilai`, `beralasan`, `id_pesan`, dengan versi model tanggapan yang dinilai, sesudah penilaian tercatat. Empat pesan baru, masing-masing ≤ 20 kata; penjaga jumlah untai C-13 menjadi 31. |
+| Putaran mutasi | **M-4** pemilik pesan tidak diperiksa → merah (HTTP, memori, PostgreSQL); **M-8** alasan tanpa pendeteksi → merah; **M-9** teks alasan masuk properti → merah; **M-12** tindak lanjut kedua diterima → merah. |
+| Alternatif | Menyimpan penilaian tanpa persetujuan penelitian ditolak sama sekali — tidak dipilih; persetujuan mengatur perekaman, bukan layanan (R-09). |
+| Dampak | `src/api/penilaian.py`, `src/api/aplikasi.py`, `src/api/peran.py`, `src/api/rekaman.py`; `tests/api/test_penilaian_http.py`, `tests/pemeriksa/test_bahasa_antarmuka.py`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |

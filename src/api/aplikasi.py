@@ -90,7 +90,18 @@ from src.api.penemuan import (
     susun_beranda,
     tolak,
 )
+from src.api.penilaian import (
+    PESAN_ADUAN_TIDAK_ADA,
+    PESAN_JAWABAN_TIDAK_ADA,
+    PESAN_PENILAIAN_TIDAK_SAH,
+    PESAN_TINDAK_LANJUT_TIDAK_SAH,
+    AduanTidakAda,
+    daftar_aduan,
+    nilai,
+    tindak_lanjuti,
+)
 from src.api.peran import (
+    POLA_ADUAN,
     POLA_ANALITIK_EKSPOR,
     POLA_ANALITIK_RINGKAS,
     POLA_ANTREAN,
@@ -100,6 +111,7 @@ from src.api.peran import (
     POLA_DATA_SAYA,
     POLA_KELUAR,
     POLA_MASUK,
+    POLA_PENILAIAN,
     POLA_PERSETUJUAN,
     POLA_PRIORITAS,
     POLA_PROFIL,
@@ -107,6 +119,7 @@ from src.api.peran import (
     POLA_SATU_PERCAKAPAN,
     POLA_TANYA,
     POLA_TARIK,
+    POLA_TINDAK_LANJUT,
     POLA_TOLAK_BUTIR,
     boleh,
 )
@@ -130,6 +143,7 @@ from src.penyimpanan.analitik import PenyimpanAnalitik
 from src.penyimpanan.kurasi import PenyimpanKurasi
 from src.penyimpanan.penemuan import PenyimpanPenemuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
+from src.penyimpanan.penilaian import PenyimpanAduan, PenyimpanPenilaian, PesanTidakAda
 from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
 from src.penyimpanan.telemetri import PenyimpanTelemetri
 
@@ -227,6 +241,8 @@ def susun_aplikasi(
     telemetri: PenyimpanTelemetri | None = None,
     versi_aplikasi: str | None = None,
     analitik: PenyimpanAnalitik | None = None,
+    penilaian: PenyimpanPenilaian | None = None,
+    aduan: PenyimpanAduan | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -257,6 +273,11 @@ def susun_aplikasi(
 
     `analitik` sama: tanpa penyimpan, rute peneliti D-14 Bagian 3.4 tidak
     terpasang (fitur 035).
+
+    `penilaian` dan `aduan` sama (fitur 036): tanpa penyimpan penilaian rute
+    penilaian pengguna tidak terpasang; tanpa penyimpan aduan kedua rute aduan
+    kurator tidak terpasang. Keduanya terpisah karena perannya terpisah —
+    penilai menulis salinan, kurator membacanya (R-06).
     """
     if penemuan is not None and pengguna is None:
         raise ValueError("rute penemuan menuntut penyimpan pengguna (FR-G01)")
@@ -431,6 +452,10 @@ def susun_aplikasi(
         _pasang_rute_penemuan(
             aplikasi, penemuan, pengguna, _identitas_atau_tolak, perekam, sekarang
         )
+    if penilaian is not None:
+        _pasang_rute_penilaian(aplikasi, penilaian, _identitas_atau_tolak, perekam, sekarang)
+    if aduan is not None:
+        _pasang_rute_aduan(aplikasi, aduan, _identitas_atau_tolak, sekarang)
 
     return aplikasi
 
@@ -789,3 +814,100 @@ def _pasang_rute_penemuan(
             await perekam.rekam_belum_relevan(siapa.pemilik, id, alasan, sekarang=kini)
             await perekam.rekam_tayang(siapa.pemilik, baru, sekarang=kini)
         return JSONResponse(status_code=200, content=isi)
+
+
+async def _badan_json(permintaan: Request) -> Any:
+    """Badan JSON, atau `None` bila tak terbaca. `ValueError` bila bukan JSON (K-4)."""
+    if not _berbadan_json(permintaan):
+        raise ValueError("bukan JSON")
+    try:
+        return await permintaan.json()
+    except ValueError:
+        return None
+
+
+def _pasang_rute_penilaian(
+    aplikasi: FastAPI,
+    simpan: PenyimpanPenilaian,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    perekam: Perekam | None,
+    sekarang: Callable[[], datetime],
+) -> None:
+    """`POST /pesan/{id}/penilaian` — D-14 Bagian 4.9, fitur 036. Aturannya milik
+    `src/api/penilaian.py`; di sini hanya terjemahan galat dan perekaman."""
+
+    def _tidak_sah() -> JSONResponse:
+        return tanggapan_galat(
+            400, KodeGalat.VALIDASI_GAGAL, PESAN_PENILAIAN_TIDAK_SAH, rute=POLA_PENILAIAN
+        )
+
+    @aplikasi.post(POLA_PENILAIAN)
+    async def nilai_jawaban(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_PENILAIAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        kini = sekarang()
+        try:
+            isi, hasil, diterima = await nilai(
+                simpan, id, await _badan_json(permintaan), pemilik=siapa.pemilik, sekarang=kini
+            )
+        except PesanTidakAda:
+            return tanggapan_galat(
+                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_JAWABAN_TIDAK_ADA, rute=POLA_PENILAIAN
+            )
+        except ValueError:
+            return _tidak_sah()
+        # R-09: perekaman sesudah tercatat, lewat gerbang C-04; galatnya ditelan.
+        if perekam is not None:
+            await perekam.rekam_penilaian(
+                siapa.pemilik,
+                id,
+                diterima.nilai,
+                beralasan=diterima.alasan is not None,
+                versi_model=hasil.versi_model,
+                sekarang=kini,
+            )
+        return JSONResponse(status_code=200, content=isi)
+
+
+def _pasang_rute_aduan(
+    aplikasi: FastAPI,
+    simpan: PenyimpanAduan,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    sekarang: Callable[[], datetime],
+) -> None:
+    """`GET /kurasi/aduan` dan `POST /kurasi/aduan/{id}/tindak-lanjut` — D-14
+    Bagian 4.9, peran `kurator`. Bentuk tanggapan keduanya sama (Bagian 4.7)."""
+
+    @aplikasi.get(POLA_ADUAN)
+    async def baca_aduan(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_ADUAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        return JSONResponse(status_code=200, content=await daftar_aduan(simpan))
+
+    @aplikasi.post(POLA_TINDAK_LANJUT)
+    async def tindak_lanjut(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_TINDAK_LANJUT)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            await tindak_lanjuti(
+                simpan,
+                id,
+                await _badan_json(permintaan),
+                pseudonim=siapa.pemilik,
+                sekarang=sekarang(),
+            )
+        except AduanTidakAda:
+            return tanggapan_galat(
+                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_ADUAN_TIDAK_ADA, rute=POLA_TINDAK_LANJUT
+            )
+        except ValueError:
+            return tanggapan_galat(
+                400,
+                KodeGalat.VALIDASI_GAGAL,
+                PESAN_TINDAK_LANJUT_TIDAK_SAH,
+                rute=POLA_TINDAK_LANJUT,
+            )
+        return JSONResponse(status_code=200, content=await daftar_aduan(simpan))

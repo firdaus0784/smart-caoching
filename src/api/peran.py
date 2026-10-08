@@ -260,6 +260,9 @@ POLA_TARIK = _INDEKS["POST", "/api/v1/kurasi/{id}/tarik"].jalur
 POLA_BERANDA = _INDEKS["GET", "/api/v1/beranda"].jalur
 POLA_BUTIR = _INDEKS["GET", "/api/v1/butir/{id}"].jalur
 POLA_TOLAK_BUTIR = _INDEKS["POST", "/api/v1/butir/{id}/tolak"].jalur
+POLA_PENILAIAN = _INDEKS["POST", "/api/v1/pesan/{id}/penilaian"].jalur
+POLA_ADUAN = _INDEKS["GET", "/api/v1/kurasi/aduan"].jalur
+POLA_TINDAK_LANJUT = _INDEKS["POST", "/api/v1/kurasi/aduan/{id}/tindak-lanjut"].jalur
 """Pola jalur yang sudah memiliki penangan HTTP — fitur 023.
 
 Berada di sini, bukan pada `src/api/aplikasi.py`, karena pemeriksa

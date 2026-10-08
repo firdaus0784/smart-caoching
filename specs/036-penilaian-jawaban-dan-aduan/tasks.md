@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Empat dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Lima dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -58,10 +58,10 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 **Kebutuhan:** R-01, R-03, R-04, R-06, R-09; K-3, K-4.
 
-- [ ] Uji lebih dulu lewat HTTP dan atas perekam
-- [ ] `src/api/penilaian.py`; tiga rute pada `src/api/aplikasi.py`;
+- [x] Uji lebih dulu lewat HTTP dan atas perekam
+- [x] `src/api/penilaian.py`; tiga rute pada `src/api/aplikasi.py`;
       `rekam_penilaian`
-- [ ] Mutasi M-4, M-8, M-9, M-12
+- [x] Mutasi M-4, M-8, M-9, M-12
 
 ## T-6 · Penarikan dan analitik
 

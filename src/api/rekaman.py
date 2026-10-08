@@ -42,6 +42,7 @@ from src.api.galat import LOG_OPERASIONAL, id_jejak_baru
 from src.api.penemuan import ButirRingkas
 from src.api.saya import keadaan_persetujuan
 from src.api.tanya import AlasanBerhenti, HasilTanya
+from src.kamus.penilaian import NilaiPenilaian
 from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.telemetri import BarisPeristiwa, PenyimpanTelemetri
@@ -186,6 +187,31 @@ class Perekam:
             JenisPeristiwa.DISCOVERY_DISMISSED,
             {"id_butir": id_butir, "panjang_alasan": len(alasan)},
             sekarang=sekarang,
+        )
+
+    async def rekam_penilaian(
+        self,
+        pemilik: str,
+        id_pesan: str,
+        nilai: NilaiPenilaian,
+        *,
+        beralasan: bool,
+        versi_model: str,
+        sekarang: datetime,
+    ) -> None:
+        """`answer_rated` — nilai, ada tidaknya alasan, dan pesan yang dinilai.
+
+        **Tanpa teks alasan** (P-4 B): peristiwa diekspor ke luar sistem, dan
+        teks bebas adalah jalan data pribadi tak berpola keluar. `id_pesan`
+        ada agar penilaian yang menggantikan dapat dikenali analitik (KB-228).
+        Versi model milik tanggapan yang dinilai, bukan `tanpa_model`.
+        """
+        await self.rekam(
+            pemilik,
+            JenisPeristiwa.ANSWER_RATED,
+            {"nilai": nilai.value, "beralasan": beralasan, "id_pesan": id_pesan},
+            sekarang=sekarang,
+            versi_model=versi_model,
         )
 
     async def _rekam_semua(
