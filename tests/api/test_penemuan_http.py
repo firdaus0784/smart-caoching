@@ -7,7 +7,9 @@ ujung: kandidat yang belum diputus tidak pernah tampil pada beranda.
 from __future__ import annotations
 
 import hashlib
+import logging
 import secrets
+from dataclasses import replace
 from datetime import UTC, datetime
 from typing import Any
 
@@ -15,12 +17,13 @@ import pytest
 from fastapi.testclient import TestClient
 from src.api.aplikasi import susun_aplikasi
 from src.api.autentikasi import MASA_SESI, NAMA_KUKI, PenentuSesi
+from src.api.galat import LOG_OPERASIONAL
 from src.api.kurasi import PESAN_BUTIR_TIDAK_ADA
 from src.api.penemuan import PESAN_ALASAN_TIDAK_SAH
 from src.ingest.kurasi.butir import ButirPengetahuan
 from src.llm.galat import kalimat_terlalu_panjang
 from src.penyimpanan.akun import AkunMemori, BarisAkun
-from src.penyimpanan.kurasi import BarisKandidat, KurasiMemori
+from src.penyimpanan.kurasi import BarisKandidat, BarisTayang, KurasiMemori
 from src.penyimpanan.penemuan import PenemuanMemori
 from src.penyimpanan.pengguna import PenggunaMemori
 from src.penyimpanan.riwayat import RiwayatMemori
@@ -52,13 +55,28 @@ B = _akun("ks-018", "psd_bbbbbbbbbbbbbbbb")
 C = _akun("ks-019", "psd_cccccccccccccccc")
 
 
-class Lingkungan:
+class KurasiRusak(KurasiMemori):
+    """Butir tayang yang isinya tidak lagi memenuhi model — baris yang ditulis
+    tangan atau sisa uji pada basis data bersama (TK-78)."""
+
     def __init__(self) -> None:
+        super().__init__()
+        self.rusak: set[str] = set()
+
+    def baris_tayang(self) -> dict[str, BarisTayang]:
+        return {
+            i: replace(t, butir={**t.butir, "judul": [t.butir["judul"]]}) if i in self.rusak else t
+            for i, t in super().baris_tayang().items()
+        }
+
+
+class Lingkungan:
+    def __init__(self, kurasi: KurasiMemori | None = None) -> None:
         self.kini = T0
         self.akun = AkunMemori()
         for satu in (K, A, B, C):
             self.akun.pasang_akun(satu)
-        self.kurasi = KurasiMemori()
+        self.kurasi = KurasiMemori() if kurasi is None else kurasi
         self.pengguna = PenggunaMemori()
         self.jalur = JalurPencatat()
         self.penemuan = PenemuanMemori(self.kurasi)
@@ -300,6 +318,31 @@ def test_regulasi_tak_berlaku_tidak_tampil_meski_belum_ditarik() -> None:
     jalankan(ling.kurasi.perbarui_status("permen-1", "dicabut"))
     assert ling.ids() == ["b-2"]
     assert _galat(ling.minta("GET", "/api/v1/butir/b-1"))[0] == 404
+
+
+def test_butir_tak_terbaca_dilewati_dan_dicatat_tanpa_isinya(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """TK-78: satu baris butir tayang yang tidak memenuhi model tidak
+    menjatuhkan beranda — butir lain tetap dilayani, baik saat dipilih maupun
+    sesudah tercatat hari itu; log operasional menyebut nomornya saja."""
+    kurasi = KurasiRusak()
+    ling = Lingkungan(kurasi)
+    ling.setujui(butir("b-1"), butir("b-2"), butir("b-3"))
+    kurasi.rusak.add("b-1")
+    with caplog.at_level(logging.WARNING, logger=LOG_OPERASIONAL.name):
+        assert ling.ids() == ["b-2", "b-3"]
+        kurasi.rusak.add("b-2")
+        assert ling.ids() == ["b-3"]
+        assert _galat(ling.minta("GET", "/api/v1/butir/b-2"))[0] == 404
+    catatan = [r.getMessage() for r in caplog.records if r.name == LOG_OPERASIONAL.name]
+    assert any("b-1" in c for c in catatan), catatan
+    assert any("b-2" in c for c in catatan), catatan
+    isi = butir("b-1")
+    for c in catatan:
+        # Pesan galat model mengutip nilai yang ditolaknya — di sini judul.
+        assert isi.judul not in c
+        assert A.pseudonim not in c
 
 
 # ── detail ───────────────────────────────────────────────────────────

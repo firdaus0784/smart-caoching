@@ -3398,3 +3398,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menolak keras dan mencegah di hulu; menunda — tidak dipilih pemegang gerbang. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 035; penanda dokumen HKI. Perbaikan TK-78 menyusul pada commit tersendiri (KB-225). |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-225 · TK-78 — butir tayang yang tidak terbaca dilewati, bukan menjatuhkan beranda
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Putusan KB-224 atas TK-78: satu baris butir tayang yang isinya tidak memenuhi `ButirPengetahuan` membuat `GET /beranda` menjawab 500 bagi setiap pengguna berprioritas kategori itu, sebab `_tayang_sah` (fitur 013) tidak menangkap `ValidationError`. |
+| Keputusan | `_tayang_sah` pada `src/api/penemuan.py` menangkap `ValidationError` dan mengembalikan `None`, sehingga butir itu dilewati baik saat dipilih untuk hari itu maupun sesudah tercatat, dan detailnya 404. Log operasional mencatat `id_butir` dan **jenis** galat saja. Uji ditulis lebih dulu dan merah (500): tiga butir disetujui lewat rute kurator, satu dirusak sebelum beranda pertama, satu lagi sesudah tercatat; beranda tetap melayani butir yang sah. |
+| Temuan saat menguji | Pesan `ValidationError` mengutip nilai yang ditolaknya. Pada perusakan pertama (bidang `judul` dihapus) kutipan itu kebetulan terpotong sebelum isi butir, sehingga mutan pemeriksa log yang mencatat pesan galat utuh tetap hijau. Perusakan diganti menjadi `judul` bertipe salah, yang dikutip pesan galat; uji kini menuntut judul itu tidak muncul di log. |
+| Putaran mutasi | **M-1** (mutan yang diputus KB-224): penangkapan `ValidationError` dihapus → merah. Pemeriksaan tambahan **M-1b**: log mencatat pesan galat utuh, bukan jenisnya → merah sesudah perusakan diganti, hijau sebelumnya. |
+| Alternatif | Menangkap `Exception` — tidak dipilih; galat lain bukan "butir tidak terbaca" dan harus tetap terlihat sebagai 500. Menolak di hulu saat baris ditulis — tidak dipilih pemegang gerbang (KB-224). |
+| Dampak | `src/api/penemuan.py`; `tests/api/test_penemuan_http.py` (penyimpan kurasi uji yang merusak baris, parameter `kurasi` pada lingkungan uji); `docs/D00.md` 2.90 (TK-78 Selesai). Fitur 013 tidak dibuka kembali; spec dan plan-nya tidak berubah. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-224); pelaksanaan oleh agen |

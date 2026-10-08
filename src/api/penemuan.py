@@ -31,6 +31,7 @@ from typing import Any, Final
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from src.api.galat import LOG_OPERASIONAL
 from src.api.hari import tanggal_wib
 from src.api.kurasi import bentuk_ulang
 from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
@@ -112,12 +113,25 @@ class Beranda(_Tanggapan):
 
 def _tayang_sah(baris: BarisTayang) -> ButirTayang | None:
     """Butir yang masih boleh tampil, atau `None` — ditarik, tanpa putusan yang
-    menyetujui, atau regulasinya tidak lagi berlaku menurut status terkini."""
+    menyetujui, atau regulasinya tidak lagi berlaku menurut status terkini.
+
+    Baris yang isinya tidak lagi memenuhi model juga `None` (TK-78): satu butir
+    rusak tidak boleh menjatuhkan beranda yang melayani butir lain. Log
+    menyebut nomor butir dan jenis galatnya saja — pesan galat model memuat
+    isi butir.
+    """
     if baris.ditarik_pada is not None:
         return None
     try:
         return bentuk_ulang(baris, status_terkini=True)
     except (GalatPutusan, RuntimeError):
+        return None
+    except ValidationError as galat:
+        LOG_OPERASIONAL.warning(
+            "butir tayang tidak terbaca id_butir=%s sebab=%s",
+            baris.id_butir,
+            type(galat).__name__,
+        )
         return None
 
 
