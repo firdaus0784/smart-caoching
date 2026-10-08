@@ -3459,3 +3459,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Kurator membaca `riwayat` dengan hak berkolom dan saringan baris — tidak dipilih; saringan kueri bukan batas hak, dan C-02 menetapkan pola yang sama: pemisahan pada tingkat penyimpanan, bukan saat kueri. Menandai aduan gugur dengan `UPDATE` — tidak dipilih; aduan tambah-saja. |
 | Dampak | `specs/036-penilaian-jawaban-dan-aduan/plan.md`, `tasks.md`; status `spec.md`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-230 · T-1 fitur 036 — kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-1 `tasks.md` fitur 036, atas pendelegasian KB-168 dalam batas `plan.md` (KB-229). Bentuk rute ditulis sebelum kodenya (R-08, C-20). |
+| Keputusan | D-14 0.17: rute tindak lanjut pada Bagian 3.4 (P-3 B); Bagian 4.9 bentuk penilaian, aduan, dan tindak lanjut; Bagian 4.8 bagian `penilaian` dan `akurasi_qa` keluar dari `belum_terukur`; Bagian 4.3 dan 5.1 tabel `pesan` sebagai catatan audit, `penilaian`, `aduan`, `aduan_digantikan`, `tindak_lanjut_aduan`, enum `NilaiPenilaian` dan `TindakLanjutAduan`. D-01 1.6: properti `answer_rated`. D-04 0.13: `pesan` dan `penilaian` (TK-69 diputus). D-05 0.7: blok "Nilai jawaban" S-09 dan S-17. D-00 2.92. |
+| Kalimat yang ditulis pelaksana | Mikrokopi S-09 blok 6 dan S-17 pada D-05, termasuk label centang "Kirim pertanyaan dan jawaban ini kepada kurator". Label itu menamai tindakan, bukan menjelaskan pemrosesan data; perlu tidaknya naskah ET-02 menyebut alur aduan tetap milik tim etik (KB-227). |
+| Alternatif | Menulis kode lebih dulu lalu mendokumentasikannya — dilarang C-20. |
+| Dampak | `docs/D14.md`, `docs/D01.md`, `docs/D04.md`, `docs/D05.md`, `docs/D00.md`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+
+**Tambahan KB-230.** Dampak juga mencakup `src/api/peran.py`: rute tindak lanjut memperoleh baris peran `kurator` pada peta rute kode. Uji peran menolak rute D-14 tanpa peran pada kode, sebab rute seperti itu terbuka bagi siapa saja pada hari dibangun. Penanganannya belum dipasang; rute itu karena itu belum terjangkau.

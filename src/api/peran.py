@@ -220,6 +220,12 @@ PETA_RUTE: tuple[Rute, ...] = (
         metode="GET", jalur="/api/v1/kurasi/aduan", penjaga_tertulis="kurator", kebutuhan="FR-I04"
     ),
     Rute(
+        metode="POST",
+        jalur="/api/v1/kurasi/aduan/{id}/tindak-lanjut",
+        penjaga_tertulis="kurator",
+        kebutuhan="FR-I04",
+    ),
+    Rute(
         metode="GET",
         jalur="/api/v1/analitik/ringkas",
         penjaga_tertulis="peneliti",

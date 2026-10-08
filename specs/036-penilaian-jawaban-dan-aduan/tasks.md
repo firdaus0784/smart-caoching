@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Nol dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Satu dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -18,13 +18,13 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 **Kebutuhan:** R-02, R-06, R-08; K-3, K-4; P-1 A, P-3 B, P-4 B.
 
-- [ ] D-14 Bagian 3.4: baris `POST /api/v1/kurasi/aduan/{id}/tindak-lanjut`
-- [ ] D-14 Bagian 4.9: bentuk penilaian, aduan, tindak lanjut; 4.8: bagian
+- [x] D-14 Bagian 3.4: baris `POST /api/v1/kurasi/aduan/{id}/tindak-lanjut`
+- [x] D-14 Bagian 4.9: bentuk penilaian, aduan, tindak lanjut; 4.8: bagian
       `penilaian`; 5.1: kelima tabel, `NilaiPenilaian`, `TindakLanjutAduan`
-- [ ] D-01 Bagian 9: properti `answer_rated`
-- [ ] D-04 Bagian 7.4: baris `pesan` mengikuti P-1 A (TK-69)
-- [ ] D-05: S-09 blok "Nilai jawaban", S-17
-- [ ] Register D-00
+- [x] D-01 Bagian 9: properti `answer_rated`
+- [x] D-04 Bagian 7.4: baris `pesan` mengikuti P-1 A (TK-69)
+- [x] D-05: S-09 blok "Nilai jawaban", S-17
+- [x] Register D-00
 
 ## T-2 · Peladen
 
