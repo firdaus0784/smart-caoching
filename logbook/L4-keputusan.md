@@ -3413,3 +3413,15 @@ ditegakkan uji, bukan kebiasaan.
 | Pemutus | Pemegang Gerbang 1–4 (KB-224); pelaksanaan oleh agen |
 
 **Koreksi KB-225 (ditambahkan, bukan menyunting).** Pesan commit a711b34 menyebut `Ref: specs/013-penemuan-dan-kurasi/spec.md` dan kebutuhan `NFR-11`. Keduanya keliru: folder fitur itu `specs/013-kurasi-dan-penemuan-harian/`, dan NFR-11 adalah aksesibilitas. Kebutuhan yang dijaga perbaikan TK-78 adalah **NFR-03** (ketersediaan layanan), di samping FR-G01 dan FR-I03 yang benar. Commit tidak diubah, sebab AGENTS.md melarang `commit --amend`.
+
+## KB-226 · Usulan spec fitur 036 diajukan ke Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Sesudah Gerbang 4 fitur 035 dan perbaikan TK-78, pemegang gerbang meminta pekerjaan dilanjutkan ("setuju dan lanjutkan"). Baris D-12 036 — penilaian jawaban FR-F07 dan aduan kurator FR-I04 — disisipkan pada KB-215 untuk menutup TK-77, dan tidak menunggu putusan tim lain kecuali yang diajukan di bawah. Baris 031 tertahan TK-71; baris 032 tidak mendesak oleh temuan mana pun. |
+| Keputusan | `specs/036-penilaian-jawaban-dan-aduan/spec.md` ditulis dan diajukan ke Gerbang 1 dengan sepuluh kebutuhan yang tidak bergantung pada pertanyaan dan empat pertanyaan: **P-1** TK-69 — apakah tanggapan disimpan sebagai catatan audit; **P-2** apakah pertanyaan peserta terbaca kurator, dan atas tindakan siapa; **P-3** penutupan aduan, yang pada anjuran menuntut satu rute baru di luar D-14 Bagian 3; **P-4** properti `answer_rated` dan perubahan analitik fitur 035. |
+| Hambatan yang dinyatakan | S-17 menuntut kurator membaca jawaban yang dinilai keliru, sedangkan D-14 Bagian 4.3 menetapkan riwayat tidak menyimpan tanggapan. Itu TK-69, terbuka sejak fitur 028; ia diajukan sebagai P-1, bukan diputus pelaksana. Klien yang mengirim ulang isi jawaban tidak diajukan sebagai pilihan: isinya dikarang pemanggil. |
+| Alternatif | Baris 032 lebih dulu — tidak dipilih; ia tidak menutup temuan terbuka, sedangkan 036 menutup TK-77 dan dapat menutup TK-69. Memutus TK-69 di dalam plan — tidak dipilih; putusan itu bukan milik pelaksana (D-04 Bagian 7.4). |
+| Dampak | `specs/036-penilaian-jawaban-dan-aduan/spec.md`. Belum ada kode; plan menunggu Gerbang 1. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
