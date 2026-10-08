@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F07, FR-I04; NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 (`answer_rated`) · D-02 J5 · D-04 Bagian 7.4 (`pesan`, TK-69) · D-05 S-09 blok 6, S-09 keadaan tidak-ditemukan, S-17 · D-06 jadwal kurator · D-14 Bagian 3.2, 3.4, 4.1, 4.3 · spec fitur 028, 033, 034, 035 |
-| Status | **Diajukan ke Gerbang 1** — 8 Oktober 2026 (KB-226) |
+| Status | **Gerbang 1 lolos** — 8 Oktober 2026 (KB-227); P-1 s.d. P-4 sesuai anjuran |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -123,6 +123,17 @@ peristiwa diekspor ke luar sistem lewat CSV fitur 035.
 keluar dari sistem. Mengubah analitik berarti mengubah bentuk D-14 Bagian 4.8
 dan daftar `MetrikTertunda` — keduanya hanya atas putusan ini.
 
+## Putusan Gerbang 1 (KB-227)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — tanggapan disimpan sebagai catatan audit tambah-saja berpseudonim; tidak pernah ditayangkan ulang kepada pengguna; dibaca kurator hanya lewat aduan. **TK-69 diputus** |
+| P-2 | **B** — peserta memilih tegas per aduan; tanpa centang, penilaian hanya bagi analitik. Perlu tidaknya naskah ET-02 menyebutnya diputus tim etik |
+| P-3 | **B** — aduan ditutup dengan tindak lanjut bernama dan catatan; **rute baru `POST /api/v1/kurasi/aduan/{id}/tindak-lanjut` disetujui** untuk D-14 Bagian 3.4 |
+| P-4 | **B** — `answer_rated` membawa `nilai` dan `beralasan` saja; D-01 Bagian 9 ditulis ulang; analitik fitur 035 menampilkan jumlah per nilai atas penilaian terakhir tiap pesan |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -140,7 +151,7 @@ dan daftar `MetrikTertunda` — keduanya hanya atas putusan ini.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-4 diputus pada Gerbang 1
+- [x] P-1 s.d. P-4 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Hak peran basis data diuji terhadap peladen: penilai menambah saja,
       kurator tidak menjangkau pseudonim

@@ -3425,3 +3425,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Baris 032 lebih dulu — tidak dipilih; ia tidak menutup temuan terbuka, sedangkan 036 menutup TK-77 dan dapat menutup TK-69. Memutus TK-69 di dalam plan — tidak dipilih; putusan itu bukan milik pelaksana (D-04 Bagian 7.4). |
 | Dampak | `specs/036-penilaian-jawaban-dan-aduan/spec.md`. Belum ada kode; plan menunggu Gerbang 1. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-227 · Gerbang 1 fitur 036 lolos; TK-69 diputus; satu rute baru disetujui
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Usulan KB-226 mengajukan empat pertanyaan. Gerbang 1 tidak didelegasikan untuk putusan yang menambah rute (AG-02) maupun yang memutus temuan tim (TK-69), sehingga keempatnya ditanyakan tegas lewat pilihan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keempatnya. **P-1 A**: tanggapan `/tanya` yang lolos validator disimpan sebagai catatan audit tambah-saja berpseudonim, tanpa `tingkat_keyakinan`, tidak pernah ditayangkan ulang kepada pengguna; **TK-69 diputus**. **P-2 B**: pertanyaan dan jawaban sampai ke kurator hanya bila peserta mencentangnya per aduan. **P-3 B**: aduan ditutup dengan tindak lanjut bernama; rute `POST /api/v1/kurasi/aduan/{id}/tindak-lanjut` **disetujui** untuk D-14 Bagian 3.4. **P-4 B**: `answer_rated` membawa `nilai` dan `beralasan` saja; analitik fitur 035 menampilkan jumlah per nilai. |
+| Alternatif | P-1 B tanpa jawaban; P-2 A atau C; P-3 C hanya dibaca; P-4 A atau C — tidak dipilih. |
+| Yang tetap milik tim | Perlu tidaknya naskah ET-02 menyebut alur aduan (tim etik, sejajar TK-75). |
+| Dampak | Status spec fitur 036; D-00 2.91 (TK-69 diputus, tetap terbuka sampai fitur 036 selesai); D-12 0.39 (baris 036 menyebut isinya; cakupan tidak menyempit). Plan menyusul atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |
