@@ -3473,3 +3473,16 @@ ditegakkan uji, bukan kebiasaan.
 | Pemutus | Agen atas pendelegasian KB-168 |
 
 **Tambahan KB-230.** Dampak juga mencakup `src/api/peran.py`: rute tindak lanjut memperoleh baris peran `kurator` pada peta rute kode. Uji peran menolak rute D-14 tanpa peran pada kode, sebab rute seperti itu terbuka bagi siapa saja pada hari dibangun. Penanganannya belum dipasang; rute itu karena itu belum terjangkau.
+
+## KB-231 · T-2 fitur 036 — peladen penilaian dan aduan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-2 `tasks.md` fitur 036, atas pendelegasian KB-168 dalam batas `plan.md` K-1 (KB-229). |
+| Keputusan | `peran_penilaian` ditambahkan pada `01-peran-dan-basis-data.sql` dengan `CONNECT` basis data utama saja. `13-penilaian.sql` membuat kelima tabel beserta batasannya — tanggapan milik pesannya sendiri, tanpa `tingkat_keyakinan` (FR-F06), kirim hanya bersama keliru (P-2 B), salinan aduan tanpa `id_pesan` (R-06), satu tindak lanjut per aduan — dan hak keempat peran sesuai plan Bagian 2. Uji ditulis lebih dulu dan merah: katalog hak tabel, kolom, dan skema; 35 penolakan berpenyebab `permission denied`; hak yang memang dipakai; batasan tabel. |
+| Temuan saat menguji | Hak skema tidak terlihat pada uji penolakan: tanpa hak tabel, kueri tetap ditolak dengan sebab yang sama. Karena itu `USAGE` atas skema `riwayat` dan `kurasi` dibaca dari katalog (`has_schema_privilege`). Tiga harapan uji yang keliru urutannya diperbaiki sebelum lulus; peladennya tidak diubah karenanya. |
+| Putaran mutasi | **M-1** `SELECT` atas `riwayat.pesan` bagi `peran_riwayat` → merah (katalog dan penolakan). **M-2** `USAGE` atas skema `riwayat` bagi `peran_kurasi` → merah (katalog skema). Basis data uji dipulihkan dari berkas asli sesudahnya. |
+| Alternatif | Saringan baris (RLS) agar kurator membaca riwayat yang diadukan saja — tidak dipilih (KB-229). |
+| Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `13-penilaian.sql`, `README.md`; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |

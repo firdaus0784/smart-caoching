@@ -25,6 +25,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 10-telemet
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 11-penarikan.sql
 psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 11b-penarikan-pseudonim.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 12-analitik.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 13-penilaian.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -112,6 +113,17 @@ mengosongkannya.
 dan `SELECT`, `INSERT` atas `telemetri.ekspor` — jejak tambah-saja setiap
 ekspor. Tanpa akun, profil, riwayat, maupun basis data pseudonim: pemegang
 ekspor tidak dapat menautkan pseudonim ke akun (C-05).
+
+## Penilaian jawaban dan aduan — salinan, bukan izin baca (fitur 036)
+
+`13-penilaian.sql` menambah `riwayat.pesan`, `riwayat.penilaian`,
+`kurasi.aduan`, `kurasi.aduan_digantikan`, dan `kurasi.tindak_lanjut_aduan`,
+seluruhnya tambah-saja bagi peran aplikasi. `peran_riwayat` **menambah**
+tanggapan tetapi tidak dapat membacanya, sehingga rute riwayat tidak dapat
+menayangkan ulang jawaban (C-07). `peran_penilaian` (baru) menyalin pertanyaan
+dan tanggapan ke aduan hanya bila peserta mencentang. `peran_kurasi` membaca
+salinan itu tanpa hak apa pun atas skema `riwayat` dan tanpa kolom
+`nomor_penilaian` — kurator tidak dapat menautkan aduan ke peserta (R-06).
 
 ## Ekstensi pgvector — batas kode dan operasi
 

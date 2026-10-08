@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 8 Oktober 2026 (KB-227, KB-228); P-1 A, P-2 B, P-3 B, P-4 B disusuli `id_pesan` |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Satu dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Dua dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10 `spec.md`; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 ## 1. Letak dan batas

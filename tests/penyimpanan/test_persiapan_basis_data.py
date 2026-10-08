@@ -65,6 +65,7 @@ def basis_data_siap() -> None:
         "peran_penarikan",
         "peran_penarikan_pseudonim",
         "peran_analitik",
+        "peran_penilaian",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -144,6 +145,7 @@ def basis_data_siap() -> None:
         ("11-penarikan.sql", "smart_coaching"),
         ("11b-penarikan-pseudonim.sql", "smart_coaching_pseudonim"),
         ("12-analitik.sql", "smart_coaching"),
+        ("13-penilaian.sql", "smart_coaching"),
     ):
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
@@ -468,7 +470,13 @@ def test_hak_peran_riwayat_persis_baca_dan_tambah(basis_data_siap: None) -> None
         "where grantee = 'peran_riwayat' and table_schema = 'riwayat' "
         "group by table_name order by table_name",
     )
-    assert hasil.stdout.split() == ["giliran:INSERT,SELECT", "percakapan:INSERT,SELECT"]
+    # Fitur 036: `pesan` ditambah saja, tidak dibaca — rute riwayat tidak dapat
+    # menayangkan ulang jawaban (C-07), ditegakkan peladen.
+    assert hasil.stdout.split() == [
+        "giliran:INSERT,SELECT",
+        "percakapan:INSERT,SELECT",
+        "pesan:INSERT",
+    ]
     # Fitur 033: satu-satunya pemegang hapus atas riwayat adalah peran
     # penarikan, yang tidak dipegang layanan aplikasi.
     lain = _psql(
@@ -483,7 +491,10 @@ def test_hak_peran_riwayat_persis_baca_dan_tambah(basis_data_siap: None) -> None
     )
     assert lain.stdout.split() == [
         "peran_penarikan:giliran:DELETE",
+        "peran_penarikan:penilaian:DELETE",
         "peran_penarikan:percakapan:DELETE",
+        "peran_penarikan:pesan:DELETE",
+        "peran_penilaian:penilaian:INSERT",
     ]
 
 
@@ -1140,10 +1151,15 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "group by grantee, table_schema, table_name order by 1",
     )
     assert tabel.stdout.split() == [
+        "peran_kurasi:kurasi.aduan_digantikan:SELECT",
         "peran_kurasi:kurasi.butir_tayang:INSERT,SELECT",
         "peran_kurasi:kurasi.kandidat:SELECT",
         "peran_kurasi:kurasi.penarikan:INSERT,SELECT",
         "peran_kurasi:kurasi.putusan:INSERT,SELECT",
+        "peran_kurasi:kurasi.tindak_lanjut_aduan:INSERT,SELECT",
+        "peran_penarikan:kurasi.aduan:DELETE",
+        "peran_penarikan:kurasi.aduan_digantikan:DELETE",
+        "peran_penarikan:kurasi.tindak_lanjut_aduan:DELETE",
         "peran_penarikan:penemuan.belum_relevan:DELETE",
         "peran_penarikan:penemuan.tayang_harian:DELETE",
         "peran_penayangan:kurasi.butir_tayang:SELECT",
@@ -1152,6 +1168,8 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "peran_pengisi_antrean:kurasi.butir_tayang:SELECT",
         "peran_pengisi_antrean:kurasi.kandidat:INSERT,SELECT",
         "peran_pengisi_antrean:kurasi.penarikan:INSERT",
+        "peran_penilaian:kurasi.aduan:INSERT",
+        "peran_penilaian:kurasi.aduan_digantikan:INSERT",
     ]
     kolom = _psql(
         PENGELOLA,
@@ -1167,13 +1185,19 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "group by a.rolname, c.relname, x.privilege_type order by 1",
     )
     assert kolom.stdout.split() == [
+        # Fitur 036: kurator membaca salinan aduan tanpa tautannya ke penilaian.
+        "peran_kurasi:aduan:SELECT:alasan,diadukan_pada,nomor,pertanyaan,tanggapan",
         "peran_kurasi:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,perlu_tinjauan_pada",
         "peran_kurasi:kandidat:UPDATE:kembali_pada",
+        "peran_penarikan:aduan:SELECT:nomor,nomor_penilaian",
+        "peran_penarikan:aduan_digantikan:SELECT:nomor_aduan",
         "peran_penarikan:belum_relevan:SELECT:id_pengguna",
         "peran_penarikan:tayang_harian:SELECT:id_pengguna",
+        "peran_penarikan:tindak_lanjut_aduan:SELECT:nomor_aduan",
         "peran_penayangan:putusan:SELECT:id_butir,jenis,menyetujui,nomor,peran,waktu",
         "peran_pengisi_antrean:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,status_keberlakuan",
         "peran_pengisi_antrean:kandidat:UPDATE:status_keberlakuan",
+        "peran_penilaian:aduan:SELECT:nomor,nomor_penilaian",
     ]
 
 
@@ -1542,13 +1566,18 @@ def test_hak_peran_penarikan_persis_menurut_katalog(basis_data_siap: None) -> No
     assert utama.stdout.split() == [
         "peran_penarikan:akun.pengguna:DELETE",
         "peran_penarikan:akun.sesi:DELETE",
+        "peran_penarikan:kurasi.aduan:DELETE",
+        "peran_penarikan:kurasi.aduan_digantikan:DELETE",
+        "peran_penarikan:kurasi.tindak_lanjut_aduan:DELETE",
         "peran_penarikan:penemuan.belum_relevan:DELETE",
         "peran_penarikan:penemuan.tayang_harian:DELETE",
         "peran_penarikan:pengguna.persetujuan:DELETE",
         "peran_penarikan:pengguna.prioritas_manajerial:DELETE",
         "peran_penarikan:pengguna.profil_sekolah:DELETE",
         "peran_penarikan:riwayat.giliran:DELETE",
+        "peran_penarikan:riwayat.penilaian:DELETE",
         "peran_penarikan:riwayat.percakapan:DELETE",
+        "peran_penarikan:riwayat.pesan:DELETE",
         "peran_penarikan:telemetri.peristiwa:DELETE",
     ]
     pseudonim = _psql(
@@ -1645,3 +1674,337 @@ def test_batasan_tabel_ekspor(basis_data_siap: None) -> None:
     ):
         hasil = _psql("peran_analitik", "smart_coaching", "-c", kueri)
         assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+
+# ── Penilaian jawaban dan aduan kurator — fitur 036 ──────────────────
+#
+# `riwayat.pesan` catatan audit: ditambah peran riwayat, tidak dibacanya (C-07).
+# Aduan salinan yang dikirim peserta: kurator membacanya tanpa hak apa pun
+# atas skema `riwayat` (R-06, P-2 B). Seluruhnya tambah-saja bagi peran
+# aplikasi; hanya peran penarikan yang menghapus (R-07).
+
+_PSD_NILAI = "psd_nnnnnnnnnnnnnnnn"
+_PERCAKAPAN_NILAI = "6d2f7c1a-4b3e-4f9a-8c2d-1e5b7a9c3f01"
+
+
+def _pesan_sql(id_pesan: str, tanggapan: str | None = None) -> str:
+    isi = (
+        tanggapan
+        if tanggapan is not None
+        else f'{{"id_pesan": "{id_pesan}", "status_dasar": "kuat"}}'
+    )
+    return (
+        "insert into riwayat.pesan (id_pesan, id_percakapan, tanggapan, waktu) "
+        f"values ('{id_pesan}', '{_PERCAKAPAN_NILAI}', '{isi}', now())"
+    )
+
+
+def _penilaian_sql(
+    id_pesan: str, nilai: str = "keliru", kirim: str = "true", alasan: str = "null"
+) -> str:
+    return (
+        "insert into riwayat.penilaian (id_pesan, nilai, alasan, kirim_ke_kurator, waktu) "
+        f"values ('{id_pesan}', '{nilai}', {alasan}, {kirim}, now())"
+    )
+
+
+def _aduan_sql(tanggapan: str = '{"status_dasar": "kuat"}', pertanyaan: str = "Bagaimana?") -> str:
+    return (
+        "insert into kurasi.aduan (nomor_penilaian, pertanyaan, tanggapan, alasan, diadukan_pada) "
+        f"select max(nomor), '{pertanyaan}', '{tanggapan}', null, now() from riwayat.penilaian"
+    )
+
+
+def _tindak_lanjut_sql(
+    tindak: str = "jawaban_sesuai_dasar", catatan: str = "Sudah sesuai", psd: str = _PSD_KURATOR
+) -> str:
+    return (
+        "insert into kurasi.tindak_lanjut_aduan "
+        "(nomor_aduan, tindak_lanjut, catatan, peran, pseudonim_kurator, waktu) "
+        f"select max(nomor), '{tindak}', '{catatan}', 'kurator', '{psd}', now() from kurasi.aduan"
+    )
+
+
+def _siapkan_pesan(id_pesan: str) -> None:
+    for kueri in (
+        "insert into riwayat.percakapan (id_percakapan, pemilik, dibuat_pada) "
+        f"values ('{_PERCAKAPAN_NILAI}', '{_PSD_NILAI}', now()) on conflict do nothing",
+        "insert into riwayat.giliran (id_percakapan, pertanyaan, id_pesan, waktu) "
+        f"values ('{_PERCAKAPAN_NILAI}', 'Bagaimana menyusun jadwal?', '{id_pesan}', now())",
+        _pesan_sql(id_pesan),
+    ):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, hasil.stderr
+
+
+DITOLAK_PENILAIAN = [
+    *[
+        (peran, "smart_coaching", kueri, sebab)
+        for peran, kueri, sebab in (
+            (
+                "peran_riwayat",
+                "select tanggapan from riwayat.pesan",
+                "C-07 — riwayat tidak membaca jawaban",
+            ),
+            ("peran_riwayat", "select * from riwayat.penilaian", "riwayat tidak membaca penilaian"),
+            ("peran_riwayat", "update riwayat.pesan set waktu = now() where false", "tambah-saja"),
+            ("peran_riwayat", "delete from riwayat.pesan where false", "tambah-saja"),
+            ("peran_riwayat", "select * from kurasi.aduan", "riwayat tidak membaca aduan"),
+            (
+                "peran_penilaian",
+                "update riwayat.penilaian set nilai = 'membantu' where false",
+                "tambah-saja",
+            ),
+            ("peran_penilaian", "delete from riwayat.penilaian where false", "tambah-saja"),
+            (
+                "peran_penilaian",
+                "select alasan from riwayat.penilaian",
+                "alasan tidak dibaca kembali",
+            ),
+            (
+                "peran_penilaian",
+                "update riwayat.pesan set waktu = now() where false",
+                "penilai tidak mengubah jawaban",
+            ),
+            ("peran_penilaian", _pesan_sql("msg_tolak036"), "penilai tidak menulis jawaban"),
+            (
+                "peran_penilaian",
+                "select pertanyaan, tanggapan from kurasi.aduan",
+                "penilai tidak membaca aduan",
+            ),
+            (
+                "peran_penilaian",
+                "update kurasi.aduan set alasan = null where false",
+                "aduan tambah-saja",
+            ),
+            (
+                "peran_penilaian",
+                "delete from kurasi.aduan_digantikan where false",
+                "penanda tambah-saja",
+            ),
+            ("peran_penilaian", _tindak_lanjut_sql(), "penilai tidak menindaklanjuti"),
+            ("peran_penilaian", "select * from akun.pengguna", "C-05 — tidak menjangkau akun"),
+            ("peran_penilaian", "select * from telemetri.peristiwa", "tidak membaca peristiwa"),
+            (
+                "peran_kurasi",
+                "select * from riwayat.giliran",
+                "R-06 — kurator tidak membaca riwayat",
+            ),
+            ("peran_kurasi", "select * from riwayat.pesan", "R-06 — hanya salinan yang dikirim"),
+            ("peran_kurasi", "select * from riwayat.percakapan", "R-06 — tanpa pemilik"),
+            (
+                "peran_kurasi",
+                "select nomor_penilaian from kurasi.aduan",
+                "R-06 — tanpa tautan ke penilaian",
+            ),
+            ("peran_kurasi", _aduan_sql(), "aduan hanya lahir dari peserta"),
+            (
+                "peran_kurasi",
+                "update kurasi.aduan set alasan = null where false",
+                "aduan tambah-saja",
+            ),
+            ("peran_kurasi", "delete from kurasi.aduan where false", "aduan tidak dihapus kurator"),
+            (
+                "peran_kurasi",
+                "insert into kurasi.aduan_digantikan (nomor_aduan, waktu) select nomor, now() from kurasi.aduan where false",
+                "kurator tidak menggugurkan",
+            ),
+            (
+                "peran_kurasi",
+                "update kurasi.tindak_lanjut_aduan set catatan = 'x' where false",
+                "jejak tambah-saja",
+            ),
+            (
+                "peran_kurasi",
+                "delete from kurasi.tindak_lanjut_aduan where false",
+                "jejak tidak dihapus",
+            ),
+            (
+                "peran_penjawaban",
+                "select * from riwayat.pesan",
+                "C-17, R-07 — penjawab tidak membaca jawaban lama",
+            ),
+            (
+                "peran_penjawaban",
+                "select * from kurasi.aduan",
+                "C-14 — aduan tidak memengaruhi jawaban",
+            ),
+            (
+                "peran_penarikan",
+                "select tanggapan from riwayat.pesan",
+                "penarikan tidak membaca isi",
+            ),
+            (
+                "peran_penarikan",
+                "select alasan from riwayat.penilaian",
+                "penarikan tidak membaca alasan",
+            ),
+            (
+                "peran_penarikan",
+                "select pertanyaan from kurasi.aduan",
+                "penarikan tidak membaca aduan",
+            ),
+            (
+                "peran_penarikan",
+                "update kurasi.aduan set alasan = null where false",
+                "hapus, bukan ubah",
+            ),
+            (
+                "peran_analitik",
+                "select * from riwayat.penilaian",
+                "analitik membaca peristiwa saja",
+            ),
+            ("peran_pengguna", "select * from kurasi.aduan", "di luar peran pengguna"),
+        )
+    ],
+    (
+        "peran_penilaian",
+        "smart_coaching_pseudonim",
+        "select 1",
+        "C-05 — tanpa basis data pseudonim",
+    ),
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_PENILAIAN)
+def test_peladen_menolak_hak_penilaian(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    """M-1: `GRANT SELECT` atas `riwayat.pesan` kepada `peran_riwayat`."""
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_skema_riwayat_dan_kurasi_hanya_bagi_perannya(basis_data_siap: None) -> None:
+    """M-2: `GRANT USAGE ON SCHEMA riwayat TO peran_kurasi`.
+
+    Hak skema tidak terlihat pada uji penolakan — tanpa hak tabel, kueri
+    tetap ditolak — sehingga dibaca dari katalog."""
+    for skema, harapan in (
+        ("riwayat", ["peran_penarikan", "peran_penilaian", "peran_riwayat"]),
+        (
+            "kurasi",
+            [
+                "peran_kurasi",
+                "peran_penarikan",
+                "peran_penayangan",
+                "peran_pengisi_antrean",
+                "peran_penilaian",
+            ],
+        ),
+    ):
+        hasil = _psql(
+            PENGELOLA,
+            "smart_coaching",
+            "-c",
+            "select rolname from pg_roles where rolname like 'peran\\_%' "
+            f"and has_schema_privilege(rolname, '{skema}', 'USAGE') order by 1",
+        )
+        assert hasil.stdout.split() == harapan, skema
+
+
+def test_hak_kolom_riwayat_persis_menurut_katalog(basis_data_siap: None) -> None:
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || c.relname || ':' || x.privilege_type || ':' "
+        "|| string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'riwayat' "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null "
+        "group by a.rolname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_penarikan:giliran:SELECT:id_percakapan",
+        "peran_penarikan:penilaian:SELECT:id_pesan,nomor",
+        "peran_penarikan:percakapan:SELECT:id_percakapan,pemilik",
+        "peran_penarikan:pesan:SELECT:id_percakapan,id_pesan",
+        "peran_penilaian:giliran:SELECT:id_pesan,pertanyaan",
+        "peran_penilaian:penilaian:SELECT:id_pesan,nomor",
+        "peran_penilaian:percakapan:SELECT:id_percakapan,pemilik",
+        "peran_penilaian:pesan:SELECT:id_percakapan,id_pesan,tanggapan",
+    ]
+
+
+def test_peran_penilaian_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    _siapkan_pesan("msg_jalan036")
+    for peran, kueri in (
+        ("peran_riwayat", _pesan_sql("msg_riwayat036")),
+        (
+            "peran_penilaian",
+            "select p.id_pesan, p.tanggapan, g.pertanyaan, c.pemilik from riwayat.pesan p "
+            "join riwayat.giliran g on g.id_pesan = p.id_pesan "
+            "join riwayat.percakapan c on c.id_percakapan = p.id_percakapan",
+        ),
+        ("peran_penilaian", _penilaian_sql("msg_jalan036") + " returning nomor"),
+        ("peran_penilaian", _aduan_sql()),
+        (
+            "peran_penilaian",
+            "insert into kurasi.aduan_digantikan (nomor_aduan, waktu) "
+            "select min(nomor), now() from kurasi.aduan on conflict do nothing",
+        ),
+        # Penilaian berikutnya atas pesan yang sama melahirkan aduan baru.
+        ("peran_penilaian", _penilaian_sql("msg_jalan036")),
+        ("peran_penilaian", _aduan_sql()),
+        (
+            "peran_kurasi",
+            "select nomor, pertanyaan, tanggapan, alasan, diadukan_pada from kurasi.aduan",
+        ),
+        ("peran_kurasi", "select nomor_aduan from kurasi.aduan_digantikan"),
+        ("peran_kurasi", _tindak_lanjut_sql()),
+        ("peran_kurasi", "select * from kurasi.tindak_lanjut_aduan"),
+        ("peran_penarikan", "select id_pesan, id_percakapan from riwayat.pesan"),
+        ("peran_penarikan", "select nomor, id_pesan from riwayat.penilaian"),
+        ("peran_penarikan", "select nomor, nomor_penilaian from kurasi.aduan"),
+        ("peran_penarikan", "select nomor_aduan from kurasi.aduan_digantikan"),
+        ("peran_penarikan", "select nomor_aduan from kurasi.tindak_lanjut_aduan"),
+    ):
+        hasil = _psql(peran, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, f"{peran}: {kueri}\n{hasil.stderr}"
+
+
+def test_batasan_tabel_penilaian(basis_data_siap: None) -> None:
+    _siapkan_pesan("msg_batas036")
+    for kueri, sebab in (
+        (_penilaian_sql("msg_batas036", nilai="bagus"), "nilai di luar FR-F07"),
+        (_penilaian_sql("msg_batas036", nilai="membantu"), "P-2 B — kirim hanya bersama keliru"),
+        (
+            _penilaian_sql("msg_batas036", kirim="false", alasan="'  '"),
+            "alasan kosong disimpan null",
+        ),
+        (
+            _pesan_sql("msg_beda036", '{"id_pesan": "msg_lain", "status_dasar": "kuat"}'),
+            "tanggapan milik pesan lain",
+        ),
+        (
+            _pesan_sql(
+                "msg_yakin036",
+                '{"id_pesan": "msg_yakin036", "status_dasar": "kuat", "tingkat_keyakinan": 0.9}',
+            ),
+            "FR-F06 — tanpa tingkat keyakinan",
+        ),
+        (_aduan_sql('{"id_pesan": "msg_batas036"}'), "R-06 — salinan tanpa id_pesan"),
+        (_aduan_sql(pertanyaan=""), "aduan tanpa pertanyaan"),
+        (_tindak_lanjut_sql(tindak="lainnya"), "tindak lanjut di luar empat nilai"),
+        (_tindak_lanjut_sql(catatan="  "), "catatan wajib"),
+        (_tindak_lanjut_sql(psd="ks-017"), "C-05 — nama akun sebagai kurator"),
+    ):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+    hasil = _psql(
+        PENGELOLA, "smart_coaching", "-c", _penilaian_sql("msg_tidak_ada036", kirim="false")
+    )
+    assert "violates foreign key constraint" in hasil.stderr, hasil.stderr
+
+    for kueri in (_penilaian_sql("msg_batas036"), _aduan_sql(), _tindak_lanjut_sql()):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, hasil.stderr
+    kedua = _psql(PENGELOLA, "smart_coaching", "-c", _tindak_lanjut_sql(catatan="Kedua"))
+    assert "duplicate key value" in kedua.stderr, "satu tindak lanjut per aduan"
