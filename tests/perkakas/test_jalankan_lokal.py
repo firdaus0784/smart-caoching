@@ -313,3 +313,29 @@ def test_titik_jalan_bersesi_memasang_rute_analitik() -> None:
     assert dengan.get("/api/v1/analitik/ringkas").status_code == 401
     tanpa = TestClient(susun_untuk_pengembangan(akun=AkunMemori()), base_url="https://testserver")
     assert tanpa.get("/api/v1/analitik/ringkas").status_code == 404
+
+
+def test_titik_jalan_bersesi_memasang_rute_penilaian_dan_aduan() -> None:
+    """Fitur 036: rute penilaian dan aduan terpasang bersama penyimpannya; tanpanya tidak ada."""
+    from src.penyimpanan.akun import AkunMemori
+    from src.penyimpanan.penilaian import AduanMemori, PenilaianMemori
+    from src.penyimpanan.riwayat import RiwayatMemori
+
+    riwayat = RiwayatMemori()
+    penilaian = PenilaianMemori(riwayat)
+    dengan = TestClient(
+        susun_untuk_pengembangan(
+            riwayat, akun=AkunMemori(), penilaian=penilaian, aduan=AduanMemori(penilaian)
+        ),
+        base_url="https://testserver",
+    )
+    assert (
+        dengan.post("/api/v1/pesan/msg_1/penilaian", json={"nilai": "membantu"}).status_code == 401
+    )
+    assert dengan.get("/api/v1/kurasi/aduan").status_code == 401
+    tanpa = TestClient(susun_untuk_pengembangan(akun=AkunMemori()), base_url="https://testserver")
+    assert tanpa.post("/api/v1/pesan/msg_1/penilaian", json={"nilai": "membantu"}).status_code in (
+        404,
+        405,
+    )
+    assert tanpa.get("/api/v1/kurasi/aduan").status_code == 404

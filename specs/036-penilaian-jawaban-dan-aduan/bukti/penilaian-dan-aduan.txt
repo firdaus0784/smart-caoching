@@ -1,0 +1,7 @@
+Pertanyaan dengan centang : Bagaimana dasar supervisi akademik yang adil, kasus vniosi?
+Pertanyaan tanpa centang  : Bagaimana menyusun rencana kerja sekolah, kasus vniosi?
+
+Tanggapan tercatat bagi peserta (riwayat.pesan) : 2
+Aduan / salinan memuat id_pesan                 : 1/false
+Tindak lanjut / pseudonim kurator dari sesi     : sumber_diajukan/true
+answer_rated (kunci properti : versi : teks alasan ikut) : beralasan,id_pesan,nilai:pengembangan:false beralasan,id_pesan,nilai:pengembangan:false

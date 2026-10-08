@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Tujuh dari delapan tugas selesai |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-229). Delapan dari delapan tugas selesai — **menunggu Gerbang 4 manusia** (KB-237) |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -83,8 +83,8 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 ## T-8 · Titik jalan, bukti, penutupan
 
-- [ ] `perkakas/jalankan_lokal.py`: penyimpan penilaian dan aduan berperan
+- [x] `perkakas/jalankan_lokal.py`: penyimpan penilaian dan aduan berperan
       masing-masing
-- [ ] Playwright Bagian 9.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] Playwright Bagian 9.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

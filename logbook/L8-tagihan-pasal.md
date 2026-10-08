@@ -582,3 +582,27 @@ dan BT-29"`. Fitur 035 tidak menyentuh jalur penjawaban.
 **empat puluh delapan** — empat puluh dua kunci `MIKROKOPI` dan enam label
 metrik tertunda — ditambah empat fungsi penyusun, bukan empat puluh lima.
 Baris di atas tidak disunting (tambah-saja).
+
+### Fitur 036 — 8 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 035. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan delapan pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 036 |
+|---|---|
+| C-04 | `answer_rated` lahir lewat gerbang `rekam()`; tanpa persetujuan, penilaian tetap tersimpan bagi kurator tetapi tidak direkam (R-09) |
+| C-05 | Aduan tanpa pseudonim, akun, pengenal percakapan, maupun `id_pesan`, ditegakkan batasan tabel dan penjaga klien; `peran_kurasi` tanpa hak atas skema `riwayat` (M-2); `peran_penilaian` tanpa basis data pseudonim |
+| C-07 | `peran_riwayat` menambah tanggapan tanpa dapat membacanya (M-1); jawaban lama hanya tampil pada S-17, dinyatakan sebagai jawaban saat diadukan |
+| C-13 | Empat kalimat peladen dan empat puluh untai layar baru — tiga puluh dua kunci `MIKROKOPI`, tiga label nilai, empat label tindak lanjut, satu butir daftar data yang ditarik — ditambah satu fungsi penyusun |
+| C-14 | Penilaian tidak dibaca jalur penjawab maupun pemilihan beranda; uji memeriksa jalur menerima pertanyaan saja |
+| C-16 | Penilaian tidak menyetel ambang, pengambilan, maupun validator |
+| C-17 | Tanggapan dicatat lapisan `api` sesudah jalur penjawab selesai; tindak lanjut tidak mengirim apa pun keluar sistem |
+| C-20 | D-14 0.17 sebelum kodenya; satu rute baru atas putusan pemegang gerbang (P-3 B); bentuk `/tanya` tidak berubah; enam model dan dua enum didaftarkan pada pemeriksa kontrak web |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 036 menyimpan tanggapan, tetapi tidak menyentuh jalur
+penjawaban maupun validatornya.

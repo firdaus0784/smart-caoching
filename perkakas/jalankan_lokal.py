@@ -64,6 +64,15 @@ from src.penyimpanan.analitik import PERAN_ANALITIK, AnalitikPostgres, Penyimpan
 from src.penyimpanan.kurasi import PERAN_KURASI, KurasiPostgres, PenyimpanKurasi
 from src.penyimpanan.penemuan import PERAN_PENAYANGAN, PenemuanPostgres, PenyimpanPenemuan
 from src.penyimpanan.pengguna import PERAN_PENGGUNA, PenggunaPostgres, PenyimpanPengguna
+from src.penyimpanan.penilaian import (
+    PERAN_PENILAIAN,
+    AduanMemori,
+    AduanPostgres,
+    PenilaianMemori,
+    PenilaianPostgres,
+    PenyimpanAduan,
+    PenyimpanPenilaian,
+)
 from src.penyimpanan.riwayat import (
     PERAN_RIWAYAT,
     PenyimpanRiwayat,
@@ -193,6 +202,8 @@ def susun_untuk_pengembangan(
     penemuan: PenyimpanPenemuan | None = None,
     telemetri: PenyimpanTelemetri | None = None,
     analitik: PenyimpanAnalitik | None = None,
+    penilaian: PenyimpanPenilaian | None = None,
+    aduan: PenyimpanAduan | None = None,
 ) -> FastAPI:
     """Rakit aplikasi dengan pengganti pengembangan.
 
@@ -205,7 +216,8 @@ def susun_untuk_pengembangan(
     `turunan_tiruan` disuntikkan hanya oleh uji. `kurasi` dan `penemuan`
     memasang rute kurator dan beranda (fitur 013). `telemetri` merekam
     peristiwa bagi pengguna yang menyetujui, bertanda versi `pengembangan`
-    (fitur 034). `analitik` memasang rute peneliti (fitur 035).
+    (fitur 034). `analitik` memasang rute peneliti (fitur 035). `penilaian`
+    dan `aduan` memasang penilaian jawaban dan aduan kurator (fitur 036).
     """
     if akun is None:
         return susun_aplikasi(
@@ -225,6 +237,8 @@ def susun_untuk_pengembangan(
         telemetri=telemetri,
         versi_aplikasi=VERSI_APLIKASI_PENGEMBANGAN if telemetri is not None else None,
         analitik=analitik,
+        penilaian=penilaian,
+        aduan=aduan,
     )
 
 
@@ -279,7 +293,30 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
     penemuan: PenyimpanPenemuan | None = None
     telemetri: PenyimpanTelemetri | None = None
     analitik: PenyimpanAnalitik | None = None
+    penilaian: PenyimpanPenilaian | None = None
+    aduan: PenyimpanAduan | None = None
     if argumen.autentikasi == "sesi":
+        # Fitur 036: penilai dan kurator masing-masing dengan perannya. Riwayat
+        # di memori menuntut penilaian di memori pula — tanpa itu setiap
+        # penilaian mencari pesan yang tidak pernah sampai ke basis data.
+        if isinstance(riwayat, RiwayatMemori):
+            penilaian_memori = PenilaianMemori(riwayat)
+            penilaian, aduan = penilaian_memori, AduanMemori(penilaian_memori)
+        else:
+            penilaian = PenilaianPostgres(
+                SambunganPerKueri(
+                    os.environ.get("PGHOST", ALAMAT_AMAN),
+                    int(os.environ.get("PGPORT", "5432")),
+                    PERAN_PENILAIAN,
+                )
+            )
+            aduan = AduanPostgres(
+                SambunganPerKueri(
+                    os.environ.get("PGHOST", ALAMAT_AMAN),
+                    int(os.environ.get("PGPORT", "5432")),
+                    PERAN_KURASI,
+                )
+            )
         # Fitur 035: rute peneliti, membaca peristiwa sebagai peran_analitik.
         analitik = AnalitikPostgres(
             SambunganPerKueri(
@@ -354,6 +391,8 @@ def main() -> None:  # pragma: no cover — dijalankan orang, bukan uji
             penemuan=penemuan,
             telemetri=telemetri,
             analitik=analitik,
+            penilaian=penilaian,
+            aduan=aduan,
         ),
         host=argumen.alamat,
         port=argumen.porta,
