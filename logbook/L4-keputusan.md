@@ -3411,3 +3411,5 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menangkap `Exception` — tidak dipilih; galat lain bukan "butir tidak terbaca" dan harus tetap terlihat sebagai 500. Menolak di hulu saat baris ditulis — tidak dipilih pemegang gerbang (KB-224). |
 | Dampak | `src/api/penemuan.py`; `tests/api/test_penemuan_http.py` (penyimpan kurasi uji yang merusak baris, parameter `kurasi` pada lingkungan uji); `docs/D00.md` 2.90 (TK-78 Selesai). Fitur 013 tidak dibuka kembali; spec dan plan-nya tidak berubah. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-224); pelaksanaan oleh agen |
+
+**Koreksi KB-225 (ditambahkan, bukan menyunting).** Pesan commit a711b34 menyebut `Ref: specs/013-penemuan-dan-kurasi/spec.md` dan kebutuhan `NFR-11`. Keduanya keliru: folder fitur itu `specs/013-kurasi-dan-penemuan-harian/`, dan NFR-11 adalah aksesibilitas. Kebutuhan yang dijaga perbaikan TK-78 adalah **NFR-03** (ketersediaan layanan), di samping FR-G01 dan FR-I03 yang benar. Commit tidak diubah, sebab AGENTS.md melarang `commit --amend`.
