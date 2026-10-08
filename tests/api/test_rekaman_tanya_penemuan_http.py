@@ -51,6 +51,18 @@ def _sitasi(id_dokumen: str) -> Sitasi:
     )
 
 
+class JalurPesanBaru(JalurPalsu):
+    """Setiap jawaban berpengenal pesan sendiri, seperti jalur sungguhan.
+
+    Sejak fitur 036 tanggapan tercatat dengan `id_pesan` sebagai kunci, dan
+    jawaban kedua berpengenal sama ditolak sebelum terkirim."""
+
+    async def jawab(self, pertanyaan: str, **lain: object) -> HasilTanya:
+        hasil = await super().jawab(pertanyaan, **lain)
+        tanggapan = hasil.tanggapan.model_copy(update={"id_pesan": f"p{self.jumlah_panggilan}"})
+        return hasil.model_copy(update={"tanggapan": tanggapan})
+
+
 def _jawaban(alasan: AlasanBerhenti | None = None) -> JalurPalsu:
     if alasan is None:
         tanggapan = Tanggapan(
@@ -65,7 +77,7 @@ def _jawaban(alasan: AlasanBerhenti | None = None) -> JalurPalsu:
         tanggapan = Tanggapan(
             id_pesan="p1", status_dasar=StatusDasar.TIDAK_DITEMUKAN, penafian=PENAFIAN, versi=VERSI
         )
-    return JalurPalsu(HasilTanya(tanggapan=tanggapan, alasan_berhenti=alasan))
+    return JalurPesanBaru(HasilTanya(tanggapan=tanggapan, alasan_berhenti=alasan))
 
 
 class Alur(Lingkungan):

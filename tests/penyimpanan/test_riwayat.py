@@ -84,14 +84,25 @@ def _pemilik() -> str:
     return f"ps_uji_{uuid.uuid4().hex[:12]}"
 
 
+def _tanggapan(id_pesan: str, **lain: object) -> dict[str, object]:
+    """Bentuk D-14 Bagian 4.1 yang cukup bagi penyimpan — ia tidak membaca isinya."""
+    return {"id_pesan": id_pesan, "status_dasar": "kuat", "penjelasan": "…", **lain}
+
+
+def _pesan_unik() -> str:
+    """Basis data bersama: `id_pesan` kunci utama, sehingga tiap uji membangkitkannya."""
+    return f"msg_uji_{uuid.uuid4().hex[:12]}"
+
+
 def _catat(
     r: PenyimpanRiwayat,
     pemilik: str,
     id_percakapan: uuid.UUID,
     pertanyaan: str = "Bagaimana menyusun jadwal supervisi?",
     waktu: datetime = T0,
-    id_pesan: str = "pesan-1",
-) -> None:
+    id_pesan: str | None = None,
+) -> str:
+    id_pesan = id_pesan or _pesan_unik()
     jalankan(
         r.catat(
             pemilik=pemilik,
@@ -99,8 +110,10 @@ def _catat(
             pertanyaan=pertanyaan,
             id_pesan=id_pesan,
             waktu=waktu,
+            tanggapan=_tanggapan(id_pesan),
         )
     )
+    return id_pesan
 
 
 # ── perilaku bersama ────────────────────────────────────────────────────
@@ -108,16 +121,14 @@ def _catat(
 
 def test_giliran_tercatat_dapat_dibaca_berurutan(riwayat: PenyimpanRiwayat) -> None:
     a, p = _pemilik(), uuid.uuid4()
-    _catat(riwayat, a, p, "Pertanyaan pertama", T0, "pesan-1")
-    _catat(riwayat, a, p, "Pertanyaan kedua", T0 + timedelta(minutes=1), "pesan-2")
+    satu = _catat(riwayat, a, p, "Pertanyaan pertama", T0)
+    dua = _catat(riwayat, a, p, "Pertanyaan kedua", T0 + timedelta(minutes=1))
 
     giliran = jalankan(riwayat.baca(pemilik=a, id_percakapan=p))
 
     assert giliran == (
-        BarisGiliran(pertanyaan="Pertanyaan pertama", id_pesan="pesan-1", waktu=T0),
-        BarisGiliran(
-            pertanyaan="Pertanyaan kedua", id_pesan="pesan-2", waktu=T0 + timedelta(minutes=1)
-        ),
+        BarisGiliran(pertanyaan="Pertanyaan pertama", id_pesan=satu, waktu=T0),
+        BarisGiliran(pertanyaan="Pertanyaan kedua", id_pesan=dua, waktu=T0 + timedelta(minutes=1)),
     )
 
 
@@ -185,6 +196,7 @@ def test_isian_kosong_ditolak_tanpa_menulis(
         "pertanyaan": "x",
         "id_pesan": "p",
         "waktu": T0,
+        "tanggapan": _tanggapan("p"),
         bidang: nilai,
     }
     with pytest.raises(ValueError, match=bidang):
@@ -247,7 +259,13 @@ def test_permukaan_tanpa_ubah_maupun_hapus(kelas: type) -> None:
     publik = {n for n in dir(kelas) if not n.startswith("_")}
     # `dapat_ditulis` ditambahkan T-6 (KB-145): pemilik diperiksa **sebelum**
     # jalur penjawab dipanggil. Ia membaca, tidak mengubah.
-    assert publik == {"catat", "daftar", "baca", "dapat_ditulis"}
+    harapan = {"catat", "daftar", "baca", "dapat_ditulis"}
+    if kelas is RiwayatMemori:
+        # Fitur 036: pembaca tanggapan bagi penilaian di memori — padanan hak
+        # SELECT `peran_penilaian`. `RiwayatPostgres` tidak menyediakannya,
+        # dan `peran_riwayat` tidak dapat membaca tabelnya (C-07).
+        harapan |= {"baris_pesan"}
+    assert publik == harapan
 
 
 def test_peran_riwayat_ada_pada_berkas_sql() -> None:
@@ -261,3 +279,83 @@ def test_penyimpan_tidak_mengimpor_api_maupun_nlp() -> None:
     isi = (AKAR / "src" / "penyimpanan" / "riwayat.py").read_text(encoding="utf-8")
     assert "src.api" not in isi
     assert "src.nlp" not in isi
+
+
+# ── tanggapan sebagai catatan audit — fitur 036, P-1 A ─────────────────
+
+
+def _pesan_tersimpan(r: PenyimpanRiwayat, id_pesan: str) -> dict[str, object] | None:
+    """Dibaca sebagai pengelola pada PostgreSQL: `peran_riwayat` sendiri tidak
+    dapat membacanya, dan itu disengaja (C-07)."""
+    if isinstance(r, RiwayatMemori):
+        baris = r.baris_pesan().get(id_pesan)
+        return None if baris is None else dict(baris.tanggapan)
+    import json
+
+    b = jalankan(
+        SambunganPeran("pengelola").fetchrow(
+            "SELECT tanggapan FROM riwayat.pesan WHERE id_pesan = $1", id_pesan
+        )
+    )
+    if b is None:
+        return None
+    isi = b["tanggapan"]  # type: ignore[index]
+    return json.loads(isi) if isinstance(isi, str) else dict(isi)
+
+
+def test_tanggapan_tercatat_bersama_gilirannya(riwayat: PenyimpanRiwayat) -> None:
+    a, p = _pemilik(), uuid.uuid4()
+    id_pesan = _catat(riwayat, a, p)
+    assert _pesan_tersimpan(riwayat, id_pesan) == _tanggapan(id_pesan)
+    # Rute riwayat tetap tidak mengembalikannya.
+    (giliran,) = jalankan(riwayat.baca(pemilik=a, id_percakapan=p))
+    assert giliran.id_pesan == id_pesan
+
+
+@pytest.mark.parametrize(
+    ("tanggapan", "pesan"),
+    [
+        (_tanggapan("msg_lain"), "tanggapan milik pesan lain"),
+        (_tanggapan("{id}", tingkat_keyakinan=0.9), "tingkat keyakinan"),
+    ],
+)
+def test_tanggapan_salah_bentuk_ditolak_tanpa_menulis(
+    riwayat: PenyimpanRiwayat, tanggapan: dict[str, object], pesan: str
+) -> None:
+    a, p, id_pesan = _pemilik(), uuid.uuid4(), _pesan_unik()
+    isi = {k: (id_pesan if v == "{id}" else v) for k, v in tanggapan.items()}
+    with pytest.raises(ValueError, match=pesan):
+        jalankan(
+            riwayat.catat(
+                pemilik=a,
+                id_percakapan=p,
+                pertanyaan="x",
+                id_pesan=id_pesan,
+                waktu=T0,
+                tanggapan=isi,
+            )
+        )
+    assert jalankan(riwayat.daftar(pemilik=a)) == ()
+    assert _pesan_tersimpan(riwayat, id_pesan) is None
+
+
+def test_pesan_ganda_tidak_meninggalkan_giliran_maupun_percakapan(
+    riwayat: PenyimpanRiwayat,
+) -> None:
+    """M-3: giliran dan tanggapan satu pernyataan — gagal yang satu, tidak
+    tertulis keduanya. Tanggapan yang tidak tercatat tidak dikirim."""
+    a, p1, p2 = _pemilik(), uuid.uuid4(), uuid.uuid4()
+    id_pesan = _catat(riwayat, a, p1)
+    with pytest.raises(Exception):  # noqa: B017 — penggerak memakai galatnya sendiri
+        _catat(riwayat, a, p2, id_pesan=id_pesan)
+    assert jalankan(riwayat.daftar(pemilik=a)) == (p1,)
+    assert len(jalankan(riwayat.baca(pemilik=a, id_percakapan=p1))) == 1
+
+
+def test_pemilik_lain_tidak_mencatat_tanggapan(riwayat: PenyimpanRiwayat) -> None:
+    a, b, p = _pemilik(), _pemilik(), uuid.uuid4()
+    _catat(riwayat, a, p)
+    id_pesan = _pesan_unik()
+    with pytest.raises(PercakapanTidakAda):
+        _catat(riwayat, b, p, id_pesan=id_pesan)
+    assert _pesan_tersimpan(riwayat, id_pesan) is None

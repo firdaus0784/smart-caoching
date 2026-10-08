@@ -99,6 +99,25 @@ def test_jawaban_tercatat_sebagai_giliran_dengan_id_pesannya() -> None:
     assert set(giliran) == {"pertanyaan", "id_pesan", "waktu"}, "tanpa salinan tanggapan (C-07)"
 
 
+def test_tanggapan_terkirim_tercatat_sebagai_catatan_audit() -> None:
+    """Fitur 036, P-1 A: yang tercatat persis yang terkirim — dan hanya itu."""
+    d = Dunia()
+    tanggapan = _tanya(d.a, uuid.uuid4())
+    assert tanggapan.status_code == 200
+    badan = tanggapan.json()
+    baris = d.riwayat.baris_pesan()[badan["id_pesan"]]
+    assert dict(baris.tanggapan) == badan
+    assert "tingkat_keyakinan" not in baris.tanggapan
+
+
+def test_jawaban_yang_ditolak_tidak_tercatat_sebagai_tanggapan() -> None:
+    d = Dunia()
+    p = uuid.uuid4()
+    assert _tanya(d.a, p).status_code == 200
+    assert _tanya(d.b, p).status_code == 404
+    assert len(d.riwayat.baris_pesan()) == 1
+
+
 def test_percakapan_berlanjut_dan_daftar_terbaru_lebih_dulu() -> None:
     d = Dunia()
     lama, baru = uuid.uuid4(), uuid.uuid4()
@@ -216,6 +235,7 @@ class RiwayatBalapan(RiwayatMemori):
             pertanyaan="Penyela",
             id_pesan="pesan-penyela",
             waktu=T0,
+            tanggapan={"id_pesan": "pesan-penyela", "status_dasar": "kuat"},
         )
         return hasil
 

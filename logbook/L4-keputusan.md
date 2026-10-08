@@ -3486,3 +3486,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Saringan baris (RLS) agar kurator membaca riwayat yang diadukan saja — tidak dipilih (KB-229). |
 | Dampak | `perkakas/basis_data/01-peran-dan-basis-data.sql`, `13-penilaian.sql`, `README.md`; `tests/peladen.py`; `tests/penyimpanan/test_persiapan_basis_data.py`; `tasks.md` fitur 036. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-232 · T-3 fitur 036 — tanggapan tercatat bersama gilirannya
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-3 `tasks.md` fitur 036 (P-1 A, TK-69), atas pendelegasian KB-168 dalam batas `plan.md` K-2 (KB-229). |
+| Keputusan | `PenyimpanRiwayat.catat` menuntut `tanggapan`; `/tanya` menyerahkan tanggapan yang terkirim. Pada PostgreSQL giliran dan tanggapan ditulis dalam satu pernyataan CTE, tanpa `RETURNING` atas `riwayat.pesan` karena `peran_riwayat` tidak dapat membacanya. Pelaksana memori memeriksa pengenal ganda dan pemilik **sebelum** mengubah apa pun, agar berperilaku sama dengan pernyataan yang gagal utuh. Batasan tabel — tanggapan milik pesannya, tanpa `tingkat_keyakinan` — diperiksa pula di kode. `RiwayatMemori.baris_pesan` adalah pembaca bagi penilaian di memori, padanan hak `SELECT` `peran_penilaian`; uji permukaan menyebutnya tegas alih-alih menyembunyikannya. |
+| Temuan saat menguji | Jalur palsu satu uji telemetri mengembalikan `id_pesan` yang sama pada setiap jawaban. Kini jawaban kedua berpengenal sama ditolak sebelum terkirim — perilaku yang benar — sehingga jalur palsu itu diganti dengan yang membangkitkan pengenal baru, seperti jalur sungguhan (`pengembangan-<uuid>` pada `make jalan`). Dua uji pencatatan dengan pengenal tetap diganti pengenal acak, sebab `id_pesan` kini kunci pada basis data bersama. |
+| Putaran mutasi | **M-3** giliran lalu tanggapan dalam dua pernyataan → merah pada memori dan PostgreSQL. |
+| Alternatif | Tanggapan dicatat oleh jalur penjawaban — tidak dipilih; C-17 dan R-05 fitur 028: jalur penjawaban tidak memegang hak tulis. |
+| Dampak | `src/penyimpanan/riwayat.py`, `src/api/aplikasi.py`; `tests/penyimpanan/test_riwayat.py`, `tests/api/test_riwayat_http.py`, `tests/api/test_aplikasi.py`, `tests/api/test_rekaman_tanya_penemuan_http.py`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |

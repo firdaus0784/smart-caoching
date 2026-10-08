@@ -365,6 +365,8 @@ def susun_aplikasi(
                 pertanyaan=giliran.pertanyaan,
                 id_pesan=giliran.id_pesan,
                 waktu=giliran.waktu,
+                # Fitur 036, P-1 A: catatan audit, tidak pernah ditayangkan ulang.
+                tanggapan=hasil.tanggapan.model_dump(mode="json"),
             )
         except PercakapanTidakAda:
             # Pemilik lain membuka percakapan yang sama di antara pemeriksaan

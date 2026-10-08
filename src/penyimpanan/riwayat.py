@@ -4,12 +4,20 @@ FR-F09: *"Sistem menyimpan riwayat percakapan dan memungkinkan pengguna
 melanjutkan sesi sebelumnya."* Bentuknya D-14 Bagian 4.3 dan 5.1; tabelnya
 `perkakas/basis_data/06-riwayat.sql`.
 
-## Yang disimpan, dan yang sengaja tidak
+## Yang disimpan, dan yang sengaja tidak dibaca
 
-Pertanyaan, rujukan `id_pesan`, dan waktu — **tidak pernah tanggapannya**.
+Giliran: pertanyaan, rujukan `id_pesan`, dan waktu. Sejak fitur 036 (TK-69,
+P-1 A) tanggapan yang terkirim **juga** tersimpan — pada `riwayat.pesan`,
+sebagai catatan audit yang dibaca kurator lewat aduan. Penyimpan ini menulisnya
+tetapi **tidak pernah membacanya**: `baca` mengembalikan giliran tanpa jawaban,
+dan pada PostgreSQL `peran_riwayat` tidak memegang `SELECT` atas tabelnya.
 Tanggapan yang tersimpan menua: regulasi yang menjadi dasarnya dapat dicabut
 sesudah jawaban disusun, dan jawaban lama yang ditampilkan ulang melanggar C-07
 tanpa satu galat pun (D-14 Bagian 4.3).
+
+Giliran dan tanggapannya ditulis **dalam satu pernyataan**. Gagal yang satu,
+tidak tertulis keduanya — dan `/tanya` tidak mengirim jawaban yang tidak
+tercatat.
 
 Pemilik berupa **pseudonim**, bukan identitas langsung (C-05). Pemetaannya
 tinggal pada basis data yang peran penulis riwayat tidak dapat sambungi.
@@ -30,7 +38,8 @@ keduanya memberi tahu penebak bahwa tebakannya mengenai sesuatu.
 
 ## Tambah-saja
 
-Permukaannya empat: `catat`, `daftar`, `baca`, `dapat_ditulis`. Tidak ada yang mengubah maupun
+Permukaannya empat: `catat`, `daftar`, `baca`, `dapat_ditulis` — ditambah
+`baris_pesan` pada pelaksana memori saja (lihat di atas). Tidak ada yang mengubah maupun
 menghapus — dan pada PostgreSQL ketiadaan itu ditegakkan peladen: `peran_riwayat`
 hanya diberi `SELECT` dan `INSERT` (T-2). Penarikan data pengguna (NFR-09)
 kelak menjadi tindakan tersendiri dengan peran tersendiri.
@@ -38,10 +47,12 @@ kelak menjadi tindakan tersendiri dengan peran tersendiri.
 
 from __future__ import annotations
 
+import json
 import uuid
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Final, Protocol
+from typing import Any, Final, Protocol
 
 from src.penyimpanan.sambungan import SambunganAktif
 
@@ -70,6 +81,16 @@ class BarisGiliran:
     waktu: datetime
 
 
+@dataclass(frozen=True)
+class BarisPesan:
+    """Tanggapan yang terkirim, sebagaimana tercatat (fitur 036, P-1 A)."""
+
+    id_pesan: str
+    id_percakapan: uuid.UUID
+    tanggapan: Mapping[str, Any]
+    waktu: datetime
+
+
 class PenyimpanRiwayat(Protocol):
     async def catat(
         self,
@@ -79,8 +100,10 @@ class PenyimpanRiwayat(Protocol):
         pertanyaan: str,
         id_pesan: str,
         waktu: datetime,
+        tanggapan: Mapping[str, Any],
     ) -> None:
-        """Tambahkan satu giliran. Percakapan baru terbuka pada giliran pertamanya."""
+        """Tambahkan satu giliran beserta tanggapannya, dalam satu langkah.
+        Percakapan baru terbuka pada giliran pertamanya."""
         ...
 
     async def daftar(self, *, pemilik: str) -> tuple[uuid.UUID, ...]:
@@ -102,12 +125,19 @@ class PenyimpanRiwayat(Protocol):
         ...
 
 
-def _periksa(pemilik: str, pertanyaan: str, id_pesan: str, waktu: datetime) -> None:
+def _periksa(
+    pemilik: str, pertanyaan: str, id_pesan: str, waktu: datetime, tanggapan: Mapping[str, Any]
+) -> None:
     for nama, nilai in (("pemilik", pemilik), ("pertanyaan", pertanyaan), ("id_pesan", id_pesan)):
         if not nilai.strip():
             raise ValueError(f"{nama} tidak boleh kosong")
     if waktu.tzinfo is None or waktu.utcoffset() is None or waktu.utcoffset().total_seconds():  # type: ignore[union-attr]
         raise ValueError("waktu giliran wajib berzona UTC (KM-01)")
+    # Batasan yang sama dengan `13-penilaian.sql`, agar kedua pelaksana sepakat.
+    if tanggapan.get("id_pesan") != id_pesan:
+        raise ValueError("tanggapan milik pesan lain — yang tercatat harus tanggapan pesan ini")
+    if "tingkat_keyakinan" in tanggapan:
+        raise ValueError("tanggapan tidak boleh membawa tingkat keyakinan (FR-F06)")
 
 
 @dataclass
@@ -127,6 +157,7 @@ class RiwayatMemori:
 
     def __init__(self) -> None:
         self._percakapan: dict[uuid.UUID, _PercakapanMemori] = {}
+        self._pesan: dict[str, BarisPesan] = {}
 
     async def catat(
         self,
@@ -136,14 +167,31 @@ class RiwayatMemori:
         pertanyaan: str,
         id_pesan: str,
         waktu: datetime,
+        tanggapan: Mapping[str, Any],
     ) -> None:
-        _periksa(pemilik, pertanyaan, id_pesan, waktu)
-        satu = self._percakapan.setdefault(
-            id_percakapan, _PercakapanMemori(pemilik=pemilik, dibuat_pada=waktu, giliran=[])
-        )
-        if satu.pemilik != pemilik:
+        _periksa(pemilik, pertanyaan, id_pesan, waktu, tanggapan)
+        # Diperiksa sebelum apa pun berubah — sama dengan kunci utama yang
+        # menggagalkan seluruh pernyataan pada PostgreSQL.
+        if id_pesan in self._pesan:
+            raise ValueError("id_pesan sudah tercatat")
+        satu = self._percakapan.get(id_percakapan)
+        if satu is not None and satu.pemilik != pemilik:
             raise PercakapanTidakAda
+        if satu is None:
+            satu = _PercakapanMemori(pemilik=pemilik, dibuat_pada=waktu, giliran=[])
+            self._percakapan[id_percakapan] = satu
         satu.giliran.append(BarisGiliran(pertanyaan=pertanyaan, id_pesan=id_pesan, waktu=waktu))
+        self._pesan[id_pesan] = BarisPesan(
+            id_pesan=id_pesan,
+            id_percakapan=id_percakapan,
+            tanggapan=json.loads(json.dumps(dict(tanggapan))),
+            waktu=waktu,
+        )
+
+    def baris_pesan(self) -> dict[str, BarisPesan]:
+        """Tanggapan tercatat — **hanya** bagi penilaian di memori, padanan hak
+        `SELECT` `peran_penilaian`. Rute riwayat tidak memanggilnya."""
+        return dict(self._pesan)
 
     async def daftar(self, *, pemilik: str) -> tuple[uuid.UUID, ...]:
         milik = [(p.dibuat_pada, i) for i, p in self._percakapan.items() if p.pemilik == pemilik]
@@ -172,14 +220,20 @@ WITH buka AS (
     SELECT pemilik FROM buka
     UNION ALL
     SELECT pemilik FROM riwayat.percakapan WHERE id_percakapan = $1
+), sah AS (
+    SELECT 1 WHERE (SELECT pemilik FROM pemilik_sah LIMIT 1) = $2
+), pesan AS (
+    INSERT INTO riwayat.pesan (id_pesan, id_percakapan, tanggapan, waktu)
+    SELECT $4, $1, $6::jsonb, $5 FROM sah
 )
 INSERT INTO riwayat.giliran (id_percakapan, pertanyaan, id_pesan, waktu)
-SELECT $1, $3, $4, $5
-WHERE (SELECT pemilik FROM pemilik_sah LIMIT 1) = $2
+SELECT $1, $3, $4, $5 FROM sah
 RETURNING nomor
 """
-"""Membuka percakapan, memeriksa pemilik, dan menambah giliran dalam **satu
-pernyataan** — atomik tanpa transaksi, yang tidak disediakan `SambunganAktif`.
+"""Membuka percakapan, memeriksa pemilik, dan menambah giliran **beserta
+tanggapannya** dalam **satu pernyataan** — atomik tanpa transaksi, yang tidak
+disediakan `SambunganAktif`. `pesan` tidak memakai `RETURNING`: peran ini
+tidak memegang `SELECT` atas tabelnya (C-07).
 
 `buka` memuat baris yang baru dimasukkan pernyataan ini; `riwayat.percakapan`
 memuat baris yang sudah ada sebelumnya — potret pernyataan tidak melihat
@@ -206,10 +260,11 @@ class RiwayatPostgres:
         pertanyaan: str,
         id_pesan: str,
         waktu: datetime,
+        tanggapan: Mapping[str, Any],
     ) -> None:
-        _periksa(pemilik, pertanyaan, id_pesan, waktu)
+        _periksa(pemilik, pertanyaan, id_pesan, waktu, tanggapan)
         baris = await self._sambungan.fetchrow(
-            _CATAT, id_percakapan, pemilik, pertanyaan, id_pesan, waktu
+            _CATAT, id_percakapan, pemilik, pertanyaan, id_pesan, waktu, json.dumps(dict(tanggapan))
         )
         if baris is None:
             raise PercakapanTidakAda

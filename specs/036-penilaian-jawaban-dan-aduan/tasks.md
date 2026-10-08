@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Dua dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Tiga dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -39,11 +39,11 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 **Kebutuhan:** P-1 A; K-2; C-07, C-17.
 
-- [ ] Uji lebih dulu atas memori **dan** PostgreSQL: pesan tercatat bersama
+- [x] Uji lebih dulu atas memori **dan** PostgreSQL: pesan tercatat bersama
       giliran; tidak tercatat berarti tidak terkirim; rute riwayat tidak
       menayangkannya
-- [ ] `RiwayatMemori`, `RiwayatPostgres`; `/tanya` menyerahkan tanggapan
-- [ ] Mutasi M-3
+- [x] `RiwayatMemori`, `RiwayatPostgres`; `/tanya` menyerahkan tanggapan
+- [x] Mutasi M-3
 
 ## T-4 · Penyimpan penilaian dan aduan
 
