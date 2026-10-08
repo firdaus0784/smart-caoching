@@ -273,7 +273,6 @@ export const LABEL_METRIK_TERTUNDA: Readonly<Record<MetrikTertunda, string>> = {
   rasio_verifikasi: "Rasio pemeriksaan pemahaman",
   rasio_komitmen: "Rasio komitmen",
   rasio_penerapan: "Rasio penerapan",
-  akurasi_qa: "Ketepatan jawaban menurut penilaian pengguna",
 };
 
 /** Rasio sebagai persen berdesimal koma — fitur 035. */

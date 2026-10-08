@@ -46,6 +46,7 @@ from src.api.analitik import (
     RasioPenemuan,
     Retensi,
     RingkasanAnalitik,
+    RingkasanPenilaian,
     RingkasanSesi,
 )
 from src.api.kurasi import Antrean, KandidatTampil, PermintaanTarik, Suntingan, TayangTampil
@@ -106,6 +107,8 @@ MODEL: tuple[type[BaseModel], ...] = (
     Integritas,
     RingkasanAnalitik,
     PermintaanEkspor,
+    # Fitur 036: bagian penilaian pada ringkasan analitik.
+    RingkasanPenilaian,
 )
 ENUM: tuple[type[Enum], ...] = (
     StatusDasar,

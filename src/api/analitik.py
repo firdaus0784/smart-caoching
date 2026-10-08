@@ -38,6 +38,7 @@ from typing import Any, Final
 from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
 
 from src.api.hari import WIB, tanggal_wib
+from src.kamus.penilaian import NilaiPenilaian
 from src.penyimpanan.analitik import CatatanEkspor, PenyimpanAnalitik
 from src.penyimpanan.telemetri import BarisPeristiwa
 from src.telemetri.ekspor import ke_csv
@@ -62,7 +63,9 @@ class MetrikTertunda(Enum):
     RASIO_VERIFIKASI = "rasio_verifikasi"
     RASIO_KOMITMEN = "rasio_komitmen"
     RASIO_PENERAPAN = "rasio_penerapan"
-    AKURASI_QA = "akurasi_qa"
+    # `akurasi_qa` keluar pada fitur 036 (P-4 B): `answer_rated` kini terekam,
+    # dan jumlahnya tampil pada `RingkasanPenilaian` — tanpa rasio "ketepatan"
+    # yang definisinya belum ditetapkan D-08.
 
 
 SEBAB_TERTUNDA: Final[dict[MetrikTertunda, str]] = {
@@ -75,7 +78,6 @@ SEBAB_TERTUNDA: Final[dict[MetrikTertunda, str]] = {
     MetrikTertunda.RASIO_VERIFIKASI: "Pemeriksaan pemahaman belum dibangun.",
     MetrikTertunda.RASIO_KOMITMEN: "Komitmen penerapan belum dibangun.",
     MetrikTertunda.RASIO_PENERAPAN: "Komitmen penerapan belum dibangun.",
-    MetrikTertunda.AKURASI_QA: "Penilaian jawaban oleh pengguna belum dibangun.",
 }
 
 
@@ -122,6 +124,12 @@ class RasioPenemuan(_Tanggapan):
     rasio: float | None
 
 
+class RingkasanPenilaian(_Tanggapan):
+    """Jumlah per nilai atas penilaian **terakhir** tiap pesan (fitur 036, KB-228)."""
+
+    per_nilai: dict[str, int]
+
+
 class BelumTerukur(_Tanggapan):
     metrik: MetrikTertunda
     sebab: str
@@ -140,6 +148,7 @@ class RingkasanAnalitik(_Tanggapan):
     dihitung_pada: datetime
     keterlibatan: Keterlibatan
     penemuan: RasioPenemuan
+    penilaian: RingkasanPenilaian
     belum_terukur: list[BelumTerukur]
     integritas: Integritas
 
@@ -200,6 +209,22 @@ def _sesi(pilot: Sequence[BarisPeristiwa]) -> RingkasanSesi:
     )
 
 
+def _penilaian(pilot: Sequence[BarisPeristiwa]) -> RingkasanPenilaian:
+    """Penilaian ulang menggantikan yang sebelumnya: kunci (pseudonim,
+    `id_pesan`), yang terakhir menurut waktu. Properti yang tidak berbentuk
+    `answer_rated` fitur 036 ditolak keras, sama dengan baris rusak lain."""
+    terakhir: dict[tuple[str, str], tuple[datetime, NilaiPenilaian]] = {}
+    for b in pilot:
+        if b.jenis != "answer_rated":
+            continue
+        kunci = (b.pseudonim, str(b.properti["id_pesan"]))
+        nilai = NilaiPenilaian(b.properti["nilai"])
+        if kunci not in terakhir or terakhir[kunci][0] <= b.waktu:
+            terakhir[kunci] = (b.waktu, nilai)
+    jumlah = Counter(n for _, n in terakhir.values())
+    return RingkasanPenilaian(per_nilai={n.value: jumlah[n] for n in NilaiPenilaian})
+
+
 def ringkasan(peristiwa: Iterable[BarisPeristiwa], *, sekarang: datetime) -> RingkasanAnalitik:
     """Ringkasan S-18 — fungsi murni atas peristiwa; lihat uraian modul."""
     semua = list(peristiwa)
@@ -232,6 +257,7 @@ def ringkasan(peristiwa: Iterable[BarisPeristiwa], *, sekarang: datetime) -> Rin
             dibuka=jenis["discovery_opened"],
             rasio=_rasio(jenis["discovery_opened"], jenis["discovery_served"]),
         ),
+        penilaian=_penilaian(pilot),
         belum_terukur=[BelumTerukur(metrik=m, sebab=SEBAB_TERTUNDA[m]) for m in MetrikTertunda],
         integritas=Integritas(
             per_jenis=dict(sorted(jenis.items())),

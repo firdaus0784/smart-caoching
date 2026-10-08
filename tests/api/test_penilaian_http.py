@@ -285,6 +285,59 @@ def test_tindak_lanjut_salah_bentuk_ditolak(badan: dict[str, Any]) -> None:
     assert len(ling.aduan_terbuka()["aduan"]) == 1
 
 
+def test_badan_json_rusak_ditolak() -> None:
+    ling = Lingkungan()
+    id_pesan = ling.tanya()
+    ling.nilai(id_pesan, nilai="keliru", kirim_ke_kurator=True)
+    (aduan,) = ling.aduan_terbuka()["aduan"]
+    for jalur, siapa, pesan in (
+        (f"/api/v1/pesan/{id_pesan}/penilaian", A, PESAN_PENILAIAN_TIDAK_SAH),
+        (f"/api/v1/kurasi/aduan/{aduan['nomor']}/tindak-lanjut", K, PESAN_TINDAK_LANJUT_TIDAK_SAH),
+    ):
+        tajuk = {"Cookie": f"{NAMA_KUKI}={ling.kuki[siapa.id]}", "Content-Type": "application/json"}
+        tanggapan = ling.klien.post(jalur, headers=tajuk, content="{rusak")
+        assert _galat(tanggapan) == (400, "VALIDASI_GAGAL", pesan)
+
+
+def test_tanpa_telemetri_penilaian_tetap_tersimpan() -> None:
+    """Rute penilaian tidak menuntut perekam — sama dengan rute lain sebelum fitur 034."""
+    akun, riwayat = AkunMemori(), RiwayatMemori()
+    akun.pasang_akun(A)
+    penilaian = PenilaianMemori(riwayat)
+    pengenal = secrets.token_urlsafe(32)
+    jalankan(
+        akun.buat_sesi(
+            hashlib.sha256(pengenal.encode()).digest(),
+            A.id,
+            sekarang=T0,
+            kedaluwarsa_pada=T0 + MASA_SESI,
+        )
+    )
+    klien = TestClient(
+        susun_aplikasi(
+            jalur=JalurPencatat(),
+            identitas=PenentuSesi(akun, sekarang=lambda: T0),
+            riwayat=riwayat,
+            penilaian=penilaian,
+            sekarang=lambda: T0,
+        ),
+        base_url="https://testserver",
+    )
+    tajuk = {"Cookie": f"{NAMA_KUKI}={pengenal}"}
+    id_pesan = klien.post(
+        "/api/v1/tanya",
+        headers=tajuk,
+        json={"pertanyaan": "Bagaimana?", "id_percakapan": str(uuid.uuid4())},
+    ).json()["id_pesan"]
+    tanggapan = klien.post(
+        f"/api/v1/pesan/{id_pesan}/penilaian",
+        headers=tajuk,
+        json={"nilai": "keliru", "kirim_ke_kurator": True},
+    )
+    assert tanggapan.status_code == 200
+    assert len(penilaian.baris_aduan()) == 1
+
+
 # ── peran ────────────────────────────────────────────────────────────
 
 

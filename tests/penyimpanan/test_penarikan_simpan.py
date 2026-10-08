@@ -136,6 +136,45 @@ async def _isi(psd: str) -> str:
             ),
         ):
             await s.execute(kueri, *argumen)
+        # Fitur 036: tanggapan, penilaian, aduan beserta penanda gugur dan
+        # tindak lanjutnya. Penanda berpseudonim pada isinya, agar hitungan
+        # tidak bergantung pada induk yang ikut terhapus (M-11).
+        await s.execute(
+            "INSERT INTO riwayat.pesan (id_pesan, id_percakapan, tanggapan, waktu) "
+            "VALUES ($1, $2, $3::jsonb, $4)",
+            f"msg_{psd}",
+            percakapan,
+            f'{{"id_pesan": "msg_{psd}", "versi": {{"model": "m"}}}}',
+            T0,
+        )
+        nomor_penilaian = await s.fetchval(
+            "INSERT INTO riwayat.penilaian (id_pesan, nilai, alasan, kirim_ke_kurator, waktu) "
+            "VALUES ($1, 'keliru', $2, true, $3) RETURNING nomor",
+            f"msg_{psd}",
+            f"Alasan {psd}",
+            T0,
+        )
+        nomor_aduan = await s.fetchval(
+            "INSERT INTO kurasi.aduan (nomor_penilaian, pertanyaan, tanggapan, alasan, "
+            'diadukan_pada) VALUES ($1, $2, \'{"status_dasar": "kuat"}\', null, $3) '
+            "RETURNING nomor",
+            nomor_penilaian,
+            f"Pertanyaan {psd}",
+            T0,
+        )
+        await s.execute(
+            "INSERT INTO kurasi.aduan_digantikan (nomor_aduan, waktu) VALUES ($1, $2)",
+            nomor_aduan,
+            T0,
+        )
+        await s.execute(
+            "INSERT INTO kurasi.tindak_lanjut_aduan (nomor_aduan, tindak_lanjut, catatan, "
+            "peran, pseudonim_kurator, waktu) "
+            "VALUES ($1, 'jawaban_sesuai_dasar', $2, 'kurator', 'psd_kkkkkkkkkkkkkkkk', $3)",
+            nomor_aduan,
+            f"Catatan {psd}",
+            T0,
+        )
     finally:
         await s.close()
     await Sambungan(PENGELOLA, "smart_coaching_pseudonim").execute(
@@ -162,6 +201,16 @@ _HITUNG: dict[str, str] = {
     "penemuan.tayang_harian": "SELECT count(*) FROM penemuan.tayang_harian WHERE id_pengguna = $1",
     "penemuan.belum_relevan": "SELECT count(*) FROM penemuan.belum_relevan WHERE id_pengguna = $1",
     "telemetri.peristiwa": "SELECT count(*) FROM telemetri.peristiwa WHERE pseudonim = $1",
+    "riwayat.pesan": "SELECT count(*) FROM riwayat.pesan WHERE id_pesan = 'msg_' || $1",
+    "riwayat.penilaian": "SELECT count(*) FROM riwayat.penilaian WHERE alasan = 'Alasan ' || $1",
+    "kurasi.aduan": "SELECT count(*) FROM kurasi.aduan WHERE pertanyaan = 'Pertanyaan ' || $1",
+    "kurasi.aduan_digantikan": (
+        "SELECT count(*) FROM kurasi.aduan_digantikan d JOIN kurasi.aduan a "
+        "ON a.nomor = d.nomor_aduan WHERE a.pertanyaan = 'Pertanyaan ' || $1"
+    ),
+    "kurasi.tindak_lanjut_aduan": (
+        "SELECT count(*) FROM kurasi.tindak_lanjut_aduan WHERE catatan = 'Catatan ' || $1"
+    ),
 }
 
 
@@ -196,9 +245,10 @@ async def _minta(psd: str, kini: datetime = T0) -> int:
     return int(b[0])
 
 
-def test_sepuluh_tabel_terdaftar() -> None:
+def test_lima_belas_tabel_terdaftar() -> None:
+    """Sepuluh tabel fitur 033, ditambah lima tabel fitur 036 (R-07)."""
     assert set(TABEL_DATA_PENGGUNA) == set(_HITUNG)
-    assert len(TABEL_DATA_PENGGUNA) == 10
+    assert len(TABEL_DATA_PENGGUNA) == 15
 
 
 def test_satu_kosong_satu_utuh_dan_bukti_tanpa_pseudonim() -> None:
@@ -280,7 +330,9 @@ class _DidahuluiProsesLain(Sambungan):
         self._nomor = nomor
 
     async def fetchrow(self, kueri: str, *argumen: object) -> Any:
-        if kueri.lstrip().startswith("WITH peristiwa"):
+        # Dikenali dari isinya, bukan kata pembukanya: urutan CTE berubah
+        # ketika tabel bertambah (fitur 036).
+        if "DELETE FROM telemetri.peristiwa" in kueri:
             await Sambungan(PERAN_PENARIKAN).execute(
                 "UPDATE akun.permintaan_penarikan SET pseudonim = NULL, dipenuhi_pada = $2, "
                 "jumlah_baris = '{}' WHERE nomor = $1",

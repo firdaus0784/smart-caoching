@@ -13,7 +13,7 @@ tidak mengimpornya. Rute `DELETE /saya/data` hanya mencatat permintaan.
 
 1. Pemetaan pseudonim dihapus pada basis data pseudonim.
 2. Satu pernyataan CTE menghapus seluruh data milik pseudonim itu pada
-   sepuluh tabel, lalu mengosongkan pseudonim pada baris permintaan dan
+   lima belas tabel (`TABEL_DATA_PENGGUNA`), lalu mengosongkan pseudonim pada baris permintaan dan
    mengisi waktu dipenuhi serta jumlah baris per tabel.
 
 Urutan ini membuat kegagalan di tengah dapat diulang: bila langkah 2 gagal,
@@ -54,12 +54,44 @@ TABEL_DATA_PENGGUNA: Final = (
     "pengguna.persetujuan",
     "akun.sesi",
     "akun.pengguna",
+    "riwayat.pesan",
+    "riwayat.penilaian",
+    "kurasi.aduan",
+    "kurasi.aduan_digantikan",
+    "kurasi.tindak_lanjut_aduan",
 )
-"""Sepuluh tempat data milik seorang pengguna — tabel `spec.md` fitur 033,
-dibaca dari katalog basis data. Catatan persetujuan termasuk (P-3, TK-75)."""
+"""Lima belas tempat data milik seorang pengguna. Sepuluh dari tabel `spec.md`
+fitur 033, dibaca dari katalog basis data; catatan persetujuan termasuk (P-3,
+TK-75). Lima dari fitur 036 (R-07): tanggapan, penilaian, dan aduan beserta
+penanda gugur dan tindak lanjutnya — catatan kurator dapat mengutip isi
+pertanyaan peserta, sehingga ia ikut terhapus bersama aduannya."""
 
 _HAPUS: Final = """
-WITH peristiwa AS (
+WITH pesan_milik AS (
+    SELECT m.id_pesan FROM riwayat.pesan m
+     WHERE m.id_percakapan IN (SELECT id_percakapan FROM riwayat.percakapan WHERE pemilik = $1)
+), penilaian_milik AS (
+    SELECT n.nomor FROM riwayat.penilaian n
+     WHERE n.id_pesan IN (SELECT id_pesan FROM pesan_milik)
+), aduan_milik AS (
+    -- Aduan tidak membawa pemilik (R-06); ia ditemukan lewat penilaiannya.
+    SELECT a.nomor FROM kurasi.aduan a
+     WHERE a.nomor_penilaian IN (SELECT nomor FROM penilaian_milik)
+), tindak_lanjut AS (
+    DELETE FROM kurasi.tindak_lanjut_aduan
+     WHERE nomor_aduan IN (SELECT nomor FROM aduan_milik) RETURNING nomor_aduan
+), digantikan AS (
+    DELETE FROM kurasi.aduan_digantikan
+     WHERE nomor_aduan IN (SELECT nomor FROM aduan_milik) RETURNING nomor_aduan
+), aduan AS (
+    DELETE FROM kurasi.aduan WHERE nomor IN (SELECT nomor FROM aduan_milik) RETURNING nomor
+), penilaian AS (
+    DELETE FROM riwayat.penilaian WHERE nomor IN (SELECT nomor FROM penilaian_milik)
+    RETURNING nomor
+), pesan AS (
+    DELETE FROM riwayat.pesan WHERE id_pesan IN (SELECT id_pesan FROM pesan_milik)
+    RETURNING id_pesan
+), peristiwa AS (
     DELETE FROM telemetri.peristiwa WHERE pseudonim = $1 RETURNING pseudonim
 ), giliran AS (
     DELETE FROM riwayat.giliran
@@ -94,7 +126,12 @@ WITH peristiwa AS (
         'pengguna.prioritas_manajerial', (SELECT count(*) FROM prioritas),
         'pengguna.persetujuan', (SELECT count(*) FROM persetujuan),
         'akun.sesi', (SELECT count(*) FROM sesi),
-        'akun.pengguna', (SELECT count(*) FROM akun)
+        'akun.pengguna', (SELECT count(*) FROM akun),
+        'riwayat.pesan', (SELECT count(*) FROM pesan),
+        'riwayat.penilaian', (SELECT count(*) FROM penilaian),
+        'kurasi.aduan', (SELECT count(*) FROM aduan),
+        'kurasi.aduan_digantikan', (SELECT count(*) FROM digantikan),
+        'kurasi.tindak_lanjut_aduan', (SELECT count(*) FROM tindak_lanjut)
     ) AS isi
 ), tandai AS (
     UPDATE akun.permintaan_penarikan

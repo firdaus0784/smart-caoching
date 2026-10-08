@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Lima dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Enam dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -67,10 +67,10 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 **Kebutuhan:** R-07; K-4, K-5; P-4 B, KB-228.
 
-- [ ] Uji lebih dulu terhadap PostgreSQL (penarikan) dan atas peristiwa buatan
+- [x] Uji lebih dulu terhadap PostgreSQL (penarikan) dan atas peristiwa buatan
       (analitik)
-- [ ] `TABEL_DATA_PENGGUNA`, `_HAPUS`; `src/api/analitik.py`
-- [ ] Mutasi M-10, M-11
+- [x] `TABEL_DATA_PENGGUNA`, `_HAPUS`; `src/api/analitik.py`
+- [x] Mutasi M-10, M-11
 
 ## T-7 · Layar S-09, S-17, S-18
 

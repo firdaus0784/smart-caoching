@@ -316,8 +316,7 @@ export type MetrikTertunda =
   | "rasio_penelusuran_sumber"
   | "rasio_verifikasi"
   | "rasio_komitmen"
-  | "rasio_penerapan"
-  | "akurasi_qa";
+  | "rasio_penerapan";
 
 export interface AktifHarian {
   readonly tanggal: string;
@@ -355,6 +354,12 @@ export interface RasioPenemuan {
   readonly rasio: number | null;
 }
 
+/** Fitur 036: jumlah per nilai atas penilaian terakhir tiap pesan; nol berarti
+ * diukur dan tidak ada. Kuncinya ketiga nilai `NilaiPenilaian`. */
+export interface RingkasanPenilaian {
+  readonly per_nilai: Readonly<Record<string, number>>;
+}
+
 export interface BelumTerukur {
   readonly metrik: MetrikTertunda;
   readonly sebab: string;
@@ -373,6 +378,7 @@ export interface RingkasanAnalitik {
   readonly dihitung_pada: string;
   readonly keterlibatan: Keterlibatan;
   readonly penemuan: RasioPenemuan;
+  readonly penilaian: RingkasanPenilaian;
   readonly belum_terukur: readonly BelumTerukur[];
   readonly integritas: Integritas;
 }

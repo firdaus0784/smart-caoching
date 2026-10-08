@@ -96,8 +96,8 @@ atas `telemetri.peristiwa`. Tanpa ubah dan hapus; tanpa skema lain; tanpa
 
 `11-penarikan.sql` membuat `akun.permintaan_penarikan`: layanan aplikasi
 (`peran_autentikasi`) hanya mencatat permintaan dan membaca apakah ada yang
-tertunda. `peran_penarikan` satu-satunya pemegang `DELETE` atas sepuluh tabel
-data pengguna — dan hanya membaca kolom pemiliknya, tidak isinya.
+tertunda. `peran_penarikan` satu-satunya pemegang `DELETE` atas tabel
+data pengguna — sepuluh sejak fitur 033, lima belas sejak `13-penilaian.sql` fitur 036 — dan hanya membaca kolom pemiliknya, tidak isinya.
 `11b-penarikan-pseudonim.sql` memberi `peran_penarikan_pseudonim` hapus atas
 `peta_pseudonim` pada basis data pseudonim.
 

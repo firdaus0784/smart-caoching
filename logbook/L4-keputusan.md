@@ -3526,3 +3526,17 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyimpan penilaian tanpa persetujuan penelitian ditolak sama sekali — tidak dipilih; persetujuan mengatur perekaman, bukan layanan (R-09). |
 | Dampak | `src/api/penilaian.py`, `src/api/aplikasi.py`, `src/api/peran.py`, `src/api/rekaman.py`; `tests/api/test_penilaian_http.py`, `tests/pemeriksa/test_bahasa_antarmuka.py`; `tasks.md` fitur 036. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-235 · T-6 fitur 036 — penarikan menjangkau lima tabel baru; analitik menghitung penilaian
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-6 `tasks.md` fitur 036, atas pendelegasian KB-168 dalam batas `plan.md` K-4, K-5 (KB-229). |
+| Keputusan | `TABEL_DATA_PENGGUNA` bertambah lima (10 → 15); pernyataan penghapusan menemukan aduan lewat penilaiannya — aduan tidak membawa pemilik (R-06) — dan menghapus tindak lanjut kurator bersamanya, sebab catatannya dapat mengutip pertanyaan peserta. Uji penarikan mengenali baris baru dari penanda berpseudonim pada isinya, bukan lewat gabungan dengan induk, agar aduan yang tertinggal tanpa induk tidak terhitung nol. Analitik memperoleh `penilaian.per_nilai` atas peristiwa `answer_rated` terakhir per pseudonim dan `id_pesan` menurut waktu; `akurasi_qa` keluar dari `MetrikTertunda`. |
+| Batas tugas yang dinyatakan | Pemeriksa kontrak web menolak model yang berbeda dari `web/src/kontrak.ts`, sehingga tipe kontrak, peta label metrik tertunda, penjaga bentuk pada `klien.ts`, dan contoh uji layar S-18 diubah pada tugas ini — tanpa tampilan baru. Tabel penilaian pada S-18 tetap milik T-7. |
+| Temuan saat menguji | Tiruan balapan pada uji penarikan mengenali pernyataan penghapusan dari kata pembukanya `WITH peristiwa`; urutan CTE berubah, dan tiruan itu kini mengenalinya dari isinya. |
+| Putaran mutasi | **M-10** setiap penilaian dihitung → merah; **M-11** penarikan melewatkan `kurasi.aduan` → merah (pernyataan gagal oleh kunci asing, dan uji menangkapnya). |
+| Alternatif | Analitik membaca `riwayat.penilaian` — tidak dipilih; `peran_analitik` membaca peristiwa saja (R-02 fitur 035). |
+| Dampak | `src/penyimpanan/penarikan.py`, `src/api/analitik.py`, `perkakas/pemeriksa/kontrak_web.py`, `perkakas/basis_data/README.md`; `web/src/kontrak.ts`, `klien.ts`, `mikrokopi.ts`, `analitik/analitik.test.tsx`; `tests/penyimpanan/test_penarikan_simpan.py`, `tests/api/test_analitik.py`, `test_analitik_http.py`, `test_penilaian_http.py`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |

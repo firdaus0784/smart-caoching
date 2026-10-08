@@ -165,9 +165,44 @@ def test_metrik_belum_terukur_bernama_dan_bersebab() -> None:
         "rasio_verifikasi",
         "rasio_komitmen",
         "rasio_penerapan",
-        "akurasi_qa",
     }
+    # Fitur 036 (P-4 B): `akurasi_qa` keluar, digantikan bagian `penilaian`.
+    assert "akurasi_qa" not in {m.value for m in MetrikTertunda}
     assert all(sebab.strip() for sebab in belum.values())
+
+
+def _nilai(huruf: str, menit: int, id_pesan: str, nilai: str, **lain: Any) -> BarisPeristiwa:
+    return _p(
+        huruf,
+        _hari(5) + timedelta(minutes=menit),
+        "answer_rated",
+        {"nilai": nilai, "beralasan": False, "id_pesan": id_pesan},
+        **lain,
+    )
+
+
+def test_penilaian_dihitung_atas_yang_terakhir_tiap_pesan() -> None:
+    """Fitur 036, KB-228; M-10: setiap penilaian dihitung, bukan yang terakhir."""
+    peristiwa = [
+        _nilai("a", 1, "msg_1", "keliru"),
+        _nilai("a", 2, "msg_1", "membantu"),  # menggantikan yang di atas
+        _nilai("a", 3, "msg_2", "tidak_membantu"),
+        _nilai("b", 4, "msg_3", "keliru"),
+        _nilai("b", 5, "msg_4", "keliru", versi=VERSI_PENGEMBANGAN),  # R-05 fitur 035
+    ]
+    r = ringkasan(peristiwa, sekarang=SEKARANG)
+    assert r.penilaian.per_nilai == {"membantu": 1, "tidak_membantu": 1, "keliru": 1}
+
+
+def test_penilaian_terakhir_menurut_waktu_bukan_urutan_masukan() -> None:
+    peristiwa = [_nilai("a", 9, "msg_1", "keliru"), _nilai("a", 1, "msg_1", "membantu")]
+    r = ringkasan(peristiwa, sekarang=SEKARANG)
+    assert r.penilaian.per_nilai == {"membantu": 0, "tidak_membantu": 0, "keliru": 1}
+
+
+def test_penilaian_tanpa_peristiwa_tetap_bertiga_dan_nol() -> None:
+    """Nol di sini berarti diukur dan tidak ada — peristiwanya sudah terekam."""
+    assert _r().penilaian.per_nilai == {"membantu": 0, "tidak_membantu": 0, "keliru": 0}
 
 
 def test_dihitung_pada_saat_diminta() -> None:

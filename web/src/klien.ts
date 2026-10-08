@@ -748,6 +748,7 @@ function apakahRingkasanAnalitik(nilai: unknown): nilai is RingkasanAnalitik {
     Array.isArray(k["retensi"]) &&
     typeof k["sesi"] === "object" &&
     typeof r["penemuan"] === "object" &&
+    typeof r["penilaian"] === "object" &&
     Array.isArray(r["belum_terukur"]) &&
     typeof r["integritas"] === "object"
   );

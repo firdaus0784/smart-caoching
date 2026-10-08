@@ -104,7 +104,15 @@ def test_ringkas_berbentuk_d14_bagi_peneliti() -> None:
     tanggapan = ling.minta("GET", RINGKAS)
     assert tanggapan.status_code == 200
     isi = tanggapan.json()
-    assert set(isi) == {"dihitung_pada", "keterlibatan", "penemuan", "belum_terukur", "integritas"}
+    assert set(isi) == {
+        "dihitung_pada",
+        "keterlibatan",
+        "penemuan",
+        "penilaian",
+        "belum_terukur",
+        "integritas",
+    }
+    assert isi["penilaian"] == {"per_nilai": {"membantu": 0, "tidak_membantu": 0, "keliru": 0}}
     assert set(isi["keterlibatan"]) == {"aktif_harian", "aktif_mingguan", "retensi", "sesi"}
     assert isi["integritas"]["pengembangan"] == 1
     assert isi["penemuan"]["rasio"] is None
