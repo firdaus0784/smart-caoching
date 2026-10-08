@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-J03, FR-J04; D-01 Bagian 9.1; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 dan 9.1 · D-04 ADR-07, peran Peneliti · D-05 S-18 · D-14 Bagian 3.4 dan 5.1 · spec fitur 012, 034, 033 |
-| Status | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-215). Gerbang 2 dan 3 atas pendelegasian KB-168 |
+| Status | **Gerbang 4 lolos** — 8 Oktober 2026 (KB-224). Tujuh dari tujuh tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 

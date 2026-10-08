@@ -3387,3 +3387,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memperbaiki `_tayang_sah` sekalian — tidak dipilih; di luar `plan.md` fitur 035 dan menyentuh fitur yang sudah lolos Gerbang 4. |
 | Dampak | `perkakas/jalankan_lokal.py`; `tests/perkakas/test_jalankan_lokal.py`; `specs/035-analitik-penelitian/bukti/`, `tasks.md`; `docs/D00.md`; `logbook/L8-tagihan-pasal.md`, `docs/hki/dokumentasi-teknis.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-224 · Gerbang 4 fitur 035 lolos; TK-78 diputus diperbaiki
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Laporan KB-223 mengajukan fitur 035 ke Gerbang 4 beserta temuan TK-78. Keduanya ditanyakan tegas lewat pilihan; Gerbang 4 tidak didelegasikan, dan perbaikan TK-78 menyentuh fitur 013 yang sudah lolos Gerbang 4. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"** bagi fitur 035 — jumlah baris lolos Gerbang 4 menjadi **29 dari 36** — dan **"Perbaiki kecil sekarang"** bagi TK-78: butir yang tidak terbaca dilewati pada beranda dan dicatat ke log operasional dengan nomor butir saja, uji lebih dulu, satu mutan. |
+| Alternatif | Menolak keras dan mencegah di hulu; menunda — tidak dipilih pemegang gerbang. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 035; penanda dokumen HKI. Perbaikan TK-78 menyusul pada commit tersendiri (KB-225). |
+| Pemutus | Pemegang Gerbang 1–4 |

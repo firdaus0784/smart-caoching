@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 6 Oktober 2026 (KB-215); P-1 s.d. P-5 sesuai anjuran |
-| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 — 6 Oktober 2026 (KB-216). Tujuh tugas pada `tasks.md` |
+| Status | **Gerbang 4 lolos** — 8 Oktober 2026 (KB-224). Tujuh dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08 `spec.md`; FR-J03, FR-J04; C-04, C-05, C-09, C-12, C-14, C-17, C-20 |
 
 ## 1. Letak dan batas
