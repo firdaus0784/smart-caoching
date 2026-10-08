@@ -64,14 +64,19 @@ CREATE TABLE IF NOT EXISTS kurasi.tindak_lanjut_aduan (
 ALTER TABLE riwayat.pesan
   DROP CONSTRAINT IF EXISTS pesan_id_isi,
   DROP CONSTRAINT IF EXISTS pesan_tanggapan_sendiri,
-  DROP CONSTRAINT IF EXISTS pesan_tanpa_keyakinan;
+  DROP CONSTRAINT IF EXISTS pesan_tanpa_keyakinan,
+  DROP CONSTRAINT IF EXISTS pesan_bermodel;
 ALTER TABLE riwayat.pesan
   ADD CONSTRAINT pesan_id_isi CHECK (char_length(id_pesan) > 0),
   -- Tanggapan yang tercatat milik pesan ini, bukan salinan pesan lain.
   ADD CONSTRAINT pesan_tanggapan_sendiri
     CHECK (jsonb_typeof(tanggapan) = 'object' AND tanggapan ->> 'id_pesan' = id_pesan),
   -- FR-F06: tingkat keyakinan tidak pernah menjadi angka yang tersimpan.
-  ADD CONSTRAINT pesan_tanpa_keyakinan CHECK (NOT tanggapan ? 'tingkat_keyakinan');
+  ADD CONSTRAINT pesan_tanpa_keyakinan CHECK (NOT tanggapan ? 'tingkat_keyakinan'),
+  -- KT-06: versi wajib pada setiap tanggapan — dan `answer_rated` membawanya.
+  -- `coalesce`: CHECK lulus bila hasilnya NULL, dan model yang tidak ada adalah NULL.
+  ADD CONSTRAINT pesan_bermodel
+    CHECK (coalesce(char_length(tanggapan -> 'versi' ->> 'model'), 0) > 0);
 
 ALTER TABLE riwayat.penilaian
   DROP CONSTRAINT IF EXISTS penilaian_nilai,

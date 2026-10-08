@@ -235,7 +235,11 @@ class RiwayatBalapan(RiwayatMemori):
             pertanyaan="Penyela",
             id_pesan="pesan-penyela",
             waktu=T0,
-            tanggapan={"id_pesan": "pesan-penyela", "status_dasar": "kuat"},
+            tanggapan={
+                "id_pesan": "pesan-penyela",
+                "status_dasar": "kuat",
+                "versi": {"model": "m"},
+            },
         )
         return hasil
 

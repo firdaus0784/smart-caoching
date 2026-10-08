@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 8 Oktober 2026 (KB-227, KB-228) |
 | Plan | Gerbang 2 lolos 8 Oktober 2026 atas pendelegasian KB-168 (KB-229); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Tiga dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Empat dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F07, FR-I04, NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -49,10 +49,10 @@ berubah.** Tanpa paket baru (C-12). Satu rute baru saja — yang disetujui P-3 B
 
 **Kebutuhan:** R-01, R-02, R-05, R-06; K-1, K-2; P-2 B.
 
-- [ ] Uji lebih dulu atas memori **dan** PostgreSQL sebagai `peran_penilaian`
+- [x] Uji lebih dulu atas memori **dan** PostgreSQL sebagai `peran_penilaian`
       dan `peran_kurasi`
-- [ ] `src/kamus/penilaian.py`; `src/penyimpanan/penilaian.py`
-- [ ] Mutasi M-5, M-6, M-7
+- [x] `src/kamus/penilaian.py`; `src/penyimpanan/penilaian.py`
+- [x] Mutasi M-5, M-6, M-7
 
 ## T-5 · Rute dan `answer_rated`
 

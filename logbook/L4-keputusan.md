@@ -3499,3 +3499,18 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Tanggapan dicatat oleh jalur penjawaban — tidak dipilih; C-17 dan R-05 fitur 028: jalur penjawaban tidak memegang hak tulis. |
 | Dampak | `src/penyimpanan/riwayat.py`, `src/api/aplikasi.py`; `tests/penyimpanan/test_riwayat.py`, `tests/api/test_riwayat_http.py`, `tests/api/test_aplikasi.py`, `tests/api/test_rekaman_tanya_penemuan_http.py`; `tasks.md` fitur 036. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-233 · T-4 fitur 036 — penyimpan penilaian dan aduan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | T-4 `tasks.md` fitur 036, atas pendelegasian KB-168 dalam batas `plan.md` K-1, K-2 (KB-229). |
+| Keputusan | `src/kamus/penilaian.py`: `NilaiPenilaian` dan `TindakLanjutAduan`, nilainya diuji terhadap baris D-14 Bagian 5.1 yang memilikinya, bukan daftar tangan. `src/penyimpanan/penilaian.py`: `PenilaianMemori`/`PenilaianPostgres` (sebagai `peran_penilaian`) dan `AduanMemori`/`AduanPostgres` (sebagai `peran_kurasi`). Penilaian, salinan aduan, dan pengguguran aduan terdahulu satu pernyataan CTE; pesan milik orang lain menolak sama persis dengan yang tidak dikenal; `BarisAduan` tidak memiliki bidang penaut ke peserta. Versi model dibaca dari tanggapan yang dinilai, bagi `answer_rated`. |
+| Temuan saat menguji | `ON CONFLICT (nomor_aduan)` pada pengguguran ditolak peladen: sasaran konflik menuntut hak baca atas kolomnya, yang `peran_penilaian` tidak pegang. Dipakai `ON CONFLICT DO NOTHING` tanpa sasaran; hak peladen tidak dilonggarkan. |
+| Putaran mutasi | **M-5** centang diabaikan → merah; **M-6** `id_pesan` tertinggal pada salinan → merah; **M-7** pengguguran dihapus → merah. Ketiganya pada memori **dan** PostgreSQL. |
+| Alternatif | Memberi `peran_penilaian` `SELECT (nomor_aduan)` atas `aduan_digantikan` — tidak dipilih; hak yang tidak dibutuhkan tidak diberikan. |
+| Dampak | `src/kamus/penilaian.py`, `src/penyimpanan/penilaian.py`; `tests/kamus/test_penilaian.py`, `tests/penyimpanan/test_penilaian_simpan.py`; `tasks.md` fitur 036. |
+| Pemutus | Agen atas pendelegasian KB-168 |
+
+**Tambahan KB-233.** Pemeriksa cakupan menemukan cabang "tanggapan tanpa versi model" pada penyimpan penilaian tidak teruji — dan cabang itu melempar **sesudah** pernyataan PostgreSQL menulis penilaian, sehingga catatan rusak akan meninggalkan penilaian tersimpan di balik galat 500. Keadaan itu dibuat mustahil alih-alih ditangani: D-14 Bagian 4.1 sudah mewajibkan `versi` pada setiap tanggapan (KT-06), maka riwayat menolak mencatat tanggapan tanpa `versi.model` dan batasan `pesan_bermodel` menolaknya pada peladen; cabangnya dihapus. Batasan pertama ditulis `char_length(...) > 0` dan **meloloskan** tanggapan tanpa model, sebab CHECK lulus pada hasil NULL; uji batasan menangkapnya, dan batasan kini memakai `coalesce`. Baris uji yang sempat lolos tertinggal pada basis data uji bersama dan menggagalkan pemasangan ulang batasan; basis data uji dibangun ulang dari berkas persiapan. Pada basis data baru tidak ada baris lama. D-14 Bagian 5.1 `pesan.tanggapan` menyebut kewajiban itu. M-5 s.d. M-7 dijalankan ulang sesudahnya: tetap merah.

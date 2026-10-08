@@ -260,7 +260,7 @@ def _percakapan_contoh() -> RiwayatMemori:
             pertanyaan="Apa itu RKAS?",
             id_pesan="p1",
             waktu=datetime.now(UTC),
-            tanggapan={"id_pesan": "p1", "status_dasar": "kuat"},
+            tanggapan={"id_pesan": "p1", "status_dasar": "kuat", "versi": {"model": "m"}},
         )
     )
     return riwayat

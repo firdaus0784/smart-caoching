@@ -86,7 +86,13 @@ def _pemilik() -> str:
 
 def _tanggapan(id_pesan: str, **lain: object) -> dict[str, object]:
     """Bentuk D-14 Bagian 4.1 yang cukup bagi penyimpan — ia tidak membaca isinya."""
-    return {"id_pesan": id_pesan, "status_dasar": "kuat", "penjelasan": "…", **lain}
+    return {
+        "id_pesan": id_pesan,
+        "status_dasar": "kuat",
+        "penjelasan": "…",
+        "versi": {"model": "model-uji", "indeks": "i", "kode": "k"},
+        **lain,
+    }
 
 
 def _pesan_unik() -> str:
@@ -317,6 +323,7 @@ def test_tanggapan_tercatat_bersama_gilirannya(riwayat: PenyimpanRiwayat) -> Non
     [
         (_tanggapan("msg_lain"), "tanggapan milik pesan lain"),
         (_tanggapan("{id}", tingkat_keyakinan=0.9), "tingkat keyakinan"),
+        (_tanggapan("{id}", versi={"indeks": "i"}), "versi model"),
     ],
 )
 def test_tanggapan_salah_bentuk_ditolak_tanpa_menulis(

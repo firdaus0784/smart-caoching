@@ -1691,7 +1691,7 @@ def _pesan_sql(id_pesan: str, tanggapan: str | None = None) -> str:
     isi = (
         tanggapan
         if tanggapan is not None
-        else f'{{"id_pesan": "{id_pesan}", "status_dasar": "kuat"}}'
+        else f'{{"id_pesan": "{id_pesan}", "status_dasar": "kuat", "versi": {{"model": "m"}}}}'
     )
     return (
         "insert into riwayat.pesan (id_pesan, id_percakapan, tanggapan, waktu) "
@@ -1979,15 +1979,19 @@ def test_batasan_tabel_penilaian(basis_data_siap: None) -> None:
             "alasan kosong disimpan null",
         ),
         (
-            _pesan_sql("msg_beda036", '{"id_pesan": "msg_lain", "status_dasar": "kuat"}'),
+            _pesan_sql("msg_beda036", '{"id_pesan": "msg_lain", "versi": {"model": "m"}}'),
             "tanggapan milik pesan lain",
         ),
         (
             _pesan_sql(
                 "msg_yakin036",
-                '{"id_pesan": "msg_yakin036", "status_dasar": "kuat", "tingkat_keyakinan": 0.9}',
+                '{"id_pesan": "msg_yakin036", "versi": {"model": "m"}, "tingkat_keyakinan": 0.9}',
             ),
             "FR-F06 — tanpa tingkat keyakinan",
+        ),
+        (
+            _pesan_sql("msg_versi036", '{"id_pesan": "msg_versi036", "versi": {"indeks": "i"}}'),
+            "KT-06 — tanggapan tanpa versi model",
         ),
         (_aduan_sql('{"id_pesan": "msg_batas036"}'), "R-06 — salinan tanpa id_pesan"),
         (_aduan_sql(pertanyaan=""), "aduan tanpa pertanyaan"),

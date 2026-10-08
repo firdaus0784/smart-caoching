@@ -138,6 +138,13 @@ def _periksa(
         raise ValueError("tanggapan milik pesan lain — yang tercatat harus tanggapan pesan ini")
     if "tingkat_keyakinan" in tanggapan:
         raise ValueError("tanggapan tidak boleh membawa tingkat keyakinan (FR-F06)")
+    versi = tanggapan.get("versi")
+    if (
+        not isinstance(versi, Mapping)
+        or not isinstance(versi.get("model"), str)
+        or not versi["model"]
+    ):
+        raise ValueError("tanggapan tanpa versi model — wajib pada setiap tanggapan (KT-06)")
 
 
 @dataclass
