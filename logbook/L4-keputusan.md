@@ -3437,3 +3437,25 @@ ditegakkan uji, bukan kebiasaan.
 | Yang tetap milik tim | Perlu tidaknya naskah ET-02 menyebut alur aduan (tim etik, sejajar TK-75). |
 | Dampak | Status spec fitur 036; D-00 2.91 (TK-69 diputus, tetap terbuka sampai fitur 036 selesai); D-12 0.39 (baris 036 menyebut isinya; cakupan tidak menyempit). Plan menyusul atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-228 · Susulan P-4 fitur 036 — `answer_rated` membawa `id_pesan`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Menyusun plan fitur 036, pelaksana menemukan putusan P-4 B (KB-227) bertentangan dengan dirinya: `answer_rated` membawa "`nilai` dan `beralasan` saja", sedangkan analitik wajib menghitung "penilaian terakhir tiap pesan". `peran_analitik` hanya membaca `telemetri.peristiwa` (R-02 fitur 035), sehingga tanpa penanda pesan pada peristiwa, penilaian yang menggantikan tidak dapat dibedakan dari penilaian pesan lain. Kalimat P-4 B ditulis pelaksana; pertentangannya karena itu kekeliruan usulan, bukan putusan. |
+| Keputusan | Ditanyakan tegas. Pemegang gerbang memilih **menambah `id_pesan`**: properti `answer_rated` menjadi `nilai`, `beralasan`, `id_pesan`. `id_pesan` pengenal acak yang tidak menautkan ke orang tanpa akses riwayat, dan ikut terekspor CSV sederajat `id_butir`. |
+| Alternatif | `nilai_sebelumnya` tanpa pengenal — tidak dipilih; hitungan bersihnya keliru, bahkan negatif, bila penilaian pertama tidak terekam karena persetujuan belum aktif. Menghitung setiap penilaian — tidak dipilih; mencabut "terakhir tiap pesan". |
+| Dampak | Tabel putusan `spec.md` fitur 036 bertambah satu baris; D-01 Bagian 9 ditulis pada T-1. |
+| Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-229 · Gerbang 2 dan 3 fitur 036 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Gerbang 1 lolos (KB-227, KB-228). Gerbang 2 dan 3 didelegasikan kepada agen (KB-168) dalam batas spec yang disetujui. |
+| Keputusan | `plan.md` K-1 s.d. K-6 dan `tasks.md` T-1 s.d. T-8 dinyatakan lolos. Pokok rancangan: aduan berupa **salinan** pertanyaan dan tanggapan yang dibuat saat peserta mencentang, sehingga `peran_kurasi` tidak memegang hak apa pun atas skema `riwayat` dan batas P-2 B menjadi batas hak peladen; `id_pesan` dibuang dari salinan agar aduan tidak tertaut ke pseudonim lewat ekspor `answer_rated` (KB-228); `peran_riwayat` hanya **menambah** `riwayat.pesan` dan tidak dapat membacanya, sehingga rute riwayat tidak dapat menayangkan ulang jawaban (C-07); penilaian berikutnya menggugurkan aduan terdahulu lewat tabel tambah-saja `kurasi.aduan_digantikan`. Tiga belas mutasi direncanakan. |
+| Alternatif | Kurator membaca `riwayat` dengan hak berkolom dan saringan baris — tidak dipilih; saringan kueri bukan batas hak, dan C-02 menetapkan pola yang sama: pemisahan pada tingkat penyimpanan, bukan saat kueri. Menandai aduan gugur dengan `UPDATE` — tidak dipilih; aduan tambah-saja. |
+| Dampak | `specs/036-penilaian-jawaban-dan-aduan/plan.md`, `tasks.md`; status `spec.md`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

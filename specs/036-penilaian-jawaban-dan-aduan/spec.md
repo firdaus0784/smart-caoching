@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F07, FR-I04; NFR-09; C-04, C-05, C-06, C-07, C-13, C-14, C-16, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 (`answer_rated`) · D-02 J5 · D-04 Bagian 7.4 (`pesan`, TK-69) · D-05 S-09 blok 6, S-09 keadaan tidak-ditemukan, S-17 · D-06 jadwal kurator · D-14 Bagian 3.2, 3.4, 4.1, 4.3 · spec fitur 028, 033, 034, 035 |
-| Status | **Gerbang 1 lolos** — 8 Oktober 2026 (KB-227); P-1 s.d. P-4 sesuai anjuran |
+| Status | **Gerbang 3 lolos** — 8 Oktober 2026 atas pendelegasian KB-168 (KB-229). Nol dari delapan tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -133,6 +133,7 @@ Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
 | P-2 | **B** — peserta memilih tegas per aduan; tanpa centang, penilaian hanya bagi analitik. Perlu tidaknya naskah ET-02 menyebutnya diputus tim etik |
 | P-3 | **B** — aduan ditutup dengan tindak lanjut bernama dan catatan; **rute baru `POST /api/v1/kurasi/aduan/{id}/tindak-lanjut` disetujui** untuk D-14 Bagian 3.4 |
 | P-4 | **B** — `answer_rated` membawa `nilai` dan `beralasan` saja; D-01 Bagian 9 ditulis ulang; analitik fitur 035 menampilkan jumlah per nilai atas penilaian terakhir tiap pesan |
+| P-4 susulan (KB-228) | Putusan P-4 B bertentangan dengan dirinya: "terakhir tiap pesan" tidak dapat dihitung dari peristiwa tanpa penanda pesan. Pemegang gerbang memilih **menambah `id_pesan`** — properti `answer_rated` menjadi `nilai`, `beralasan`, `id_pesan` |
 
 ## Ketertelusuran
 
