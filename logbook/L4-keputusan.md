@@ -3596,3 +3596,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menampilkan baris sebagai tak terbaca — tidak dipilih pemegang gerbang (KB-238). Menangkap `Exception` — tidak dipilih; sama dengan KB-225, galat lain bukan "butir tidak terbaca" dan harus tetap terlihat sebagai 500. |
 | Dampak | `src/api/kurasi.py`; `tests/api/test_kurasi_http.py` (penyimpan kurasi uji yang merusak baris, parameter `kurasi` pada lingkungan uji); `docs/D00.md` 2.95 (TK-79 Selesai). Fitur 013 tidak dibuka kembali; spec dan plan-nya tidak berubah. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-238); pelaksanaan oleh agen |
+
+## KB-240 · Usulan spec fitur 032 diajukan ke Gerbang 1; TK-80
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Sesudah Gerbang 4 fitur 036 dan perbaikan TK-79, pemegang gerbang meminta pekerjaan dilanjutkan ("setuju dan lanjutkan"). Baris 031 tertahan TK-71; baris 032 — koleksi dan pembaca sumber — tidak menunggu putusan tim lain. Tombol Simpan pada S-06 dan dasar rujukan S-09 yang dapat dibuka sama-sama menunggu baris ini. |
+| Keputusan | `specs/032-koleksi-dan-pembaca-sumber/spec.md` ditulis dan diajukan ke Gerbang 1 dengan sepuluh kebutuhan yang tidak bergantung pada pertanyaan dan empat pertanyaan: **P-1** rute daftar dan pengosongan koleksi (TK-80); **P-2** isi pembaca sumber, termasuk dokumen sekolah berpersetujuan pemilik; **P-3** `citation_opened`, `discovery_saved`, dan rasio penelusuran sumber pada analitik; **P-4** butir tersimpan yang kemudian ditarik. |
+| Temuan — TK-80 | D-14 Bagian 3 tidak memuat rute yang mendaftar koleksi maupun mengeluarkan butir darinya, padahal S-11 memetakan FR-G06 dan FR-G10 ke koleksi. Dicatat pada D-00 2.96 dan diajukan sebagai P-1. |
+| Yang dinyatakan pada usulan | Korpus memuat dokumen sekolah berpersetujuan pemilik (ET-04). Menayangkan teksnya kata demi kata kepada kepala sekolah lain berbeda dari meringkasnya dalam jawaban; anjuran P-2 tidak menampilkan teks itu sampai tim etik memutus cakupan persetujuannya. |
+| Alternatif | Baris 031 lebih dulu — tidak dipilih; tertahan TK-71. Memutus rute koleksi di dalam plan — tidak dipilih; AG-02. |
+| Dampak | `specs/032-koleksi-dan-pembaca-sumber/spec.md`; `docs/D00.md` 2.96. Belum ada kode; plan menunggu Gerbang 1. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
