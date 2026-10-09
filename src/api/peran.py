@@ -164,6 +164,20 @@ PETA_RUTE: tuple[Rute, ...] = (
         penjaga_tertulis="pengguna",
         kebutuhan="FR-G06",
     ),
+    # Dua baris berikut atas putusan P-1 A fitur 032 (KB-241, TK-80), bukan
+    # prakarsa pelaksana (AG-02).
+    Rute(
+        metode="DELETE",
+        jalur="/api/v1/butir/{id}/simpan",
+        penjaga_tertulis="pengguna",
+        kebutuhan="FR-G06",
+    ),
+    Rute(
+        metode="GET",
+        jalur="/api/v1/koleksi",
+        penjaga_tertulis="pengguna",
+        kebutuhan="FR-G06, FR-G10",
+    ),
     Rute(
         metode="POST",
         jalur="/api/v1/butir/{id}/tolak",

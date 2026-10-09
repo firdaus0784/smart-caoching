@@ -3643,3 +3643,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | TK-82 B (perkakas tim mengetik ulang metadata) dan C (pembaca ditunda) — tidak dipilih. Rancangan: penayang membaca koleksi (ditolak — R-03 lebih kuat bila ditegakkan hak peladen); `peran_koleksi` membaca kurasi sendiri (ditolak — kelayakan butir sudah milik penayang, hak kedua hanya menambah tempat hanyut); pembaca membaca `isi` korpus (ditolak — itu dokumen utuh, P-2 B). |
 | Dampak | D-00 2.99. `plan.md` dan `tasks.md` fitur 032 terbit. T-1 mengubah D-14, D-04, D-05, D-01, dan baris D-12 032 (menyebut TK-81 dan TK-82; cakupan bertambah atas putusan, tidak menyempit). |
 | Pemutus | Pemegang Gerbang 1–4 (TK-82); agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-244 · T-1 fitur 032: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | R-09 menuntut bentuk setiap rute tertulis di D-14 sebelum kodenya. Putusan P-1 A (KB-241), TK-81 A (KB-242), dan TK-82 A (KB-243) menunggu dituliskan ke dokumen pemiliknya. |
+| Keputusan | D-14 0.18: dua baris Bagian 3.3, Bagian 4.10 (pembaca sumber dan koleksi), `penelusuran_sumber` pada 4.8, tabel `metadata_dokumen`, `status_dokumen`, `koleksi` pada 5.1. D-04 0.14, D-05 0.8 (S-09 blok 5, S-10, S-11, S-06 blok 8, navigasi "Milik saya"), D-12 0.41 (baris 032 menyebut TK-81 dan TK-82), D-00 3.00. Peta rute peran memperoleh dua baris. **D-01 tidak berubah**: P-3 A menuntut properti apa adanya, sehingga nama kunci `id_sumber`, `jenis_sumber`, dan `ada_catatan` ditulis pada D-14, bukan sebagai properti baru. |
+| Alternatif | Menuliskan nama kunci pada D-01 Bagian 9 — tidak dipilih: mengubah dokumen kebutuhan demi penamaan, padahal D-14 pemilik kontrak bidang. Status regulasi bagi sumber bukan regulasi tanpa catatan ditampilkan "belum tercatat" — tidak dipilih: riset tidak memiliki keberlakuan, dan penanda yang selalu tampil diabaikan pembacanya. |
+| Dampak | Kontrak terbit sebelum kode. `src/api/peran.py` memperoleh dua baris peta rute; rutenya dipasang T-4 dan T-5. |
+| Pemutus | Agen, atas pendelegasian KB-168 dan putusan KB-241 s.d. KB-243 |

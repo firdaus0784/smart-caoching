@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-241); P-1 s.d. P-4 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-81 A (KB-242): catatan status di korpus. TK-82 A (KB-243): metadata asal dicatat gerbang ingesti |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243); Gerbang 2 dan 3 bersamaan; K-1 s.d. K-8 |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Satu dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10 `spec.md`; FR-F11, FR-G06, FR-G10, FR-B06, NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 
 ## 1. Letak dan batas
@@ -39,7 +39,7 @@ web/src/Aplikasi.tsx            navigasi "Milik saya"
 web/src/pengaturan/             S-14 menyebut koleksi pada data yang ditarik
 web/src/analitik/               tabel penelusuran sumber
 docs/                           D-14 3.3, 4.8, 4.10, 5.1; D-04 7.2, 7.4; D-05 3.1, S-06,
-                                S-10, S-11; D-01 9; D-12 baris 032; D-00
+                                S-09, S-10, S-11; D-12 baris 032; D-00. D-01 tidak berubah
 ```
 
 **`src/rag/`, `src/llm/`, `src/pengguna/`, `src/nlp/` tidak disentuh.**
@@ -185,7 +185,7 @@ Lewat gerbang perekaman fitur 034 (C-04), `versi_model` `tanpa_model`:
 | `discovery_saved` | `POST /butir/{id}/simpan` menjawab 200 | `{"ada_catatan": true}` — tanpa teks catatan |
 
 Penolakan tidak direkam. Properti persis D-01 Bagian 9, tanpa tambahan (P-3
-A); T-1 hanya menuliskan nama kuncinya di sana.
+A); nama kuncinya ditulis pada D-14 Bagian 4.10, dan D-01 tidak berubah.
 
 Analitik fitur 035 memperoleh bagian
 `"penelusuran_sumber": {"jawaban": n, "dibuka": n, "rasio": r}` —
@@ -301,7 +301,7 @@ pada keluarannya, bukan disamarkan.
 
 | Tugas | Isi |
 |---|---|
-| T-1 | Kontrak: D-14 3.3, 4.8, 4.10, 5.1; D-04 7.2, 7.4; D-05 3.1, S-06, S-10, S-11; D-01 9; D-12; D-00 |
+| T-1 | Kontrak: D-14 3.3, 4.8, 4.10, 5.1; D-04 7.2, 7.4; D-05 3.1, S-06, S-09, S-10, S-11; D-12; D-00; peta rute peran |
 | T-2 | Peladen: `14-sumber-dan-koleksi.sql`, dua peran; M-1, M-2, M-3 |
 | T-3 | Metadata dan status dicatat: penyimpanan, `setujui()`, perkakas `status`; M-4, M-5 |
 | T-4 | Pembaca sumber: penyimpan, aturan, rute, `citation_opened`; M-6 s.d. M-9 |

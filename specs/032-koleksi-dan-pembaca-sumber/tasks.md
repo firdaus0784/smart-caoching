@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-241); TK-81 A (KB-242), TK-82 A (KB-243) |
 | Plan | Gerbang 2 lolos 9 Oktober 2026 atas pendelegasian KB-168 (KB-243); K-1 s.d. K-8 |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Nol dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Satu dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F11, FR-G06, FR-G10, FR-B06, NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -19,13 +19,15 @@ Empat rute saja — dua yang sudah ada pada D-14 dan dua yang disetujui P-1 A.
 
 **Kebutuhan:** R-09, R-10; K-3 s.d. K-7; P-1 A, P-3 A, TK-81 A, TK-82 A.
 
-- [ ] D-14 Bagian 3.3: baris `GET /api/v1/koleksi` dan `DELETE /api/v1/butir/{id}/simpan`
-- [ ] D-14 Bagian 4.10: bentuk pembaca sumber dan koleksi; 4.8: bagian
+- [x] D-14 Bagian 3.3: baris `GET /api/v1/koleksi` dan `DELETE /api/v1/butir/{id}/simpan`
+- [x] D-14 Bagian 4.10: bentuk pembaca sumber dan koleksi, termasuk nama kunci
+      properti `citation_opened` dan `discovery_saved`; 4.8: bagian
       `penelusuran_sumber`; 5.1: ketiga tabel, letak bidang `dokumen_sumber`
-- [ ] D-04 Bagian 7.2 dan 7.4: catatan metadata, catatan status, koleksi
-- [ ] D-05: Bagian 3.1 navigasi "Milik saya"; S-06 blok 8; S-10; S-11
-- [ ] D-01 Bagian 9: nama kunci properti `citation_opened` dan `discovery_saved`
-- [ ] D-12 baris 032 menyebut TK-81 dan TK-82; register D-00
+- [x] D-04 Bagian 7.2 dan 7.4: catatan metadata, catatan status, koleksi
+- [x] D-05: navigasi "Milik saya"; S-06 blok 8; S-09 blok 5; S-10; S-11
+- [x] D-01 Bagian 9 **tidak berubah**: properti apa adanya (P-3 A)
+- [x] D-12 baris 032 menyebut TK-81 dan TK-82; register D-00
+- [x] Peta rute peran: kedua rute baru
 
 ## T-2 · Peladen
 
