@@ -16,6 +16,7 @@ import secrets
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 
+import asyncpg  # type: ignore[import-untyped]
 import pytest
 from src.penyimpanan.kurasi import (
     PERAN_KURASI,
@@ -35,7 +36,7 @@ from src.penyimpanan.penemuan import (
     PenyimpanPenemuan,
 )
 from tests.konftes_asinkron import jalankan
-from tests.peladen import siapkan
+from tests.peladen import psql, siapkan
 from tests.penyimpanan.test_akun import SambunganPeran
 
 siapkan()
@@ -236,6 +237,99 @@ def test_status_regulasi_diperbarui_pada_kandidat_dan_tayang(simpan: Tiga) -> No
 def test_status_di_luar_tiga_nilai_ditolak(simpan: Tiga) -> None:
     with pytest.raises(ValueError):
         jalankan(simpan.pengisi.perbarui_status("dok-x", "kedaluwarsa"))
+
+
+# ── catatan status korpus — T-3 fitur 032, TK-81 A ───────────────────
+
+
+def _catatan_status(simpan: Tiga, dokumen: str) -> list[tuple[str, str | None]]:
+    if isinstance(simpan.pengisi, KurasiMemori):
+        return list(simpan.pengisi.catatan_status(dokumen))
+    keluar = psql(
+        "smart_coaching",
+        "-c",
+        "select status || '|' || coalesce(rujukan_pengganti, '') from korpus.status_dokumen "
+        f"where id_dokumen = '{dokumen}' order by nomor",
+    ).stdout.split()
+    return [(s, p or None) for s, p in (b.split("|", 1) for b in keluar)]
+
+
+def test_status_tercatat_di_korpus_bersama_salinan_kurasi(simpan: Tiga) -> None:
+    """TK-81 A: catatan korpus tambah-saja, yang terbaru berlaku."""
+
+    async def uji() -> None:
+        dokumen = "dok-" + _acak(8)
+        k = _kandidat(dokumen=dokumen, status="berlaku")
+        await simpan.pengisi.tambah_kandidat(k)
+        await simpan.pengisi.perbarui_status(dokumen, "berlaku")
+        await simpan.pengisi.perbarui_status(
+            dokumen, "dicabut", rujukan_pengganti="Permendikdasmen_2_2027"
+        )
+        satu = await simpan.kurasi.satu_menunggu(k.id_butir, hari_ini=HARI)
+        assert satu is not None and satu.status_keberlakuan == "dicabut"
+
+    jalankan(uji())
+    # Dokumen yang tidak pernah menjadi sumber butir pun tercatat: pembaca
+    # sumber membaca korpus, bukan salinan kurasi.
+    dokumen = "dok-" + _acak(8)
+    jalankan(simpan.pengisi.perbarui_status(dokumen, "diubah"))
+    assert _catatan_status(simpan, dokumen) == [("diubah", None)]
+
+
+def test_catatan_status_berurutan_dan_membawa_pengganti(simpan: Tiga) -> None:
+    dokumen = "dok-" + _acak(8)
+    jalankan(simpan.pengisi.perbarui_status(dokumen, "berlaku"))
+    jalankan(
+        simpan.pengisi.perbarui_status(
+            dokumen, "dicabut", rujukan_pengganti="Permendikdasmen_2_2027"
+        )
+    )
+    assert _catatan_status(simpan, dokumen) == [
+        ("berlaku", None),
+        ("dicabut", "Permendikdasmen_2_2027"),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("status", "pengganti"),
+    [("berlaku", "Permendikdasmen_2_2027"), ("dicabut", "  ")],
+)
+def test_pengganti_yang_tidak_sah_ditolak_tanpa_menulis(
+    simpan: Tiga, status: str, pengganti: str
+) -> None:
+    dokumen = "dok-" + _acak(8)
+    with pytest.raises(ValueError):
+        jalankan(simpan.pengisi.perbarui_status(dokumen, status, rujukan_pengganti=pengganti))
+    assert _catatan_status(simpan, dokumen) == []
+
+
+def test_catatan_korpus_yang_ditolak_membatalkan_salinan_kurasi() -> None:
+    """M-5 atomik: satu pernyataan. Batasan uji sementara menolak catatan
+    korpus; salinan kurasi tidak boleh terlanjur berubah, sebab status yang
+    tercatat di satu tempat dan tidak di tempat lain membuat pembaca sumber
+    dan beranda berselisih tentang aturan yang sama."""
+    dokumen = "dok-" + _acak(8)
+    pengisi = PengisiAntreanPostgres(SambunganPeran(PERAN_PENGISI_ANTREAN))  # type: ignore[arg-type]
+    kurasi = KurasiPostgres(SambunganPeran(PERAN_KURASI))  # type: ignore[arg-type]
+    k = _kandidat(dokumen=dokumen, status="berlaku")
+    jalankan(pengisi.tambah_kandidat(k))
+    psql(
+        "smart_coaching",
+        "-c",
+        "ALTER TABLE korpus.status_dokumen ADD CONSTRAINT uji_tolak_032 "
+        f"CHECK (id_dokumen <> '{dokumen}')",
+    )
+    try:
+        with pytest.raises(asyncpg.exceptions.CheckViolationError):
+            jalankan(pengisi.perbarui_status(dokumen, "dicabut"))
+    finally:
+        psql(
+            "smart_coaching",
+            "-c",
+            "ALTER TABLE korpus.status_dokumen DROP CONSTRAINT IF EXISTS uji_tolak_032",
+        )
+    satu = jalankan(kurasi.satu_menunggu(k.id_butir, hari_ini=HARI))
+    assert satu is not None and satu.status_keberlakuan == "berlaku"
 
 
 def test_penarikan_otomatis_dan_oleh_kurator(simpan: Tiga) -> None:

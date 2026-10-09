@@ -39,7 +39,7 @@ from typing import Final
 
 from src.penyimpanan.area import Area
 from src.penyimpanan.catatan_akses import CatatanAkses
-from src.penyimpanan.dasar import PenyimpanDasar
+from src.penyimpanan.dasar import MetadataDokumen, PenyimpanDasar
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial import Kredensial
 from src.penyimpanan.sambungan import SambunganAktif
@@ -114,7 +114,14 @@ class PenyimpanPostgres(PenyimpanDasar):
         )
 
     async def pindahkan(
-        self, kredensial: Kredensial, id_dokumen: str, dari: Area, ke: Area, alasan: str
+        self,
+        kredensial: Kredensial,
+        id_dokumen: str,
+        dari: Area,
+        ke: Area,
+        alasan: str,
+        *,
+        metadata: MetadataDokumen | None = None,
     ) -> None:
         """Pindahkan dokumen antar area dalam **satu pernyataan**.
 
@@ -128,9 +135,39 @@ class PenyimpanPostgres(PenyimpanDasar):
         adalah persis yang ADR-06 cegah.
 
         `alasan` tidak disimpan di sini; yang mencatatnya `jejak_area`.
+
+        **Metadata ke korpus ikut pernyataan yang sama** (TK-82 A): ia
+        disisipkan dari baris yang berpindah, sehingga dokumen yang tidak
+        berpindah tidak bercatatan, dan metadata yang ditolak peladen
+        membatalkan pemindahannya. Dokumen korpus tanpa catatan tidak
+        terjangkau pembaca sumber — padahal jalur penjawab memakainya.
         """
+        if metadata is not None and ke is not Area.KORPUS:
+            raise ValueError("metadata hanya menyertai pemindahan ke korpus (TK-82 A)")
         self._pastikan_boleh_baca(kredensial, dari)
         self._pastikan_boleh_tulis(kredensial, ke)
+        if metadata is not None:
+            baris = await self._sambungan.fetchrow(
+                f"WITH terangkat AS ("
+                f"  DELETE FROM {SKEMA[dari]}.{TABEL} WHERE id = $1 RETURNING id, isi"
+                f"), pindah AS ("
+                f"  INSERT INTO {SKEMA[ke]}.{TABEL} (id, isi) "
+                f"  SELECT id, isi FROM terangkat RETURNING id"
+                f"), catat AS ("
+                f"  INSERT INTO korpus.metadata_dokumen "
+                f"  (id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan) "
+                f"  SELECT id, $2, $3, $4, $5, $6 FROM pindah"
+                f") SELECT id FROM pindah",
+                id_dokumen,
+                metadata.judul,
+                metadata.jenis,
+                metadata.penerbit,
+                metadata.tahun,
+                metadata.tingkat_kerahasiaan,
+            )
+            if baris is None:
+                raise GalatDokumenTidakAda(id_dokumen)
+            return
         baris = await self._sambungan.fetchrow(
             f"WITH terangkat AS ("
             f"  DELETE FROM {SKEMA[dari]}.{TABEL} WHERE id = $1 RETURNING id, isi"

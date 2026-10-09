@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-241); TK-81 A (KB-242), TK-82 A (KB-243) |
 | Plan | Gerbang 2 lolos 9 Oktober 2026 atas pendelegasian KB-168 (KB-243); K-1 s.d. K-8 |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Dua dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Tiga dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F11, FR-G06, FR-G10, FR-B06, NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -42,12 +42,13 @@ Empat rute saja — dua yang sudah ada pada D-14 dan dua yang disetujui P-1 A.
 
 **Kebutuhan:** R-04, R-07; K-2, K-8; TK-81 A, TK-82 A.
 
-- [ ] Uji lebih dulu atas tiruan **dan** PostgreSQL: metadata bersama
+- [x] Uji lebih dulu atas tiruan **dan** PostgreSQL: metadata bersama
       pemindahan, pembatalan bersama, penarikan tanpa metadata; gerbang
       ingesti menyerahkan metadata; status bersama salinan kurasi; `--pengganti`
-- [ ] `src/penyimpanan/dasar.py`, `tiruan.py`, `postgres.py`, `kurasi.py`;
+- [x] `src/penyimpanan/dasar.py`, `tiruan.py`, `postgres.py`, `kurasi.py`;
       `src/ingest/gerbang.py`; `perkakas/kurasi.py`
-- [ ] Mutasi M-4, M-5
+- [x] Mutasi M-4, M-5
+- [x] TK-83 diajukan: pemindahan sebagai `peran_verifikasi` ditolak peladen (pra-ada, fitur 024)
 
 ## T-4 · Pembaca sumber dan `citation_opened`
 

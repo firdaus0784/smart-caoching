@@ -41,7 +41,7 @@ from collections.abc import Callable
 
 import pytest
 from src.penyimpanan.area import Area
-from src.penyimpanan.dasar import PenyimpanDasar
+from src.penyimpanan.dasar import MetadataDokumen, PenyimpanDasar
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, VERIFIKASI
 from src.penyimpanan.postgres import PenyimpanPostgres
@@ -119,7 +119,7 @@ def _susun_postgres() -> tuple[PenyimpanDasar, Penanam, type[Exception]]:
         text=True,
         check=False,
     )
-    _psql("TRUNCATE karantina.dokumen_sumber, korpus.dokumen_sumber")
+    _psql("TRUNCATE karantina.dokumen_sumber, korpus.dokumen_sumber, korpus.metadata_dokumen")
 
     class SambunganSekaliPakai:
         """Menyambung dan menutup pada tiap panggilan.
@@ -278,3 +278,62 @@ def test_dokumen_hilang_dari_area_asal_setelah_dipindah(terisi: tuple) -> None:
     jalankan(penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos"))
     with pytest.raises(terisi[1]):
         jalankan(penyimpan.baca_dokumen(VERIFIKASI, Area.KARANTINA, "dok_karantina"))
+
+
+# ── Metadata asal — T-3 fitur 032, TK-82 A ───────────────────────────
+
+_METADATA = MetadataDokumen(
+    judul="Notulen rapat pleno",
+    jenis="dokumen_sekolah",
+    penerbit="SDN Sukamaju",
+    tahun=2026,
+    tingkat_kerahasiaan="internal_sekolah",
+)
+
+
+def _metadata(penyimpan: PenyimpanDasar, id_dokumen: str) -> tuple[MetadataDokumen, ...]:
+    if isinstance(penyimpan, PenyimpanTiruan):
+        return penyimpan.metadata_tercatat(id_dokumen)
+    baris = _psql(
+        "SELECT judul || '|' || jenis || '|' || penerbit || '|' || tahun || '|' "
+        "|| tingkat_kerahasiaan FROM korpus.metadata_dokumen "
+        f"WHERE id_dokumen = '{id_dokumen}' ORDER BY nomor"
+    ).stdout.split("\n")
+    return tuple(
+        MetadataDokumen(
+            judul=b[0], jenis=b[1], penerbit=b[2], tahun=int(b[3]), tingkat_kerahasiaan=b[4]
+        )
+        for b in (s.split("|") for s in baris if s)
+    )
+
+
+def test_pindah_ke_korpus_mencatat_metadata(terisi: tuple) -> None:
+    penyimpan = terisi[0]
+    jalankan(
+        penyimpan.pindahkan(
+            VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "lolos", metadata=_METADATA
+        )
+    )
+    assert _metadata(penyimpan, "dok_karantina") == (_METADATA,)
+    assert jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_karantina"))
+
+
+def test_metadata_hanya_menyertai_pemindahan_ke_korpus(terisi: tuple) -> None:
+    """Penarikan dari korpus tidak menulis metadata; metadata yang diserahkan
+    bersama arah itu adalah kekeliruan pemanggil, ditolak sebelum apa pun
+    berpindah."""
+    penyimpan = terisi[0]
+    with pytest.raises(ValueError):
+        jalankan(
+            penyimpan.pindahkan(
+                VERIFIKASI, "dok_korpus", Area.KORPUS, Area.KARANTINA, "tarik", metadata=_METADATA
+            )
+        )
+    assert jalankan(penyimpan.baca_dokumen(PENJAWABAN, Area.KORPUS, "dok_korpus"))
+    assert _metadata(penyimpan, "dok_korpus") == ()
+
+
+def test_pemindahan_tanpa_metadata_tidak_mencatat_apa_pun(terisi: tuple) -> None:
+    penyimpan = terisi[0]
+    jalankan(penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "x"))
+    assert _metadata(penyimpan, "dok_karantina") == ()

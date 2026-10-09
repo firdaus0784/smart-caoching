@@ -33,7 +33,7 @@ from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan
 from src.ingest.jejak import JejakArea
 from src.kamus.segmen import Peringkat
 from src.penyimpanan.area import Area
-from src.penyimpanan.dasar import PenyimpanDasar
+from src.penyimpanan.dasar import MetadataDokumen, PenyimpanDasar
 from src.penyimpanan.galat import GalatAksesDitolak
 from src.penyimpanan.kredensial import Kredensial
 
@@ -252,6 +252,10 @@ class Gerbang:
         data pribadi membatalkan seluruh persetujuannya, bukan hanya jejaknya:
         memindahkan dokumen lalu gagal menjejakkannya menghasilkan perubahan
         yang tidak tercatat, persis keadaan yang R-11 larang.
+
+        **Metadata asal ikut pemindahan** (TK-82 A, fitur 032): yang tercatat
+        adalah `Dokumen` yang baru saja diperiksa `boleh_masuk_korpus`, bukan
+        salinan yang diketik ulang orang. Aturan gerbang tidak berubah.
         """
         if not id_verifikator:
             raise GalatGerbang("persetujuan tanpa nama verifikator tidak dapat ditelusuri")
@@ -276,7 +280,14 @@ class Gerbang:
             ke_area=Area.KORPUS,
             alasan=alasan,
         )
-        await self.penyimpan.pindahkan(kredensial, id_dokumen, Area.KARANTINA, Area.KORPUS, alasan)
+        await self.penyimpan.pindahkan(
+            kredensial,
+            id_dokumen,
+            Area.KARANTINA,
+            Area.KORPUS,
+            alasan,
+            metadata=_metadata(dokumen),
+        )
         self._area[id_dokumen] = Area.KORPUS
         self._alasan[id_dokumen] = alasan
         self._dokumen[id_dokumen] = dokumen.model_copy(
@@ -363,6 +374,17 @@ class Gerbang:
                 _KREDENSIAL_PENARIKAN, id_dokumen, Area.KORPUS, Area.KARANTINA, alasan
             )
             self._area[id_dokumen] = Area.KARANTINA
+
+
+def _metadata(dokumen: Dokumen) -> MetadataDokumen:
+    """Metadata asal sebagaimana dicatat korpus — nilai enum, bukan enumnya."""
+    return MetadataDokumen(
+        judul=dokumen.judul,
+        jenis=dokumen.jenis.value,
+        penerbit=dokumen.penerbit,
+        tahun=dokumen.tahun,
+        tingkat_kerahasiaan=dokumen.tingkat_kerahasiaan.value,
+    )
 
 
 _KREDENSIAL_INGESTI = Kredensial(

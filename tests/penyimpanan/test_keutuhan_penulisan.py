@@ -19,6 +19,7 @@ import json
 
 import pytest
 from src.penyimpanan.area import Area
+from src.penyimpanan.dasar import MetadataDokumen
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial_baku import VERIFIKASI
 from src.penyimpanan.postgres import PenyimpanPostgres
@@ -117,6 +118,84 @@ def test_pemindahan_dokumen_yang_tidak_ada_tidak_membuat_apa_pun() -> None:
         jalankan(penyimpan.pindahkan(VERIFIKASI, "hantu", Area.KARANTINA, Area.KORPUS, "uji"))
 
     assert _jumlah("korpus", "hantu") == 0
+
+
+# ── metadata bersama pemindahan — T-3 fitur 032, TK-82 A ─────────────
+
+_METADATA = MetadataDokumen(
+    judul="Permendikdasmen Nomor 1 Tahun 2026",
+    jenis="regulasi_resmi",
+    penerbit="Kemendikdasmen",
+    tahun=2026,
+    tingkat_kerahasiaan="publik",
+)
+
+
+def _jumlah_metadata(id_dokumen: str) -> int:
+    hasil = psql(
+        "smart_coaching",
+        "-c",
+        f"select count(*) from korpus.metadata_dokumen where id_dokumen = '{id_dokumen}'",
+    )
+    return int(hasil.stdout.strip() or 0)
+
+
+def test_metadata_tercatat_bersama_pemindahan() -> None:
+    """Sebagai pengelola, seperti uji pemindahan fitur 024 di atas.
+
+    Bukan pilihan: tidak satu peran pun memegang `DELETE` atas
+    `karantina.dokumen_sumber`, sehingga pemindahan sebagai `peran_verifikasi`
+    ditolak peladen — temuan TK-83, diajukan kepada pemegang gerbang (KB-246).
+    Hak `INSERT` verifikator atas `korpus.metadata_dokumen` sendiri terbukti
+    pada uji peladen T-2."""
+    psql("smart_coaching", "-c", "TRUNCATE karantina.dokumen_sumber, korpus.dokumen_sumber")
+    psql(
+        "smart_coaching", "-c", "DELETE FROM korpus.metadata_dokumen WHERE id_dokumen = 'dok_meta'"
+    )
+    _tanam("karantina", "dok_meta")
+
+    penyimpan = PenyimpanPostgres(SambunganNyata())
+    jalankan(
+        penyimpan.pindahkan(
+            VERIFIKASI, "dok_meta", Area.KARANTINA, Area.KORPUS, "uji", metadata=_METADATA
+        )
+    )
+    assert (_jumlah("korpus", "dok_meta"), _jumlah_metadata("dok_meta")) == (1, 1)
+
+
+def test_metadata_yang_ditolak_membatalkan_pemindahan() -> None:
+    """M-4. Batasan uji sementara menolak metadata ini di peladen. Bila
+    metadata dicatat dalam pernyataan terpisah sesudah pemindahan, dokumen
+    terlanjur di korpus tanpa catatan — dan pembaca sumber menganggapnya tidak
+    ada, padahal jalur penjawab memakainya."""
+    psql("smart_coaching", "-c", "TRUNCATE karantina.dokumen_sumber, korpus.dokumen_sumber")
+    psql(
+        "smart_coaching", "-c", "DELETE FROM korpus.metadata_dokumen WHERE id_dokumen = 'dok_tolak'"
+    )
+    _tanam("karantina", "dok_tolak")
+    psql(
+        "smart_coaching",
+        "-c",
+        "ALTER TABLE korpus.metadata_dokumen ADD CONSTRAINT uji_tolak_032 "
+        "CHECK (id_dokumen <> 'dok_tolak')",
+    )
+    try:
+        penyimpan = PenyimpanPostgres(SambunganNyata())
+        with pytest.raises(Exception) as galat:
+            jalankan(
+                penyimpan.pindahkan(
+                    VERIFIKASI, "dok_tolak", Area.KARANTINA, Area.KORPUS, "uji", metadata=_METADATA
+                )
+            )
+        assert not isinstance(galat.value, GalatAksesDitolak)
+    finally:
+        psql(
+            "smart_coaching",
+            "-c",
+            "ALTER TABLE korpus.metadata_dokumen DROP CONSTRAINT IF EXISTS uji_tolak_032",
+        )
+    assert _jumlah("karantina", "dok_tolak") == 1, "dokumen berpindah tanpa metadata"
+    assert _jumlah("korpus", "dok_tolak") == 0
 
 
 # ── peladen tidak dapat dihubungi ────────────────────────────────────

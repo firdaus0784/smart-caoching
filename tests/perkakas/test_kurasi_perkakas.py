@@ -34,7 +34,7 @@ from src.penyimpanan.kurasi import (
 )
 from src.penyimpanan.penemuan import PERAN_PENAYANGAN, PenemuanPostgres
 from tests.konftes_asinkron import jalankan
-from tests.peladen import siapkan
+from tests.peladen import psql, siapkan
 from tests.penyimpanan.test_akun import SambunganPeran
 
 from perkakas import kurasi as perkakas_kurasi
@@ -311,12 +311,37 @@ def test_status_berlaku_tidak_menarik(tmp_path: Path) -> None:
     assert "Butir tayang ditarik: 0" in keluar
 
 
+def test_status_dengan_pengganti_tercatat_di_korpus() -> None:
+    """TK-81 A: perintah yang sama mengisi catatan korpus, beserta pengganti."""
+    dokumen = "dok-" + _acak()
+    kode, keluar, _ = _jalan(
+        "status",
+        "--dokumen",
+        dokumen,
+        "--status",
+        "dicabut",
+        "--pengganti",
+        "Permendikdasmen Nomor 2 Tahun 2027",
+    )
+    assert kode == 0, keluar
+    baris = psql(
+        "smart_coaching",
+        "-c",
+        "select status || '|' || coalesce(rujukan_pengganti, '') from korpus.status_dokumen "
+        f"where id_dokumen = '{dokumen}'",
+    ).stdout.strip()
+    assert baris == "dicabut|Permendikdasmen Nomor 2 Tahun 2027"
+
+
 @pytest.mark.parametrize(
     "argumen",
     [
         ("status", "--dokumen", "dok-x", "--status", "kedaluwarsa"),
         ("status", "--dokumen", " ", "--status", "dicabut"),
         ("status", "--dokumen", "3201234567890001", "--status", "dicabut"),
+        ("status", "--dokumen", "dok-x", "--status", "berlaku", "--pengganti", "Permen 2/2027"),
+        ("status", "--dokumen", "dok-x", "--status", "dicabut", "--pengganti", "  "),
+        ("status", "--dokumen", "dok-x", "--status", "dicabut", "--pengganti", "3201234567890001"),
     ],
 )
 def test_status_berbentuk_salah_ditolak(argumen: tuple[str, ...]) -> None:

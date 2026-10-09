@@ -121,9 +121,16 @@ class PengisiAntrean(Protocol):
         """`False` bila id butir itu sudah pernah masuk antrean."""
         ...
 
-    async def perbarui_status(self, id_dokumen: str, status: str) -> tuple[str, ...]:
-        """Perbarui salinan status setiap kandidat dan butir tayang bersumber
-        dokumen itu; kembalikan id butir tayang yang **belum ditarik**."""
+    async def perbarui_status(
+        self, id_dokumen: str, status: str, *, rujukan_pengganti: str | None = None
+    ) -> tuple[str, ...]:
+        """Catat status dokumen itu di korpus, lalu perbarui salinan status
+        setiap kandidat dan butir tayang bersumber dokumen itu — satu langkah,
+        atau tidak sama sekali (TK-81 A, fitur 032). Kembalikan id butir tayang
+        yang **belum ditarik**.
+
+        `rujukan_pengganti` hanya bersama `diubah` atau `dicabut`, dan tidak
+        kosong; selainnya `ValueError` sebelum apa pun tertulis."""
         ...
 
     async def tarik_otomatis(self, id_butir: str, alasan: str, *, sekarang: datetime) -> bool:
@@ -237,6 +244,7 @@ class _Isi:
     putusan: list[CatatanPutusan] = field(default_factory=list)
     tayang: dict[str, BarisTayang] = field(default_factory=dict)
     penarikan: list[tuple[str, str, str]] = field(default_factory=list)
+    status_dokumen: list[tuple[str, str, str | None]] = field(default_factory=list)
 
 
 class KurasiMemori:
@@ -255,9 +263,11 @@ class KurasiMemori:
         self._isi.kandidat[kandidat.id_butir] = kandidat
         return True
 
-    async def perbarui_status(self, id_dokumen: str, status: str) -> tuple[str, ...]:
-        if status not in _STATUS:
-            raise ValueError("status keberlakuan di luar tiga nilai KL-07")
+    async def perbarui_status(
+        self, id_dokumen: str, status: str, *, rujukan_pengganti: str | None = None
+    ) -> tuple[str, ...]:
+        _status_dokumen(status, rujukan_pengganti)
+        self._isi.status_dokumen.append((id_dokumen, status, rujukan_pengganti))
         for kunci, k in list(self._isi.kandidat.items()):
             if k.id_dokumen_sumber == id_dokumen:
                 self._isi.kandidat[kunci] = replace(k, status_keberlakuan=status)
@@ -268,6 +278,11 @@ class KurasiMemori:
                 if t.ditarik_pada is None:
                     aktif.append(kunci)
         return tuple(sorted(aktif))
+
+    def catatan_status(self, id_dokumen: str) -> tuple[tuple[str, str | None], ...]:
+        """Catatan status korpus dokumen itu, berurutan — `korpus.status_dokumen`
+        pada pelaksana memori. Dibaca uji dan pembaca sumber memori."""
+        return tuple((s, p) for i, s, p in self._isi.status_dokumen if i == id_dokumen)
 
     async def tarik_otomatis(self, id_butir: str, alasan: str, *, sekarang: datetime) -> bool:
         _penarikan("regulasi_sumber_berubah", "ditarik", alasan, sekarang)
@@ -464,12 +479,26 @@ def _jumlah(status: object) -> int:
 
 
 _PERBARUI_STATUS: Final = """
-WITH k AS (
+WITH korpus_status AS (
+  INSERT INTO korpus.status_dokumen (id_dokumen, status, rujukan_pengganti)
+  VALUES ($1, $2, $3)
+), k AS (
   UPDATE kurasi.kandidat SET status_keberlakuan = $2 WHERE id_dokumen_sumber = $1
   RETURNING id_butir)
 UPDATE kurasi.butir_tayang SET status_keberlakuan = $2 WHERE id_dokumen_sumber = $1
 RETURNING id_butir, ditarik_pada
 """
+"""Catatan korpus dan kedua salinan dalam **satu pernyataan** (TK-81 A): status
+yang tercatat di korpus tetapi tidak pada salinan kurasi — atau sebaliknya —
+membuat pembaca sumber dan beranda berselisih tentang aturan yang sama.
+Bagian CTE tanpa `RETURNING` tetap dijalankan."""
+
+
+def _status_dokumen(status: str, rujukan_pengganti: str | None) -> None:
+    if status not in _STATUS:
+        raise ValueError("status keberlakuan di luar tiga nilai KL-07")
+    if rujukan_pengganti is not None and (status == "berlaku" or not rujukan_pengganti.strip()):
+        raise ValueError("rujukan pengganti hanya bersama diubah atau dicabut, dan tidak kosong")
 
 
 def _baris_kandidat(b: Any) -> BarisKandidat:
@@ -525,10 +554,11 @@ class PengisiAntreanPostgres:
         )
         return b is not None
 
-    async def perbarui_status(self, id_dokumen: str, status: str) -> tuple[str, ...]:
-        if status not in _STATUS:
-            raise ValueError("status keberlakuan di luar tiga nilai KL-07")
-        baris = await self._sambungan.fetch(_PERBARUI_STATUS, id_dokumen, status)
+    async def perbarui_status(
+        self, id_dokumen: str, status: str, *, rujukan_pengganti: str | None = None
+    ) -> tuple[str, ...]:
+        _status_dokumen(status, rujukan_pengganti)
+        baris = await self._sambungan.fetch(_PERBARUI_STATUS, id_dokumen, status, rujukan_pengganti)
         return tuple(sorted(str(b["id_butir"]) for b in baris if b["ditarik_pada"] is None))
 
     async def tarik_otomatis(self, id_butir: str, alasan: str, *, sekarang: datetime) -> bool:

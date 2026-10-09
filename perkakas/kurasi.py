@@ -2,10 +2,12 @@
 
     python -m perkakas.kurasi isi --berkas kandidat.json
     python -m perkakas.kurasi status --dokumen <id> --status <berlaku|diubah|dicabut>
+                                     [--pengganti "<peraturan pengganti>"]
 
 Tersambung sebagai `peran_pengisi_antrean`; alamat dari `PGHOST` dan `PGPORT`,
 sandi peran dari `PGPASSWORD` bila peladen memintanya. Tidak menjangkau
-karantina, korpus, maupun basis data pseudonim.
+karantina maupun basis data pseudonim, dan tidak **membaca** korpus: atasnya ia
+hanya menambah catatan status (fitur 032).
 
 ## `isi` — satu-satunya jalan masuk antrean
 
@@ -31,10 +33,13 @@ Keluaran hanya memuat **jumlah**, termasuk berapa yang masuk tanpa penyaring
 relevansi. Isi butir tidak dikutip: ia dapat memuat apa pun yang terbawa dari
 dokumen sumber.
 
-## `status` — salinan status regulasi (K-4)
+## `status` — status regulasi (K-4; TK-81 A fitur 032)
 
-Memperbarui salinan status setiap kandidat dan butir tayang bersumber dokumen
-itu. Bila statusnya `diubah` atau `dicabut`, setiap butir tayang yang belum
+Mencatat status dokumen itu di korpus — beserta rujukan pengganti bila
+diberikan, hanya bersama `diubah` atau `dicabut` — dan memperbarui salinan
+status setiap kandidat dan butir tayang bersumber dokumen itu, dalam satu
+pernyataan. Pembaca sumber membaca catatan korpus; regulasi tanpa catatan
+tampil tanpa teks. Bila statusnya `diubah` atau `dicabut`, setiap butir tayang yang belum
 ditarik **ditarik otomatis** — D-06 Bagian 7.5, aturan yang sama dengan
 `tinjau(pemicu=REGULASI_SUMBER_BERUBAH)` fitur 010: regulasi yang tidak lagi
 berlaku menarik, tanpa pengecualian. Fungsi itu sendiri tidak dipanggil karena
@@ -90,6 +95,7 @@ def _penghurai() -> argparse.ArgumentParser:
     status = sub.add_parser("status", help="perbarui status regulasi sebuah dokumen sumber")
     status.add_argument("--dokumen", required=True)
     status.add_argument("--status", required=True)
+    status.add_argument("--pengganti", default=None)
     return penghurai
 
 
@@ -200,6 +206,7 @@ _KELOMPOK: dict[Tindakan, str] = {
 async def _status(
     dokumen: str,
     status: str,
+    pengganti: str | None,
     pengisi: PengisiAntrean,
     keluar: TextIO,
     galat: TextIO,
@@ -213,7 +220,16 @@ async def _status(
             file=galat,
         )
         return 2
-    aktif = await pengisi.perbarui_status(dokumen, status)
+    if pengganti is not None and (
+        status == "berlaku" or not pengganti.strip() or periksa_data_pribadi(pengganti)
+    ):
+        print(
+            "Ditolak: --pengganti hanya bersama diubah atau dicabut, berisi, dan tanpa data "
+            "pribadi.",
+            file=galat,
+        )
+        return 2
+    aktif = await pengisi.perbarui_status(dokumen, status, rujukan_pengganti=pengganti)
     ditarik = 0
     if status != "berlaku":
         alasan = f"regulasi sumber berstatus {status} — ditarik otomatis (C-07, KL-07)"
@@ -242,7 +258,11 @@ def utama(
         return asyncio.run(
             _isi(argumen.berkas, pengisi, penyaring, keluar, galat, sekarang(), pagu_harian)
         )
-    return asyncio.run(_status(argumen.dokumen, argumen.status, pengisi, keluar, galat, sekarang()))
+    return asyncio.run(
+        _status(
+            argumen.dokumen, argumen.status, argumen.pengganti, pengisi, keluar, galat, sekarang()
+        )
+    )
 
 
 class _SambunganPengisi:  # pragma: no cover — dipakai orang, bukan uji

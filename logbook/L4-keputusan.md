@@ -3665,3 +3665,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Satu tabel status-dan-metadata — tidak dipilih: penulisnya berbeda (gerbang ingesti dan perkakas kurasi), dan satu tabel menuntut kedua penulis memegang hak yang sama. Catatan berkunci `id_dokumen` dengan `UPDATE` — tidak dipilih: riwayat status regulasi adalah jejak yang C-07 butuhkan. |
 | Dampak | Uji peladen: lima uji baru dan tiga katalog lama diperluas; seluruh berkas uji peladen hijau. `tests/peladen.py` dan README menjalankan berkas baru. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-246 · T-3 fitur 032: metadata dan status dicatat atomik; TK-83 diajukan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | K-2 plan fitur 032: metadata asal ikut pemindahan ke korpus (TK-82 A), dan status dicatat di korpus bersama salinan kurasi (TK-81 A), masing-masing satu pernyataan. Uji ditulis lebih dulu dan merah. Saat uji pemindahan dijalankan sebagai `peran_verifikasi` — pelajaran TK-64 — peladen menolaknya: tidak ada peran yang memegang `DELETE` atas `karantina.dokumen_sumber`. |
+| Keputusan | `MetadataDokumen` pada kontrak penyimpan; `pindahkan(..., metadata=)` hanya ke korpus, disisipkan dari baris yang berpindah; `setujui()` menyerahkan metadata `Dokumen` yang baru diperiksa, aturan gerbang tidak berubah (K-8). `perbarui_status(..., rujukan_pengganti=)` menyisipkan catatan korpus dalam CTE yang sama; perkakas memperoleh `--pengganti`, ditolak bersama `berlaku`, kosong, atau berdata pribadi tanpa dikutip. Mutasi M-4, M-5, dan M-5b (dua pernyataan) merah. **TK-83 diajukan, tidak diperbaiki**: celahnya pra-ada pada fitur 024, menyangkut hak karantina (C-03), dan pemetaan peran bagi `terima`, `setujui`, serta `cabut_persetujuan` belum pernah dirancang. Uji pemindahan fitur 032 tersambung sebagai pengelola, seperti uji fitur 024; hak `INSERT` metadata bagi verifikator terbukti pada uji peladen T-2. |
+| Alternatif | Memberi `peran_verifikasi` hak `DELETE` atas karantina di dalam fitur 032 — tidak dipilih: mengubah hak C-03 milik fitur yang lolos Gerbang 4, tanpa perkakas yang memakainya dan tanpa putusan. Menulis metadata dalam pernyataan kedua sesudah pemindahan — tidak dipilih: M-4 menunjukkan dokumen dapat berada di korpus tanpa catatan. |
+| Dampak | D-00 3.01 (TK-83 terbuka). Penyimpan tiruan dan PostgreSQL lulus kontrak yang sama; `tests/api/test_penemuan_http.py` tidak berubah. |
+| Pemutus | Agen, atas pendelegasian KB-168; TK-83 menunggu pemegang gerbang |

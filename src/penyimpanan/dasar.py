@@ -18,9 +18,29 @@ PostgreSQL adalah pekerjaan penyebaran D-09.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial import Kredensial
+
+
+@dataclass(frozen=True)
+class MetadataDokumen:
+    """Metadata asal yang ikut tercatat saat dokumen masuk korpus — TK-82 A,
+    FR-B06, D-14 Bagian 5.1 `metadata_dokumen` (fitur 032).
+
+    Untai dan bilangan, bukan enum `JenisSumber` dan `TingkatKerahasiaan`:
+    penyimpanan berada di bawah ingesti dan tidak mengimpornya — alasan yang
+    sama dengan `anonimisasi_terverifikasi` pada `SegmenTerindeks`. Daftar
+    nilainya dijaga dua lapis: `Dokumen`, satu-satunya pembentuknya, dan
+    batasan tabel peladen.
+    """
+
+    judul: str
+    jenis: str
+    penerbit: str
+    tahun: int
+    tingkat_kerahasiaan: str
 
 
 class PenyimpanDasar(ABC):
@@ -63,11 +83,23 @@ class PenyimpanDasar(ABC):
 
     @abstractmethod
     async def pindahkan(
-        self, kredensial: Kredensial, id_dokumen: str, dari: Area, ke: Area, alasan: str
+        self,
+        kredensial: Kredensial,
+        id_dokumen: str,
+        dari: Area,
+        ke: Area,
+        alasan: str,
+        *,
+        metadata: MetadataDokumen | None = None,
     ) -> None:
         """Pindahkan dokumen antar area.
 
         Menuntut kredensial yang boleh membaca `dari` **dan** menulis `ke`.
         Salah satu saja tidak cukup: memindahkan adalah membaca lalu menulis,
         dan memeriksa hanya sebelahnya meninggalkan separuh gerbang terbuka.
+
+        `metadata` hanya menyertai pemindahan **ke korpus**, dan tercatat
+        bersama pemindahannya atau tidak sama sekali (TK-82 A). Arah lain
+        bersama metadata adalah kekeliruan pemanggil: `ValueError` sebelum
+        apa pun disentuh.
         """
