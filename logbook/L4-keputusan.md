@@ -3632,3 +3632,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | TK-81: status dibaca dari salinan kurasi (hanya dokumen yang pernah menjadi sumber butir), atau pembaca tanpa status (melanggar R-07) — tidak dipilih. TK-82: lihat pertanyaan yang diajukan. |
 | Dampak | D-00 2.98 (TK-81 diputus, TK-82 terbuka). Spec fitur 032 tidak berubah. |
 | Pemutus | Pemegang Gerbang 1–4 (TK-81); TK-82 menunggu |
+
+## KB-243 · TK-82 diputus A; plan dan tasks fitur 032 — Gerbang 2 dan 3 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | KB-242 mengajukan TK-82: metadata asal dokumen hanya hidup pada memori `GerbangIngesti`, sedangkan pembaca sumber menuntut judul, jenis, dan tingkat kerahasiaan. Sesudah TK-81 dan TK-82 diputus, plan dan tasks fitur 032 dapat ditulis. Gerbang 2 dan 3 didelegasikan KB-168. |
+| Keputusan | **TK-82, pilihan A** oleh pemegang gerbang: gerbang ingesti mencatat metadata ke `korpus.metadata_dokumen` saat dokumen disetujui masuk korpus, dalam pernyataan yang sama dengan pemindahannya. **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-8, delapan tugas. Dua putusan rancangan yang lebih ketat dari bunyi spec, dicatat agar dapat ditolak pada Gerbang 4: (1) dokumen berstatus `dicabut` tampil tanpa teks — R-07 hanya menuntut penandanya, tetapi teks regulasi yang tidak berlaku, dibuka dari jawaban, terbaca sebagai dasar jawaban itu (C-07); (2) `dokumen_sekolah` tanpa teks pada tingkat kerahasiaan mana pun, termasuk `publik` — alasan yang sama dengan `Dokumen.boleh_masuk_korpus`, dan cakupan ET-04 milik tim etik. Properti `citation_opened` dan `discovery_saved` persis D-01 (P-3 A), tanpa pengenal tambahan. |
+| Alternatif | TK-82 B (perkakas tim mengetik ulang metadata) dan C (pembaca ditunda) — tidak dipilih. Rancangan: penayang membaca koleksi (ditolak — R-03 lebih kuat bila ditegakkan hak peladen); `peran_koleksi` membaca kurasi sendiri (ditolak — kelayakan butir sudah milik penayang, hak kedua hanya menambah tempat hanyut); pembaca membaca `isi` korpus (ditolak — itu dokumen utuh, P-2 B). |
+| Dampak | D-00 2.99. `plan.md` dan `tasks.md` fitur 032 terbit. T-1 mengubah D-14, D-04, D-05, D-01, dan baris D-12 032 (menyebut TK-81 dan TK-82; cakupan bertambah atas putusan, tidak menyempit). |
+| Pemutus | Pemegang Gerbang 1–4 (TK-82); agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
