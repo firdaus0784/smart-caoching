@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F11, FR-G06, FR-G10; NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 (`citation_opened`, `discovery_saved`) dan 9.1 · D-02 J1-4, J2, J3-5, titik kritis T2 · D-05 Bagian 3.1, S-06 blok 8, S-10, S-11, K-7 · D-06 Bagian 4 dan 7.5 · D-14 Bagian 3.2, 3.3, 4.1, 4.6 · spec fitur 013, 033, 034, 035 |
-| Status | **Diajukan ke Gerbang 1** — 9 Oktober 2026 (KB-240) |
+| Status | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-241); P-1 s.d. P-4 sesuai anjuran |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -114,6 +114,17 @@ telah berubah".
 terbaca sebagai dasar yang masih berlaku. Pilihan B lebih ketat terhadap
 regulasi yang dicabut; ia menuntut D-06 Bagian 7.5 ditulis ulang.
 
+## Putusan Gerbang 1 (KB-241)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — **dua rute baru disetujui** untuk D-14 Bagian 3.3: `GET /api/v1/koleksi` (bersaring kategori dan jenis sumber) dan `DELETE /api/v1/butir/{id}/simpan`. TK-80 diputus |
+| P-2 | **A** — pembaca menampilkan teks bagian yang dirujuk hanya bagi dokumen `publik`, berlisensi terbuka, dan beranonimisasi terverifikasi; selainnya metadata dan tautan luar. Cakupan persetujuan dokumen sekolah (ET-04) diputus tim etik |
+| P-3 | **A** — `citation_opened` dan `discovery_saved` direkam lewat gerbang C-04 dengan properti D-01; analitik menghitung rasio penelusuran sumber D-01 Bagian 9.1 dan `rasio_penelusuran_sumber` keluar dari daftar belum terukur |
+| P-4 | **A** — sesuai D-06 Bagian 7.5: butir tersimpan yang ditarik tetap terbaca dengan penanda "dasar rujukannya telah berubah" sebelum isinya |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -131,7 +142,7 @@ regulasi yang dicabut; ia menuntut D-06 Bagian 7.5 ditulis ulang.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-4 diputus pada Gerbang 1
+- [x] P-1 s.d. P-4 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Hak peran pembaca sumber diuji terhadap peladen: korpus terbaca, karantina
       dan kolom vektor tidak

@@ -3609,3 +3609,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Baris 031 lebih dulu — tidak dipilih; tertahan TK-71. Memutus rute koleksi di dalam plan — tidak dipilih; AG-02. |
 | Dampak | `specs/032-koleksi-dan-pembaca-sumber/spec.md`; `docs/D00.md` 2.96. Belum ada kode; plan menunggu Gerbang 1. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-241 · Gerbang 1 fitur 032 lolos; TK-80 diputus; dua rute baru disetujui
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Usulan KB-240 mengajukan empat pertanyaan. Gerbang 1 tidak didelegasikan untuk putusan yang menambah rute (AG-02) maupun yang memutus temuan (TK-80), sehingga keempatnya ditanyakan tegas lewat pilihan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keempatnya. **P-1 A**: `GET /api/v1/koleksi` dan `DELETE /api/v1/butir/{id}/simpan` **disetujui**; TK-80 diputus. **P-2 A**: pembaca sumber menampilkan teks bagian yang dirujuk hanya bagi dokumen publik, berlisensi terbuka, dan beranonimisasi terverifikasi. **P-3 A**: `citation_opened` dan `discovery_saved` direkam; analitik menghitung rasio penelusuran sumber. **P-4 A**: butir tersimpan yang ditarik tetap terbaca dengan penanda sebelum isinya (D-06 Bagian 7.5). |
+| Alternatif | P-1 B satu rute atau C tanpa rute; P-2 B dokumen utuh, C semua tingkat kerahasiaan, atau D tautan luar saja; P-3 B atau C; P-4 B tanpa isi — tidak dipilih. |
+| Yang tetap milik tim | Cakupan persetujuan pemilik dokumen sekolah (ET-04) bagi penayangan teks kepada peserta lain — tim etik. |
+| Dampak | Status spec fitur 032; D-00 2.97 (TK-80 diputus, tetap terbuka sampai fitur 032 selesai); D-12 0.40 (baris 032 menyebut kedua rute; cakupan tidak menyempit). Plan menyusul atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |
