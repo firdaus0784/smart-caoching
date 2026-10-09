@@ -3698,3 +3698,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyaring segmen di SQL — tidak dipilih: aturan di dua tempat akan berselisih tentang teks yang tampil. `bagian` berupa id segmen — tidak dipilih: sitasi D-14 Bagian 4.1 membawa `id_dokumen` dan `bagian`, bukan id segmen, dan bentuk itu tidak boleh berubah (C-20). |
 | Dampak | Pemeriksa rute terdaftar menyusun aplikasi rujukan dengan pembaca. `make check` lulus enam gerbang. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-249 · T-5 fitur 032: koleksi dan `discovery_saved`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | K-4 plan fitur 032: simpan hanya bagi butir yang pernah tayang bagi pemanggil dan masih sah, butir yang ditarik tetap terbaca berpenanda (P-4 A), koleksi tidak menjadi sinyal pemilihan (R-03). Uji penyimpan (memori dan PostgreSQL sebagai `peran_koleksi`) dan uji HTTP ditulis lebih dulu dan merah. |
+| Keputusan | `src/penyimpanan/koleksi.py` memegang tabelnya saja: simpan atau ganti, keluarkan, daftar terbaru lebih dulu. `src/api/koleksi.py` memeriksa kelayakan lewat `detail()` fitur 013 apa adanya — 404 berbentuk sama dengan detail butir — lalu catatan: kosong menjadi `null`, berdata pribadi ditolak tanpa dikutip. Daftar membaca butir tayang lewat penyimpan penemuan; `dasar_berubah` bila ditarik atau status salinannya `diubah`/`dicabut`; baris tak terbaca atau tanpa butir tayang dilewati dengan log tanpa isi. Bentuk butir lengkap dibagi lewat `lengkap()` pada `src/api/penemuan.py`, tanpa mengubah perilaku detail. `discovery_saved` berproperti `ada_catatan` saja. Koleksi menuntut penyimpan penemuan saat aplikasi disusun. Tiga untai C-13 baru (36). Uji cabang tanpa telemetri ditambah agar cakupan tidak turun. Mutasi M-10, M-11, M-12, M-14 merah. |
+| Alternatif | `peran_koleksi` membaca butir tayang sendiri — tidak dipilih (KB-243). Menyembunyikan butir yang ditarik dari koleksi — ditolak P-4 A. `DELETE` yang selalu 204 — tidak dipilih: layar yang usang perlu tahu butirnya sudah tidak ada. |
+| Dampak | Pemeriksa rute terdaftar menyusun aplikasi rujukan dengan koleksi. `make check` lulus enam gerbang. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

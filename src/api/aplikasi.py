@@ -71,6 +71,15 @@ from src.api.autentikasi import (
 )
 from src.api.galat import tanggapan_galat
 from src.api.identitas import Identitas, PenentuIdentitas
+from src.api.koleksi import (
+    PESAN_CATATAN_TIDAK_SAH,
+    PESAN_KOLEKSI_TIDAK_ADA,
+    PESAN_PENYARING_TIDAK_SAH,
+    ButirTidakDiKoleksi,
+    daftar,
+    keluarkan,
+    simpan,
+)
 from src.api.kurasi import (
     PESAN_BUTIR_TIDAK_ADA,
     PESAN_PUTUSAN_TIDAK_SAH,
@@ -110,6 +119,8 @@ from src.api.peran import (
     POLA_DAFTAR_PERCAKAPAN,
     POLA_DATA_SAYA,
     POLA_KELUAR,
+    POLA_KELUARKAN,
+    POLA_KOLEKSI,
     POLA_MASUK,
     POLA_PENILAIAN,
     POLA_PERSETUJUAN,
@@ -117,6 +128,7 @@ from src.api.peran import (
     POLA_PROFIL,
     POLA_PUTUSAN,
     POLA_SATU_PERCAKAPAN,
+    POLA_SIMPAN,
     POLA_SUMBER,
     POLA_TANYA,
     POLA_TARIK,
@@ -147,6 +159,7 @@ from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
 from src.penyimpanan.analitik import PenyimpanAnalitik
+from src.penyimpanan.koleksi import PenyimpanKoleksi
 from src.penyimpanan.kurasi import PenyimpanKurasi
 from src.penyimpanan.penemuan import PenyimpanPenemuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
@@ -252,6 +265,7 @@ def susun_aplikasi(
     penilaian: PenyimpanPenilaian | None = None,
     aduan: PenyimpanAduan | None = None,
     sumber: PembacaSumber | None = None,
+    koleksi: PenyimpanKoleksi | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -291,9 +305,15 @@ def susun_aplikasi(
     `sumber` sama (fitur 032): tanpa pembaca, `GET /sumber/{id}` tidak
     terpasang. Pembaca tidak menerima jalur penjawab maupun penyimpan tulis
     apa pun (R-05, C-17).
+
+    `koleksi` sama, dan ia **menuntut** `penemuan`: kelayakan butir yang
+    disimpan dan isi butir yang didaftar dibaca penyimpan penemuan, bukan
+    penyimpan koleksi (R-01).
     """
     if penemuan is not None and pengguna is None:
         raise ValueError("rute penemuan menuntut penyimpan pengguna (FR-G01)")
+    if koleksi is not None and penemuan is None:
+        raise ValueError("rute koleksi menuntut penyimpan penemuan (R-01 fitur 032)")
     perekam: Perekam | None = None
     if telemetri is not None:
         if pengguna is None:
@@ -471,6 +491,8 @@ def susun_aplikasi(
         _pasang_rute_aduan(aplikasi, aduan, _identitas_atau_tolak, sekarang)
     if sumber is not None:
         _pasang_rute_sumber(aplikasi, sumber, _identitas_atau_tolak, perekam, sekarang)
+    if koleksi is not None and penemuan is not None:
+        _pasang_rute_koleksi(aplikasi, penemuan, koleksi, _identitas_atau_tolak, perekam, sekarang)
 
     return aplikasi
 
@@ -915,6 +937,76 @@ def _pasang_rute_sumber(
                 siapa.pemilik, tampil.id_dokumen, tampil.jenis, sekarang=sekarang()
             )
         return JSONResponse(status_code=200, content=tampil.model_dump(mode="json"))
+
+
+def _pasang_rute_koleksi(
+    aplikasi: FastAPI,
+    penemuan: PenyimpanPenemuan,
+    koleksi: PenyimpanKoleksi,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    perekam: Perekam | None,
+    sekarang: Callable[[], datetime],
+) -> None:
+    """Tiga rute koleksi — D-14 Bagian 3.3 dan 4.10, fitur 032. Aturannya milik
+    `src/api/koleksi.py`; di sini terjemahan galat dan `discovery_saved`."""
+
+    @aplikasi.post(POLA_SIMPAN)
+    async def simpan_butir(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_SIMPAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        kini = sekarang()
+        try:
+            try:
+                badan = await _badan_json(permintaan)
+            except ValueError:
+                badan = None
+            tersimpan = await simpan(penemuan, koleksi, siapa.pemilik, id, badan, sekarang=kini)
+        except ButirTidakTampil:
+            return tanggapan_galat(
+                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_BUTIR_TIDAK_ADA, rute=POLA_SIMPAN
+            )
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_CATATAN_TIDAK_SAH, rute=POLA_SIMPAN
+            )
+        if perekam is not None:
+            await perekam.rekam_simpan(
+                siapa.pemilik, ada_catatan=tersimpan.catatan is not None, sekarang=kini
+            )
+        return JSONResponse(status_code=200, content=tersimpan.model_dump(mode="json"))
+
+    @aplikasi.delete(POLA_KELUARKAN)
+    async def keluarkan_butir(permintaan: Request, id: str) -> Response:
+        siapa = await identitas_atau_tolak(permintaan, POLA_KELUARKAN)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            await keluarkan(koleksi, siapa.pemilik, id)
+        except ButirTidakDiKoleksi:
+            return tanggapan_galat(
+                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_KOLEKSI_TIDAK_ADA, rute=POLA_KELUARKAN
+            )
+        return Response(status_code=204)
+
+    @aplikasi.get(POLA_KOLEKSI)
+    async def baca_koleksi(permintaan: Request) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_KOLEKSI)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            isi = await daftar(
+                penemuan,
+                koleksi,
+                siapa.pemilik,
+                kategori=permintaan.query_params.get("kategori"),
+                jenis_sumber=permintaan.query_params.get("jenis_sumber"),
+            )
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_PENYARING_TIDAK_SAH, rute=POLA_KOLEKSI
+            )
+        return JSONResponse(status_code=200, content=isi)
 
 
 def _pasang_rute_aduan(

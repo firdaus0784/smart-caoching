@@ -337,3 +337,20 @@ def test_pemindahan_tanpa_metadata_tidak_mencatat_apa_pun(terisi: tuple) -> None
     penyimpan = terisi[0]
     jalankan(penyimpan.pindahkan(VERIFIKASI, "dok_karantina", Area.KARANTINA, Area.KORPUS, "x"))
     assert _metadata(penyimpan, "dok_karantina") == ()
+
+
+def test_pindah_dokumen_tidak_ada_bersama_metadata(terisi: tuple) -> None:
+    """Tidak ada yang berpindah, tidak ada yang tercatat."""
+    penyimpan = terisi[0]
+    with pytest.raises(terisi[1]):
+        jalankan(
+            penyimpan.pindahkan(
+                VERIFIKASI,
+                "dok_tidak_pernah_ada",
+                Area.KARANTINA,
+                Area.KORPUS,
+                "lolos",
+                metadata=_METADATA,
+            )
+        )
+    assert _metadata(penyimpan, "dok_tidak_pernah_ada") == ()

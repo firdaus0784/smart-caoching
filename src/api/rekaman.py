@@ -215,6 +215,13 @@ class Perekam:
             versi_model=versi_model,
         )
 
+    async def rekam_simpan(self, pemilik: str, *, ada_catatan: bool, sekarang: datetime) -> None:
+        """`discovery_saved` — ada tidaknya catatan pribadi, persis D-01 Bagian 9
+        (P-3 A fitur 032). Teks catatan tidak pernah menjadi properti."""
+        await self.rekam(
+            pemilik, JenisPeristiwa.DISCOVERY_SAVED, {"ada_catatan": ada_catatan}, sekarang=sekarang
+        )
+
     async def rekam_sumber_dibuka(
         self, pemilik: str, id_dokumen: str, jenis: JenisSumber, *, sekarang: datetime
     ) -> None:

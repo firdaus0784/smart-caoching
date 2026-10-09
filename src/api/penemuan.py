@@ -208,6 +208,19 @@ async def susun_beranda(
     return _isi(keadaan, []), tercatat
 
 
+def lengkap(butir: ButirPengetahuan, sumber: Mapping[str, Any]) -> ButirLengkap:
+    """Bentuk butir lengkap D-14 Bagian 4.6 — dipakai detail dan koleksi (fitur
+    032), agar keduanya tidak dapat berbeda tentang `boleh_teks_penuh`."""
+    return ButirLengkap(
+        **_ringkas(butir).model_dump(),
+        inti_temuan=butir.inti_temuan,
+        implikasi_tindakan=list(butir.implikasi_tindakan),
+        tenggat_terkait=butir.tenggat_terkait,
+        boleh_teks_penuh=boleh_teks_penuh(butir),
+        sumber=SumberButir.model_validate(sumber),
+    )
+
+
 async def detail(penemuan: PenyimpanPenemuan, pemilik: str, id_butir: str) -> dict[str, Any]:
     """Butir lengkap — hanya yang pernah tayang bagi pemanggil dan masih sah."""
     if id_butir not in await penemuan.pernah_tayang(pemilik):
@@ -216,15 +229,7 @@ async def detail(penemuan: PenyimpanPenemuan, pemilik: str, id_butir: str) -> di
     tayang = None if baris is None else _tayang_sah(baris)
     if baris is None or tayang is None:
         raise ButirTidakTampil(id_butir)
-    butir = tayang.butir
-    return ButirLengkap(
-        **_ringkas(butir).model_dump(),
-        inti_temuan=butir.inti_temuan,
-        implikasi_tindakan=list(butir.implikasi_tindakan),
-        tenggat_terkait=butir.tenggat_terkait,
-        boleh_teks_penuh=boleh_teks_penuh(butir),
-        sumber=SumberButir.model_validate(baris.sumber),
-    ).model_dump(mode="json")
+    return lengkap(tayang.butir, baris.sumber).model_dump(mode="json")
 
 
 async def tolak(

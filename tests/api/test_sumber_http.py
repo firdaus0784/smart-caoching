@@ -293,3 +293,25 @@ def test_pembaca_tidak_memanggil_jalur_penjawab() -> None:
     ling.dokumen()
     ling.baca()
     assert ling.jalur.panggilan == []
+
+
+def test_tanpa_penyimpan_telemetri_tetap_terbaca() -> None:
+    ling = Lingkungan()
+    ling.dokumen()
+    klien = TestClient(
+        susun_aplikasi(
+            jalur=ling.jalur,
+            identitas=PenentuSesi(ling.akun, sekarang=lambda: T0),
+            riwayat=RiwayatMemori(),
+            sumber=ling.sumber,
+            sekarang=lambda: T0,
+        ),
+        base_url="https://testserver",
+    )
+    tanggapan = klien.get(
+        f"/api/v1/sumber/{DOK}",
+        headers={"Cookie": f"{NAMA_KUKI}={ling.kuki[A.id]}"},
+        params={"bagian": BAGIAN},
+    )
+    assert tanggapan.status_code == 200, tanggapan.text
+    assert ling.dibuka() == []
