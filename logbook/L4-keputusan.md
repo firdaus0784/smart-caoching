@@ -3720,3 +3720,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menghitung rasio atas pseudonim berbeda — tidak dipilih: D-01 Bagian 9.1 mendefinisikannya atas jumlah peristiwa, dan definisi bukan milik pelaksana. |
 | Dampak | `make check` lulus enam gerbang. T-7 tidak lagi memuat S-18. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-251 · T-7 fitur 032: layar S-06 Simpan, S-09 sitasi, S-10, S-11, navigasi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | K-7 plan fitur 032. Uji layar ditulis lebih dulu dan merah: Simpan dan catatannya, baris sitasi yang dapat diketuk, urutan status sebelum teks dan keempat alasan tanpa teks, penanda dasar berubah sebelum isi, penyaring, keluarkan, navigasi tiga tujuan, serta galat dan luring. |
+| Keputusan | S-10 dibuka **di dalam** S-09, bukan sebagai tahap cangkang: jawaban tidak disimpan riwayat (C-07), sehingga tahap terpisah akan membuangnya dan "Kembali ke jawaban" menuntut bertanya ulang. Baris sitasi menjadi tombol hanya bila S-09 memberinya pembuka; S-17 tetap teks. Tautan sumber asli diambil dari baris sitasi. S-11 menyaring lewat kueri peladen; butir yang sudah tidak ada saat dikeluarkan tetap hilang dari layar. Navigasi memperoleh "Milik saya" yang membuka S-11 saja; uji S-14 yang menghitung dua tujuan diganti uji bahwa Pengaturan bukan tujuan navigasi. `labelCatatan` sudah dipakai kurator, sehingga kunci baru bernama `labelCatatanKoleksi`. S-14 menyebut koleksi pada daftar data yang ditarik. Mutasi M-16 dan M-17 merah; percobaan pertama M-16 tidak terkompilasi dan tidak dihitung — skrip mutasi kini menandai mutan semacam itu tidak sah. |
+| Alternatif | S-10 sebagai tahap cangkang dengan jawaban disimpan di peramban — tidak dipilih: menyimpan jawaban di peramban membuka jalan menayangkan jawaban yang dasarnya kelak dicabut (C-07). |
+| Dampak | Bundel 89,25 kB gzip, di bawah anggaran. `make check` lulus enam gerbang. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

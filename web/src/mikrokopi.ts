@@ -12,7 +12,9 @@
  */
 
 import type {
+  AlasanTanpaTeks,
   JenisGalat,
+  JenisSumber,
   MetrikTertunda,
   NilaiPenilaian,
   StatusDasar,
@@ -133,11 +135,12 @@ export const MIKROKOPI = {
   penarikanLuring: "Sedang tidak terhubung. Permintaan belum terkirim; coba lagi saat sinyal kembali.",
   penarikanGangguan: "Permintaan belum terkirim. Coba lagi sebentar lagi.",
 
-  // Navigasi — D-05 Bagian 3.1 pada fitur 013 (K-7): dua tujuan sampai isi
-  // "Milik saya" dibangun pada baris 031 dan 032.
+  // Navigasi — D-05 Bagian 3.1. Fitur 013 (K-7) dua tujuan; fitur 032 (R-10)
+  // menambah "Milik saya", berisi koleksi saja sampai baris 031.
   labelNavigasi: "Navigasi utama",
   navBeranda: "Beranda",
   navTanya: "Tanya",
+  navMilikSaya: "Milik saya",
 
   // D-05 S-05 Beranda — fitur 013.
   judulBeranda: "Butir hari ini",
@@ -288,7 +291,83 @@ export const MIKROKOPI = {
   labelJawabanDisajikan: "Jawaban disajikan",
   labelSumberDibuka: "Sumber dibuka",
   kolomNilai: "Nilai",
+
+  // D-05 S-10 Pembaca sumber — fitur 032.
+  tombolKembaliJawaban: "Kembali ke jawaban",
+  sumberMemuat: "Dokumen sumber sedang dimuat.",
+  sumberTidakAda: "Dokumen ini tidak dapat dibuka di aplikasi.",
+  sumberLuring: "Sedang tidak terhubung. Pembaca sumber memerlukan sambungan.",
+  sumberGangguan: "Ada gangguan di sistem kami. Coba buka lagi sebentar lagi.",
+  judulStatusKeberlakuan: "Status keberlakuan",
+  statusBelumTercatat: "Status keberlakuannya belum tercatat.",
+  judulTeksBagian: "Teks bagian yang dirujuk",
+  bukaSumberAsli: "Buka sumber aslinya",
+
+  // D-05 S-06 blok 8 · Simpan — fitur 032.
+  tombolSimpan: "Simpan",
+  labelCatatanKoleksi: "Catatan untuk diri sendiri (boleh kosong)",
+  petunjukCatatan: "Tanpa nama atau nomor pribadi",
+  tombolSimpanKoleksi: "Simpan ke koleksi",
+  tersimpanKoleksi: "Tersimpan di Koleksi saya.",
+  catatanDitolak: "Hapus nama atau nomor pribadi dari catatan, lalu simpan lagi.",
+  simpanLuring: "Belum tersimpan. Periksa sambungan, lalu simpan lagi.",
+  simpanGangguan: "Belum tersimpan karena gangguan di sistem kami. Coba simpan lagi.",
+
+  // D-05 S-11 Koleksi tersimpan — fitur 032.
+  judulKoleksi: "Koleksi tersimpan",
+  koleksiMemuat: "Koleksi sedang dimuat.",
+  labelSaringKategori: "Kategori",
+  labelSaringJenis: "Jenis sumber",
+  pilihanSemua: "Semua",
+  penandaDasarBerubah: "Dasar rujukan butir ini telah berubah. Isinya mungkin tidak lagi berlaku.",
+  judulCatatanAnda: "Catatan Anda",
+  tombolKeluarkan: "Keluarkan dari koleksi",
+  butirDikeluarkan: "Butir dikeluarkan dari koleksi.",
+  keluarkanBelumTerkirim: "Butir belum dikeluarkan. Periksa sambungan, lalu coba lagi.",
+  koleksiKosong: "Belum ada butir tersimpan. Ketuk Simpan pada butir yang ingin Anda baca lagi.",
+  koleksiTersaringKosong: "Tidak ada butir tersimpan pada pilihan ini.",
+  koleksiLuring: "Sedang tidak terhubung. Koleksi memerlukan sambungan.",
+  koleksiGangguan: "Ada gangguan di sistem kami. Coba muat koleksi lagi.",
 } as const;
+
+/** Asal dokumen pada S-10 — D-13 Bagian 6 (fitur 032). Bukan label butir. */
+export const LABEL_JENIS_DOKUMEN: Readonly<Record<JenisSumber, string>> = {
+  regulasi_resmi: "Regulasi resmi",
+  data_resmi_agregat: "Data resmi",
+  artikel_lisensi_terbuka: "Artikel berlisensi terbuka",
+  dokumen_sekolah: "Dokumen sekolah",
+  laporan_lembaga: "Laporan lembaga",
+};
+
+/** Status keberlakuan pada S-10 blok 3 — sebelum teks (R-07). */
+export const STATUS_SUMBER = {
+  berlaku: "Masih berlaku.",
+  diubah: "Sudah diubah.",
+  dicabut: "Sudah dicabut dan tidak berlaku lagi.",
+} as const;
+
+/** Mengapa teks bagian tidak tampil — D-05 S-10 (fitur 032). */
+export const TANPA_TEKS: Readonly<Record<AlasanTanpaTeks, string>> = {
+  dokumen_tidak_publik: "Dokumen ini milik sekolah atau terbatas. Teksnya tidak ditampilkan di aplikasi.",
+  status_belum_tercatat: "Status keberlakuan aturan ini belum tercatat. Teksnya belum ditampilkan.",
+  dokumen_dicabut: "Aturan ini sudah dicabut. Teksnya tidak ditampilkan agar tidak dipakai sebagai dasar.",
+  bagian_tidak_tersedia: "Teks bagian ini tidak tersedia di aplikasi. Buka sumber aslinya bila ada tautan.",
+};
+
+/** S-10 blok 1: penerbit · tahun, di bawah judul. */
+export function penerbitDanTahun(penerbit: string, tahun: number): string {
+  return [penerbit, String(tahun)].join(" · ");
+}
+
+/** S-10 blok 2. */
+export function bagianDirujuk(bagian: string): string {
+  return `Bagian yang dirujuk: ${bagian}`;
+}
+
+/** Rujukan pengubah atau pengganti pada S-10 blok 3. */
+export function teksPenggantiSumber(status: "diubah" | "dicabut", rujukan: string): string {
+  return status === "diubah" ? teksPengganti(rujukan) : `Penggantinya: ${rujukan}`;
+}
 
 /** Tiga nilai FR-F07, setara — urutan D-05 S-09 blok 6 (fitur 036). */
 export const LABEL_NILAI: Readonly<Record<NilaiPenilaian, string>> = {
@@ -317,6 +396,7 @@ export const DATA_DITARIK: readonly string[] = [
   "Pertanyaan yang pernah Anda ajukan",
   "Jawaban yang Anda terima, penilaian Anda, dan aduan yang Anda kirim kepada kurator",
   "Butir yang tampil bagi Anda, beserta alasan belum relevan",
+  "Koleksi butir tersimpan beserta catatan Anda",
   "Catatan penggunaan untuk penelitian",
 ];
 

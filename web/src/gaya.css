@@ -465,3 +465,54 @@ a {
   color: var(--huruf-utama);
   background: var(--latar-tombol-kedua);
 }
+
+/* ── fitur 032 · S-09 baris sitasi, S-10 pembaca sumber, S-11 koleksi ───── */
+
+/* PK-03: baris sitasi yang dapat diketuk berupa tombol berpenampilan tautan,
+   dengan sasaran ketuk penuh (D-05 Bagian 11). */
+button.tautan-sitasi {
+  min-height: var(--ukuran-ketuk);
+  padding: 0;
+  text-align: left;
+  color: var(--huruf-tautan);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.status-sumber,
+.penanda-dasar-berubah {
+  padding: 0.5rem 0.75rem;
+  color: var(--huruf-keberlakuan);
+  background: var(--latar-keberlakuan);
+  border-radius: 0.25rem;
+}
+
+.status-sumber[data-status="berlaku"] {
+  color: var(--huruf-utama);
+  background: var(--latar-kuat);
+}
+
+.status-sumber h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.penanda-dasar-berubah {
+  margin: 0;
+  font-weight: 600;
+}
+
+.penyaring-koleksi {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem var(--jarak);
+  align-items: center;
+}
+
+.penyaring-koleksi select {
+  min-height: var(--ukuran-ketuk);
+  font: inherit;
+}

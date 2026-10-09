@@ -17,8 +17,10 @@
 
 import type {
   AduanTampil,
+  AlasanTanpaTeks,
   Antrean,
   Beranda,
+  ButirKoleksi,
   ButirLengkap,
   ButirRingkas,
   DaftarAduan,
@@ -30,13 +32,18 @@ import type {
   HasilButir,
   HasilDaftar,
   HasilEkspor,
+  HasilKeluarkan,
+  HasilKoleksi,
   HasilMasuk,
   HasilNaskah,
   HasilPenarikan,
   HasilPenilaian,
   HasilRingkasan,
+  HasilSimpan,
+  HasilSumber,
   HasilTanya,
   JenisGalat,
+  JenisSumber,
   JenisSumberButir,
   KandidatTampil,
   KategoriMasalah,
@@ -57,6 +64,7 @@ import type {
   StatusDasar,
   StatusKeberlakuan,
   SumberButir,
+  SumberTampil,
   Suntingan,
   Tanggapan,
   TayangTampil,
@@ -75,6 +83,7 @@ export const JALUR_ANTREAN = "/api/v1/kurasi/antrean";
 export const JALUR_ANALITIK_RINGKAS = "/api/v1/analitik/ringkas";
 export const JALUR_ANALITIK_EKSPOR = "/api/v1/analitik/ekspor";
 export const JALUR_ADUAN = "/api/v1/kurasi/aduan";
+export const JALUR_KOLEKSI = "/api/v1/koleksi";
 /** Berkas statis yang diisi tim (K-4 fitur 030), bukan rute API. */
 export const JALUR_NASKAH = "/naskah/persetujuan.json";
 /** Penjelasan penarikan data milik tim (P-4 B fitur 033), bukan rute API. */
@@ -888,4 +897,146 @@ export function tindakLanjutiAduan(
   pemanggil: Pemanggil,
 ): Promise<HasilAduan> {
   return aduanDari(pemanggil, jalurTindakLanjut(nomor), kirimJson("POST", badan));
+}
+
+// ── fitur 032 · pembaca sumber dan koleksi — D-14 Bagian 4.10 ──────────────
+
+const JENIS_DOKUMEN: readonly JenisSumber[] = [
+  "regulasi_resmi",
+  "data_resmi_agregat",
+  "artikel_lisensi_terbuka",
+  "dokumen_sekolah",
+  "laporan_lembaga",
+];
+const ALASAN_TANPA_TEKS: readonly AlasanTanpaTeks[] = [
+  "dokumen_tidak_publik",
+  "status_belum_tercatat",
+  "dokumen_dicabut",
+  "bagian_tidak_tersedia",
+];
+
+/** `GET /api/v1/sumber/{id}?bagian=` — dokumen dan bagian dari baris sitasi. */
+export function jalurSumber(idDokumen: string, bagian: string): string {
+  return `/api/v1/sumber/${encodeURIComponent(idDokumen)}?bagian=${encodeURIComponent(bagian)}`;
+}
+
+/** `POST` dan `DELETE /api/v1/butir/{id}/simpan`. */
+export function jalurSimpan(idButir: string): string {
+  return `/api/v1/butir/${encodeURIComponent(idButir)}/simpan`;
+}
+
+function apakahSumberTampil(nilai: unknown): nilai is SumberTampil {
+  return (
+    objekBerkunci(nilai, [
+      "id_dokumen",
+      "judul",
+      "jenis",
+      "penerbit",
+      "tahun",
+      "status_keberlakuan",
+      "rujukan_pengganti",
+      "bagian",
+      "teks_bagian",
+      "tanpa_teks",
+    ]) &&
+    untai(nilai["id_dokumen"]) &&
+    untai(nilai["judul"]) &&
+    JENIS_DOKUMEN.includes(nilai["jenis"] as JenisSumber) &&
+    untai(nilai["penerbit"]) &&
+    Number.isInteger(nilai["tahun"]) &&
+    (nilai["status_keberlakuan"] === null ||
+      STATUS_KEBERLAKUAN.includes(nilai["status_keberlakuan"] as StatusKeberlakuan)) &&
+    untaiAtauKosong(nilai["rujukan_pengganti"]) &&
+    untai(nilai["bagian"]) &&
+    larikDari(nilai["teks_bagian"], untai) &&
+    (nilai["tanpa_teks"] === null || ALASAN_TANPA_TEKS.includes(nilai["tanpa_teks"] as AlasanTanpaTeks))
+  );
+}
+
+/** Pembaca sumber S-10. 404 adalah keadaan sah: dokumen tidak dapat dibuka. */
+export async function bacaSumber(
+  idDokumen: string,
+  bagian: string,
+  pemanggil: Pemanggil,
+): Promise<HasilSumber> {
+  const hasil = await ambil013(pemanggil, jalurSumber(idDokumen, bagian), { method: "GET" });
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahSumberTampil(hasil.badan)
+    ? { jenis: "sumber", sumber: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+const KUNCI_KOLEKSI = ["catatan", "disimpan_pada", "dasar_berubah"] as const;
+
+function apakahButirKoleksi(nilai: unknown): nilai is ButirKoleksi {
+  if (typeof nilai !== "object" || nilai === null || Array.isArray(nilai)) return false;
+  const semua = nilai as Record<string, unknown>;
+  const lengkap = Object.fromEntries(
+    Object.entries(semua).filter(([k]) => !(KUNCI_KOLEKSI as readonly string[]).includes(k)),
+  );
+  return (
+    KUNCI_KOLEKSI.every((k) => k in semua) &&
+    apakahButirLengkap(lengkap) &&
+    untaiAtauKosong(semua["catatan"]) &&
+    untai(semua["disimpan_pada"]) &&
+    typeof semua["dasar_berubah"] === "boolean"
+  );
+}
+
+/** S-06 blok 8: catatan kosong dikirim `null` — peladen menyimpannya begitu pula. */
+export async function simpanKeKoleksi(
+  idButir: string,
+  catatan: string,
+  pemanggil: Pemanggil,
+): Promise<HasilSimpan> {
+  const badan = { catatan: catatan.trim() === "" ? null : catatan };
+  const hasil = await ambil013(pemanggil, jalurSimpan(idButir), kirimJson("POST", badan));
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  if ("tidak_ada" in hasil) return { jenis: "tidak_ada" };
+  if ("status" in hasil) return { jenis: "galat", galat: petakanStatus(hasil.status) };
+  return apakahButirKoleksi(hasil.badan)
+    ? { jenis: "tersimpan", butir: hasil.badan }
+    : { jenis: "galat", galat: "sistem" };
+}
+
+/** `DELETE` — 204 tanpa badan, sehingga tidak lewat pembaca JSON. */
+export async function keluarkanDariKoleksi(
+  idButir: string,
+  pemanggil: Pemanggil,
+): Promise<HasilKeluarkan> {
+  let jawaban: Response;
+  try {
+    jawaban = await pemanggil(jalurSimpan(idButir), { method: "DELETE" });
+  } catch {
+    return { jenis: "galat", galat: "luring" };
+  }
+  if (jawaban.status === 204) return { jenis: "dikeluarkan" };
+  if (jawaban.status === 404) return { jenis: "tidak_ada" };
+  return { jenis: "galat", galat: petakanStatus(jawaban.status) };
+}
+
+export interface PenyaringKoleksi {
+  readonly kategori?: KategoriMasalah;
+  readonly jenis_sumber?: JenisSumberButir;
+}
+
+/** S-11 — penyaring yang tidak dipilih tidak dikirim sama sekali. */
+export async function bacaKoleksi(
+  pemanggil: Pemanggil,
+  penyaring: PenyaringKoleksi = {},
+): Promise<HasilKoleksi> {
+  const kueri = new URLSearchParams();
+  if (penyaring.kategori !== undefined) kueri.set("kategori", penyaring.kategori);
+  if (penyaring.jenis_sumber !== undefined) kueri.set("jenis_sumber", penyaring.jenis_sumber);
+  const teks = kueri.toString();
+  const hasil = await ambil(pemanggil, teks === "" ? JALUR_KOLEKSI : `${JALUR_KOLEKSI}?${teks}`, {
+    method: "GET",
+  });
+  if ("galat" in hasil) return { jenis: "galat", galat: hasil.galat };
+  const badan = hasil.badan;
+  return objekBerkunci(badan, ["koleksi"]) && larikDari(badan["koleksi"], apakahButirKoleksi)
+    ? { jenis: "koleksi", koleksi: badan["koleksi"] as ButirKoleksi[] }
+    : { jenis: "galat", galat: "sistem" };
 }

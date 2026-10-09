@@ -16,7 +16,7 @@
 
 import { useState, type ReactNode } from "react";
 
-import type { Tanggapan, TanggapanAduan } from "../kontrak";
+import type { Sitasi, Tanggapan, TanggapanAduan } from "../kontrak";
 import { barisSitasi, MIKROKOPI, PENANDA_DASAR, teksPengganti } from "../mikrokopi";
 
 /** D-07 Bagian 5.1, FR-F05. Peladen sudah menjaganya; lapisan kedua di sini. */
@@ -38,9 +38,12 @@ export interface PropertiBlokJawaban {
   readonly salin?: (teks: string) => Promise<void>;
   /** Blok 6 "Nilai jawaban" — S-09 saja, pada keempat status dasar (R-10). */
   readonly nilai?: ReactNode;
+  /** Fitur 032, PK-03: baris sitasi membuka S-10. Tanpa ini — S-17 — baris
+   * sitasi tetap teks biasa. */
+  readonly bukaSumber?: (sitasi: Sitasi) => void;
 }
 
-export function BlokJawaban({ tanggapan, salin, nilai }: PropertiBlokJawaban) {
+export function BlokJawaban({ tanggapan, salin, nilai, bukaSumber }: PropertiBlokJawaban) {
   const [keadaanSalin, setKeadaanSalin] = useState<KeadaanSalin>("diam");
 
   const ringkasan = tanggapan.ringkasan_tindakan.slice(0, BUTIR_RINGKASAN_MAKSIMUM);
@@ -98,7 +101,13 @@ export function BlokJawaban({ tanggapan, salin, nilai }: PropertiBlokJawaban) {
               const tautan = tautanAman(s.tautan);
               return (
                 <li className="sitasi" key={`${s.id_dokumen}/${s.bagian}`}>
-                  <span>{barisSitasi(s.judul, s.penerbit, s.tahun, s.bagian)}</span>
+                  {bukaSumber === undefined ? (
+                    <span>{barisSitasi(s.judul, s.penerbit, s.tahun, s.bagian)}</span>
+                  ) : (
+                    <button className="tautan-sitasi" onClick={() => bukaSumber(s)} type="button">
+                      {barisSitasi(s.judul, s.penerbit, s.tahun, s.bagian)}
+                    </button>
+                  )}
                   {s.status_keberlakuan !== "berlaku" && (
                     <span className="penanda-keberlakuan">{MIKROKOPI.penandaDiubah}</span>
                   )}

@@ -15,6 +15,7 @@ import {
   TUJUAN_SALINAN,
   apakahBeranda,
   jalurButir,
+  jalurSimpan,
   jalurTolakButir,
   type Pemanggil,
 } from "../klien";
@@ -340,6 +341,63 @@ test("Batal menutup isian tanpa mengirim", async () => {
   fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolBatal }));
   expect(screen.queryByLabelText(MIKROKOPI.labelAlasanBelumRelevan)).toBeNull();
   expect(p.panggilan.filter((c) => c.startsWith("POST"))).toHaveLength(0);
+});
+
+// ── S-06 blok 8 · Simpan — fitur 032 ───────────────────────────────
+
+test("FR-G06: Simpan membuka catatan opsional, lalu menyimpan beserta catatannya", async () => {
+  const p = peladen({
+    [jalurButir("b-1")]: () => json(LENGKAP),
+    [jalurSimpan("b-1")]: () =>
+      json({ ...LENGKAP, catatan: "Bahas di rapat guru", disimpan_pada: "2026-10-09T01:00:00Z", dasar_berubah: false }),
+  });
+  detail(p.pemanggil);
+  fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolSimpan }));
+  expect(screen.getByText(MIKROKOPI.petunjukCatatan)).toBeTruthy();
+  fireEvent.change(screen.getByLabelText(MIKROKOPI.labelCatatanKoleksi), {
+    target: { value: "Bahas di rapat guru" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolSimpanKoleksi }));
+  expect(await screen.findByText(MIKROKOPI.tersimpanKoleksi)).toBeTruthy();
+  expect(p.badan).toEqual([{ catatan: "Bahas di rapat guru" }]);
+  expect(p.panggilan).toContain(`POST ${jalurSimpan("b-1")}`);
+});
+
+test("catatan kosong terkirim sebagai null", async () => {
+  const p = peladen({
+    [jalurButir("b-1")]: () => json(LENGKAP),
+    [jalurSimpan("b-1")]: () =>
+      json({ ...LENGKAP, catatan: null, disimpan_pada: "2026-10-09T01:00:00Z", dasar_berubah: false }),
+  });
+  detail(p.pemanggil);
+  fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolSimpan }));
+  fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolSimpanKoleksi }));
+  expect(await screen.findByText(MIKROKOPI.tersimpanKoleksi)).toBeTruthy();
+  expect(p.badan).toEqual([{ catatan: null }]);
+});
+
+test.each([
+  [() => json({}, 400), MIKROKOPI.catatanDitolak],
+  [luring, MIKROKOPI.simpanLuring],
+  [() => json({}, 500), MIKROKOPI.simpanGangguan],
+] as const)("catatan yang tidak tersimpan tetap di isian", async (jawab, kalimat) => {
+  detail(peladen({ [jalurButir("b-1")]: () => json(LENGKAP), [jalurSimpan("b-1")]: jawab }).pemanggil);
+  fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolSimpan }));
+  const isian = screen.getByLabelText(MIKROKOPI.labelCatatanKoleksi);
+  fireEvent.change(isian, { target: { value: "Untuk rapat" } });
+  fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolSimpanKoleksi }));
+  expect(await screen.findByText(kalimat)).toBeTruthy();
+  expect((isian as HTMLTextAreaElement).value).toBe("Untuk rapat");
+});
+
+test("butir yang sudah tidak tersedia saat disimpan menjadi keadaan sah", async () => {
+  detail(
+    peladen({ [jalurButir("b-1")]: () => json(LENGKAP), [jalurSimpan("b-1")]: () => json({}, 404) })
+      .pemanggil,
+  );
+  fireEvent.click(await screen.findByRole("button", { name: MIKROKOPI.tombolSimpan }));
+  fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolSimpanKoleksi }));
+  expect(await screen.findByText(MIKROKOPI.butirTidakAda)).toBeTruthy();
 });
 
 test("401 pada detail menyerahkan ke cangkang", async () => {

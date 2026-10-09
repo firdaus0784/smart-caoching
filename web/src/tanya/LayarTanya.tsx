@@ -15,8 +15,9 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { bacaDraf, hapusDraf, simpanDraf, type Simpanan } from "../draf";
 import { bacaPercakapan, tanya, type Pemanggil } from "../klien";
-import type { Giliran, JenisGalat, Tanggapan } from "../kontrak";
+import type { Giliran, JenisGalat, Sitasi, Tanggapan } from "../kontrak";
 import { MIKROKOPI, PESAN_GALAT } from "../mikrokopi";
+import { LayarSumber } from "../sumber/LayarSumber";
 import { jadikanAktif, percakapanAktif, percakapanBaru, tandaiDikenal } from "../percakapan";
 import { BlokJawaban } from "./BlokJawaban";
 import { NilaiJawaban } from "./NilaiJawaban";
@@ -66,6 +67,9 @@ export function LayarTanya({
   const [dikenalPeladen, setDikenalPeladen] = useState(!awal.baru);
   const [giliran, setGiliran] = useState<readonly Giliran[]>([]);
   const [muatUlang, setMuatUlang] = useState(0);
+  // Fitur 032: S-10 terbuka di dalam layar ini, agar jawaban tetap ada sesudah
+  // kembali — jawaban tidak disimpan riwayat (C-07).
+  const [sumber, setSumber] = useState<Sitasi | null>(null);
   const isian = useRef<HTMLTextAreaElement>(null);
 
   // Blok 9: pertanyaan percakapan aktif — saat dibuka, sesudah muat ulang
@@ -133,6 +137,17 @@ export function LayarTanya({
   function kirim(peristiwa: FormEvent<HTMLFormElement>) {
     peristiwa.preventDefault();
     void ajukan();
+  }
+
+  if (sumber !== null) {
+    return (
+      <LayarSumber
+        belumMasuk={() => belumMasuk?.(false)}
+        kembali={() => setSumber(null)}
+        pemanggil={pemanggil}
+        sitasi={sumber}
+      />
+    );
   }
 
   return (
@@ -210,6 +225,7 @@ export function LayarTanya({
 
       {keadaan.jenis === "jawaban" && (
         <BlokJawaban
+          bukaSumber={setSumber}
           nilai={
             <NilaiJawaban
               belumMasuk={() => belumMasuk?.(false)}

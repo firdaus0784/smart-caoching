@@ -50,6 +50,7 @@ from src.api.analitik import (
     RingkasanPenilaian,
     RingkasanSesi,
 )
+from src.api.koleksi import ButirKoleksi, Koleksi, PermintaanSimpan
 from src.api.kurasi import Antrean, KandidatTampil, PermintaanTarik, Suntingan, TayangTampil
 from src.api.penemuan import Beranda, ButirLengkap, ButirRingkas, KeadaanBeranda, PermintaanTolak
 from src.api.penilaian import (
@@ -61,10 +62,12 @@ from src.api.penilaian import (
 )
 from src.api.percakapan import Giliran
 from src.api.saya import Naskah, PermintaanProfil
+from src.api.sumber import AlasanTanpaTeks, SumberTampil
 from src.ingest.kurasi.butir import JenisSumberButir
 from src.ingest.kurasi.penarikan import Pemicu
 from src.ingest.kurasi.putusan import AlasanTolak
 from src.ingest.kurasi.sumber import SumberButir
+from src.ingest.peringkat import JenisSumber
 from src.kamus.penilaian import NilaiPenilaian, TindakLanjutAduan
 from src.kamus.segmen import StatusKeberlakuan
 from src.nlp.anotasi.skema import KategoriMasalah
@@ -124,8 +127,13 @@ MODEL: tuple[type[BaseModel], ...] = (
     AduanTampil,
     DaftarAduan,
     PermintaanTindakLanjut,
-    # Fitur 032: bagian penelusuran sumber pada ringkasan analitik.
+    # Fitur 032: bagian penelusuran sumber pada ringkasan analitik; pembaca
+    # sumber dan koleksi, D-14 Bagian 4.10.
     RasioPenelusuranSumber,
+    SumberTampil,
+    PermintaanSimpan,
+    ButirKoleksi,
+    Koleksi,
 )
 ENUM: tuple[type[Enum], ...] = (
     StatusDasar,
@@ -144,6 +152,9 @@ ENUM: tuple[type[Enum], ...] = (
     # Fitur 036.
     NilaiPenilaian,
     TindakLanjutAduan,
+    # Fitur 032.
+    JenisSumber,
+    AlasanTanpaTeks,
 )
 
 _ANTARMUKA = re.compile(r"^export interface (\w+) \{\n(.*?)^\}", re.MULTILINE | re.DOTALL)

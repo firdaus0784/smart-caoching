@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { Aplikasi } from "./Aplikasi";
@@ -6,6 +6,7 @@ import { bacaDraf, simpanDraf, type Simpanan } from "./draf";
 import {
   JALUR_BERANDA,
   JALUR_KELUAR,
+  JALUR_KOLEKSI,
   JALUR_MASUK,
   JALUR_PERCAKAPAN,
   JALUR_PROFIL,
@@ -195,6 +196,7 @@ describe("beranda dan navigasi", () => {
       }
       if (jalur === jalurButir("b-1")) return new Response(JSON.stringify(LENGKAP));
       if (jalur === JALUR_PERCAKAPAN) return new Response(JSON.stringify({ percakapan: [] }));
+      if (jalur === JALUR_KOLEKSI) return new Response(JSON.stringify({ koleksi: [] }));
       return new Response("{}", { status: 500 });
     };
     return { pemanggil, panggilan, sah };
@@ -205,7 +207,24 @@ describe("beranda dan navigasi", () => {
     expect(await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda })).toBeTruthy();
     const nav = screen.getByRole("navigation", { name: MIKROKOPI.labelNavigasi });
     expect(nav.querySelector('[aria-current="page"]')?.textContent).toBe(MIKROKOPI.navBeranda);
-    expect(nav.querySelectorAll("button")).toHaveLength(2);
+    // Fitur 032 (R-10): tujuan ketiga "Milik saya", berisi koleksi saja.
+    expect([...nav.querySelectorAll("button")].map((b) => b.textContent)).toEqual([
+      MIKROKOPI.navBeranda,
+      MIKROKOPI.navTanya,
+      MIKROKOPI.navMilikSaya,
+    ]);
+  });
+
+  test("Milik saya membuka S-11 Koleksi tersimpan, tanpa komitmen maupun jurnal", async () => {
+    pasang(peladenAktif().pemanggil);
+    const nav = await screen.findByRole("navigation", { name: MIKROKOPI.labelNavigasi });
+    fireEvent.click(within(nav).getByRole("button", { name: MIKROKOPI.navMilikSaya }));
+    expect(await screen.findByRole("heading", { level: 1, name: MIKROKOPI.judulKoleksi })).toBeTruthy();
+    expect(
+      screen.getByRole("navigation", { name: MIKROKOPI.labelNavigasi }).querySelector('[aria-current="page"]')
+        ?.textContent,
+    ).toBe(MIKROKOPI.navMilikSaya);
+    expect(document.body.textContent?.toLowerCase()).not.toMatch(/komitmen|jurnal/);
   });
 
   test("Beranda → Detail → kembali; navigasi ke Tanya dan kembali", async () => {

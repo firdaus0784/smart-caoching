@@ -15,9 +15,9 @@
  * ```
  *
  * Sesudah aktivasi pertama pengguna tetap mendarat di S-09 (R-07 fitur 030);
- * pembukaan berikutnya mendarat di S-05 (D-05 0.6). Navigasi utama dua
- * tujuan — Beranda dan Tanya (K-7 fitur 013); "Milik saya" tampil ketika
- * isinya dibangun.
+ * pembukaan berikutnya mendarat di S-05 (D-05 0.6). Navigasi utama tiga
+ * tujuan — Beranda, Tanya, dan "Milik saya" (fitur 032, R-10), yang berisi
+ * S-11 Koleksi tersimpan saja; komitmen dan jurnal menyusul pada baris 031.
  *
  * Luring atau galat lain saat memeriksa tetap membuka Tanya (K-6): pengguna
  * masih dapat menulis draf (KL-E), dan aktivasi ditanyakan lagi lain kali.
@@ -40,6 +40,7 @@ import { LayarPersetujuan } from "./aktivasi/LayarPersetujuan";
 import { LayarProfil } from "./aktivasi/LayarProfil";
 import { hapusDraf, type Simpanan } from "./draf";
 import { LayarAnalitik } from "./analitik/LayarAnalitik";
+import { LayarKoleksi } from "./koleksi/LayarKoleksi";
 import { bacaAnalitik, bacaAntrean, bacaRingkasan, keluar, muatNaskah, type Pemanggil } from "./klien";
 import type { Antrean, HasilNaskah, KeadaanPersetujuan, Ringkasan, RingkasanAnalitik } from "./kontrak";
 import { CangkangKurator } from "./kurasi/CangkangKurator";
@@ -67,6 +68,7 @@ type Tahap =
   | { readonly jenis: "profil" }
   | { readonly jenis: "beranda" }
   | { readonly jenis: "butir"; readonly idButir: string }
+  | { readonly jenis: "koleksi" }
   | { readonly jenis: "kurasi"; readonly antrean: Antrean }
   | { readonly jenis: "kurasi_galat"; readonly luring: boolean }
   | { readonly jenis: "analitik"; readonly ringkasan: RingkasanAnalitik }
@@ -160,7 +162,7 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
 
   const perluMasuk = () => setTahap({ jenis: "masuk", pemberitahuan: MIKROKOPI.perluMasukLagiSaja });
 
-  function navigasi(aktif: "beranda" | "tanya") {
+  function navigasi(aktif: "beranda" | "tanya" | "koleksi") {
     return (
       <nav aria-label={MIKROKOPI.labelNavigasi} className="navigasi">
         <button
@@ -176,6 +178,13 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
           type="button"
         >
           {MIKROKOPI.navTanya}
+        </button>
+        <button
+          aria-current={aktif === "koleksi" ? "page" : undefined}
+          onClick={() => setTahap({ jenis: "koleksi" })}
+          type="button"
+        >
+          {MIKROKOPI.navMilikSaya}
         </button>
       </nav>
     );
@@ -304,6 +313,14 @@ export function Aplikasi({ pemanggil, simpanan, salin }: PropertiAplikasi) {
           pemanggil={pemanggil}
           simpanan={simpanan}
         />
+      </>
+    );
+  }
+  if (tahap.jenis === "koleksi") {
+    return (
+      <>
+        {navigasi("koleksi")}
+        <LayarKoleksi belumMasuk={perluMasuk} pemanggil={pemanggil} />
       </>
     );
   }

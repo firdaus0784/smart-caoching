@@ -237,6 +237,83 @@ export type HasilButir =
   | { readonly jenis: "galat"; readonly galat: JenisGalat };
 
 /**
+ * Pembaca sumber dan koleksi — D-14 Bagian 4.10, fitur 032. `JenisSumber` asal
+ * dokumen (D-13 Bagian 6), **bukan** `JenisSumberButir`: dua daftar, dua nama.
+ */
+export type JenisSumber =
+  | "regulasi_resmi"
+  | "data_resmi_agregat"
+  | "artikel_lisensi_terbuka"
+  | "dokumen_sekolah"
+  | "laporan_lembaga";
+
+export type AlasanTanpaTeks =
+  | "dokumen_tidak_publik"
+  | "status_belum_tercatat"
+  | "dokumen_dicabut"
+  | "bagian_tidak_tersedia";
+
+export interface SumberTampil {
+  readonly id_dokumen: string;
+  readonly judul: string;
+  readonly jenis: JenisSumber;
+  readonly penerbit: string;
+  readonly tahun: number;
+  readonly status_keberlakuan: StatusKeberlakuan | null;
+  readonly rujukan_pengganti: string | null;
+  readonly bagian: string;
+  readonly teks_bagian: readonly string[];
+  readonly tanpa_teks: AlasanTanpaTeks | null;
+}
+
+export type HasilSumber =
+  | { readonly jenis: "sumber"; readonly sumber: SumberTampil }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export interface PermintaanSimpan {
+  readonly catatan?: string | null;
+}
+
+/** Butir lengkap Bagian 4.6 ditambah tiga bidang koleksi. Ditulis utuh, bukan
+ * `extends`: pemeriksa kontrak membandingkan bidang per antarmuka. */
+export interface ButirKoleksi {
+  readonly id_butir: string;
+  readonly kategori: KategoriMasalah;
+  readonly jenis_sumber: JenisSumberButir;
+  readonly judul: string;
+  readonly alasan_relevansi: string;
+  readonly perkiraan_waktu_baca: number;
+  readonly inti_temuan: string;
+  readonly implikasi_tindakan: readonly string[];
+  readonly tenggat_terkait: string | null;
+  readonly boleh_teks_penuh: boolean;
+  readonly sumber: SumberButir;
+  readonly catatan: string | null;
+  readonly disimpan_pada: string;
+  /** Ditarik, atau regulasinya diubah atau dicabut — penanda tampil sebelum isi (P-4 A). */
+  readonly dasar_berubah: boolean;
+}
+
+export interface Koleksi {
+  readonly koleksi: readonly ButirKoleksi[];
+}
+
+export type HasilSimpan =
+  | { readonly jenis: "tersimpan"; readonly butir: ButirKoleksi }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilKoleksi =
+  | { readonly jenis: "koleksi"; readonly koleksi: readonly ButirKoleksi[] }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+export type HasilKeluarkan =
+  | { readonly jenis: "dikeluarkan" }
+  | { readonly jenis: "tidak_ada" }
+  | { readonly jenis: "galat"; readonly galat: JenisGalat };
+
+/**
  * Kurasi — D-14 Bagian 4.7, fitur 013. Dijaga terhadap model pada
  * `src/api/kurasi.py`; `AlasanTolak` dan `Pemicu` terhadap enum fitur 010.
  */

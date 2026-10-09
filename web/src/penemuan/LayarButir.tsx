@@ -3,8 +3,9 @@
  *
  * Urutan blok D-05 Bagian 6: jenis sumber, judul, **mengapa relevan di atas
  * isi**, waktu baca, inti temuan, implikasi tindakan, sumber, tindakan. Blok 8
- * hanya **Belum relevan** pada fitur 013 — Simpan milik baris 032, *knowledge
- * check* milik baris 031.
+ * memuat **Belum relevan** (fitur 013) dan **Simpan** dengan catatan opsional
+ * (fitur 032, FR-G06); *knowledge check* milik baris 031. Simpan yang luring
+ * tidak diantrekan: catatannya tetap di isian.
  *
  * `boleh_teks_penuh` dibaca dari peladen; tanggapan tidak membawa untai
  * lisensi sama sekali, sehingga layar tidak dapat menyimpulkannya (C-02).
@@ -17,7 +18,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 
 import type { Simpanan } from "../draf";
-import { bacaButir, tolakButir, type Pemanggil } from "../klien";
+import { bacaButir, simpanKeKoleksi, tolakButir, type Pemanggil } from "../klien";
 import type { ButirLengkap } from "../kontrak";
 import { LABEL_JENIS_SUMBER, MIKROKOPI, barisSumber, waktuBaca } from "../mikrokopi";
 import { salinanButir, simpanButir } from "./salinan";
@@ -155,6 +156,12 @@ export function LayarButir({
           {!butir.boleh_teks_penuh && <p className="keterangan">{MIKROKOPI.teksPenuhTertutup}</p>}
         </section>
       </article>
+      <SimpanKoleksi
+        belumMasuk={belumMasuk}
+        idButir={butir.id_butir}
+        pemanggil={pemanggil}
+        tidakAda={() => setKeadaan({ jenis: "tidak_ada" })}
+      />
       <BelumRelevan
         belumMasuk={belumMasuk}
         idButir={butir.id_butir}
@@ -163,6 +170,92 @@ export function LayarButir({
         tidakAda={() => setKeadaan({ jenis: "tidak_ada" })}
       />
     </main>
+  );
+}
+
+/** S-06 blok 8 · Simpan — fitur 032, FR-G06. Menyimpan ulang mengganti catatan. */
+function SimpanKoleksi({
+  idButir,
+  pemanggil,
+  tidakAda,
+  belumMasuk,
+}: {
+  readonly idButir: string;
+  readonly pemanggil: Pemanggil;
+  readonly tidakAda: () => void;
+  readonly belumMasuk: () => void;
+}) {
+  const [terbuka, setTerbuka] = useState(false);
+  const [catatan, setCatatan] = useState("");
+  const [pesan, setPesan] = useState<string | null>(null);
+  const [tersimpan, setTersimpan] = useState(false);
+  const [mengirim, setMengirim] = useState(false);
+
+  async function kirim(peristiwa: FormEvent<HTMLFormElement>) {
+    peristiwa.preventDefault();
+    setMengirim(true);
+    const hasil = await simpanKeKoleksi(idButir, catatan, pemanggil);
+    setMengirim(false);
+    if (hasil.jenis === "tersimpan") {
+      setTersimpan(true);
+      setPesan(null);
+    } else if (hasil.jenis === "tidak_ada") {
+      tidakAda();
+    } else if (hasil.galat === "belum_masuk") {
+      belumMasuk();
+    } else if (hasil.galat === "pertanyaan_ditolak") {
+      setPesan(MIKROKOPI.catatanDitolak);
+    } else if (hasil.galat === "luring") {
+      setPesan(MIKROKOPI.simpanLuring);
+    } else {
+      setPesan(MIKROKOPI.simpanGangguan);
+    }
+  }
+
+  if (tersimpan) {
+    return <p role="status">{MIKROKOPI.tersimpanKoleksi}</p>;
+  }
+  if (!terbuka) {
+    return (
+      <div className="tindakan">
+        <button onClick={() => setTerbuka(true)} type="button">
+          {MIKROKOPI.tombolSimpan}
+        </button>
+      </div>
+    );
+  }
+  return (
+    <form className="isian-pertanyaan" onSubmit={(e) => void kirim(e)}>
+      <label htmlFor="catatan-koleksi">{MIKROKOPI.labelCatatanKoleksi}</label>
+      <p id="petunjuk-catatan">{MIKROKOPI.petunjukCatatan}</p>
+      <textarea
+        aria-describedby="petunjuk-catatan"
+        id="catatan-koleksi"
+        onChange={(e) => setCatatan(e.target.value)}
+        rows={2}
+        value={catatan}
+      />
+      {pesan !== null && (
+        <p className="galat" role="alert">
+          {pesan}
+        </p>
+      )}
+      <div className="tindakan">
+        <button disabled={mengirim} type="submit">
+          {MIKROKOPI.tombolSimpanKoleksi}
+        </button>
+        <button
+          className="tombol-kedua"
+          onClick={() => {
+            setTerbuka(false);
+            setPesan(null);
+          }}
+          type="button"
+        >
+          {MIKROKOPI.tombolBatal}
+        </button>
+      </div>
+    </form>
   );
 }
 

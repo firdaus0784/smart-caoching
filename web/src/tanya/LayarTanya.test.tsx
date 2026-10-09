@@ -1,10 +1,10 @@
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-import { JALUR_PERCAKAPAN, JALUR_TANYA, type Pemanggil } from "../klien";
+import { JALUR_PERCAKAPAN, JALUR_TANYA, jalurSumber, type Pemanggil } from "../klien";
 import type { Tanggapan } from "../kontrak";
 import { bacaDraf, type Simpanan } from "../draf";
-import { MIKROKOPI, PENANDA_DASAR, PESAN_GALAT } from "../mikrokopi";
+import { MIKROKOPI, PENANDA_DASAR, PESAN_GALAT, barisSitasi } from "../mikrokopi";
 import { LayarTanya } from "./LayarTanya";
 
 afterEach(cleanup);
@@ -625,4 +625,44 @@ test("K-3: penolakan pertanyaan benar pula bagi nomor pribadi", async () => {
   const teks = (await screen.findByRole("alert")).textContent ?? "";
   expect(teks).toContain(PESAN_GALAT.pertanyaan_ditolak.tersimpan);
   expect(PESAN_GALAT.pertanyaan_ditolak.tersimpan).toContain("nomor pribadi");
+});
+
+
+// ── fitur 032 · S-09 blok 5 membuka S-10 ─────────────────────────────
+
+test("PK-03: baris sitasi membuka S-10; kembali menampilkan jawaban yang sama tanpa bertanya ulang", async () => {
+  const sitasi = DASAR.sitasi[0]!;
+  const panggilan: string[] = [];
+  const pemanggil: Pemanggil = async (jalur, init) => {
+    panggilan.push(`${init?.method ?? "GET"} ${jalur}`);
+    if (jalur === JALUR_TANYA) return new Response(JSON.stringify(DASAR));
+    if (jalur === jalurSumber(sitasi.id_dokumen, sitasi.bagian)) {
+      return new Response(
+        JSON.stringify({
+          id_dokumen: sitasi.id_dokumen,
+          judul: sitasi.judul,
+          jenis: "regulasi_resmi",
+          penerbit: sitasi.penerbit,
+          tahun: sitasi.tahun,
+          status_keberlakuan: "berlaku",
+          rujukan_pengganti: null,
+          bagian: sitasi.bagian,
+          teks_bagian: ["Kepala sekolah menyusun rencana kerja tahunan."],
+          tanpa_teks: null,
+        }),
+      );
+    }
+    return new Response("{}", { status: 500 });
+  };
+  pasang(pemanggil);
+  ketik("Bagaimana menyusun jadwal supervisi?");
+  kirim();
+  const baris = barisSitasi(sitasi.judul, sitasi.penerbit, sitasi.tahun, sitasi.bagian);
+  fireEvent.click(await screen.findByRole("button", { name: baris }));
+  expect(await screen.findByRole("heading", { level: 1, name: sitasi.judul })).toBeTruthy();
+  expect(screen.queryByTestId("blok-jawaban")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: MIKROKOPI.tombolKembaliJawaban }));
+  const blok = await screen.findByTestId("blok-jawaban");
+  expect(within(blok).getByText(DASAR.ringkasan_tindakan[0]!)).toBeTruthy();
+  expect(panggilan.filter((c) => c === `POST ${JALUR_TANYA}`)).toHaveLength(1);
 });

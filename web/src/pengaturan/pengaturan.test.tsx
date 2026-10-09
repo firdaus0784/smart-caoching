@@ -121,14 +121,17 @@ const tarikan = (p: Peladen) => p.panggilan.filter((c) => c.startsWith("DELETE")
 
 // ── letak — P-5 ────────────────────────────────────────────────────────
 
-test("P-5: Pengaturan di samping Keluar, navigasi utama tetap dua", async () => {
+test("P-5: Pengaturan di samping Keluar, bukan tujuan navigasi utama", async () => {
   const p = peladen();
   render(<Aplikasi pemanggil={p.pemanggil} salin={async () => undefined} simpanan={simpananPeta()} />);
   await screen.findByRole("heading", { name: MIKROKOPI.judulBeranda });
   const pengaturan = tombol(MIKROKOPI.tombolPengaturan);
   expect(pengaturan.parentElement).toBe(tombol(MIKROKOPI.tombolKeluar).parentElement);
   const nav = screen.getByRole("navigation", { name: MIKROKOPI.labelNavigasi });
-  expect(nav.querySelectorAll("button")).toHaveLength(2);
+  // Tiga tujuan sejak fitur 032 (R-10); Pengaturan tidak termasuk.
+  expect([...nav.querySelectorAll("button")].map((b) => b.textContent)).not.toContain(
+    MIKROKOPI.tombolPengaturan,
+  );
 });
 
 test("Pengaturan juga terbuka dari Tanya, dan Kembali menutupnya", async () => {
@@ -182,6 +185,8 @@ test("persetujuan terlihat dan dapat dicabut, lalu kembali ke Pengaturan", async
 test("R-06: daftar yang dihapus dan yang tidak, sebelum apa pun dikirim", async () => {
   const p = peladen();
   await bukaPengaturan(p);
+  // Fitur 032 (R-08): koleksi dan catatannya disebut di antara yang ditarik.
+  expect(DATA_DITARIK.filter((d) => /koleksi/i.test(d))).toHaveLength(1);
   for (const butir of [...DATA_DITARIK, ...DATA_TIDAK_DITARIK]) {
     expect(screen.getByText(butir)).toBeTruthy();
   }
