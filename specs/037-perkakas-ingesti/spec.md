@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 | Dokumen terkait | D-01 Modul B, BT-70 · D-03 Bagian 3 dan token penyamaran · D-04 Bagian 7.2 (`dokumen_sumber`, `jejak_area`), ADR-06, KA-04 · D-07 Bagian 3.1 dan 3.2 · D-13 KD-02, KD-10, Bagian 6 · D-14 Bagian 3 (peran `verifikator`) dan 5.1 · spec fitur 002, 015, 024, 026, 032 · TK-83 |
-| Status | **Diajukan ke Gerbang 1** — 9 Oktober 2026 (KB-254) |
+| Status | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-255) |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -156,6 +156,19 @@ menerima, menyetujui, menolak, atau menarik.
 **Anjuran: A.** Jejak tetap dapat dipertanggungjawabkan lewat daftar tim,
 tanpa basis data menyimpan nama orang yang tidak memerlukannya.
 
+## Putusan Gerbang 1 (KB-255)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — keadaan gerbang sebagai catatan tambah-saja di skema `karantina`, termasuk `jejak_area`; gerbang membacanya dari peladen setiap perintah |
+| P-2 | **A** — tiga peran, satu per kredensial: `peran_ingesti` baru; `peran_verifikasi` diperketat menjadi hapus saja atas karantina; `peran_penarikan_dokumen` baru. TK-83 dikerjakan di sini |
+| P-3 | **A** — penarikan persetujuan menghapus segmen dokumen dari kedua indeks dalam pernyataan yang sama dengan pemindahannya. TK-84 diputus |
+| P-4 | **A** — baris D-12 **038** "Segmentasi dan penempatan indeks" disisipkan, dikerjakan sesudah 037; fitur 037 berhenti di korpus |
+| P-5 | **A** — `terima` menyamarkan enam pengenal berpola dengan token D-03 sebelum teks disimpan di karantina; teks asli tidak tersimpan; jumlah samaran per jenis tercatat tanpa nilai |
+| P-6 | **A** — pelaku pada jejak berupa kode anggota tim berpola nama akun, bukan nama orang |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -173,7 +186,7 @@ tanpa basis data menyimpan nama orang yang tidak memerlukannya.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-6 diputus pada Gerbang 1
+- [x] P-1 s.d. P-6 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Hak setiap peran diuji terhadap peladen: perintahnya berjalan dengan
       haknya sendiri, dan hak yang tidak dibutuhkannya ditolak

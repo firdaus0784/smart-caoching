@@ -3772,3 +3772,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-2 dan P-3 mengubah hak peladen C-03 milik fitur yang sudah lolos Gerbang 4, dan P-4 menyangkut baris D-12 baru; keduanya bukan putusan agen. |
 | Dampak | `specs/037-perkakas-ingesti/spec.md`; `docs/D00.md` 3.05. Belum ada kode; plan menunggu Gerbang 1. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-255 · Gerbang 1 fitur 037 lolos; TK-84 diputus; baris D-12 038 disisipkan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Usulan KB-254 mengajukan enam pertanyaan. Gerbang 1 tidak didelegasikan untuk putusan yang memutus temuan (TK-84) maupun yang menyisipkan baris D-12 (P-4), sehingga keenamnya ditanyakan tegas lewat pilihan, dalam dua kelompok. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keenamnya. **P-1 A**: keadaan gerbang sebagai catatan tambah-saja di skema `karantina`, termasuk `jejak_area`. **P-2 A**: tiga peran, satu per kredensial — `peran_ingesti` dan `peran_penarikan_dokumen` baru, `peran_verifikasi` diperketat menjadi hapus saja atas karantina. **P-3 A**: penarikan persetujuan menghapus segmen dari kedua indeks dalam pernyataan yang sama; TK-84 diputus. **P-4 A**: baris D-12 **038** segmentasi dan penempatan indeks disisipkan, sesudah 037. **P-5 A**: enam pengenal berpola disamarkan dengan token D-03 sebelum karantina; teks asli tidak tersimpan. **P-6 A**: pelaku jejak berupa kode anggota tim berpola nama akun. |
+| Alternatif | P-1 B proses interaktif atau C satu perintah; P-2 B satu peran atau C salin tanpa hapus; P-3 B tandai dan saring atau C terbuka; P-4 B masuk 037 atau C tanpa pemilik; P-5 B lapor saja atau C tanpa pendeteksi; P-6 B nama lengkap — tidak dipilih. |
+| Yang tetap milik tim | Formulir persetujuan pemilik (ET-02) dan cakupan persetujuan dokumen sekolah (ET-04); pengenalan nama dan alamat menunggu model NER (BT-70). |
+| Dampak | Status spec fitur 037; D-12 0.43 (baris 037 diperluas sesuai putusan, baris 038 disisipkan); D-00 3.06 (TK-84 diputus, tetap terbuka sampai fitur 037 selesai). Plan menyusul atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |
