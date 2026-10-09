@@ -3676,3 +3676,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memberi `peran_verifikasi` hak `DELETE` atas karantina di dalam fitur 032 — tidak dipilih: mengubah hak C-03 milik fitur yang lolos Gerbang 4, tanpa perkakas yang memakainya dan tanpa putusan. Menulis metadata dalam pernyataan kedua sesudah pemindahan — tidak dipilih: M-4 menunjukkan dokumen dapat berada di korpus tanpa catatan. |
 | Dampak | D-00 3.01 (TK-83 terbuka). Penyimpan tiruan dan PostgreSQL lulus kontrak yang sama; `tests/api/test_penemuan_http.py` tidak berubah. |
 | Pemutus | Agen, atas pendelegasian KB-168; TK-83 menunggu pemegang gerbang |
+
+## KB-247 · TK-83 diputus: baris D-12 037 perkakas ingesti
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | KB-246 mengajukan TK-83: tidak ada peran basis data yang dapat memindahkan dokumen dari karantina, pemetaan peran bagi penerimaan, persetujuan, dan penarikan dokumen belum dirancang, dan tidak ada baris D-12 yang memiliki perkakas pengisi korpus. Baris D-12 baru tidak didelegasikan (KB-168), sehingga ditanyakan. |
+| Keputusan | **Pilihan A** oleh pemegang gerbang: baris D-12 **037** "Perkakas ingesti" disisipkan — perkakas tim yang menjalankan gerbang ingesti terhadap PostgreSQL beserta peta peran basis datanya; menutup TK-83; dikerjakan sesudah fitur 032. |
+| Alternatif | B: TK-83 terbuka tanpa pemilik; C: memperbaiki hak karantina di dalam fitur 032 — tidak dipilih. |
+| Dampak | D-12 0.42; D-00 3.02 (TK-83 diputus). Fitur 032 tidak berubah cakupannya. Usulan spec 037 menyusul sesudah Gerbang 4 fitur 032 dan melewati Gerbang 1 sendiri. |
+| Pemutus | Pemegang Gerbang 1–4 |
