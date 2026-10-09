@@ -3621,3 +3621,14 @@ ditegakkan uji, bukan kebiasaan.
 | Yang tetap milik tim | Cakupan persetujuan pemilik dokumen sekolah (ET-04) bagi penayangan teks kepada peserta lain — tim etik. |
 | Dampak | Status spec fitur 032; D-00 2.97 (TK-80 diputus, tetap terbuka sampai fitur 032 selesai); D-12 0.40 (baris 032 menyebut kedua rute; cakupan tidak menyempit). Plan menyusul atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-242 · TK-81 diputus: catatan status di korpus; TK-82 diajukan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Menyusun plan fitur 032 menemukan dua bidang D-14 Bagian 5.1 yang tidak berwujud di peladen. **TK-81:** `dokumen_sumber.status_keberlakuan` — status hanya tersalin pada kandidat dan butir tayang kurasi, rujukan pengganti tidak tersimpan, padahal R-07 menuntut keduanya tampil sebelum isi pembaca sumber. **TK-82:** metadata asal dokumen — `isi` tabel korpus adalah teks dokumen; judul, jenis, penerbit, tahun, dan tingkat kerahasiaan hanya hidup pada memori `GerbangIngesti`. Keduanya mengubah apa yang dibangun di luar spec, sehingga ditanyakan, bukan diputus atas KB-168. |
+| Keputusan | **TK-81, pilihan A** oleh pemegang gerbang: catatan status tambah-saja per dokumen korpus, diisi perintah `status` perkakas kurasi yang sudah ada. Regulasi tanpa status tercatat tampil metadata saja, tanpa teks. Kelak dibaca jalur penjawab. Satu tabel bertambah pada D-14. **TK-82 diajukan**; plan fitur 032 tidak ditulis sebelum diputus. |
+| Alternatif | TK-81: status dibaca dari salinan kurasi (hanya dokumen yang pernah menjadi sumber butir), atau pembaca tanpa status (melanggar R-07) — tidak dipilih. TK-82: lihat pertanyaan yang diajukan. |
+| Dampak | D-00 2.98 (TK-81 diputus, TK-82 terbuka). Spec fitur 032 tidak berubah. |
+| Pemutus | Pemegang Gerbang 1–4 (TK-81); TK-82 menunggu |
