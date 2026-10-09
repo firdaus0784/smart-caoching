@@ -3584,3 +3584,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | TK-79: menampilkan baris sebagai tak terbaca — tidak dipilih; mengubah bentuk D-14 Bagian 4.7 dan S-15. Menunda — tidak dipilih. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 036; D-00 2.94; dokumen HKI. Perbaikan TK-79 menyusul pada commit tersendiri (KB-239). |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-239 · TK-79 — butir tak terbaca dilewati, bukan menjatuhkan antrean kurasi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Putusan KB-238 atas TK-79: satu butir yang isinya tidak memenuhi `ButirPengetahuan` membuat `GET /kurasi/antrean` — dan kedua rute penulis kurasi, yang menjawab bentuk yang sama — menjawab 500 bagi seluruh kurator. |
+| Keputusan | `antrean` pada `src/api/kurasi.py` membentuk kandidat dan butir tayang lewat satu penyaring yang menangkap `ValidationError`, melewati barisnya, dan mencatat `id_butir` beserta **jenis** galat saja ke log operasional — pesan galat model mengutip isi butir. Uji ditulis lebih dulu dan merah: empat butir, dua ditayangkan lewat rute kurator, lalu satu yang menunggu dan satu yang tayang dirusak dengan judul bertipe salah; antrean tetap 200 dengan dua butir lainnya, dan judul tidak muncul di log. D-14 tidak berubah. |
+| Putaran mutasi | **M-1**: penangkapan diganti `TypeError`, sehingga `ValidationError` lolos → merah. |
+| Alternatif | Menampilkan baris sebagai tak terbaca — tidak dipilih pemegang gerbang (KB-238). Menangkap `Exception` — tidak dipilih; sama dengan KB-225, galat lain bukan "butir tidak terbaca" dan harus tetap terlihat sebagai 500. |
+| Dampak | `src/api/kurasi.py`; `tests/api/test_kurasi_http.py` (penyimpan kurasi uji yang merusak baris, parameter `kurasi` pada lingkungan uji); `docs/D00.md` 2.95 (TK-79 Selesai). Fitur 013 tidak dibuka kembali; spec dan plan-nya tidak berubah. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-238); pelaksanaan oleh agen |

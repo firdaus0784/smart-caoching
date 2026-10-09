@@ -7,7 +7,9 @@ tercatat benar-benar pseudonim dari sesi kurator — bukan identitas tetap.
 from __future__ import annotations
 
 import hashlib
+import logging
 import secrets
+from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
@@ -15,6 +17,7 @@ import pytest
 from fastapi.testclient import TestClient
 from src.api.aplikasi import susun_aplikasi
 from src.api.autentikasi import MASA_SESI, NAMA_KUKI, PenentuSesi
+from src.api.galat import LOG_OPERASIONAL
 from src.api.kurasi import (
     PESAN_BUTIR_TIDAK_ADA,
     PESAN_PUTUSAN_TIDAK_SAH,
@@ -25,7 +28,7 @@ from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.llm.galat import kalimat_terlalu_panjang
 from src.nlp.anotasi.skema import KategoriMasalah
 from src.penyimpanan.akun import AkunMemori, BarisAkun
-from src.penyimpanan.kurasi import BarisKandidat, KurasiMemori
+from src.penyimpanan.kurasi import BarisKandidat, BarisTayang, KurasiMemori
 from src.penyimpanan.pengguna import PenggunaMemori
 from src.penyimpanan.riwayat import RiwayatMemori
 from tests.api.test_saya_http import JalurPencatat
@@ -79,13 +82,34 @@ def butir(
 SUMBER = {"judul": "Laporan", "penerbit": "Penerbit", "tahun": 2025, "tautan": None}
 
 
-class Lingkungan:
+class KurasiRusak(KurasiMemori):
+    """Butir yang isinya tidak lagi memenuhi model, pada antrean dan pada daftar
+    tayang — baris yang ditulis tangan atau sisa uji pada basis data bersama
+    (TK-79). Judul bertipe salah: pesan galat model mengutip nilai itu."""
+
     def __init__(self) -> None:
+        super().__init__()
+        self.rusak: set[str] = set()
+
+    def _rusakkan(self, baris: Any) -> Any:
+        if baris.id_butir not in self.rusak:
+            return baris
+        return replace(baris, butir={**baris.butir, "judul": [baris.butir["judul"]]})
+
+    async def menunggu(self, *, hari_ini: date) -> tuple[BarisKandidat, ...]:
+        return tuple(self._rusakkan(k) for k in await super().menunggu(hari_ini=hari_ini))
+
+    async def tayang_aktif(self) -> tuple[BarisTayang, ...]:
+        return tuple(self._rusakkan(t) for t in await super().tayang_aktif())
+
+
+class Lingkungan:
+    def __init__(self, kurasi: KurasiMemori | None = None) -> None:
         self.kini = T0
         self.akun = AkunMemori()
         for satu in (K, A):
             self.akun.pasang_akun(satu)
-        self.kurasi = KurasiMemori()
+        self.kurasi = KurasiMemori() if kurasi is None else kurasi
         self.klien = TestClient(
             susun_aplikasi(
                 jalur=JalurPencatat(),
@@ -175,6 +199,33 @@ def test_antrean_berbentuk_d14() -> None:
             "masuk_pada": "2026-10-05T01:00:00Z",
         }
     ]
+
+
+def test_butir_tak_terbaca_dilewati_pada_antrean_dan_dicatat_tanpa_isinya(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """TK-79 (KB-238): satu butir yang tidak memenuhi model tidak menjatuhkan
+    antrean bagi seluruh kurator — butir lain tetap tampil, baik yang menunggu
+    maupun yang tayang; log operasional menyebut nomornya saja, dan tim
+    menariknya lewat perkakas."""
+    kurasi = KurasiRusak()
+    ling = Lingkungan(kurasi)
+    for id_butir in ("b-1", "b-2", "b-3", "b-4"):
+        ling.masukkan(butir(id_butir))
+    for id_butir in ("b-3", "b-4"):
+        assert ling.putuskan(id_butir, SETUJUI).status_code == 200
+    kurasi.rusak |= {"b-1", "b-3"}
+    with caplog.at_level(logging.WARNING, logger=LOG_OPERASIONAL.name):
+        tanggapan = ling.minta("GET", "/api/v1/kurasi/antrean")
+    assert tanggapan.status_code == 200
+    isi = tanggapan.json()
+    assert [k["id_butir"] for k in isi["menunggu"]] == ["b-2"]
+    assert [t["id_butir"] for t in isi["tayang"]] == ["b-4"]
+    catatan = [r.getMessage() for r in caplog.records if r.name == LOG_OPERASIONAL.name]
+    assert any("b-1" in c for c in catatan), catatan
+    assert any("b-3" in c for c in catatan), catatan
+    for c in catatan:
+        assert "Supervisi akademik terjadwal" not in c
 
 
 def test_rute_kurasi_hanya_bagi_kurator() -> None:

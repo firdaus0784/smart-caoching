@@ -29,11 +29,13 @@ karangan. Pembentukan itu menjalankan ulang penjaga C-06 dan C-07 pada bentuknya
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from datetime import date, datetime
-from typing import Annotated, Any, Final, Literal
+from typing import Annotated, Any, Final, Literal, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
 
+from src.api.galat import LOG_OPERASIONAL
 from src.api.hari import iso_utc, tanggal_wib
 from src.ingest.kurasi.butir import ButirPengetahuan, JenisSumberButir
 from src.ingest.kurasi.jejak import GalatJejakKurasi, JejakKurasi
@@ -206,12 +208,34 @@ def _tayang(t: BarisTayang) -> TayangTampil:
     )
 
 
+_Baris = TypeVar("_Baris", BarisKandidat, BarisTayang)
+_Tampil = TypeVar("_Tampil", KandidatTampil, TayangTampil)
+
+
+def _yang_terbaca(bentuk: Callable[[_Baris], _Tampil], semua: Iterable[_Baris]) -> list[_Tampil]:
+    """Baris yang isinya tidak lagi memenuhi model dilewati (TK-79, KB-238):
+    satu butir rusak tidak boleh menjatuhkan antrean bagi seluruh kurator. Log
+    menyebut nomor butir dan jenis galatnya saja — pesan galat model memuat
+    isi butir — dan tim menariknya lewat perkakas."""
+    hasil: list[_Tampil] = []
+    for baris in semua:
+        try:
+            hasil.append(bentuk(baris))
+        except ValidationError as galat:
+            LOG_OPERASIONAL.warning(
+                "butir kurasi tidak terbaca id_butir=%s sebab=%s",
+                baris.id_butir,
+                type(galat).__name__,
+            )
+    return hasil
+
+
 async def antrean(simpan: PenyimpanKurasi, *, sekarang: datetime) -> dict[str, Any]:
     """Bentuk tanggapan bersama ketiga rute — D-14 Bagian 4.7."""
     menunggu = await simpan.menunggu(hari_ini=tanggal_wib(sekarang))
     return Antrean(
-        menunggu=[_kandidat(k) for k in menunggu],
-        tayang=[_tayang(t) for t in await simpan.tayang_aktif()],
+        menunggu=_yang_terbaca(_kandidat, menunggu),
+        tayang=_yang_terbaca(_tayang, await simpan.tayang_aktif()),
     ).model_dump(mode="json")
 
 
