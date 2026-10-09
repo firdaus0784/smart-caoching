@@ -3748,3 +3748,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Merakit jalur penjawab sungguhan pada `make jalan` agar sitasi lahir dari peladen — tidak dipilih: di luar `plan.md` fitur 032, dan plan Bagian 10.2 sudah menyatakan jawaban buatan. Menanam korpus lewat gerbang ingesti — tidak mungkin sebelum baris 037: pemindahan dari karantina ditolak peladen bagi setiap peran aplikasi (TK-83). |
 | Dampak | `perkakas/jalankan_lokal.py`; `tests/perkakas/test_jalankan_lokal.py`; `specs/032-koleksi-dan-pembaca-sumber/bukti/`, status `spec.md`, `plan.md`, `tasks.md`; `docs/D00.md`, `docs/hki/dokumentasi-teknis.md`; `logbook/L8-tagihan-pasal.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-253 · Gerbang 4 fitur 032 lolos; dua aturan S-10 yang lebih ketat dipertahankan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Laporan KB-252 mengajukan fitur 032 ke Gerbang 4. Jawaban "lanjutkan" atas laporan itu tidak dibaca sebagai putusan gerbang, sebab Gerbang 4 tidak didelegasikan (KB-168) dan putusan-putusan sebelumnya diambil lewat pilihan tegas (KB-213, KB-224, KB-238); putusan ditanyakan lewat pilihan. Turut ditanyakan dua aturan pembaca sumber yang lebih ketat dari spec (KB-243) dan langkah sesudahnya. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"** bagi fitur 032 — jumlah baris lolos Gerbang 4 menjadi **31 dari 37**; TK-80, TK-81, dan TK-82 selesai (D-00 3.04). **"Pertahankan keduanya"** bagi aturan S-10: dokumen berstatus `dicabut` tampil tanpa teks, dan dokumen sekolah tanpa teks pada tingkat kerahasiaan apa pun. **"Ya, susun spec 037"**: usulan spec baris 037 perkakas ingesti disusun dan diajukan ke Gerbang 1. |
+| Alternatif | Belum lolos — tidak dipilih. Melonggarkan aturan `dicabut` atau dokumen sekolah — tidak dipilih; yang kedua tetap menyentuh ET-04 milik tim etik. Mendahulukan baris 031 — tidak dipilih. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 032; D-00 3.04; dokumen HKI. |
+| Pemutus | Pemegang Gerbang 1–4 |
