@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F11, FR-G06, FR-G10; NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 | Dokumen terkait | D-01 Bagian 9 (`citation_opened`, `discovery_saved`) dan 9.1 · D-02 J1-4, J2, J3-5, titik kritis T2 · D-05 Bagian 3.1, S-06 blok 8, S-10, S-11, K-7 · D-06 Bagian 4 dan 7.5 · D-14 Bagian 3.2, 3.3, 4.1, 4.6 · spec fitur 013, 033, 034, 035 |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Lima dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Enam dari delapan tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 

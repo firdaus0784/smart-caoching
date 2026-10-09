@@ -3709,3 +3709,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | `peran_koleksi` membaca butir tayang sendiri — tidak dipilih (KB-243). Menyembunyikan butir yang ditarik dari koleksi — ditolak P-4 A. `DELETE` yang selalu 204 — tidak dipilih: layar yang usang perlu tahu butirnya sudah tidak ada. |
 | Dampak | Pemeriksa rute terdaftar menyusun aplikasi rujukan dengan koleksi. `make check` lulus enam gerbang. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-250 · T-6 fitur 032: penarikan menghapus koleksi; rasio penelusuran sumber
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | K-5 dan K-6 plan fitur 032: penarikan data menghapus koleksi beserta catatannya (R-08), dan analitik menghitung rasio penelusuran sumber D-01 Bagian 9.1 (P-3 A). Uji terhadap PostgreSQL dan atas peristiwa buatan ditulis lebih dulu dan merah. |
+| Keputusan | `TABEL_DATA_PENGGUNA` 15 → 16 dengan `penemuan.koleksi`, dihapus dalam pernyataan `_HAPUS` yang sama; catatan metadata dan status korpus tidak tersentuh, diuji. `RingkasanAnalitik` memperoleh `penelusuran_sumber` (`citation_opened` / `answer_served`, pilot saja, `null` tanpa penyebut); `rasio_penelusuran_sumber` keluar dari `MetrikTertunda`. Kontrak web, validator klien, dan tabel S-18 berubah dalam tugas yang sama — bukan T-7 — sebab klien menolak ringkasan yang tidak berbentuk kontrak, dan commit yang mengubah bentuk tanpa klien meninggalkan S-18 rusak di antara dua commit. Mutasi M-13, M-15 merah. |
+| Alternatif | Menghitung rasio atas pseudonim berbeda — tidak dipilih: D-01 Bagian 9.1 mendefinisikannya atas jumlah peristiwa, dan definisi bukan milik pelaksana. |
+| Dampak | `make check` lulus enam gerbang. T-7 tidak lagi memuat S-18. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

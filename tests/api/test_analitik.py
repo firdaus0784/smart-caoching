@@ -161,13 +161,14 @@ def test_metrik_belum_terukur_bernama_dan_bersebab() -> None:
     assert set(belum) == set(MetrikTertunda)
     assert {m.value for m in MetrikTertunda} == {
         "rasio_penuntasan",
-        "rasio_penelusuran_sumber",
         "rasio_verifikasi",
         "rasio_komitmen",
         "rasio_penerapan",
     }
     # Fitur 036 (P-4 B): `akurasi_qa` keluar, digantikan bagian `penilaian`.
     assert "akurasi_qa" not in {m.value for m in MetrikTertunda}
+    # Fitur 032 (P-3 A; M-15): digantikan bagian `penelusuran_sumber`.
+    assert "rasio_penelusuran_sumber" not in {m.value for m in MetrikTertunda}
     assert all(sebab.strip() for sebab in belum.values())
 
 
@@ -216,3 +217,27 @@ def test_penanda_pengembangan_sama_dengan_titik_jalan() -> None:
     from perkakas.jalankan_lokal import VERSI_APLIKASI_PENGEMBANGAN
 
     assert VERSI_PENGEMBANGAN == VERSI_APLIKASI_PENGEMBANGAN
+
+
+def test_rasio_penelusuran_sumber_d01() -> None:
+    """D-01 Bagian 9.1: `citation_opened` / `answer_served`, pilot saja (P-3 A)."""
+    peristiwa = [
+        *[_p("a", _hari(5, j), "answer_served") for j in range(5)],
+        _p(
+            "a",
+            _hari(5, 6),
+            "citation_opened",
+            {"id_sumber": "d1", "jenis_sumber": "regulasi_resmi"},
+        ),
+        _p("b", _hari(6), "citation_opened", {"id_sumber": "d1", "jenis_sumber": "regulasi_resmi"}),
+        _p("e", _hari(6), "citation_opened", {"id_sumber": "d2"}, versi=VERSI_PENGEMBANGAN),
+        _p("e", _hari(6), "answer_served", versi=VERSI_PENGEMBANGAN),
+    ]
+    sumber = ringkasan(peristiwa, sekarang=SEKARANG).penelusuran_sumber
+    assert (sumber.jawaban, sumber.dibuka, sumber.rasio) == (5, 2, 0.4)
+
+
+def test_rasio_penelusuran_tanpa_jawaban_bernilai_null() -> None:
+    peristiwa = [_p("a", _hari(5), "citation_opened", {"id_sumber": "d1"})]
+    sumber = ringkasan(peristiwa, sekarang=SEKARANG).penelusuran_sumber
+    assert (sumber.jawaban, sumber.dibuka, sumber.rasio) == (0, 1, None)

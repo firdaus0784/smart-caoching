@@ -10,7 +10,14 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-li
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { Aplikasi } from "../Aplikasi";
-import { JALUR_ANALITIK_EKSPOR, JALUR_ANALITIK_RINGKAS, JALUR_ANTREAN, JALUR_PROFIL, type Pemanggil } from "../klien";
+import {
+  JALUR_ANALITIK_EKSPOR,
+  JALUR_ANALITIK_RINGKAS,
+  JALUR_ANTREAN,
+  JALUR_PROFIL,
+  bacaAnalitik,
+  type Pemanggil,
+} from "../klien";
 import type { RingkasanAnalitik } from "../kontrak";
 import { LABEL_METRIK_TERTUNDA, LABEL_NILAI, MIKROKOPI, persen } from "../mikrokopi";
 import { LayarAnalitik } from "./LayarAnalitik";
@@ -31,6 +38,7 @@ const RINGKASAN: RingkasanAnalitik = {
   },
   penemuan: { disajikan: 0, dibuka: 0, rasio: null },
   penilaian: { per_nilai: { membantu: 3, tidak_membantu: 1, keliru: 2 } },
+  penelusuran_sumber: { jawaban: 5, dibuka: 2, rasio: 0.4 },
   belum_terukur: [{ metrik: "rasio_penerapan", sebab: "Komitmen penerapan belum dibangun." }],
   integritas: {
     per_jenis: { session_start: 11 },
@@ -119,6 +127,23 @@ describe("S-18", () => {
       `${LABEL_NILAI.tidak_membantu}1`,
       `${LABEL_NILAI.keliru}2`,
     ]);
+  });
+
+  test("fitur 032: rasio penelusuran sumber — jawaban, sumber dibuka, rasio", () => {
+    layar(peladen().pemanggil);
+    const tabel = screen.getByRole("table", { name: MIKROKOPI.judulPenelusuranAnalitik });
+    const baris = within(tabel).getAllByRole("row").slice(1).map((b) => b.textContent);
+    expect(baris).toEqual([
+      `${MIKROKOPI.labelJawabanDisajikan}5`,
+      `${MIKROKOPI.labelSumberDibuka}2`,
+      `${MIKROKOPI.kolomRasio}${persen(0.4)}`,
+    ]);
+  });
+
+  test("fitur 032: ringkasan tanpa penelusuran sumber ditolak klien, bukan ditampilkan separuh", async () => {
+    const { penelusuran_sumber: _, ...lama } = RINGKASAN;
+    const pemanggil: Pemanggil = async () => new Response(JSON.stringify(lama));
+    expect(await bacaAnalitik(pemanggil)).toEqual({ jenis: "galat", galat: "sistem" });
   });
 
   test("R-05: integritas menyebut peristiwa pengembangan yang dipisah", () => {

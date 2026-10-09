@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-241); TK-81 A (KB-242), TK-82 A (KB-243) |
 | Plan | Gerbang 2 lolos 9 Oktober 2026 atas pendelegasian KB-168 (KB-243); K-1 s.d. K-8 |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Lima dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Enam dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F11, FR-G06, FR-G10, FR-B06, NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -72,10 +72,12 @@ Empat rute saja — dua yang sudah ada pada D-14 dan dua yang disetujui P-1 A.
 
 **Kebutuhan:** R-08; K-5, K-6; P-3 A.
 
-- [ ] Uji lebih dulu terhadap PostgreSQL (penarikan) dan atas peristiwa buatan
+- [x] Uji lebih dulu terhadap PostgreSQL (penarikan) dan atas peristiwa buatan
       (analitik)
-- [ ] `TABEL_DATA_PENGGUNA`, `_HAPUS`; `src/api/analitik.py`
-- [ ] Mutasi M-13, M-15
+- [x] `TABEL_DATA_PENGGUNA`, `_HAPUS`; `src/api/analitik.py`
+- [x] Mutasi M-13, M-15
+- [x] Kontrak web dan tabel S-18 penelusuran sumber ikut tugas ini: bentuk ringkasan
+      berubah di sini, dan klien yang menolak bentuk lama wajib berubah bersamanya
 
 ## T-7 · Layar S-06, S-09, S-10, S-11, navigasi, S-14, S-18
 

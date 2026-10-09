@@ -13,7 +13,7 @@ tidak mengimpornya. Rute `DELETE /saya/data` hanya mencatat permintaan.
 
 1. Pemetaan pseudonim dihapus pada basis data pseudonim.
 2. Satu pernyataan CTE menghapus seluruh data milik pseudonim itu pada
-   lima belas tabel (`TABEL_DATA_PENGGUNA`), lalu mengosongkan pseudonim pada baris permintaan dan
+   enam belas tabel (`TABEL_DATA_PENGGUNA`), lalu mengosongkan pseudonim pada baris permintaan dan
    mengisi waktu dipenuhi serta jumlah baris per tabel.
 
 Urutan ini membuat kegagalan di tengah dapat diulang: bila langkah 2 gagal,
@@ -59,12 +59,15 @@ TABEL_DATA_PENGGUNA: Final = (
     "kurasi.aduan",
     "kurasi.aduan_digantikan",
     "kurasi.tindak_lanjut_aduan",
+    "penemuan.koleksi",
 )
-"""Lima belas tempat data milik seorang pengguna. Sepuluh dari tabel `spec.md`
+"""Enam belas tempat data milik seorang pengguna. Sepuluh dari tabel `spec.md`
 fitur 033, dibaca dari katalog basis data; catatan persetujuan termasuk (P-3,
 TK-75). Lima dari fitur 036 (R-07): tanggapan, penilaian, dan aduan beserta
 penanda gugur dan tindak lanjutnya — catatan kurator dapat mengutip isi
-pertanyaan peserta, sehingga ia ikut terhapus bersama aduannya."""
+pertanyaan peserta, sehingga ia ikut terhapus bersama aduannya. Satu dari
+fitur 032 (R-08): koleksi beserta catatannya. Catatan metadata dan status
+dokumen korpus bukan data peserta dan tidak tersentuh."""
 
 _HAPUS: Final = """
 WITH pesan_milik AS (
@@ -103,6 +106,8 @@ WITH pesan_milik AS (
     DELETE FROM penemuan.tayang_harian WHERE id_pengguna = $1 RETURNING id_pengguna
 ), belum_relevan AS (
     DELETE FROM penemuan.belum_relevan WHERE id_pengguna = $1 RETURNING id_pengguna
+), koleksi AS (
+    DELETE FROM penemuan.koleksi WHERE id_pengguna = $1 RETURNING id_pengguna
 ), profil AS (
     DELETE FROM pengguna.profil_sekolah WHERE id_pengguna = $1 RETURNING id_pengguna
 ), prioritas AS (
@@ -131,7 +136,8 @@ WITH pesan_milik AS (
         'riwayat.penilaian', (SELECT count(*) FROM penilaian),
         'kurasi.aduan', (SELECT count(*) FROM aduan),
         'kurasi.aduan_digantikan', (SELECT count(*) FROM digantikan),
-        'kurasi.tindak_lanjut_aduan', (SELECT count(*) FROM tindak_lanjut)
+        'kurasi.tindak_lanjut_aduan', (SELECT count(*) FROM tindak_lanjut),
+        'penemuan.koleksi', (SELECT count(*) FROM koleksi)
     ) AS isi
 ), tandai AS (
     UPDATE akun.permintaan_penarikan

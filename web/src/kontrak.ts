@@ -313,7 +313,6 @@ export type HasilAntrean =
  */
 export type MetrikTertunda =
   | "rasio_penuntasan"
-  | "rasio_penelusuran_sumber"
   | "rasio_verifikasi"
   | "rasio_komitmen"
   | "rasio_penerapan";
@@ -354,6 +353,13 @@ export interface RasioPenemuan {
   readonly rasio: number | null;
 }
 
+/** Fitur 032: `citation_opened` / `answer_served` — D-01 Bagian 9.1. */
+export interface RasioPenelusuranSumber {
+  readonly jawaban: number;
+  readonly dibuka: number;
+  readonly rasio: number | null;
+}
+
 /** Fitur 036: jumlah per nilai atas penilaian terakhir tiap pesan; nol berarti
  * diukur dan tidak ada. Kuncinya ketiga nilai `NilaiPenilaian`. */
 export interface RingkasanPenilaian {
@@ -379,6 +385,7 @@ export interface RingkasanAnalitik {
   readonly keterlibatan: Keterlibatan;
   readonly penemuan: RasioPenemuan;
   readonly penilaian: RingkasanPenilaian;
+  readonly penelusuran_sumber: RasioPenelusuranSumber;
   readonly belum_terukur: readonly BelumTerukur[];
   readonly integritas: Integritas;
 }

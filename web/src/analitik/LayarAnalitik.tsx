@@ -209,6 +209,18 @@ export function LayarAnalitik({
       </section>
 
       <section>
+        <Tabel
+          baris={[
+            [MIKROKOPI.labelJawabanDisajikan, String(r.penelusuran_sumber.jawaban)],
+            [MIKROKOPI.labelSumberDibuka, String(r.penelusuran_sumber.dibuka)],
+            [MIKROKOPI.kolomRasio, nilaiAtau(r.penelusuran_sumber.rasio, persen)],
+          ]}
+          judul={MIKROKOPI.judulPenelusuranAnalitik}
+          kolom={[MIKROKOPI.kolomKode, MIKROKOPI.kolomJumlah]}
+        />
+      </section>
+
+      <section>
         <h2>{MIKROKOPI.judulBelumTerukur}</h2>
         <dl>
           {r.belum_terukur.map((b) => (

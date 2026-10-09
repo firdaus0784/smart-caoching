@@ -109,10 +109,12 @@ def test_ringkas_berbentuk_d14_bagi_peneliti() -> None:
         "keterlibatan",
         "penemuan",
         "penilaian",
+        "penelusuran_sumber",
         "belum_terukur",
         "integritas",
     }
     assert isi["penilaian"] == {"per_nilai": {"membantu": 0, "tidak_membantu": 0, "keliru": 0}}
+    assert isi["penelusuran_sumber"] == {"jawaban": 0, "dibuka": 0, "rasio": None}
     assert set(isi["keterlibatan"]) == {"aktif_harian", "aktif_mingguan", "retensi", "sesi"}
     assert isi["integritas"]["pengembangan"] == 1
     assert isi["penemuan"]["rasio"] is None

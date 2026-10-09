@@ -43,6 +43,7 @@ from src.api.analitik import (
     Keterlibatan,
     MetrikTertunda,
     PermintaanEkspor,
+    RasioPenelusuranSumber,
     RasioPenemuan,
     Retensi,
     RingkasanAnalitik,
@@ -123,6 +124,8 @@ MODEL: tuple[type[BaseModel], ...] = (
     AduanTampil,
     DaftarAduan,
     PermintaanTindakLanjut,
+    # Fitur 032: bagian penelusuran sumber pada ringkasan analitik.
+    RasioPenelusuranSumber,
 )
 ENUM: tuple[type[Enum], ...] = (
     StatusDasar,

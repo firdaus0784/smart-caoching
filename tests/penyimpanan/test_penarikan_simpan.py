@@ -128,6 +128,12 @@ async def _isi(psd: str) -> str:
                 "VALUES ($1, 'b-uji-033', 'Belum menjadi fokus', $2)",
                 (psd, T0),
             ),
+            # Fitur 032: koleksi beserta catatannya (R-08).
+            (
+                "INSERT INTO penemuan.koleksi (id_pengguna, id_butir, catatan, disimpan_pada) "
+                "VALUES ($1, 'b-uji-033', 'Bahas di rapat guru', $2)",
+                (psd, T0),
+            ),
             (
                 "INSERT INTO telemetri.peristiwa (pseudonim, jenis, waktu, properti, "
                 "versi_aplikasi, versi_model) "
@@ -200,6 +206,7 @@ _HITUNG: dict[str, str] = {
     ),
     "penemuan.tayang_harian": "SELECT count(*) FROM penemuan.tayang_harian WHERE id_pengguna = $1",
     "penemuan.belum_relevan": "SELECT count(*) FROM penemuan.belum_relevan WHERE id_pengguna = $1",
+    "penemuan.koleksi": "SELECT count(*) FROM penemuan.koleksi WHERE id_pengguna = $1",
     "telemetri.peristiwa": "SELECT count(*) FROM telemetri.peristiwa WHERE pseudonim = $1",
     "riwayat.pesan": "SELECT count(*) FROM riwayat.pesan WHERE id_pesan = 'msg_' || $1",
     "riwayat.penilaian": "SELECT count(*) FROM riwayat.penilaian WHERE alasan = 'Alasan ' || $1",
@@ -245,10 +252,11 @@ async def _minta(psd: str, kini: datetime = T0) -> int:
     return int(b[0])
 
 
-def test_lima_belas_tabel_terdaftar() -> None:
-    """Sepuluh tabel fitur 033, ditambah lima tabel fitur 036 (R-07)."""
+def test_enam_belas_tabel_terdaftar() -> None:
+    """Sepuluh tabel fitur 033, lima tabel fitur 036 (R-07), dan koleksi fitur
+    032 (R-08; M-13)."""
     assert set(TABEL_DATA_PENGGUNA) == set(_HITUNG)
-    assert len(TABEL_DATA_PENGGUNA) == 15
+    assert len(TABEL_DATA_PENGGUNA) == 16
 
 
 def test_satu_kosong_satu_utuh_dan_bukti_tanpa_pseudonim() -> None:
@@ -283,6 +291,27 @@ def test_satu_kosong_satu_utuh_dan_bukti_tanpa_pseudonim() -> None:
 
         assert json.loads(bukti["jumlah_baris"]) == {t: 1 for t in TABEL_DATA_PENGGUNA}
         assert nomor not in [p.nomor for p in await _penarikan().tertunda()]
+
+    jalankan(uji())
+
+
+def test_catatan_korpus_bukan_data_peserta_tidak_tersentuh() -> None:
+    """Fitur 032: metadata dan status dokumen korpus tidak dimiliki peserta mana
+    pun, dan penarikan tidak menyentuhnya."""
+
+    async def uji() -> None:
+        a = _psd()
+        await _isi(a)
+        s = Sambungan(PENGELOLA)
+        await s.execute(
+            "INSERT INTO korpus.status_dokumen (id_dokumen, status) VALUES ($1, 'berlaku')",
+            f"dok-{a}",
+        )
+        await _penarikan().jalankan(await _minta(a), sekarang=T0 + timedelta(days=1))
+        b = await Sambungan(PENGELOLA).fetchrow(
+            "SELECT count(*) FROM korpus.status_dokumen WHERE id_dokumen = $1", f"dok-{a}"
+        )
+        assert int(b[0]) == 1
 
     jalankan(uji())
 

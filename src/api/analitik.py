@@ -59,21 +59,20 @@ class MetrikTertunda(Enum):
     """Metrik D-01 Bagian 9.1 yang peristiwanya belum terekam."""
 
     RASIO_PENUNTASAN = "rasio_penuntasan"
-    RASIO_PENELUSURAN_SUMBER = "rasio_penelusuran_sumber"
     RASIO_VERIFIKASI = "rasio_verifikasi"
     RASIO_KOMITMEN = "rasio_komitmen"
     RASIO_PENERAPAN = "rasio_penerapan"
     # `akurasi_qa` keluar pada fitur 036 (P-4 B): `answer_rated` kini terekam,
     # dan jumlahnya tampil pada `RingkasanPenilaian` — tanpa rasio "ketepatan"
     # yang definisinya belum ditetapkan D-08.
+    # `rasio_penelusuran_sumber` keluar pada fitur 032 (P-3 A): `citation_opened`
+    # kini terekam pada pembaca sumber, dan rasionya tampil pada
+    # `RasioPenelusuranSumber`.
 
 
 SEBAB_TERTUNDA: Final[dict[MetrikTertunda, str]] = {
     MetrikTertunda.RASIO_PENUNTASAN: (
         "Lama baca hanya teramati di peramban, dan rute penerimanya belum diputus."
-    ),
-    MetrikTertunda.RASIO_PENELUSURAN_SUMBER: (
-        "Sumber yang dibuka belum terekam; pembaca sumber belum dibangun."
     ),
     MetrikTertunda.RASIO_VERIFIKASI: "Pemeriksaan pemahaman belum dibangun.",
     MetrikTertunda.RASIO_KOMITMEN: "Komitmen penerapan belum dibangun.",
@@ -124,6 +123,14 @@ class RasioPenemuan(_Tanggapan):
     rasio: float | None
 
 
+class RasioPenelusuranSumber(_Tanggapan):
+    """D-01 Bagian 9.1: `citation_opened` / `answer_served` (fitur 032, P-3 A)."""
+
+    jawaban: int
+    dibuka: int
+    rasio: float | None
+
+
 class RingkasanPenilaian(_Tanggapan):
     """Jumlah per nilai atas penilaian **terakhir** tiap pesan (fitur 036, KB-228)."""
 
@@ -149,6 +156,7 @@ class RingkasanAnalitik(_Tanggapan):
     keterlibatan: Keterlibatan
     penemuan: RasioPenemuan
     penilaian: RingkasanPenilaian
+    penelusuran_sumber: RasioPenelusuranSumber
     belum_terukur: list[BelumTerukur]
     integritas: Integritas
 
@@ -258,6 +266,11 @@ def ringkasan(peristiwa: Iterable[BarisPeristiwa], *, sekarang: datetime) -> Rin
             rasio=_rasio(jenis["discovery_opened"], jenis["discovery_served"]),
         ),
         penilaian=_penilaian(pilot),
+        penelusuran_sumber=RasioPenelusuranSumber(
+            jawaban=jenis["answer_served"],
+            dibuka=jenis["citation_opened"],
+            rasio=_rasio(jenis["citation_opened"], jenis["answer_served"]),
+        ),
         belum_terukur=[BelumTerukur(metrik=m, sebab=SEBAB_TERTUNDA[m]) for m in MetrikTertunda],
         integritas=Integritas(
             per_jenis=dict(sorted(jenis.items())),

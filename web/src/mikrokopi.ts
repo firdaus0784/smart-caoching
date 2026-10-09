@@ -284,6 +284,9 @@ export const MIKROKOPI = {
   tindakLanjutGangguan: "Tindak lanjut belum tercatat karena gangguan di sistem kami. Coba lagi.",
   aduanSudahDiambil: "Aduan ini sudah ditindaklanjuti atau digantikan. Daftar sudah dimuat ulang.",
   judulPenilaianAnalitik: "Penilaian jawaban",
+  judulPenelusuranAnalitik: "Penelusuran sumber",
+  labelJawabanDisajikan: "Jawaban disajikan",
+  labelSumberDibuka: "Sumber dibuka",
   kolomNilai: "Nilai",
 } as const;
 
@@ -324,7 +327,6 @@ export const DATA_TIDAK_DITARIK: readonly string[] = [
 /** Nama metrik D-01 Bagian 9.1 yang belum terukur — fitur 035. */
 export const LABEL_METRIK_TERTUNDA: Readonly<Record<MetrikTertunda, string>> = {
   rasio_penuntasan: "Rasio penuntasan bacaan",
-  rasio_penelusuran_sumber: "Rasio penelusuran sumber",
   rasio_verifikasi: "Rasio pemeriksaan pemahaman",
   rasio_komitmen: "Rasio komitmen",
   rasio_penerapan: "Rasio penerapan",
