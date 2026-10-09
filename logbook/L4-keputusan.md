@@ -3573,3 +3573,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memperbaiki `antrean` sekalian — tidak dipilih; di luar `plan.md` fitur 036 dan menyentuh fitur yang sudah lolos Gerbang 4; dan berbeda dari beranda, melewati baris diam-diam pada antrean menyembunyikannya dari kurator, sehingga bentuk perbaikannya perlu diputus. |
 | Dampak | `perkakas/jalankan_lokal.py`; `tests/perkakas/test_jalankan_lokal.py`; `web/src/gaya.css`; `specs/036-penilaian-jawaban-dan-aduan/bukti/`, status `spec.md`, `plan.md`, `tasks.md`; `docs/D00.md`, `docs/hki/dokumentasi-teknis.md`; `logbook/L8-tagihan-pasal.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-238 · Gerbang 4 fitur 036 lolos; TK-79 diputus diperbaiki
+
+| | |
+|---|---|
+| Tanggal | 2026-10-08 |
+| Konteks | Laporan KB-237 mengajukan fitur 036 ke Gerbang 4 beserta temuan TK-79. Keduanya ditanyakan tegas lewat pilihan, termasuk bahwa satu commit T-7 sempat terdorong ketika gerbang gagal lalu dikoreksi (KB-236). Gerbang 4 tidak didelegasikan, dan perbaikan TK-79 menyentuh fitur 013 yang sudah lolos Gerbang 4. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"** bagi fitur 036 — jumlah baris lolos Gerbang 4 menjadi **30 dari 36**; TK-69 dan TK-77 selesai (D-00 2.94) — dan **"Lewati dan catat"** bagi TK-79: baris tak terbaca dilewati pada antrean kurasi, log operasional mencatat nomor butir saja, tim menariknya lewat perkakas; satu tugas, uji lebih dulu, satu mutan, tanpa perubahan D-14. |
+| Alternatif | TK-79: menampilkan baris sebagai tak terbaca — tidak dipilih; mengubah bentuk D-14 Bagian 4.7 dan S-15. Menunda — tidak dipilih. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 036; D-00 2.94; dokumen HKI. Perbaikan TK-79 menyusul pada commit tersendiri (KB-239). |
+| Pemutus | Pemegang Gerbang 1–4 |
