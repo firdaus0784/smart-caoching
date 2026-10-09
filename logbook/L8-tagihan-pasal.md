@@ -606,3 +606,30 @@ Fitur ini menguatkan delapan pasal yang sudah lulus:
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 036 menyimpan tanggapan, tetapi tidak menyentuh jalur
 penjawaban maupun validatornya.
+
+### Fitur 032 — 9 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 036. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan sepuluh pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 032 |
+|---|---|
+| C-02 | Pembaca sumber tidak memegang `isi` korpus, kolom vektor, maupun skema `indeks_metadata` (M-1, M-2); segmen berlisensi tertutup — juga lisensi yang tidak dikenal — tidak tampil sebagai teks |
+| C-03 | `peran_pembaca_sumber` dan `peran_koleksi` tanpa hak atas skema karantina; ditolak peladen, bukan oleh kode |
+| C-04 | `citation_opened` dan `discovery_saved` lahir lewat gerbang `rekam()`; tanpa persetujuan dan pada permintaan yang ditolak, tidak direkam |
+| C-05 | Koleksi dimiliki pseudonim dari sesi; kedua peran baru tanpa basis data pseudonim; `discovery_saved` membawa `ada_catatan` saja (M-12); catatan berdata pribadi ditolak tanpa dikutip (M-11) |
+| C-07 | Dokumen `dicabut` dan regulasi tanpa status tercatat tampil tanpa teks (M-7, M-8); status keberlakuan tampil sebelum teks (M-16); butir yang ditarik tetap terbaca dengan penanda dasar berubah sebelum isinya (M-14, M-17); jawaban S-09 tidak disimpan untuk pembaca sumber |
+| C-13 | Lima kalimat peladen dan empat puluh delapan untai layar baru — tiga puluh lima kunci `MIKROKOPI`, lima label jenis dokumen, tiga kalimat status, empat kalimat tanpa teks, satu butir daftar data yang ditarik — ditambah tiga fungsi penyusun |
+| C-14 | Koleksi tidak dibaca pemilihan beranda: `peran_penayangan` tanpa hak atas `penemuan.koleksi` (M-3); jalur penjawab tidak disentuh |
+| C-15 | Tanpa hitungan, poin, maupun lencana koleksi pada S-11 |
+| C-17 | Pembaca sumber hanya membaca; status dan metadata dicatat perkakas tim dan gerbang ingesti, bukan jalur penjawaban |
+| C-20 | D-14 0.18 sebelum kodenya; dua rute baru atas putusan pemegang gerbang (P-1 A, TK-80); bentuk `/tanya` tidak berubah; lima model dan dua enum didaftarkan pada pemeriksa kontrak web |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Pembaca sumber menampilkan bagian yang dirujuk sitasi, tetapi
+tidak memeriksa dukungan isi klaim; jalur penjawaban dan validatornya tidak
+disentuh.

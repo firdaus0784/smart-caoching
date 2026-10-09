@@ -1,0 +1,8 @@
+Jawaban S-09 buatan naskah bukti (jalur penjawab titik jalan belum dirakit);
+isi korpus ditanam sebagai pengelola (perkakas ingesti: baris 037, TK-83).
+
+citation_opened (kunci : id_sumber : jenis_sumber : versi) : id_sumber,jenis_sumber:doc_bukti_032:regulasi_resmi:pengembangan id_sumber,jenis_sumber:doc_tanpa_status_032:regulasi_resmi:pengembangan
+discovery_saved (properti)                               : {"ada_catatan": true} {"ada_catatan": false}
+koleksi tersisa (id_butir : catatan)                     : b-032-regulasi:Bahas pada rapat guru hari Senin.
+korpus.status_dokumen doc_bukti_032 (status : pengganti)  : berlaku:- berlaku:-
+S-18 penelusuran sumber (pengembangan dipisah)           : Jawaban disajikan 0 | Sumber dibuka 0 | Rasio Belum dapat dihitung

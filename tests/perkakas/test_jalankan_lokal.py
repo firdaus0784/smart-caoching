@@ -339,3 +339,33 @@ def test_titik_jalan_bersesi_memasang_rute_penilaian_dan_aduan() -> None:
         405,
     )
     assert tanpa.get("/api/v1/kurasi/aduan").status_code == 404
+
+
+def test_titik_jalan_bersesi_memasang_rute_sumber_dan_koleksi() -> None:
+    """Fitur 032: pembaca sumber dan tiga rute koleksi terpasang bersama
+    penyimpannya; tanpanya tidak ada."""
+    from src.penyimpanan.akun import AkunMemori
+    from src.penyimpanan.koleksi import KoleksiMemori
+    from src.penyimpanan.kurasi import KurasiMemori
+    from src.penyimpanan.penemuan import PenemuanMemori
+    from src.penyimpanan.pengguna import PenggunaMemori
+    from src.penyimpanan.sumber import SumberMemori
+
+    kurasi = KurasiMemori()
+    dengan = TestClient(
+        susun_untuk_pengembangan(
+            akun=AkunMemori(),
+            pengguna=PenggunaMemori(),
+            kurasi=kurasi,
+            penemuan=PenemuanMemori(kurasi),
+            sumber=SumberMemori(),
+            koleksi=KoleksiMemori(),
+        ),
+        base_url="https://testserver",
+    )
+    assert dengan.get("/api/v1/sumber/doc_1", params={"bagian": "Pasal 1"}).status_code == 401
+    assert dengan.get("/api/v1/koleksi").status_code == 401
+    assert dengan.delete("/api/v1/butir/b-1/simpan").status_code == 401
+    tanpa = TestClient(susun_untuk_pengembangan(akun=AkunMemori()), base_url="https://testserver")
+    assert tanpa.get("/api/v1/sumber/doc_1", params={"bagian": "Pasal 1"}).status_code == 404
+    assert tanpa.get("/api/v1/koleksi").status_code == 404
