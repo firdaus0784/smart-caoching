@@ -3759,3 +3759,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Belum lolos — tidak dipilih. Melonggarkan aturan `dicabut` atau dokumen sekolah — tidak dipilih; yang kedua tetap menyentuh ET-04 milik tim etik. Mendahulukan baris 031 — tidak dipilih. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 032; D-00 3.04; dokumen HKI. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-254 · Usulan spec fitur 037 diajukan ke Gerbang 1; TK-84
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | Pada KB-253 pemegang gerbang memilih "Ya, susun spec 037". Baris D-12 037 menutup TK-83: perkakas tim yang menjalankan gerbang ingesti terhadap PostgreSQL beserta peta peran basis datanya. Saat menyusunnya ditemukan bahwa gerbang fitur 002 menyimpan seluruh keadaannya di memori, sehingga perkakas yang dijalankan per perintah tidak dapat memakainya apa adanya. |
+| Keputusan | `specs/037-perkakas-ingesti/spec.md` ditulis dan diajukan ke Gerbang 1 dengan sepuluh kebutuhan yang tidak bergantung pada pertanyaan dan enam pertanyaan: **P-1** tempat keadaan gerbang; **P-2** peta peran basis data (TK-83); **P-3** penarikan persetujuan dan segmen indeks (TK-84); **P-4** segmentasi dan penempatan indeks, diajukan sebagai baris D-12 038; **P-5** penyamaran otomatis enam pengenal berpola dengan token D-03 sebelum karantina (FR-B04); **P-6** bentuk pelaku pada `jejak_area`. |
+| Temuan — TK-84 | Pengambilan vektor membaca segmen tanpa menautkannya ke korpus, sedangkan penarikan persetujuan hanya memindahkan dokumen. Segmen dokumen yang persetujuannya ditarik tetap terambil. Dicatat pada D-00 3.05 dan diajukan sebagai P-3. |
+| Yang dinyatakan pada usulan | Tanpa rute baru: D-14 Bagian 3 tidak memuat rute unggah maupun verifikasi, dan baris ini perkakas tim. Penyamaran tidak menjangkau nama dan alamat sampai model NER ada (BT-70); batas itu dinyatakan kepada verifikator setiap kali. Baris D-12 038 hanya disisipkan atas putusan pemegang gerbang. |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-2 dan P-3 mengubah hak peladen C-03 milik fitur yang sudah lolos Gerbang 4, dan P-4 menyangkut baris D-12 baru; keduanya bukan putusan agen. |
+| Dampak | `specs/037-perkakas-ingesti/spec.md`; `docs/D00.md` 3.05. Belum ada kode; plan menunggu Gerbang 1. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
