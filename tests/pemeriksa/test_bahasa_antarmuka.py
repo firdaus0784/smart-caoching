@@ -116,7 +116,10 @@ def test_untai_nyata_memang_ditemukan_pemeriksa() -> None:
         "PESAN_ADUAN_TIDAK_ADA",
     ):
         assert baru in nama, baru
-    assert len(ditemukan) == 31, f"{len(ditemukan)} untai terbaca, seharusnya 31"
+    # 33 sejak fitur 032 T-4: sumber tak dapat dibuka, bagian tak dikenali.
+    assert "PESAN_SUMBER_TIDAK_ADA" in nama
+    assert "PESAN_BAGIAN_TIDAK_SAH" in nama
+    assert len(ditemukan) == 33, f"{len(ditemukan)} untai terbaca, seharusnya 33"
 
 
 # ── Aturan 1 · isi ────────────────────────────────────────────────────

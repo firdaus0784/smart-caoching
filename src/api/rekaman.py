@@ -42,6 +42,7 @@ from src.api.galat import LOG_OPERASIONAL, id_jejak_baru
 from src.api.penemuan import ButirRingkas
 from src.api.saya import keadaan_persetujuan
 from src.api.tanya import AlasanBerhenti, HasilTanya
+from src.ingest.peringkat import JenisSumber
 from src.kamus.penilaian import NilaiPenilaian
 from src.pengguna.persetujuan import KeadaanPersetujuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
@@ -212,6 +213,18 @@ class Perekam:
             {"nilai": nilai.value, "beralasan": beralasan, "id_pesan": id_pesan},
             sekarang=sekarang,
             versi_model=versi_model,
+        )
+
+    async def rekam_sumber_dibuka(
+        self, pemilik: str, id_dokumen: str, jenis: JenisSumber, *, sekarang: datetime
+    ) -> None:
+        """`citation_opened` — id sumber dan jenis sumber, persis D-01 Bagian 9
+        (P-3 A fitur 032). Bagian yang dibuka tidak ikut."""
+        await self.rekam(
+            pemilik,
+            JenisPeristiwa.CITATION_OPENED,
+            {"id_sumber": id_dokumen, "jenis_sumber": jenis.value},
+            sekarang=sekarang,
         )
 
     async def _rekam_semua(

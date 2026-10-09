@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-241); TK-81 A (KB-242), TK-82 A (KB-243) |
 | Plan | Gerbang 2 lolos 9 Oktober 2026 atas pendelegasian KB-168 (KB-243); K-1 s.d. K-8 |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Tiga dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Empat dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10; FR-F11, FR-G06, FR-G10, FR-B06, NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -54,10 +54,10 @@ Empat rute saja — dua yang sudah ada pada D-14 dan dua yang disetujui P-1 A.
 
 **Kebutuhan:** R-04 s.d. R-07; K-3, K-5.
 
-- [ ] Uji lebih dulu atas memori **dan** PostgreSQL sebagai
+- [x] Uji lebih dulu atas memori **dan** PostgreSQL sebagai
       `peran_pembaca_sumber`, lewat HTTP, dan atas perekam
-- [ ] `src/penyimpanan/sumber.py`; `src/api/sumber.py`; rute; `rekam_sumber_dibuka`
-- [ ] Mutasi M-6, M-7, M-8, M-9
+- [x] `src/penyimpanan/sumber.py`; `src/api/sumber.py`; rute; `rekam_sumber_dibuka`
+- [x] Mutasi M-6, M-7, M-8, M-9
 
 ## T-5 · Koleksi dan `discovery_saved`
 

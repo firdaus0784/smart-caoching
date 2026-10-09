@@ -3687,3 +3687,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | B: TK-83 terbuka tanpa pemilik; C: memperbaiki hak karantina di dalam fitur 032 — tidak dipilih. |
 | Dampak | D-12 0.42; D-00 3.02 (TK-83 diputus). Fitur 032 tidak berubah cakupannya. Usulan spec 037 menyusul sesudah Gerbang 4 fitur 032 dan melewati Gerbang 1 sendiri. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-248 · T-4 fitur 032: pembaca sumber dan `citation_opened`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | K-3 plan fitur 032 menetapkan empat alasan tanpa teks yang diperiksa berurutan, satu bentuk 404 bagi yang tidak terjangkau, dan `citation_opened` berproperti D-01 apa adanya (P-3 A). Uji penyimpan (memori dan PostgreSQL sebagai `peran_pembaca_sumber`) dan uji HTTP ditulis lebih dulu dan merah. |
+| Keputusan | `src/penyimpanan/sumber.py` mengembalikan baris mentah: dokumen korpus dengan catatan metadata dan status terbaru, segmen satu bagian berurutan `id_segmen`. `src/api/sumber.py` memegang aturan: dokumen sekolah atau bukan publik, regulasi tanpa status, dicabut, lalu bagian tanpa segmen yang terbuka dan terverifikasi; segmen disaring satu per satu; lisensi yang tidak dikenal diperlakukan tertutup; catatan yang nilainya tidak dikenal menjadi 404 dengan log tanpa isi. `GET /sumber/{id}?bagian=` terpasang hanya bila pembaca diberikan, tanpa jalur penjawab. Dua untai C-13 baru (33). Mutasi M-6 s.d. M-9 merah. |
+| Alternatif | Menyaring segmen di SQL — tidak dipilih: aturan di dua tempat akan berselisih tentang teks yang tampil. `bagian` berupa id segmen — tidak dipilih: sitasi D-14 Bagian 4.1 membawa `id_dokumen` dan `bagian`, bukan id segmen, dan bentuk itu tidak boleh berubah (C-20). |
+| Dampak | Pemeriksa rute terdaftar menyusun aplikasi rujukan dengan pembaca. `make check` lulus enam gerbang. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

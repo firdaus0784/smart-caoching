@@ -117,6 +117,7 @@ from src.api.peran import (
     POLA_PROFIL,
     POLA_PUTUSAN,
     POLA_SATU_PERCAKAPAN,
+    POLA_SUMBER,
     POLA_TANYA,
     POLA_TARIK,
     POLA_TINDAK_LANJUT,
@@ -136,6 +137,12 @@ from src.api.saya import (
     putuskan_persetujuan,
     ringkasan,
 )
+from src.api.sumber import (
+    PESAN_BAGIAN_TIDAK_SAH,
+    PESAN_SUMBER_TIDAK_ADA,
+    SumberTidakTampil,
+    baca_sumber,
+)
 from src.api.tanya import HasilTanya
 from src.llm.galat import GalatLayananModel, KodeGalat
 from src.nlp.anonimisasi.pola import periksa_data_pribadi
@@ -145,6 +152,7 @@ from src.penyimpanan.penemuan import PenyimpanPenemuan
 from src.penyimpanan.pengguna import PenyimpanPengguna
 from src.penyimpanan.penilaian import PenyimpanAduan, PenyimpanPenilaian, PesanTidakAda
 from src.penyimpanan.riwayat import PenyimpanRiwayat, PercakapanTidakAda
+from src.penyimpanan.sumber import PembacaSumber
 from src.penyimpanan.telemetri import PenyimpanTelemetri
 
 PESAN_TIDAK_BERHAK = "Akun Anda tidak dapat membuka bagian ini."
@@ -243,6 +251,7 @@ def susun_aplikasi(
     analitik: PenyimpanAnalitik | None = None,
     penilaian: PenyimpanPenilaian | None = None,
     aduan: PenyimpanAduan | None = None,
+    sumber: PembacaSumber | None = None,
     sekarang: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> FastAPI:
     """Susun peladen — R-04, R-07; riwayat berpemilik sejak fitur 028.
@@ -278,6 +287,10 @@ def susun_aplikasi(
     penilaian pengguna tidak terpasang; tanpa penyimpan aduan kedua rute aduan
     kurator tidak terpasang. Keduanya terpisah karena perannya terpisah —
     penilai menulis salinan, kurator membacanya (R-06).
+
+    `sumber` sama (fitur 032): tanpa pembaca, `GET /sumber/{id}` tidak
+    terpasang. Pembaca tidak menerima jalur penjawab maupun penyimpan tulis
+    apa pun (R-05, C-17).
     """
     if penemuan is not None and pengguna is None:
         raise ValueError("rute penemuan menuntut penyimpan pengguna (FR-G01)")
@@ -456,6 +469,8 @@ def susun_aplikasi(
         _pasang_rute_penilaian(aplikasi, penilaian, _identitas_atau_tolak, perekam, sekarang)
     if aduan is not None:
         _pasang_rute_aduan(aplikasi, aduan, _identitas_atau_tolak, sekarang)
+    if sumber is not None:
+        _pasang_rute_sumber(aplikasi, sumber, _identitas_atau_tolak, perekam, sekarang)
 
     return aplikasi
 
@@ -868,6 +883,38 @@ def _pasang_rute_penilaian(
                 sekarang=kini,
             )
         return JSONResponse(status_code=200, content=isi)
+
+
+def _pasang_rute_sumber(
+    aplikasi: FastAPI,
+    pembaca: PembacaSumber,
+    identitas_atau_tolak: Callable[[Request, str], Awaitable[Identitas | JSONResponse]],
+    perekam: Perekam | None,
+    sekarang: Callable[[], datetime],
+) -> None:
+    """`GET /sumber/{id}?bagian=` — D-14 Bagian 4.10, fitur 032. Aturannya milik
+    `src/api/sumber.py`; di sini terjemahan galat dan `citation_opened`."""
+
+    @aplikasi.get(POLA_SUMBER)
+    async def baca_sumber_rute(permintaan: Request, id: str) -> JSONResponse:
+        siapa = await identitas_atau_tolak(permintaan, POLA_SUMBER)
+        if isinstance(siapa, JSONResponse):
+            return siapa
+        try:
+            tampil = await baca_sumber(pembaca, id, permintaan.query_params.get("bagian"))
+        except SumberTidakTampil:
+            return tanggapan_galat(
+                404, KodeGalat.SUMBER_TIDAK_ADA, PESAN_SUMBER_TIDAK_ADA, rute=POLA_SUMBER
+            )
+        except ValueError:
+            return tanggapan_galat(
+                400, KodeGalat.VALIDASI_GAGAL, PESAN_BAGIAN_TIDAK_SAH, rute=POLA_SUMBER
+            )
+        if perekam is not None:
+            await perekam.rekam_sumber_dibuka(
+                siapa.pemilik, tampil.id_dokumen, tampil.jenis, sekarang=sekarang()
+            )
+        return JSONResponse(status_code=200, content=tampil.model_dump(mode="json"))
 
 
 def _pasang_rute_aduan(

@@ -166,6 +166,7 @@ def _rute_terpasang() -> set[str]:
         analitik=_Kosong(),  # type: ignore[arg-type]
         penilaian=_Kosong(),  # type: ignore[arg-type]
         aduan=_Kosong(),  # type: ignore[arg-type]
+        sumber=_Kosong(),  # type: ignore[arg-type]
     )
     return {_pola(rute.path) for rute in aplikasi.routes if isinstance(rute, APIRoute)}
 
