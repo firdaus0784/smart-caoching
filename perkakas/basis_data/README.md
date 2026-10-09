@@ -26,6 +26,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 11-penarik
 psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 11b-penarikan-pseudonim.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 12-analitik.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 13-penilaian.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 14-sumber-dan-koleksi.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -97,7 +98,7 @@ atas `telemetri.peristiwa`. Tanpa ubah dan hapus; tanpa skema lain; tanpa
 `11-penarikan.sql` membuat `akun.permintaan_penarikan`: layanan aplikasi
 (`peran_autentikasi`) hanya mencatat permintaan dan membaca apakah ada yang
 tertunda. `peran_penarikan` satu-satunya pemegang `DELETE` atas tabel
-data pengguna — sepuluh sejak fitur 033, lima belas sejak `13-penilaian.sql` fitur 036 — dan hanya membaca kolom pemiliknya, tidak isinya.
+data pengguna — sepuluh sejak fitur 033, lima belas sejak `13-penilaian.sql` fitur 036, enam belas sejak `14-sumber-dan-koleksi.sql` fitur 032 — dan hanya membaca kolom pemiliknya, tidak isinya.
 `11b-penarikan-pseudonim.sql` memberi `peran_penarikan_pseudonim` hapus atas
 `peta_pseudonim` pada basis data pseudonim.
 
@@ -213,3 +214,19 @@ Tanpa peladen, uji itu **gagal** — sejak keputusan tim 12 September 2026.
 Sebelumnya ia dilewati dengan sebab tertulis, dan itu tidak cukup: gerbang
 yang melaporkan lulus tanpa memeriksa lapisan penyimpanan sungguhan adalah
 laporan palsu. Alasannya pada `tests/peladen.py`.
+
+## Catatan korpus, pembaca sumber, dan koleksi (fitur 032)
+
+`14-sumber-dan-koleksi.sql` menambah `korpus.metadata_dokumen` dan
+`korpus.status_dokumen` — dua catatan tambah-saja yang mewujudkan bidang
+`dokumen_sumber` D-14 Bagian 5.1 (TK-82, TK-81) — serta `penemuan.koleksi`.
+
+`peran_pembaca_sumber` membaca `id` dokumen korpus tetapi **tidak** `isi`-nya,
+membaca segmen `indeks_utama` tanpa kolom vektor, dan tidak memegang USAGE atas
+karantina maupun `indeks_metadata`: bagian yang dirujuk dapat ditampilkan,
+dokumen utuh dan segmen berlisensi tertutup tidak (P-2 A, C-02, C-03).
+
+`peran_koleksi` memegang tabel koleksi saja. `peran_penayangan` tidak memegang
+hak apa pun atasnya, sehingga pemilihan beranda tidak dapat membaca koleksi
+(R-03, C-14). Hak bawaan skema korpus memberi verifikator `UPDATE` atas tabel
+baru; berkas ini mencabutnya, sebab kedua catatan tambah-saja.

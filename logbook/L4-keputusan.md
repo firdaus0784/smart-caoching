@@ -3654,3 +3654,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menuliskan nama kunci pada D-01 Bagian 9 — tidak dipilih: mengubah dokumen kebutuhan demi penamaan, padahal D-14 pemilik kontrak bidang. Status regulasi bagi sumber bukan regulasi tanpa catatan ditampilkan "belum tercatat" — tidak dipilih: riset tidak memiliki keberlakuan, dan penanda yang selalu tampil diabaikan pembacanya. |
 | Dampak | Kontrak terbit sebelum kode. `src/api/peran.py` memperoleh dua baris peta rute; rutenya dipasang T-4 dan T-5. |
 | Pemutus | Agen, atas pendelegasian KB-168 dan putusan KB-241 s.d. KB-243 |
+
+## KB-245 · T-2 fitur 032: peladen catatan korpus, pembaca sumber, dan koleksi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-09 |
+| Konteks | K-1 plan fitur 032 menetapkan tiga tabel dan dua peran baru, dengan hak yang menegakkan P-2 A, C-02, C-03, R-03, dan R-05 di peladen. Uji ditulis lebih dulu dan dijalankan merah — berkas SQL belum ada — sebelum berkasnya ditulis. |
+| Keputusan | `14-sumber-dan-koleksi.sql`: `korpus.metadata_dokumen`, `korpus.status_dokumen` (tambah-saja), `penemuan.koleksi`. `peran_pembaca_sumber` membaca `id` dokumen korpus tanpa `isi`, kedua catatan, dan enam kolom segmen `indeks_utama`; tanpa USAGE karantina dan `indeks_metadata`. `peran_koleksi` memegang tabel koleksi saja. Hak bawaan skema korpus atas tabel baru dicabut sebagian: verifikator kehilangan `UPDATE` atas kedua catatan dan `INSERT` atas status. `SELECT` bawaan jalur penjawab dibiarkan, tertulis pada uji katalog. Batasan daftar nilai dibandingkan uji dengan `JenisSumber`, `TingkatKerahasiaan`, dan `StatusKeberlakuan`. Mutasi M-1, M-2, M-3 merah. |
+| Alternatif | Satu tabel status-dan-metadata — tidak dipilih: penulisnya berbeda (gerbang ingesti dan perkakas kurasi), dan satu tabel menuntut kedua penulis memegang hak yang sama. Catatan berkunci `id_dokumen` dengan `UPDATE` — tidak dipilih: riwayat status regulasi adalah jejak yang C-07 butuhkan. |
+| Dampak | Uji peladen: lima uji baru dan tiga katalog lama diperluas; seluruh berkas uji peladen hijau. `tests/peladen.py` dan README menjalankan berkas baru. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

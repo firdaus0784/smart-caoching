@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-241); P-1 s.d. P-4 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-81 A (KB-242): catatan status di korpus. TK-82 A (KB-243): metadata asal dicatat gerbang ingesti |
-| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Satu dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 9 Oktober 2026 atas pendelegasian KB-168 (KB-243). Dua dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-10 `spec.md`; FR-F11, FR-G06, FR-G10, FR-B06, NFR-09; C-02, C-03, C-04, C-05, C-07, C-13, C-14, C-17, C-20 |
 
 ## 1. Letak dan batas

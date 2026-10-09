@@ -66,6 +66,8 @@ def basis_data_siap() -> None:
         "peran_penarikan_pseudonim",
         "peran_analitik",
         "peran_penilaian",
+        "peran_pembaca_sumber",
+        "peran_koleksi",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -146,6 +148,7 @@ def basis_data_siap() -> None:
         ("11b-penarikan-pseudonim.sql", "smart_coaching_pseudonim"),
         ("12-analitik.sql", "smart_coaching"),
         ("13-penilaian.sql", "smart_coaching"),
+        ("14-sumber-dan-koleksi.sql", "smart_coaching"),
     ):
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
@@ -1151,6 +1154,9 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "group by grantee, table_schema, table_name order by 1",
     )
     assert tabel.stdout.split() == [
+        # Fitur 032: koleksi milik perannya sendiri. Penayang tidak tercantum
+        # di sini — pemilihan beranda tidak membaca koleksi (R-03, M-3).
+        "peran_koleksi:penemuan.koleksi:DELETE,INSERT,SELECT",
         "peran_kurasi:kurasi.aduan_digantikan:SELECT",
         "peran_kurasi:kurasi.butir_tayang:INSERT,SELECT",
         "peran_kurasi:kurasi.kandidat:SELECT",
@@ -1161,6 +1167,7 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "peran_penarikan:kurasi.aduan_digantikan:DELETE",
         "peran_penarikan:kurasi.tindak_lanjut_aduan:DELETE",
         "peran_penarikan:penemuan.belum_relevan:DELETE",
+        "peran_penarikan:penemuan.koleksi:DELETE",
         "peran_penarikan:penemuan.tayang_harian:DELETE",
         "peran_penayangan:kurasi.butir_tayang:SELECT",
         "peran_penayangan:penemuan.belum_relevan:INSERT,SELECT",
@@ -1185,6 +1192,7 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "group by a.rolname, c.relname, x.privilege_type order by 1",
     )
     assert kolom.stdout.split() == [
+        "peran_koleksi:koleksi:UPDATE:catatan,disimpan_pada",
         # Fitur 036: kurator membaca salinan aduan tanpa tautannya ke penilaian.
         "peran_kurasi:aduan:SELECT:alasan,diadukan_pada,nomor,pertanyaan,tanggapan",
         "peran_kurasi:butir_tayang:UPDATE:alasan_tarik,ditarik_pada,perlu_tinjauan_pada",
@@ -1192,6 +1200,7 @@ def test_hak_peran_kurasi_persis_menurut_katalog(basis_data_siap: None) -> None:
         "peran_penarikan:aduan:SELECT:nomor,nomor_penilaian",
         "peran_penarikan:aduan_digantikan:SELECT:nomor_aduan",
         "peran_penarikan:belum_relevan:SELECT:id_pengguna",
+        "peran_penarikan:koleksi:SELECT:id_pengguna",
         "peran_penarikan:tayang_harian:SELECT:id_pengguna",
         "peran_penarikan:tindak_lanjut_aduan:SELECT:nomor_aduan",
         "peran_penayangan:putusan:SELECT:id_butir,jenis,menyetujui,nomor,peran,waktu",
@@ -1570,6 +1579,7 @@ def test_hak_peran_penarikan_persis_menurut_katalog(basis_data_siap: None) -> No
         "peran_penarikan:kurasi.aduan_digantikan:DELETE",
         "peran_penarikan:kurasi.tindak_lanjut_aduan:DELETE",
         "peran_penarikan:penemuan.belum_relevan:DELETE",
+        "peran_penarikan:penemuan.koleksi:DELETE",
         "peran_penarikan:penemuan.tayang_harian:DELETE",
         "peran_penarikan:pengguna.persetujuan:DELETE",
         "peran_penarikan:pengguna.prioritas_manajerial:DELETE",
@@ -2012,3 +2022,359 @@ def test_batasan_tabel_penilaian(basis_data_siap: None) -> None:
         assert hasil.returncode == 0, hasil.stderr
     kedua = _psql(PENGELOLA, "smart_coaching", "-c", _tindak_lanjut_sql(catatan="Kedua"))
     assert "duplicate key value" in kedua.stderr, "satu tindak lanjut per aduan"
+
+
+# ── Catatan korpus, pembaca sumber, dan koleksi — fitur 032 ──────────
+#
+# `peran_pembaca_sumber` membaca bagian yang dirujuk — tidak teks dokumen utuh,
+# tidak karantina, tidak `indeks_metadata` — dan tidak menulis apa pun.
+# `peran_koleksi` memegang tabel koleksi saja; penayang tidak menjangkaunya,
+# sehingga koleksi tidak dapat menjadi sinyal pemilihan beranda (R-03).
+# Catatan metadata dan status korpus tambah-saja.
+
+_PSD_KOLEKSI = "psd_kkkkkkkkkkkkkkkk"
+_DOK_032 = "dok-032"
+
+
+def _metadata_sql(
+    id_dokumen: str = _DOK_032,
+    jenis: str = "regulasi_resmi",
+    tingkat: str = "publik",
+    tahun: int = 2026,
+    judul: str = "Permendikdasmen Nomor 1 Tahun 2026",
+) -> str:
+    return (
+        "insert into korpus.metadata_dokumen "
+        "(id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan) values "
+        f"('{id_dokumen}', '{judul}', '{jenis}', 'Kemendikdasmen', {tahun}, '{tingkat}')"
+    )
+
+
+def _status_sql(
+    id_dokumen: str = _DOK_032, status: str = "berlaku", pengganti: str = "null"
+) -> str:
+    return (
+        "insert into korpus.status_dokumen (id_dokumen, status, rujukan_pengganti) "
+        f"values ('{id_dokumen}', '{status}', {pengganti})"
+    )
+
+
+def _koleksi_sql(id_butir: str = "b-032", catatan: str = "null", psd: str = _PSD_KOLEKSI) -> str:
+    return (
+        "insert into penemuan.koleksi (id_pengguna, id_butir, catatan, disimpan_pada) "
+        f"values ('{psd}', '{id_butir}', {catatan}, now()) "
+        "on conflict (id_pengguna, id_butir) do update "
+        "set catatan = excluded.catatan, disimpan_pada = excluded.disimpan_pada"
+    )
+
+
+DITOLAK_SUMBER = [
+    *[
+        (peran, "smart_coaching", kueri, sebab)
+        for peran, kueri, sebab in (
+            (
+                "peran_pembaca_sumber",
+                "select isi from korpus.dokumen_sumber",
+                "P-2 A — pembaca tidak membaca teks dokumen utuh",
+            ),
+            (
+                "peran_pembaca_sumber",
+                "select * from karantina.dokumen_sumber",
+                "C-03 — pembaca tidak menjangkau karantina",
+            ),
+            (
+                "peran_pembaca_sumber",
+                "select teks from indeks_metadata.segmen_teks",
+                "C-02 — segmen berlisensi tertutup tidak terjangkau",
+            ),
+            (
+                "peran_pembaca_sumber",
+                "select vektor_sematan from indeks_utama.segmen_teks",
+                "hak minimum — pembaca tidak membaca vektor",
+            ),
+            ("peran_pembaca_sumber", _status_sql(), "R-05 — pembaca tidak menulis status"),
+            ("peran_pembaca_sumber", _metadata_sql(), "R-05 — pembaca tidak menulis metadata"),
+            (
+                "peran_pembaca_sumber",
+                "update indeks_utama.segmen_teks set teks = 'x' where false",
+                "R-05, C-17 — pembaca tidak menyunting segmen",
+            ),
+            (
+                "peran_pembaca_sumber",
+                "select * from penemuan.koleksi",
+                "pembaca tidak membaca koleksi",
+            ),
+            ("peran_pembaca_sumber", "select * from riwayat.giliran", "hak minimum"),
+            ("peran_koleksi", "select * from penemuan.tayang_harian", "kelayakan dibaca penayang"),
+            ("peran_koleksi", "select * from kurasi.butir_tayang", "kelayakan dibaca penayang"),
+            ("peran_koleksi", "select * from korpus.dokumen_sumber", "hak minimum"),
+            (
+                "peran_koleksi",
+                "update penemuan.koleksi set id_pengguna = 'psd_xxxxxxxxxxxxxxxx' where false",
+                "pemilik koleksi tidak dapat dipindahkan",
+            ),
+            ("peran_koleksi", "truncate penemuan.koleksi", "koleksi tidak dikosongkan sekaligus"),
+            (
+                "peran_penayangan",
+                "select * from penemuan.koleksi",
+                "R-03, C-14 — pemilihan beranda tidak membaca koleksi",
+            ),
+            (
+                "peran_penjawaban",
+                "select * from penemuan.koleksi",
+                "C-14 — koleksi tidak memengaruhi jawaban",
+            ),
+            ("peran_analitik", "select * from penemuan.koleksi", "analitik membaca peristiwa saja"),
+            (
+                "peran_penarikan",
+                "select catatan from penemuan.koleksi",
+                "penarikan tidak membaca catatan",
+            ),
+            (
+                "peran_penarikan",
+                "delete from korpus.status_dokumen where false",
+                "catatan korpus bukan data peserta",
+            ),
+            (
+                "peran_pengisi_antrean",
+                "select * from korpus.status_dokumen",
+                "perkakas kurasi tidak membaca korpus",
+            ),
+            (
+                "peran_pengisi_antrean",
+                "select id from korpus.dokumen_sumber",
+                "perkakas kurasi tidak membaca korpus",
+            ),
+            ("peran_pengisi_antrean", _metadata_sql(), "metadata milik gerbang ingesti"),
+            (
+                "peran_pengisi_antrean",
+                "update korpus.status_dokumen set status = 'berlaku' where false",
+                "status tambah-saja",
+            ),
+            (
+                "peran_verifikasi",
+                "update korpus.metadata_dokumen set judul = 'x' where false",
+                "metadata tambah-saja",
+            ),
+            (
+                "peran_verifikasi",
+                "delete from korpus.metadata_dokumen where false",
+                "metadata tambah-saja",
+            ),
+            ("peran_verifikasi", _status_sql(), "status bukan pekerjaan verifikator"),
+            ("peran_penjawaban", _status_sql(), "C-17 — penjawab tanpa hak tulis"),
+            ("peran_pemanggil_llm", _metadata_sql(), "C-17 — pemanggil model tanpa hak tulis"),
+        )
+    ],
+    *[
+        (peran, "smart_coaching_pseudonim", "select 1", "C-05 — tanpa basis data pseudonim")
+        for peran in ("peran_pembaca_sumber", "peran_koleksi")
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_SUMBER)
+def test_peladen_menolak_hak_sumber_dan_koleksi(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_skema_korpus_indeks_dan_penemuan_hanya_bagi_perannya(basis_data_siap: None) -> None:
+    """M-2: `GRANT USAGE ON SCHEMA indeks_metadata TO peran_pembaca_sumber`.
+
+    Hak skema dibaca dari katalog: tanpa hak tabel, kueri tetap ditolak,
+    sehingga uji penolakan tidak melihatnya."""
+    for skema, harapan in (
+        ("karantina", ["peran_verifikasi"]),
+        (
+            "korpus",
+            [
+                "peran_pemanggil_llm",
+                "peran_pembaca_sumber",
+                "peran_pengisi_antrean",
+                "peran_penjawaban",
+                "peran_verifikasi",
+            ],
+        ),
+        (
+            "indeks_utama",
+            [
+                "peran_pemanggil_llm",
+                "peran_pembaca_sumber",
+                "peran_penjawaban",
+                "peran_penyematan",
+                "peran_verifikasi",
+            ],
+        ),
+        ("indeks_metadata", ["peran_penjawaban", "peran_penyematan", "peran_verifikasi"]),
+        ("penemuan", ["peran_koleksi", "peran_penarikan", "peran_penayangan"]),
+    ):
+        hasil = _psql(
+            PENGELOLA,
+            "smart_coaching",
+            "-c",
+            "select rolname from pg_roles where rolname like 'peran\\_%' "
+            f"and has_schema_privilege(rolname, '{skema}', 'USAGE') order by 1",
+        )
+        assert hasil.stdout.split() == harapan, skema
+
+
+def test_hak_catatan_korpus_persis_menurut_katalog(basis_data_siap: None) -> None:
+    """Hak bawaan skema korpus dicabut sebagian (`UPDATE`, `INSERT` status bagi
+    verifikator); `SELECT` bagi jalur penjawab dibiarkan — rancangan, bukan
+    sisa (plan Bagian 2)."""
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_schema || '.' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where table_schema = 'korpus' and table_name in ('metadata_dokumen', 'status_dokumen') "
+        "and grantee like 'peran\\_%' group by grantee, table_schema, table_name order by 1",
+    )
+    assert hasil.stdout.split() == [
+        "peran_pemanggil_llm:korpus.metadata_dokumen:SELECT",
+        "peran_pemanggil_llm:korpus.status_dokumen:SELECT",
+        "peran_pembaca_sumber:korpus.metadata_dokumen:SELECT",
+        "peran_pembaca_sumber:korpus.status_dokumen:SELECT",
+        "peran_pengisi_antrean:korpus.status_dokumen:INSERT",
+        "peran_penjawaban:korpus.metadata_dokumen:SELECT",
+        "peran_penjawaban:korpus.status_dokumen:SELECT",
+        "peran_verifikasi:korpus.metadata_dokumen:INSERT,SELECT",
+        "peran_verifikasi:korpus.status_dokumen:SELECT",
+    ]
+
+
+def test_hak_peran_pembaca_dan_koleksi_persis_di_seluruh_skema(basis_data_siap: None) -> None:
+    """M-1: `GRANT SELECT (isi) ON korpus.dokumen_sumber TO peran_pembaca_sumber`.
+
+    Seluruh skema, termasuk hak yang tidak terpikir: tanpa `TRUNCATE`,
+    `TRIGGER`, maupun `REFERENCES`."""
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_schema || '.' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where grantee in ('peran_pembaca_sumber', 'peran_koleksi') "
+        "group by grantee, table_schema, table_name order by 1",
+    )
+    assert tabel.stdout.split() == [
+        "peran_koleksi:penemuan.koleksi:DELETE,INSERT,SELECT",
+        "peran_pembaca_sumber:korpus.metadata_dokumen:SELECT",
+        "peran_pembaca_sumber:korpus.status_dokumen:SELECT",
+    ]
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || n.nspname || '.' || c.relname || ':' || x.privilege_type "
+        "|| ':' || string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null "
+        "and a.rolname in ('peran_pembaca_sumber', 'peran_koleksi') "
+        "group by a.rolname, n.nspname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_koleksi:penemuan.koleksi:UPDATE:catatan,disimpan_pada",
+        "peran_pembaca_sumber:indeks_utama.segmen_teks:SELECT:"
+        "anonimisasi_terverifikasi,id_dokumen,id_segmen,lisensi,penanda_bagian,teks",
+        "peran_pembaca_sumber:korpus.dokumen_sumber:SELECT:id",
+    ]
+
+
+def test_peran_sumber_dan_koleksi_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64: tiap peran tersambung sendiri dan menjalankan pekerjaannya."""
+    for kueri in (
+        f"delete from korpus.dokumen_sumber where id = '{_DOK_032}'",
+        f"insert into korpus.dokumen_sumber (id, isi) values ('{_DOK_032}', '\"teks\"'::jsonb)",
+        f"delete from indeks_utama.segmen_teks where id_dokumen = '{_DOK_032}'",
+        "insert into indeks_utama.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+        "anonimisasi_terverifikasi, penanda_bagian) values "
+        f"('seg-032', '{_DOK_032}', 'Kepala sekolah menyusun rencana.', 'terbuka', true, "
+        "'Pasal 7')",
+    ):
+        _jalan(PENGELOLA, kueri)
+    for peran, kueri in (
+        ("peran_verifikasi", _metadata_sql()),
+        ("peran_pengisi_antrean", _status_sql(status="diubah", pengganti="'Permen 2/2027'")),
+        (
+            "peran_pembaca_sumber",
+            "select d.id, m.judul, m.jenis, m.tingkat_kerahasiaan, s.status, s.rujukan_pengganti "
+            "from korpus.dokumen_sumber d "
+            "join korpus.metadata_dokumen m on m.id_dokumen = d.id "
+            "left join korpus.status_dokumen s on s.id_dokumen = d.id "
+            f"where d.id = '{_DOK_032}' order by m.nomor desc, s.nomor desc limit 1",
+        ),
+        (
+            "peran_pembaca_sumber",
+            "select id_segmen, teks, lisensi, anonimisasi_terverifikasi, penanda_bagian "
+            f"from indeks_utama.segmen_teks where id_dokumen = '{_DOK_032}'",
+        ),
+        ("peran_koleksi", _koleksi_sql(catatan="'Bahas di rapat guru'")),
+        ("peran_koleksi", _koleksi_sql(catatan="null")),
+        (
+            "peran_koleksi",
+            f"select id_butir, catatan, disimpan_pada from penemuan.koleksi "
+            f"where id_pengguna = '{_PSD_KOLEKSI}'",
+        ),
+        (
+            "peran_koleksi",
+            f"delete from penemuan.koleksi where id_pengguna = '{_PSD_KOLEKSI}' "
+            "and id_butir = 'b-032'",
+        ),
+        ("peran_koleksi", _koleksi_sql(id_butir="b-032-tarik")),
+        ("peran_penarikan", "select id_pengguna from penemuan.koleksi"),
+        ("peran_penarikan", f"delete from penemuan.koleksi where id_pengguna = '{_PSD_KOLEKSI}'"),
+    ):
+        _jalan(peran, kueri)
+
+
+def test_batasan_tabel_sumber_dan_koleksi(basis_data_siap: None) -> None:
+    for kueri, sebab in (
+        (_metadata_sql(jenis="buku"), "jenis di luar JenisSumber"),
+        (_metadata_sql(tingkat="rahasia"), "tingkat di luar TingkatKerahasiaan"),
+        (_metadata_sql(tahun=1900), "tahun sebelum TAHUN_PALING_AWAL"),
+        (_metadata_sql(judul="  "), "judul wajib"),
+        (_status_sql(status="kedaluwarsa"), "status di luar KL-07"),
+        (_status_sql(status="berlaku", pengganti="'Permen 2/2027'"), "pengganti tanpa perubahan"),
+        (_status_sql(status="dicabut", pengganti="'  '"), "pengganti kosong disimpan null"),
+        (_koleksi_sql(psd="ks-017"), "C-05 — nama akun sebagai pemilik"),
+        (_koleksi_sql(catatan="'  '"), "catatan kosong disimpan null"),
+    ):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+    for kueri in (_status_sql(status="dicabut"), _metadata_sql(id_dokumen="dok-032-lain")):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-v", "ON_ERROR_STOP=1", "-c", kueri)
+        assert hasil.returncode == 0, hasil.stderr
+
+
+def test_daftar_nilai_batasan_korpus_sama_dengan_enumnya() -> None:
+    """Tiga daftar dibaca dari enumnya, bukan dipercaya — salinan yang hanyut
+    menolak dokumen sah, atau menerima nilai yang tidak dikenal pembaca."""
+    import re
+
+    from src.ingest.dokumen import TingkatKerahasiaan
+    from src.ingest.peringkat import JenisSumber
+    from src.kamus.segmen import StatusKeberlakuan
+
+    sql = (BERKAS / "14-sumber-dan-koleksi.sql").read_text(encoding="utf-8")
+
+    def daftar(penanda: str) -> set[str]:
+        mulai = sql.index(penanda)
+        return set(re.findall(r"'([a-z_]+)'", sql[mulai : sql.index(")", mulai)]))
+
+    assert daftar("jenis IN") == {j.value for j in JenisSumber}
+    assert daftar("tingkat_kerahasiaan IN") == {t.value for t in TingkatKerahasiaan}
+    assert daftar("status IN") == {s.value for s in StatusKeberlakuan}
