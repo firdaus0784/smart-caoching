@@ -3890,3 +3890,16 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Belum lolos; menolak salah satu perubahan; mendahulukan baris 031 — tidak dipilih. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 037; D-00 3.10; dokumen HKI. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-265 · Usulan spec fitur 038 diajukan ke Gerbang 1; TK-86
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | Pada KB-264 pemegang gerbang memilih "Ya, susun spec 038". Baris D-12 038 — segmentasi dan penempatan indeks — disisipkan pada KB-255; sejak fitur 037 dokumen masuk korpus lewat gerbang sungguhan tetapi tanpa segmen. |
+| Keputusan | `specs/038-segmentasi-dan-penempatan-indeks/spec.md` ditulis dan diajukan ke Gerbang 1 dengan delapan kebutuhan yang tidak bergantung pada pertanyaan dan empat pertanyaan: **P-1** cara memotong; **P-2** kapan dan dengan peran apa, termasuk TK-86; **P-3** sumber lisensi; **P-4** peringkat kepercayaan dan status pada segmen. |
+| Temuan — TK-86 | Katalog hak peladen menunjukkan `peran_verifikasi` memegang `INSERT` dan `UPDATE` atas kedua tabel `segmen_teks`, diwarisi hak bawaan skema fitur 024, sedangkan kredensial kodenya tanpa hak tulis indeks. Peran yang membaca karantina dapat menulis indeks yang dibaca pemanggil model. Dicatat pada D-00 3.11 dan diajukan sebagai bagian P-2; tidak diperbaiki sebelum diputus, sebab menyentuh hak fitur yang lolos Gerbang 4. |
+| Yang dinyatakan pada usulan | Tanpa rute baru. Ukuran segmen milik D-07 Bagian 3.2, tidak disetel di kode (C-16). Penyematan dan perakitan jalur penjawab dari PostgreSQL di luar cakupan. |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-2 mengubah hak peladen milik fitur yang lolos Gerbang 4 dan memutus temuan. |
+| Dampak | `specs/038-segmentasi-dan-penempatan-indeks/spec.md`; `docs/D00.md` 3.11. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
