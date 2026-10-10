@@ -3879,3 +3879,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membuktikan pembaca sumber dengan dokumen yang ditanam seperti fitur 032 — tidak dipilih: yang dibuktikan justru jalur gerbang sungguhan. |
 | Dampak | `specs/037-perkakas-ingesti/bukti/`, status `spec.md`, `plan.md`, `tasks.md`; `docs/D00.md`, `docs/hki/dokumentasi-teknis.md`; `logbook/L8-tagihan-pasal.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-264 · Gerbang 4 fitur 037 lolos; tiga perubahan perilaku fitur 002 diterima
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | Laporan KB-263 mengajukan fitur 037 ke Gerbang 4, bersama tiga perubahan kecil perilaku gerbang fitur 002 yang muncul saat implementasi dan tidak tertulis pada putusan Gerbang 1 (KB-261). Gerbang 4 tidak didelegasikan; ketiganya ditanyakan tegas lewat pilihan, bersama langkah berikutnya. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Gerbang 4 lolos"** bagi fitur 037 — jumlah baris lolos Gerbang 4 menjadi **32 dari 38**; TK-83, TK-84, dan TK-85 selesai (D-00 3.10). **"Terima ketiganya"**: penolakan atas dokumen korpus ditolak; persetujuan dan pencabutan atas dokumen tak dikenal melempar `GalatDokumenTidakAda`; status anonimisasi selalu diturunkan dari putusan. **"Ya, susun spec 038"**: usulan spec baris 038 segmentasi dan penempatan indeks disusun dan diajukan ke Gerbang 1. |
+| Alternatif | Belum lolos; menolak salah satu perubahan; mendahulukan baris 031 — tidak dipilih. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 037; D-00 3.10; dokumen HKI. |
+| Pemutus | Pemegang Gerbang 1–4 |
