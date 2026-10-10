@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 | Dokumen terkait | D-01 Modul B, BT-70 · D-03 Bagian 3 dan token penyamaran · D-04 Bagian 7.2 (`dokumen_sumber`, `jejak_area`), ADR-06, KA-04 · D-07 Bagian 3.1 dan 3.2 · D-13 KD-02, KD-10, Bagian 6 · D-14 Bagian 3 (peran `verifikator`) dan 5.1 · spec fitur 002, 015, 024, 026, 032 · TK-83 |
-| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Dua dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Tiga dari tujuh tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 

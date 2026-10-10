@@ -3817,3 +3817,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memberi ingesti `SELECT (isi)` agar `ON CONFLICT` berjalan — tidak dipilih: P-2 A menyatakan ingesti tidak membaca isi. Menghapus lalu menyisipkan ulang — tidak dipilih: ingesti akan memegang hapus atas karantina. |
 | Dampak | `01-peran-dan-basis-data.sql`, `tests/peladen.py`, README peladen. Uji penyimpanan, ingesti, dan perkakas lulus tanpa diubah. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-259 · T-3 fitur 037: penyamaran enam pengenal berpola (FR-B04)
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | K-2 plan fitur 037, P-5 A: enam pengenal berpola disamarkan dengan token D-03 sebelum teks disimpan di karantina; teks asli tidak tersimpan. Pendeteksi fitur 015 hanya melapor. Uji ditulis lebih dulu dan merah. |
+| Keputusan | `src/nlp/anonimisasi/samaran.py`: `samarkan()` memakai rentang pendeteksi fitur 015, mengganti dari akhir ke awal agar indeks karakter tidak bergeser (C-10), dan mengembalikan teks bertoken beserta jumlah keenam jenis tanpa nilai. Token diuji terhadap daftar token penyamaran D-03. Rentang bertindih digabung menjadi satu token berjenis temuan yang lebih dulu; jenis tanpa token ditolak, bukan dilewati. Mutasi M-8 sisi penyamar (penggantian dihapus) merah. |
+| Alternatif | Menyamarkan di dalam pendeteksi — tidak dipilih: fitur 015 sengaja memisahkan pelaporan dari putusan. Melewati jenis asing — tidak dipilih: rentang yang dilewati tersimpan apa adanya. |
+| Dampak | Belum dipanggil siapa pun; gerbang memakainya pada T-5. Nama dan alamat tetap tidak tersamarkan (BT-70). |
+| Pemutus | Agen, atas pendelegasian KB-168 |
