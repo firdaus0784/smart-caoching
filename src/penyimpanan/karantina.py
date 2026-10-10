@@ -147,6 +147,12 @@ class CatatanGerbang(ABC):
         """
 
     @abstractmethod
+    async def daftar(self) -> tuple[KeadaanKarantina, ...]:
+        """Keadaan setiap dokumen yang kini di karantina, berurutan id — bagi
+        perintah `daftar` perkakas (fitur 037, T-6). Tanpa kredensial, sama
+        dengan `keadaan`; gerbang memeriksanya sebelum memanggil."""
+
+    @abstractmethod
     async def tinjau(
         self, kredensial: Kredensial, id_dokumen: str, id_peninjau: str, catatan: str
     ) -> None:
@@ -243,6 +249,14 @@ class CatatanGerbangMemori(CatatanGerbang):
             ),
             alasan_terakhir=semua_jejak[-1].alasan if semua_jejak else "",
         )
+
+    async def daftar(self) -> tuple[KeadaanKarantina, ...]:
+        hasil = []
+        for id_dokumen in sorted(i for i, a in self._area.items() if a is Area.KARANTINA):
+            keadaan = await self.keadaan(id_dokumen)
+            if keadaan is not None:
+                hasil.append(keadaan)
+        return tuple(hasil)
 
     def _nomor_wajib(self, id_dokumen: str) -> int:
         nomor = self._nomor_terbaru(id_dokumen)
@@ -366,6 +380,14 @@ SELECT p.id_dokumen, p.judul, p.jenis, p.penerbit, p.tahun, p.tingkat_kerahasiaa
 FROM p
 """
 
+_DAFTAR: Final = """
+SELECT d.id FROM karantina.dokumen_sumber d
+WHERE EXISTS (SELECT 1 FROM karantina.penerimaan p WHERE p.id_dokumen = d.id)
+ORDER BY d.id
+"""
+"""Dokumen karantina yang pernah diterima gerbang. Teks yang ditaruh di luar
+gerbang — tanpa penerimaan — tidak memiliki keadaan, dan tidak tampil."""
+
 _NOMOR_TERBARU: Final = "(SELECT max(nomor) FROM karantina.penerimaan WHERE id_dokumen = $1)"
 
 _TINJAU: Final = f"""
@@ -472,6 +494,14 @@ class CatatanGerbangPostgres(CatatanGerbang):
             persetujuan_dicabut=bool(b["dicabut"]),
             alasan_terakhir=str(b["alasan_terakhir"] or ""),
         )
+
+    async def daftar(self) -> tuple[KeadaanKarantina, ...]:
+        hasil = []
+        for baris in await self._sambungan.fetch(_DAFTAR):
+            keadaan = await self.keadaan(str(baris["id"]))
+            if keadaan is not None:
+                hasil.append(keadaan)
+        return tuple(hasil)
 
     async def tinjau(
         self, kredensial: Kredensial, id_dokumen: str, id_peninjau: str, catatan: str

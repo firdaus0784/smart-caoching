@@ -394,3 +394,23 @@ def test_tiruan_mencatat_jejak_bersama_pemindahan() -> None:
     with pytest.raises(GalatDokumenTidakAda):
         jalankan(tiruan.pindahkan(VERIFIKASI, "d2", Area.KARANTINA, Area.KORPUS, "x", jejak=jejak))
     assert tiruan.jejak_tercatat("d2") == ()
+
+
+# ── `daftar` — T-6 fitur 037, perintah `daftar` perkakas ─────────────────
+
+
+def test_daftar_memuat_dokumen_karantina_saja(pelaksana: Pelaksana) -> None:
+    """Dokumen di karantina — menunggu maupun ditolak — tampil dengan keadaan
+    penerimaan terbarunya; yang sudah di korpus tidak."""
+    a, b, c = _id(), _id(), _id()
+    _terima(pelaksana, a)
+    _terima(pelaksana, b)
+    jalankan(pelaksana.verifikasi.tolak(VERIFIKASI, b, "tm-002", "nama guru pada halaman 3"))
+    _terima(pelaksana, c)
+    jalankan(
+        pelaksana.verifikasi.setujui(VERIFIKASI, c, "tm-002", "anonimisasi terperiksa", METADATA)
+    )
+    daftar = {k.penerimaan.id_dokumen: k for k in jalankan(pelaksana.verifikasi.daftar())}
+    assert {a, b} <= set(daftar) and c not in daftar
+    assert daftar[b].status_anonimisasi == "ditolak"
+    assert daftar[a] == jalankan(pelaksana.verifikasi.keadaan(a))

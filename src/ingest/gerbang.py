@@ -39,6 +39,7 @@ diteruskan ke penyimpan mana pun. Nama dan alamat tidak tersamarkan (BT-70).
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import dataclass
 
 from src.ingest.adversarial import Temuan, periksa_pola
 from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan, TingkatKerahasiaan
@@ -67,6 +68,26 @@ class GalatGerbang(Exception):
     """
 
 
+@dataclass(frozen=True)
+class HasilTerima:
+    """Yang diketahui `terima` tentang unggahannya sendiri — jumlah, tanpa
+    nilai maupun kutipan. Peran ingesti tidak dapat membaca karantina, sehingga
+    ringkasan ini satu-satunya laporan bagi pengunggah (fitur 037)."""
+
+    samaran: dict[str, int]
+    jumlah_temuan: int
+
+
+@dataclass(frozen=True)
+class RingkasanKarantina:
+    """Satu baris perintah `daftar` perkakas — tanpa teks maupun kutipan."""
+
+    dokumen: Dokumen
+    jumlah_temuan: int
+    ditinjau: bool
+    samaran: dict[str, int]
+
+
 class Gerbang:
     """Satu-satunya jalan masuk dan keluar korpus."""
 
@@ -89,7 +110,7 @@ class Gerbang:
         self._pemeriksa = pemeriksa
         self._catatan = catatan if catatan is not None else CatatanGerbangMemori(penyimpan)
 
-    async def terima(self, dokumen: Dokumen, teks: str, *, id_penerima: str = "") -> None:
+    async def terima(self, dokumen: Dokumen, teks: str, *, id_penerima: str = "") -> HasilTerima:
         """Terima dokumen baru — selalu ke karantina (R-03).
 
         Tidak menerima parameter area. Jalan yang tidak ada tidak dapat
@@ -146,6 +167,7 @@ class Gerbang:
             raise GalatGerbang(
                 "dokumen ini sedang berada di korpus — versi baru diterima dengan id baru (TK-85 A)"
             ) from galat
+        return HasilTerima(samaran=hasil.jumlah, jumlah_temuan=len(temuan))
 
     def _jalankan_pemeriksa(self, teks: str) -> list[Temuan]:
         """Jalankan pemeriksa; kegagalannya menahan, bukan meloloskan — R-10.
@@ -208,6 +230,25 @@ class Gerbang:
     async def dokumen(self, kredensial: Kredensial, id_dokumen: str) -> Dokumen:
         """Metadata dokumen, digerbangi sama dengan yang lain."""
         return _dokumen_dari(await self._pastikan_terbaca(kredensial, id_dokumen))
+
+    async def daftar(self, kredensial: Kredensial) -> list[RingkasanKarantina]:
+        """Dokumen yang kini di karantina — fitur 037, perintah `daftar`.
+
+        Menuntut kredensial pembaca karantina **sebelum** catatan dibaca:
+        daftar isi karantina adalah keterangan yang sama dengan isinya bagi
+        siapa pun yang tidak berhak (C-03). Tanpa teks maupun kutipan temuan.
+        """
+        if not kredensial.boleh_baca(Area.KARANTINA):
+            raise GalatAksesDitolak(kredensial=kredensial, area=Area.KARANTINA, operasi="baca")
+        return [
+            RingkasanKarantina(
+                dokumen=_dokumen_dari(k),
+                jumlah_temuan=len(k.temuan),
+                ditinjau=k.ditinjau,
+                samaran=dict(k.penerimaan.samaran),
+            )
+            for k in await self._catatan.daftar()
+        ]
 
     async def samaran(self, kredensial: Kredensial, id_dokumen: str) -> dict[str, int]:
         """Jumlah samaran per jenis pada unggahan terbaru — fitur 037, P-5 A.

@@ -3851,3 +3851,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menolak `Gerbang` tanpa catatan — tidak dipilih: mengubah setiap uji fitur 002. Membiarkan penolakan atas dokumen korpus — tidak dipilih: jejaknya tidak dapat disimpan peladen tanpa melonggarkan batasan arah. |
 | Dampak | `src/ingest/gerbang.py`, `src/ingest/jejak.py`. Perkakas menyusunnya pada T-6. |
 | Pemutus | Agen, atas pendelegasian KB-168; perubahan (3) dan (4) menunggu Gerbang 4 |
+
+## KB-262 · T-6 fitur 037: perkakas ingesti
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | K-4 plan fitur 037 (P-2 A, P-6 A). Uji ditulis lebih dulu dan merah, terhadap PostgreSQL dengan peran sungguhan per perintah; sambungan mencatat perannya, sehingga perintah yang memakai peran keliru tertangkap. |
+| Keputusan | `perkakas/ingesti.py`: tujuh perintah — `terima` sebagai `peran_ingesti`, `daftar`, `baca`, `tinjau`, `setujui`, `tolak` sebagai `peran_verifikasi`, `cabut` sebagai `peran_penarikan_dokumen` — masing-masing objek `Gerbang` baru di atas catatan PostgreSQL. Pelaku diperiksa polanya sebelum menyambung; metadata diperiksa enum dan model `Dokumen` sebelum menyambung. Ekstraksi lewat pengekstrak fitur 015; PDF tanpa lapisan teks dialihkan ke OCR, dan keluaran OCR dicatat ke L2 (C-09). `daftar` tanpa teks; `baca` mencetak pernyataan BT-70 lebih dulu, lalu teks tersamar dan temuan, ke keluaran baku saja. Galat tidak mengutip masukan, alasan, catatan, maupun teks; galat peladen disebut kelasnya saja. **Dua tambahan pada lapisan di bawahnya, dalam tugas yang sama:** `CatatanGerbang.daftar` dan `Gerbang.daftar` (bagi perintah `daftar`, menuntut kredensial pembaca karantina sebelum catatan dibaca), dan `Gerbang.terima` kini mengembalikan jumlah samaran dan temuan — peran ingesti tidak dapat membaca karantina, sehingga ringkasan itu satu-satunya laporan bagi pengunggah. Uji kontrak `daftar` atas memori dan PostgreSQL. Mutasi M-13 merah. |
+| Alternatif | Satu peran bagi seluruh perintah — ditolak P-2 B. Membaca ringkasan penerimaan sesudah `terima` sebagai verifikator — tidak dipilih: perintah `terima` akan menyambung dua peran. Mencetak teks ke berkas — tidak dipilih: R-08 membatasinya ke keluaran baku. |
+| Dampak | Belum ada rute; bentuk `/tanya` tidak berubah. Uji fitur 002 tetap tidak diubah. |
+| Pemutus | Agen, atas pendelegasian KB-168 |
