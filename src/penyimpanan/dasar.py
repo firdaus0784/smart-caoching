@@ -20,6 +20,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from src.kamus.gerbang import PutusanGerbang
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial import Kredensial
 
@@ -41,6 +42,41 @@ class MetadataDokumen:
     penerbit: str
     tahun: int
     tingkat_kerahasiaan: str
+
+
+@dataclass(frozen=True)
+class BarisJejak:
+    """Baris `jejak_area` yang ikut pemindahan — fitur 037, R-06, D-04 Bagian 7.2.
+
+    Arah pemindahan diambil dari pemindahan itu sendiri, bukan diisi dua kali:
+    dua sumber arah dapat berselisih, dan yang tercatat bisa saja bukan yang
+    terjadi. Pemeriksaan isinya — pelaku dan alasan tanpa data pribadi —
+    milik `JejakArea` di ingesti, sebelum pemindahan dikirim.
+    """
+
+    id_pelaku: str
+    alasan: str
+    putusan: PutusanGerbang
+
+
+def periksa_arah_jejak(dari: Area, ke: Area, jejak: BarisJejak | None) -> None:
+    """Putusan yang tidak sesuai arahnya adalah kekeliruan pemanggil, ditolak
+    sebelum apa pun disentuh — padanan batasan `jejak_arah` peladen.
+
+    Penolakan tidak memindahkan apa pun, sehingga tidak pernah menyertai
+    pemindahan; persetujuan satu-satunya jalan ke korpus; pencabutan hanya
+    mengeluarkan."""
+    if jejak is None:
+        return
+    sesuai = {
+        PutusanGerbang.SETUJUI: dari is Area.KARANTINA and ke is Area.KORPUS,
+        PutusanGerbang.TOLAK: False,
+        PutusanGerbang.CABUT_PERSETUJUAN: ke is Area.KARANTINA,
+    }[jejak.putusan]
+    if not sesuai:
+        raise ValueError(
+            f"putusan {jejak.putusan.value} tidak sesuai arah {dari.value} ke {ke.value}"
+        )
 
 
 class PenyimpanDasar(ABC):
@@ -91,6 +127,7 @@ class PenyimpanDasar(ABC):
         alasan: str,
         *,
         metadata: MetadataDokumen | None = None,
+        jejak: BarisJejak | None = None,
     ) -> None:
         """Pindahkan dokumen antar area.
 
@@ -102,4 +139,10 @@ class PenyimpanDasar(ABC):
         bersama pemindahannya atau tidak sama sekali (TK-82 A). Arah lain
         bersama metadata adalah kekeliruan pemanggil: `ValueError` sebelum
         apa pun disentuh.
+
+        `jejak` tercatat bersama pemindahannya atau tidak sama sekali (fitur
+        037, R-06); putusan yang tidak sesuai arah ditolak lebih dulu
+        (`periksa_arah_jejak`). **Dokumen yang keluar dari korpus membawa
+        segmennya keluar dari kedua indeks** dalam pernyataan yang sama
+        (TK-84 A) — aturan setiap pemindahan, bukan hanya pencabutan.
         """

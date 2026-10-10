@@ -39,10 +39,16 @@ from typing import Final
 
 from src.penyimpanan.area import Area
 from src.penyimpanan.catatan_akses import CatatanAkses
-from src.penyimpanan.dasar import MetadataDokumen, PenyimpanDasar
+from src.penyimpanan.dasar import (
+    BarisJejak,
+    MetadataDokumen,
+    PenyimpanDasar,
+    periksa_arah_jejak,
+)
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial import Kredensial
 from src.penyimpanan.sambungan import SambunganAktif
+from src.penyimpanan.skema_indeks import SKEMA_INDEKS, TABEL_SEGMEN
 
 SKEMA: Final[dict[Area, str]] = {
     Area.KARANTINA: "karantina",
@@ -122,6 +128,7 @@ class PenyimpanPostgres(PenyimpanDasar):
         alasan: str,
         *,
         metadata: MetadataDokumen | None = None,
+        jejak: BarisJejak | None = None,
     ) -> None:
         """Pindahkan dokumen antar area dalam **satu pernyataan**.
 
@@ -134,46 +141,73 @@ class PenyimpanPostgres(PenyimpanDasar):
         salinan pada kedua area. Salinan mentah yang tertinggal di karantina
         adalah persis yang ADR-06 cegah.
 
-        `alasan` tidak disimpan di sini; yang mencatatnya `jejak_area`.
+        `alasan` tidak disimpan di sini; yang mencatatnya `jejak`.
 
-        **Metadata ke korpus ikut pernyataan yang sama** (TK-82 A): ia
-        disisipkan dari baris yang berpindah, sehingga dokumen yang tidak
-        berpindah tidak bercatatan, dan metadata yang ditolak peladen
-        membatalkan pemindahannya. Dokumen korpus tanpa catatan tidak
-        terjangkau pembaca sumber — padahal jalur penjawab memakainya.
+        Bagian yang ikut pernyataan yang sama, masing-masing disisipkan dari
+        baris yang **berpindah** — dokumen yang tidak berpindah tidak
+        meninggalkan apa pun:
+
+        - **metadata ke korpus** (TK-82 A): metadata yang ditolak peladen
+          membatalkan pemindahannya;
+        - **segmen keluar dari kedua indeks** bila dokumen keluar dari korpus
+          (TK-84 A, fitur 037): pengambilan membaca segmen tanpa menautkannya
+          ke korpus, sehingga segmen yang tertinggal tetap terambil;
+        - **jejak** (R-06 fitur 037): jejak yang ditolak batasan tabel
+          membatalkan pemindahannya, dan pemindahan tidak pernah terjadi tanpa
+          jejaknya. Nomor penerimaan dibaca di dalam pernyataan yang sama.
         """
         if metadata is not None and ke is not Area.KORPUS:
             raise ValueError("metadata hanya menyertai pemindahan ke korpus (TK-82 A)")
+        periksa_arah_jejak(dari, ke, jejak)
         self._pastikan_boleh_baca(kredensial, dari)
         self._pastikan_boleh_tulis(kredensial, ke)
+        bagian = [
+            f"terangkat AS (DELETE FROM {SKEMA[dari]}.{TABEL} WHERE id = $1 RETURNING id, isi)",
+            f"pindah AS (INSERT INTO {SKEMA[ke]}.{TABEL} (id, isi) "
+            f"SELECT id, isi FROM terangkat RETURNING id)",
+        ]
+        argumen: list[object] = [id_dokumen]
         if metadata is not None:
-            baris = await self._sambungan.fetchrow(
-                f"WITH terangkat AS ("
-                f"  DELETE FROM {SKEMA[dari]}.{TABEL} WHERE id = $1 RETURNING id, isi"
-                f"), pindah AS ("
-                f"  INSERT INTO {SKEMA[ke]}.{TABEL} (id, isi) "
-                f"  SELECT id, isi FROM terangkat RETURNING id"
-                f"), catat AS ("
-                f"  INSERT INTO korpus.metadata_dokumen "
-                f"  (id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan) "
-                f"  SELECT id, $2, $3, $4, $5, $6 FROM pindah"
-                f") SELECT id FROM pindah",
-                id_dokumen,
+            bagian.append(
+                "catat AS (INSERT INTO korpus.metadata_dokumen "
+                "(id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan) "
+                "SELECT id, $2, $3, $4, $5, $6 FROM pindah)"
+            )
+            argumen += [
                 metadata.judul,
                 metadata.jenis,
                 metadata.penerbit,
                 metadata.tahun,
                 metadata.tingkat_kerahasiaan,
+            ]
+        if dari is Area.KORPUS:
+            bagian += BAGIAN_SEGMEN_KELUAR
+        if jejak is not None:
+            n = len(argumen)
+            bagian.append(
+                "jejak AS (INSERT INTO karantina.jejak_area (id_dokumen, nomor_penerimaan, "
+                "putusan, id_pelaku, dari_area, ke_area, alasan) "
+                "SELECT id, (SELECT max(nomor) FROM karantina.penerimaan "
+                f"WHERE id_dokumen = pindah.id), ${n + 1}, ${n + 2}, '{dari.value}', "
+                f"'{ke.value}', ${n + 3} FROM pindah)"
             )
-            if baris is None:
-                raise GalatDokumenTidakAda(id_dokumen)
-            return
+            argumen += [jejak.putusan.value, jejak.id_pelaku, jejak.alasan]
         baris = await self._sambungan.fetchrow(
-            f"WITH terangkat AS ("
-            f"  DELETE FROM {SKEMA[dari]}.{TABEL} WHERE id = $1 RETURNING id, isi"
-            f") INSERT INTO {SKEMA[ke]}.{TABEL} (id, isi) "
-            f"SELECT id, isi FROM terangkat RETURNING id",
-            id_dokumen,
+            "WITH " + ", ".join(bagian) + " SELECT id FROM pindah", *argumen
         )
         if baris is None:
             raise GalatDokumenTidakAda(id_dokumen)
+
+
+BAGIAN_SEGMEN_KELUAR: Final[tuple[str, ...]] = tuple(
+    f"segmen_{tujuan.value} AS (DELETE FROM {skema}.{TABEL_SEGMEN} "
+    "WHERE id_dokumen IN (SELECT id FROM pindah))"
+    for tujuan, skema in SKEMA_INDEKS.items()
+)
+"""Bagian CTE yang menghapus segmen dokumen yang keluar dari korpus — TK-84 A.
+
+Satu tempat, dipakai setiap pernyataan yang mengeluarkan dokumen dari korpus,
+termasuk pencabutan pada `karantina.py`. Merujuk CTE `pindah`: segmen hanya
+terhapus bila dokumennya memang berpindah. Nama skema dan tabel dari
+`skema_indeks.py`, tempat fakta fisik indeks tinggal.
+"""

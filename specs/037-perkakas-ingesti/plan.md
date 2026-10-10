@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-255); P-1 s.d. P-6 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-84 A (KB-255): penarikan menghapus segmen dari indeks. TK-85 A (KB-256): unggahan ulang atas dokumen yang berada di korpus ditolak |
-| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Tiga dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Empat dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-11 `spec.md`; FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 
 ## 1. Letak dan batas
@@ -65,7 +65,7 @@ dapat dijaga peladen dari data pribadi; yang menjaganya pemeriksaan
 |---|---|---|
 | `peran_ingesti` (baru) | `USAGE` karantina dan korpus; `INSERT`, `UPDATE (isi, disimpan_pada)`, dan `SELECT (id)` atas `karantina.dokumen_sumber`; `INSERT` atas `penerimaan` dan `temuan_pola`; `SELECT (id)` atas `korpus.dokumen_sumber` (TK-85 A) | Membaca `isi` di area mana pun; tinjauan, jejak, korpus selain kolom `id`; indeks |
 | `peran_verifikasi` | `SELECT` atas keempat catatan; `INSERT` atas `tinjauan_temuan` dan `jejak_area`; **`DELETE` atas `karantina.dokumen_sumber`** | **`INSERT` dan `UPDATE` atas karantina** — dicabut dari hak bawaan skema, juga bagi tabel yang dibuat kelak (P-2 A) |
-| `peran_penarikan_dokumen` (baru) | `USAGE` korpus, karantina, kedua indeks; `SELECT`, `DELETE` atas `korpus.dokumen_sumber`; `INSERT` atas `karantina.dokumen_sumber`; `SELECT (nomor, id_dokumen)` atas `penerimaan`; `INSERT` atas `jejak_area`; `SELECT (id_dokumen)` dan `DELETE` atas kedua tabel `segmen_teks` | Teks segmen, kolom vektor; temuan dan tinjauan; menyisipkan ke korpus maupun indeks |
+| `peran_penarikan_dokumen` (baru) | `USAGE` korpus, karantina, kedua indeks; `SELECT`, `DELETE` atas `korpus.dokumen_sumber`; `INSERT` atas `karantina.dokumen_sumber` beserta `SELECT (id)`; `SELECT (nomor, id_dokumen)` atas `penerimaan`; `INSERT` atas `jejak_area`; `SELECT (id_dokumen)` dan `DELETE` atas kedua tabel `segmen_teks` | Teks segmen, kolom vektor; temuan dan tinjauan; menyisipkan ke korpus maupun indeks |
 
 Peran pengambilan, pemanggil model, penyematan, pembaca sumber, dan seluruh
 peran aplikasi lain tetap tanpa `USAGE` atas karantina (R-05). Kedua peran

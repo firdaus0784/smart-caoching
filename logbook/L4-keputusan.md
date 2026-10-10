@@ -3828,3 +3828,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyamarkan di dalam pendeteksi — tidak dipilih: fitur 015 sengaja memisahkan pelaporan dari putusan. Melewati jenis asing — tidak dipilih: rentang yang dilewati tersimpan apa adanya. |
 | Dampak | Belum dipanggil siapa pun; gerbang memakainya pada T-5. Nama dan alamat tetap tidak tersamarkan (BT-70). |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-260 · T-4 fitur 037: catatan gerbang memori dan PostgreSQL
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | K-1 dan K-3 plan fitur 037 (P-1 A, P-3 A, TK-84 A, TK-85 A). Uji kontrak ditulis lebih dulu dan merah, atas pelaksana memori dan PostgreSQL; yang kedua tersambung sebagai peran tiap perintah — ingesti, verifikasi, penarikan dokumen — bukan pengelola. |
+| Keputusan | `src/penyimpanan/karantina.py`: `CatatanGerbang` dengan `terima`, `keadaan`, `tinjau`, `tolak`, `setujui`, `cabut`; keadaan diturunkan dari penerimaan terbaru. `terima` menulis teks, penerimaan, dan temuan dalam satu pernyataan dan menolak dokumen korpus di dalamnya (TK-85 A). `pindahkan(..., jejak=)` pada kontrak, tiruan, dan PostgreSQL: putusan yang tidak sesuai arah ditolak sebelum apa pun disentuh; jejak dan, bila dokumen keluar dari korpus, penghapusan segmen kedua indeks ikut pernyataan pemindahan (`BAGIAN_SEGMEN_KELUAR`, satu tempat). Pencabutan satu pernyataan bagi kedua keadaan dokumen, sehingga tidak ada celah antara membaca area dan mencatatnya. `GalatDokumenDiKorpus` baru. **Dua koreksi selama tugas, keduanya ditangkap uji:** (1) `INSERT ... RETURNING id` ke karantina menuntut `SELECT (id)` bagi `peran_penarikan_dokumen` — hak yang tertulis pada plan semula lalu terhapus saat plan dirapikan; dikembalikan pada `15-ingesti.sql`, plan, dan uji katalog. (2) `CatatanGerbangPostgres` semula menyusun `PenyimpanPostgres` sendiri; uji aturan pemilihan pelaksana fitur 024 menolaknya, sehingga penyimpan dokumennya kini disuntikkan. Mutasi M-5, M-6, M-12 merah. |
+| Alternatif | Pencabutan lewat membaca area lalu `pindahkan()` — tidak dipilih: dua pernyataan membuka celah, dan peran penarikan tidak dapat membaca keadaan penuh. Menyimpan status sebagai kolom — ditolak P-1 A. |
+| Dampak | Gerbang ingesti belum memakainya; disambungkan pada T-5. Uji penyimpanan, ingesti, dan pengambilan lulus tanpa diubah. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

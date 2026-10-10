@@ -2675,6 +2675,7 @@ def test_hak_peran_dokumen_persis_di_seluruh_skema(basis_data_siap: None) -> Non
         "peran_ingesti:korpus.dokumen_sumber:SELECT:id",
         "peran_penarikan_dokumen:indeks_metadata.segmen_teks:SELECT:id_dokumen",
         "peran_penarikan_dokumen:indeks_utama.segmen_teks:SELECT:id_dokumen",
+        "peran_penarikan_dokumen:karantina.dokumen_sumber:SELECT:id",
         "peran_penarikan_dokumen:karantina.penerimaan:SELECT:id_dokumen,nomor",
     ]
 

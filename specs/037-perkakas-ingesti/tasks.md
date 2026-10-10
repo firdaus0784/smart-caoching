@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-255); TK-84 A (KB-255), TK-85 A (KB-256) |
 | Plan | Gerbang 2 lolos 10 Oktober 2026 atas pendelegasian KB-168 (KB-256); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Tiga dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Empat dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-11; FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -50,13 +50,13 @@ baru (C-12, C-20). Uji fitur 002 lulus tanpa diubah (R-02).
 
 **Kebutuhan:** R-03, R-06, R-09; K-1, K-3; P-1 A, P-3 A.
 
-- [ ] Uji kontrak lebih dulu atas memori **dan** PostgreSQL, tiap perintah
+- [x] Uji kontrak lebih dulu atas memori **dan** PostgreSQL, tiap perintah
       dengan perannya: keadaan diturunkan; tinjauan hanya bagi penerimaan
       terbaru; pemindahan, metadata, dan jejak bersama atau tidak sama sekali;
       keluar dari korpus menghapus segmen kedua indeks
-- [ ] `src/penyimpanan/karantina.py`; `dasar.py`, `tiruan.py`, `postgres.py`
+- [x] `src/penyimpanan/karantina.py`; `dasar.py`, `tiruan.py`, `postgres.py`
       (`pindahkan(..., jejak=)`)
-- [ ] Mutasi M-5, M-6, M-12
+- [x] Mutasi M-5, M-6, M-12
 
 ## T-5 · Gerbang memakai catatan
 

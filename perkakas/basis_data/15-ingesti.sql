@@ -180,7 +180,9 @@ GRANT SELECT (id) ON korpus.dokumen_sumber TO peran_ingesti;
 GRANT USAGE ON SCHEMA karantina, korpus, indeks_utama, indeks_metadata
   TO peran_penarikan_dokumen;
 GRANT SELECT, DELETE ON korpus.dokumen_sumber TO peran_penarikan_dokumen;
-GRANT INSERT ON karantina.dokumen_sumber TO peran_penarikan_dokumen;
+-- `SELECT (id)`: `RETURNING id` atas dokumen yang baru tiba di karantina —
+-- segmen dan jejak hanya ikut bila dokumennya memang berpindah.
+GRANT INSERT, SELECT (id) ON karantina.dokumen_sumber TO peran_penarikan_dokumen;
 GRANT SELECT (nomor, id_dokumen) ON karantina.penerimaan TO peran_penarikan_dokumen;
 GRANT INSERT ON karantina.jejak_area TO peran_penarikan_dokumen;
 GRANT SELECT (id_dokumen), DELETE ON indeks_utama.segmen_teks, indeks_metadata.segmen_teks

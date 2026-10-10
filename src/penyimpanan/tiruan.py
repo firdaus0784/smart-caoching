@@ -19,7 +19,12 @@ from __future__ import annotations
 
 from src.penyimpanan.area import Area
 from src.penyimpanan.catatan_akses import CatatanAkses
-from src.penyimpanan.dasar import MetadataDokumen, PenyimpanDasar
+from src.penyimpanan.dasar import (
+    BarisJejak,
+    MetadataDokumen,
+    PenyimpanDasar,
+    periksa_arah_jejak,
+)
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.kredensial import Kredensial
 
@@ -31,6 +36,7 @@ class PenyimpanTiruan(PenyimpanDasar):
         self._isi: dict[Area, dict[str, object]] = {area: {} for area in Area}
         self._catatan = catatan
         self._metadata: list[tuple[str, MetadataDokumen]] = []
+        self._jejak: list[tuple[str, Area, Area, BarisJejak]] = []
 
     def tanam(self, area: Area, id_dokumen: str, isi: object) -> None:
         """Isi awal untuk pengujian, tanpa melewati pemeriksaan kredensial.
@@ -74,6 +80,11 @@ class PenyimpanTiruan(PenyimpanDasar):
         """Catatan metadata dokumen itu, berurutan — bagi uji, bukan kontrak."""
         return tuple(m for i, m in self._metadata if i == id_dokumen)
 
+    def jejak_tercatat(self, id_dokumen: str) -> tuple[tuple[Area, Area, BarisJejak], ...]:
+        """Jejak yang ikut pemindahan dokumen itu — bagi uji, bukan kontrak.
+        Tiruan tidak memiliki indeks, sehingga tidak ada segmen yang ikut."""
+        return tuple((d, k, j) for i, d, k, j in self._jejak if i == id_dokumen)
+
     async def pindahkan(
         self,
         kredensial: Kredensial,
@@ -83,6 +94,7 @@ class PenyimpanTiruan(PenyimpanDasar):
         alasan: str,
         *,
         metadata: MetadataDokumen | None = None,
+        jejak: BarisJejak | None = None,
     ) -> None:
         """Baca dari asal, tulis ke tujuan, hapus dari asal.
 
@@ -99,6 +111,7 @@ class PenyimpanTiruan(PenyimpanDasar):
         """
         if metadata is not None and ke is not Area.KORPUS:
             raise ValueError("metadata hanya menyertai pemindahan ke korpus (TK-82 A)")
+        periksa_arah_jejak(dari, ke, jejak)
         self._pastikan_boleh_baca(kredensial, dari)
         self._pastikan_boleh_tulis(kredensial, ke)
         if id_dokumen not in self._isi[dari]:
@@ -106,3 +119,5 @@ class PenyimpanTiruan(PenyimpanDasar):
         self._isi[ke][id_dokumen] = self._isi[dari].pop(id_dokumen)
         if metadata is not None:
             self._metadata.append((id_dokumen, metadata))
+        if jejak is not None:
+            self._jejak.append((id_dokumen, dari, ke, jejak))

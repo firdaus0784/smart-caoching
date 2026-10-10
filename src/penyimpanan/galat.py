@@ -48,6 +48,20 @@ class GalatDokumenTidakAda(Exception):
     """
 
 
+class GalatDokumenDiKorpus(Exception):
+    """Unggahan ulang atas dokumen yang sedang berada di korpus — TK-85 A,
+    R-11 fitur 037.
+
+    Satu dokumen satu area. Menerima versi baru ke karantina sementara versi
+    lama tetap di korpus membuat gerbang tidak lagi tahu versi mana yang
+    persetujuannya ditarik. Versi baru masuk dengan id baru.
+
+    Bukan galat akses: kredensial ingesti memang boleh menulis karantina, dan
+    pesannya tidak membocorkan apa pun yang belum diketahui pengunggah — ia
+    sendiri yang memasukkan dokumen itu.
+    """
+
+
 class GalatAksesDitolak(Exception):
     """Kredensial tidak menjangkau area yang diminta — R-02.
 
