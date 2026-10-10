@@ -3795,3 +3795,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | TK-85 B (unggahan ulang mengeluarkan versi lama dari korpus; peran ingesti memegang hapus korpus) dan C (versi berdampingan) — tidak dipilih. Rancangan: menyimpan status sebagai kolom yang diperbarui — ditolak, jejak putusan yang dapat disunting tidak membuktikan apa pun; aturan gerbang ditulis ulang di pelaksana PostgreSQL — ditolak, dua salinan aturan akan berselisih; segmen ikut keluar hanya pada penarikan — ditolak, aturan itu milik setiap pemindahan keluar dari korpus. |
 | Dampak | D-00 3.07 (TK-85). `plan.md` dan `tasks.md` fitur 037 terbit; R-11 pada spec. Belum ada kode. |
 | Pemutus | Pemegang Gerbang 1–4 (TK-85); agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-257 · T-1 fitur 037: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | K-1 dan K-5 plan fitur 037: catatan karantina gerbang ingesti ditulis ke kontrak sebelum kodenya (R-10). Uji nilai `PutusanGerbang` terhadap baris D-14 ditulis lebih dulu dan merah. |
+| Keputusan | D-14 0.19 Bagian 5.1: `penerimaan` (beserta `samaran` tanpa nilai dan `id_penerima` berpola kode tim), `temuan_pola`, `tinjauan_temuan`, `jejak_area` dengan `nomor_penerimaan` dan `putusan`; bidang `dokumen_sumber` yang menyangkut gerbang dinyatakan diturunkan dari catatan; satu dokumen satu area (TK-85 A). D-04 0.15 Bagian 7.2 dan KA-04: ketiga peran dokumen. `src/kamus/gerbang.py`: `PutusanGerbang` tiga nilai, diuji terhadap D-14 dan didefinisikan di satu tempat saja. |
+| Alternatif | Menyimpan putusan sebagai jenis arah pemindahan saja — tidak dipilih: penolakan dan penarikan atas dokumen karantina sama-sama berarah karantina ke karantina, sehingga keadaan tidak dapat diturunkan tanpa menebak. |
+| Dampak | D-00 3.08. Tanpa rute; bentuk `/tanya` tidak berubah. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-255); P-1 s.d. P-6 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-84 A (KB-255): penarikan menghapus segmen dari indeks. TK-85 A (KB-256): unggahan ulang atas dokumen yang berada di korpus ditolak |
-| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Nol dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Satu dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-11 `spec.md`; FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 
 ## 1. Letak dan batas
