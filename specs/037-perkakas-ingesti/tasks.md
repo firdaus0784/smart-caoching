@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-255); TK-84 A (KB-255), TK-85 A (KB-256) |
 | Plan | Gerbang 2 lolos 10 Oktober 2026 atas pendelegasian KB-168 (KB-256); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Enam dari tujuh tugas selesai |
+| Status | **Lolos Gerbang 2–3** atas pendelegasian KB-168 (KB-256). Tujuh dari tujuh tugas selesai — **menunggu Gerbang 4 manusia** (KB-263) |
 | Kebutuhan | R-01 s.d. R-11; FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -80,6 +80,6 @@ baru (C-12, C-20). Uji fitur 002 lulus tanpa diubah (R-02).
 
 ## T-7 · Bukti, penutupan
 
-- [ ] Perkakas terhadap PostgreSQL, Bagian 8.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] Perkakas terhadap PostgreSQL, Bagian 8.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

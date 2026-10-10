@@ -3862,3 +3862,20 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Satu peran bagi seluruh perintah — ditolak P-2 B. Membaca ringkasan penerimaan sesudah `terima` sebagai verifikator — tidak dipilih: perintah `terima` akan menyambung dua peran. Mencetak teks ke berkas — tidak dipilih: R-08 membatasinya ke keluaran baku. |
 | Dampak | Belum ada rute; bentuk `/tanya` tidak berubah. Uji fitur 002 tetap tidak diubah. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-263 · T-7 fitur 037 — bukti, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | T-7 `tasks.md` fitur 037, atas pendelegasian KB-168 dalam batas `plan.md` (KB-256). Gerbang 4 tidak didelegasikan. |
+| Keputusan | Fitur 037 dinyatakan selesai tujuh dari tujuh tugas dan **diajukan ke Gerbang 4**. |
+| Putaran mutasi | Tiga belas mutasi `plan.md` Bagian 8.3 ditambah M-8a (sisi penyamar). **Menyala 14 dari 14**: M-1, M-2, M-3, M-4, M-11 (KB-258); M-8a (KB-259); M-5, M-6, M-12 (KB-260); M-7, M-8, M-9, M-10 (KB-261); M-13 (KB-262). |
+| Bukti | `bukti/ujung_ke_ujung.py`, **delapan belas pemeriksaan lulus**: perkakas dijalankan lewat baris perintah, tiap perintah sebagai perannya sendiri. Regulasi contoh — NIP dan dua pola penyisipan — diterima dengan NIP tersamar, tampil pada `daftar` tanpa teks, `baca` mendahulukan pernyataan BT-70 dan menampilkan teks bertoken; persetujuan ditahan sampai temuan ditinjau (FR-B08), lalu berhasil; unggahan ulangnya ditolak (TK-85 A). Pembaca sumber `make jalan`, dengan sesi pengguna sungguhan, menampilkan metadata yang dicatat gerbang ingesti — bukan ditanam — tanpa teks, sebab segmentasi milik baris 038. Notulen sekolah contoh — NIK dan telepon — disetujui, segmennya dihapus dari kedua indeks oleh pencabutan (TK-84 A), dan pembaca sumber sesudahnya menjawab tidak ada. Tidak satu pengenal asli pun tersimpan pada dokumen karantina, korpus, maupun kutipan temuan (`bukti/perkakas-ingesti.txt`, berkas contoh `contoh-*.docx`). |
+| **Hal buatan, dinyatakan** | (1) Berkas contoh dibuat naskah bukti; seluruh nomornya dibuat-buat. (2) Segmen dokumen sekolah ditanam pengelola sebelum pencabutan, sebab segmentasi milik baris 038; yang dibuktikan penghapusannya. |
+| **Penyiapan basis data uji, dinyatakan** | Pada basis data uji, bukan data peserta. Bukti dijalankan dua kali: putaran pertama gagal pada dua **harapan naskah** yang keliru — kalimat contoh memicu dua pola, bukan satu, dan masuk dijawab 204, bukan 200 — sedangkan perilaku sistem sudah benar; harapan diperbaiki, putaran kedua lulus. Dokumen kedua putaran tetap di basis data uji; `daftar` juga memuat dokumen sisa uji perkakas, sebab uji dan `make jalan` berbagi basis data pada mesin pengembangan. Akun `ks-937` dibuat untuk bukti; berkas sandinya di direktori kerja sementara dihapus, dan peladen latar dihentikan. Tidak ada baris yang dihapus pengelola. |
+| Penutupan | L8: tagihan pasal tidak menyusut (19 lulus, 0 gagal, 1 belum); lima pasal dikuatkan. Dokumen HKI: layanan NLP, pekerja latar, basis data, penyimpanan berkas, keamanan, mutu, yang belum terbangun; uji 3.426 dan 337. D-00 3.09: TK-83, TK-84, TK-85 menunggu Gerbang 4. |
+| Yang menunggu | **Gerbang 4** fitur 037 oleh pemegang gerbang, termasuk tiga perubahan kecil perilaku fitur 002 yang tidak tertulis pada putusan (KB-261): penolakan atas dokumen korpus ditolak; persetujuan dan pencabutan atas dokumen tak dikenal melempar `GalatDokumenTidakAda`; status anonimisasi yang diserahkan pengunggah tidak dipakai. Sesudahnya baris 038 — segmentasi dan penempatan indeks — melewati Gerbang 1 sendiri. |
+| Alternatif | Membuktikan pembaca sumber dengan dokumen yang ditanam seperti fitur 032 — tidak dipilih: yang dibuktikan justru jalur gerbang sungguhan. |
+| Dampak | `specs/037-perkakas-ingesti/bukti/`, status `spec.md`, `plan.md`, `tasks.md`; `docs/D00.md`, `docs/hki/dokumentasi-teknis.md`; `logbook/L8-tagihan-pasal.md`. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

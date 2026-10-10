@@ -633,3 +633,25 @@ Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Pembaca sumber menampilkan bagian yang dirujuk sitasi, tetapi
 tidak memeriksa dukungan isi klaim; jalur penjawaban dan validatornya tidak
 disentuh.
+
+### Fitur 037 — 10 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 032. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan lima pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 037 |
+|---|---|
+| C-03 | Karantina dijangkau tiga peran dokumen saja, satu per kredensial kode (M-4); ingesti menaruh tanpa dapat membaca (M-2), verifikator hanya dapat mengeluarkan — hak bawaan skema yang memberinya tambah dan ubah dicabut, juga bagi tabel kelak (M-1, M-3); setiap peran diuji berjalan dengan haknya sendiri |
+| C-05 | Kedua peran baru tanpa basis data pseudonim; pelaku pada catatan karantina kode anggota tim, bukan nama, ditegakkan batasan tabel (M-11) |
+| C-09 | Keluaran OCR perkakas tercatat ke L2 beserta versi mesin dan sidik model |
+| C-12 | Tanpa paket baru: ekstraksi lewat pengekstrak fitur 015, penyamaran dengan pustaka baku |
+| C-17 | Penarikan dokumen hanya mengurangi — tidak dapat menyisipkan ke korpus maupun indeks; tanpa rute; jalur penjawaban tidak disentuh |
+| C-20 | D-14 0.19 sebelum kodenya; `PutusanGerbang` di kamus, diuji terhadap D-14; tanpa rute baru; bentuk `/tanya` tidak berubah |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 037 mengisi korpus, tetapi tidak menyentuh jalur
+penjawaban maupun validatornya; segmentasi milik baris 038.
