@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 | Dokumen terkait | D-01 Modul B, BT-70 · D-03 Bagian 3 dan token penyamaran · D-04 Bagian 7.2 (`dokumen_sumber`, `jejak_area`), ADR-06, KA-04 · D-07 Bagian 3.1 dan 3.2 · D-13 KD-02, KD-10, Bagian 6 · D-14 Bagian 3 (peran `verifikator`) dan 5.1 · spec fitur 002, 015, 024, 026, 032 · TK-83 |
-| Status | **Gerbang 1 lolos** — 9 Oktober 2026 (KB-255) |
+| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Nol dari tujuh tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -65,6 +65,7 @@ tuntas padahal tidak (P-3).
 | R-08 | Teks dokumen karantina **HARUS** hanya dapat ditampilkan kepada perintah berperan verifikasi, ke keluaran baku perkakas. Ia tidak ditulis ke berkas maupun log oleh perkakas |
 | R-09 | Penarikan persetujuan **HARUS** berlaku seketika, tanpa kredensial verifikator, dan **HARUS** mengeluarkan dokumen dari korpus; persetujuan ulang hanya lewat unggahan ulang beserta persetujuan baru (KB-014) |
 | R-10 | Fitur ini **TIDAK BOLEH** menambah rute, mengubah bentuk tanggapan `/tanya`, maupun memberi jalur penjawaban kemampuan menulis (C-17, C-20). Setiap tabel baru **HARUS** ditulis ke D-14 Bagian 5.1 dan D-04 Bagian 7.2 sebelum kodenya |
+| R-11 | **KETIKA** dokumen yang sedang berada di korpus diunggah ulang dengan id yang sama, sistem **HARUS** menolaknya sebelum apa pun tersimpan; versi baru masuk dengan id baru (TK-85 A, KB-256) |
 
 ## Pertanyaan terbuka
 
@@ -169,6 +170,13 @@ Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
 | P-5 | **A** — `terima` menyamarkan enam pengenal berpola dengan token D-03 sebelum teks disimpan di karantina; teks asli tidak tersimpan; jumlah samaran per jenis tercatat tanpa nilai |
 | P-6 | **A** — pelaku pada jejak berupa kode anggota tim berpola nama akun, bukan nama orang |
 
+**Putusan tambahan sesudah Gerbang 1 — TK-85 (KB-256).** Saat menyusun plan
+ditemukan bahwa gerbang fitur 002 menerima unggahan ulang atas dokumen yang
+sudah di korpus: gerbang menganggapnya di karantina sementara versi lama tetap
+di korpus, sehingga penarikan persetujuan pemilik tidak mengeluarkan versi
+lama itu. Pemegang gerbang memilih **A**: unggahan ulang itu ditolak; versi
+baru masuk dengan id baru. Ditambahkan sebagai R-11.
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -183,6 +191,7 @@ Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
 | R-08 | FR-B05; KM-03 |
 | R-09 | ET-04; KB-014 |
 | R-10 | C-17; C-20; AG-02 |
+| R-11 | ET-04; KB-014; TK-85 |
 
 ## Kriteria penerimaan
 

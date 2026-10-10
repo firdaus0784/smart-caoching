@@ -3784,3 +3784,14 @@ ditegakkan uji, bukan kebiasaan.
 | Yang tetap milik tim | Formulir persetujuan pemilik (ET-02) dan cakupan persetujuan dokumen sekolah (ET-04); pengenalan nama dan alamat menunggu model NER (BT-70). |
 | Dampak | Status spec fitur 037; D-12 0.43 (baris 037 diperluas sesuai putusan, baris 038 disisipkan); D-00 3.06 (TK-84 diputus, tetap terbuka sampai fitur 037 selesai). Plan menyusul atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-256 · TK-85 diputus A; plan dan tasks fitur 037 — Gerbang 2 dan 3 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | Saat menyusun plan fitur 037 — memindahkan keadaan gerbang ingesti dari memori ke peladen — ditemukan bahwa `Gerbang.terima()` fitur 002 menerima unggahan ulang atas dokumen yang sudah di korpus, sehingga penarikan persetujuan pemilik tidak mengeluarkan versi lamanya. Dibuktikan dengan skrip atas penyimpan tiruan: sesudah unggah ulang lalu penarikan, korpus masih menyajikan "versi satu". Perbaikannya menyentuh fitur 002 yang lolos Gerbang 4, sehingga ditanyakan (TK-85). Gerbang 2 dan 3 didelegasikan KB-168. |
+| Keputusan | **TK-85, pilihan A** oleh pemegang gerbang: unggahan ulang atas `id_dokumen` yang berada di korpus ditolak sebelum apa pun tersimpan; versi baru masuk dengan id baru, dan versi lama ditandai lewat perintah `status` perkakas kurasi. Ditambahkan ke spec sebagai R-11 dengan catatan asal-usulnya. **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-6, tujuh tugas, tiga belas mutasi. Dua putusan rancangan yang perlu terlihat pada Gerbang 4: (1) **keadaan gerbang diturunkan dari catatan tambah-saja, bukan kolom yang disunting** — status anonimisasi dan persetujuan dibaca dari jejak yang merujuk penerimaan terbaru; (2) **urutan jejak berubah**: diperiksa lebih dulu, ditulis bersama pemindahan, sehingga pemindahan yang gagal tidak lagi meninggalkan baris jejak — perubahan kecil pada perilaku fitur 002 yang tidak bertentangan dengan ujinya. |
+| Alternatif | TK-85 B (unggahan ulang mengeluarkan versi lama dari korpus; peran ingesti memegang hapus korpus) dan C (versi berdampingan) — tidak dipilih. Rancangan: menyimpan status sebagai kolom yang diperbarui — ditolak, jejak putusan yang dapat disunting tidak membuktikan apa pun; aturan gerbang ditulis ulang di pelaksana PostgreSQL — ditolak, dua salinan aturan akan berselisih; segmen ikut keluar hanya pada penarikan — ditolak, aturan itu milik setiap pemindahan keluar dari korpus. |
+| Dampak | D-00 3.07 (TK-85). `plan.md` dan `tasks.md` fitur 037 terbit; R-11 pada spec. Belum ada kode. |
+| Pemutus | Pemegang Gerbang 1–4 (TK-85); agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
