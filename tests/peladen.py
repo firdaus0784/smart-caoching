@@ -162,6 +162,7 @@ def siapkan() -> None:
         ("12-analitik.sql", "smart_coaching"),
         ("13-penilaian.sql", "smart_coaching"),
         ("14-sumber-dan-koleksi.sql", "smart_coaching"),
+        ("15-ingesti.sql", "smart_coaching"),
     ):
         hasil = psql(basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         if hasil.returncode != 0:

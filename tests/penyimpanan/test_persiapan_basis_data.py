@@ -68,6 +68,8 @@ def basis_data_siap() -> None:
         "peran_penilaian",
         "peran_pembaca_sumber",
         "peran_koleksi",
+        "peran_ingesti",
+        "peran_penarikan_dokumen",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -149,6 +151,7 @@ def basis_data_siap() -> None:
         ("12-analitik.sql", "smart_coaching"),
         ("13-penilaian.sql", "smart_coaching"),
         ("14-sumber-dan-koleksi.sql", "smart_coaching"),
+        ("15-ingesti.sql", "smart_coaching"),
     ):
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
@@ -2190,12 +2193,16 @@ def test_skema_korpus_indeks_dan_penemuan_hanya_bagi_perannya(basis_data_siap: N
     Hak skema dibaca dari katalog: tanpa hak tabel, kueri tetap ditolak,
     sehingga uji penolakan tidak melihatnya."""
     for skema, harapan in (
-        ("karantina", ["peran_verifikasi"]),
+        # Fitur 037: ketiga peran dokumen saja — peran aplikasi mana pun tidak
+        # menjangkau karantina (R-05, C-03). M-4 fitur 037 merah di sini.
+        ("karantina", ["peran_ingesti", "peran_penarikan_dokumen", "peran_verifikasi"]),
         (
             "korpus",
             [
+                "peran_ingesti",
                 "peran_pemanggil_llm",
                 "peran_pembaca_sumber",
+                "peran_penarikan_dokumen",
                 "peran_pengisi_antrean",
                 "peran_penjawaban",
                 "peran_verifikasi",
@@ -2206,12 +2213,21 @@ def test_skema_korpus_indeks_dan_penemuan_hanya_bagi_perannya(basis_data_siap: N
             [
                 "peran_pemanggil_llm",
                 "peran_pembaca_sumber",
+                "peran_penarikan_dokumen",
                 "peran_penjawaban",
                 "peran_penyematan",
                 "peran_verifikasi",
             ],
         ),
-        ("indeks_metadata", ["peran_penjawaban", "peran_penyematan", "peran_verifikasi"]),
+        (
+            "indeks_metadata",
+            [
+                "peran_penarikan_dokumen",
+                "peran_penjawaban",
+                "peran_penyematan",
+                "peran_verifikasi",
+            ],
+        ),
         ("penemuan", ["peran_koleksi", "peran_penarikan", "peran_penayangan"]),
     ):
         hasil = _psql(
@@ -2378,3 +2394,437 @@ def test_daftar_nilai_batasan_korpus_sama_dengan_enumnya() -> None:
     assert daftar("jenis IN") == {j.value for j in JenisSumber}
     assert daftar("tingkat_kerahasiaan IN") == {t.value for t in TingkatKerahasiaan}
     assert daftar("status IN") == {s.value for s in StatusKeberlakuan}
+
+
+# ── Fitur 037 · Catatan gerbang ingesti dan peran dokumen ───────────────────
+#
+# Tiga peran, satu per kredensial kode (P-2 A, TK-83): `peran_ingesti` menulis
+# karantina tanpa membaca isinya; `peran_verifikasi` membaca karantina dan hanya
+# dapat MENGELUARKAN dokumen darinya; `peran_penarikan_dokumen` mengeluarkan
+# dokumen dari korpus beserta segmennya dari kedua indeks (TK-84 A). Catatan
+# karantina tambah-saja; pelaku berupa kode anggota tim (P-6 A).
+
+_DOK_037 = "dok-037"
+_SAMARAN = '{"nik": 1, "nip": 0, "nisn": 0, "nuptk": 0, "telepon": 0, "rekening": 0}'
+
+
+def _terima_sql(
+    id_dokumen: str = _DOK_037,
+    jenis: str = "dokumen_sekolah",
+    tingkat: str = "internal_sekolah",
+    persetujuan: str = "diberikan",
+    penerima: str = "tm-001",
+    samaran: str = _SAMARAN,
+    tahun: int = 2026,
+) -> str:
+    """Bentuk pernyataan `terima` T-4: teks, penerimaan, dan temuan sekaligus;
+    tidak menulis apa pun bila dokumennya sedang di korpus (TK-85 A).
+
+    Ganti lalu sisip, bukan `ON CONFLICT`: `excluded.isi` menuntut hak baca
+    `isi`, padahal ingesti sengaja tidak memegangnya."""
+    return (
+        "with ganti as ("
+        "  update karantina.dokumen_sumber set isi = '\"Notulen rapat [NIK]\"'::jsonb, "
+        f"  disimpan_pada = now() where id = '{id_dokumen}' returning id"
+        "), baru as ("
+        "  insert into karantina.dokumen_sumber (id, isi) "
+        f"  select '{id_dokumen}', '\"Notulen rapat [NIK]\"'::jsonb "
+        "  where not exists (select 1 from ganti) "
+        f"  and not exists (select 1 from korpus.dokumen_sumber where id = '{id_dokumen}') "
+        "  returning id"
+        "), tulis as (select id from ganti union all select id from baru"
+        "), terima as ("
+        "  insert into karantina.penerimaan (id_dokumen, judul, jenis, penerbit, tahun, "
+        "  tingkat_kerahasiaan, status_persetujuan_pemilik, samaran, id_penerima) "
+        f"  select id, 'Notulen rapat pleno', '{jenis}', 'SDN Sukamaju', {tahun}, '{tingkat}', "
+        f"  '{persetujuan}', '{samaran}'::jsonb, '{penerima}' from tulis returning nomor"
+        ") insert into karantina.temuan_pola (nomor_penerimaan, pola, mulai, akhir, kutipan) "
+        "select nomor, 'abaikan instruksi', 0, 17, 'abaikan instruksi' from terima"
+    )
+
+
+def _nomor(id_dokumen: str) -> str:
+    return f"(select max(nomor) from karantina.penerimaan where id_dokumen = '{id_dokumen}')"
+
+
+def _jejak_sql(
+    id_dokumen: str = _DOK_037,
+    putusan: str = "tolak",
+    pelaku: str = "tm-002",
+    dari: str = "karantina",
+    ke: str = "karantina",
+    alasan: str = "memuat nama guru pada halaman 3",
+) -> str:
+    return (
+        "insert into karantina.jejak_area (id_dokumen, nomor_penerimaan, putusan, id_pelaku, "
+        f"dari_area, ke_area, alasan) values ('{id_dokumen}', {_nomor(id_dokumen)}, "
+        f"'{putusan}', '{pelaku}', '{dari}', '{ke}', '{alasan}')"
+    )
+
+
+def _tinjau_sql(id_dokumen: str = _DOK_037, peninjau: str = "tm-002") -> str:
+    return (
+        "insert into karantina.tinjauan_temuan (nomor_penerimaan, id_peninjau, catatan) "
+        f"values ({_nomor(id_dokumen)}, '{peninjau}', 'kutipan peraturan, bukan perintah')"
+    )
+
+
+def _setujui_sql(id_dokumen: str = _DOK_037) -> str:
+    """Bentuk pernyataan `setujui` T-4: pindah, metadata, jejak sekaligus."""
+    return (
+        "with terangkat as ("
+        f"  delete from karantina.dokumen_sumber where id = '{id_dokumen}' returning id, isi"
+        "), pindah as ("
+        "  insert into korpus.dokumen_sumber (id, isi) select id, isi from terangkat returning id"
+        "), catat as ("
+        "  insert into korpus.metadata_dokumen "
+        "  (id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan) "
+        "  select id, 'Notulen rapat pleno', 'dokumen_sekolah', 'SDN Sukamaju', 2026, "
+        "  'internal_sekolah' from pindah"
+        "), jejak as ("
+        "  insert into karantina.jejak_area (id_dokumen, nomor_penerimaan, putusan, id_pelaku, "
+        "  dari_area, ke_area, alasan) "
+        f"  select id, {_nomor(id_dokumen)}, 'setujui', 'tm-002', 'karantina', 'korpus', "
+        "  'anonimisasi terperiksa' from pindah"
+        ") select id from pindah"
+    )
+
+
+def _cabut_sql(id_dokumen: str = _DOK_037) -> str:
+    """Bentuk pernyataan `cabut` T-4: keluar dari korpus beserta segmennya dari
+    kedua indeks, dan jejaknya, sekaligus (TK-84 A)."""
+    return (
+        "with terangkat as ("
+        f"  delete from korpus.dokumen_sumber where id = '{id_dokumen}' returning id, isi"
+        "), kembali as ("
+        "  insert into karantina.dokumen_sumber (id, isi) select id, isi from terangkat"
+        "), segmen_utama as ("
+        f"  delete from indeks_utama.segmen_teks where id_dokumen = '{id_dokumen}'"
+        "), segmen_metadata as ("
+        f"  delete from indeks_metadata.segmen_teks where id_dokumen = '{id_dokumen}'"
+        ") insert into karantina.jejak_area (id_dokumen, nomor_penerimaan, putusan, id_pelaku, "
+        "dari_area, ke_area, alasan) "
+        f"select '{id_dokumen}', {_nomor(id_dokumen)}, 'cabut_persetujuan', 'tm-003', "
+        "case when exists (select 1 from terangkat) then 'korpus' else 'karantina' end, "
+        "'karantina', 'pemilik menarik izin'"
+    )
+
+
+DITOLAK_INGESTI = [
+    *[
+        (peran, "smart_coaching", kueri, sebab)
+        for peran, kueri, sebab in (
+            (
+                "peran_ingesti",
+                "select isi from karantina.dokumen_sumber",
+                "ingesti tidak membaca bahan yang ditaruhnya",
+            ),
+            ("peran_ingesti", "select isi from korpus.dokumen_sumber", "hanya kolom id korpus"),
+            ("peran_ingesti", "select judul from karantina.penerimaan", "penerimaan tanpa dibaca"),
+            ("peran_ingesti", _jejak_sql(), "putusan milik verifikator"),
+            ("peran_ingesti", _tinjau_sql(), "tinjauan milik verifikator"),
+            (
+                "peran_ingesti",
+                f"delete from karantina.dokumen_sumber where id = '{_DOK_037}'",
+                "ingesti tidak mengeluarkan dokumen",
+            ),
+            (
+                "peran_ingesti",
+                "update karantina.penerimaan set judul = 'x' where false",
+                "penerimaan tambah-saja",
+            ),
+            (
+                "peran_ingesti",
+                "insert into korpus.dokumen_sumber (id, isi) values ('x', '{}'::jsonb)",
+                "R-01 — tidak ada jalan langsung ke korpus",
+            ),
+            (
+                "peran_verifikasi",
+                "insert into karantina.dokumen_sumber (id, isi) values ('x', '{}'::jsonb)",
+                "P-2 A — verifikator tidak menaruh bahan",
+            ),
+            (
+                "peran_verifikasi",
+                "update karantina.dokumen_sumber set isi = '{}'::jsonb where false",
+                "P-2 A — verifikator tidak menyunting bahan yang dinilainya",
+            ),
+            ("peran_verifikasi", _terima_sql(id_dokumen="dok-037-v"), "penerimaan milik ingesti"),
+            (
+                "peran_verifikasi",
+                "update karantina.jejak_area set alasan = 'x' where false",
+                "jejak tambah-saja",
+            ),
+            (
+                "peran_verifikasi",
+                "delete from karantina.jejak_area where false",
+                "jejak tambah-saja",
+            ),
+            (
+                "peran_verifikasi",
+                "delete from karantina.tinjauan_temuan where false",
+                "tinjauan tambah-saja",
+            ),
+            (
+                "peran_penarikan_dokumen",
+                "select teks from indeks_utama.segmen_teks",
+                "penarikan tidak membaca teks segmen",
+            ),
+            (
+                "peran_penarikan_dokumen",
+                "select isi from karantina.dokumen_sumber",
+                "penarikan tidak membaca karantina",
+            ),
+            (
+                "peran_penarikan_dokumen",
+                "insert into korpus.dokumen_sumber (id, isi) values ('x', '{}'::jsonb)",
+                "penarikan hanya mengurangi korpus",
+            ),
+            (
+                "peran_penarikan_dokumen",
+                "insert into indeks_utama.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+                "anonimisasi_terverifikasi, penanda_bagian) values "
+                "('s', 'd', 't', 'terbuka', true, 'Pasal 1')",
+                "penarikan tidak menambah segmen",
+            ),
+            (
+                "peran_penarikan_dokumen",
+                "select * from karantina.temuan_pola",
+                "penarikan tidak membaca temuan",
+            ),
+            (
+                "peran_penjawaban",
+                "select * from karantina.penerimaan",
+                "C-03 — penjawab tidak menjangkau catatan karantina",
+            ),
+            (
+                "peran_pembaca_sumber",
+                "select * from karantina.jejak_area",
+                "C-03 — pembaca sumber tidak menjangkau jejak karantina",
+            ),
+        )
+    ],
+    *[
+        (peran, "smart_coaching_pseudonim", "select 1", "C-05 — tanpa basis data pseudonim")
+        for peran in ("peran_ingesti", "peran_penarikan_dokumen")
+    ],
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_INGESTI)
+def test_peladen_menolak_hak_ingesti(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_hak_peran_dokumen_persis_di_seluruh_skema(basis_data_siap: None) -> None:
+    """M-1: `GRANT INSERT ON karantina.dokumen_sumber TO peran_verifikasi`.
+    M-2: `GRANT SELECT (isi) ON karantina.dokumen_sumber TO peran_ingesti`.
+
+    Ketiga peran dokumen di seluruh skema bagi ingesti dan penarikan; di skema
+    karantina bagi verifikator — hak korpus dan indeksnya milik fitur 024."""
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_schema || '.' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where grantee in ('peran_ingesti', 'peran_penarikan_dokumen') "
+        "or (grantee = 'peran_verifikasi' and table_schema = 'karantina') "
+        "group by grantee, table_schema, table_name order by 1",
+    )
+    assert tabel.stdout.split() == [
+        "peran_ingesti:karantina.dokumen_sumber:INSERT",
+        "peran_ingesti:karantina.penerimaan:INSERT",
+        "peran_ingesti:karantina.temuan_pola:INSERT",
+        "peran_penarikan_dokumen:indeks_metadata.segmen_teks:DELETE",
+        "peran_penarikan_dokumen:indeks_utama.segmen_teks:DELETE",
+        "peran_penarikan_dokumen:karantina.dokumen_sumber:INSERT",
+        "peran_penarikan_dokumen:karantina.jejak_area:INSERT",
+        "peran_penarikan_dokumen:korpus.dokumen_sumber:DELETE,SELECT",
+        "peran_verifikasi:karantina.dokumen_sumber:DELETE,SELECT",
+        "peran_verifikasi:karantina.jejak_area:INSERT,SELECT",
+        "peran_verifikasi:karantina.penerimaan:SELECT",
+        "peran_verifikasi:karantina.temuan_pola:SELECT",
+        "peran_verifikasi:karantina.tinjauan_temuan:INSERT,SELECT",
+    ]
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || n.nspname || '.' || c.relname || ':' || x.privilege_type "
+        "|| ':' || string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null "
+        "and (a.rolname in ('peran_ingesti', 'peran_penarikan_dokumen') "
+        "or (a.rolname = 'peran_verifikasi' and n.nspname = 'karantina')) "
+        "group by a.rolname, n.nspname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_ingesti:karantina.dokumen_sumber:SELECT:id",
+        "peran_ingesti:karantina.dokumen_sumber:UPDATE:disimpan_pada,isi",
+        "peran_ingesti:karantina.penerimaan:SELECT:nomor",
+        "peran_ingesti:korpus.dokumen_sumber:SELECT:id",
+        "peran_penarikan_dokumen:indeks_metadata.segmen_teks:SELECT:id_dokumen",
+        "peran_penarikan_dokumen:indeks_utama.segmen_teks:SELECT:id_dokumen",
+        "peran_penarikan_dokumen:karantina.penerimaan:SELECT:id_dokumen,nomor",
+    ]
+
+
+def test_hak_bawaan_karantina_tanpa_tulis_bagi_verifikator(basis_data_siap: None) -> None:
+    """P-2 A berlaku juga bagi tabel karantina yang dibuat kelak: hak bawaan
+    skema tidak lagi memberi verifikator tambah maupun ubah."""
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select string_agg(x.privilege_type, ',' order by x.privilege_type) "
+        "from pg_default_acl d join pg_namespace n on n.oid = d.defaclnamespace "
+        "cross join lateral aclexplode(d.defaclacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where n.nspname = 'karantina' and d.defaclobjtype = 'r' "
+        "and a.rolname = 'peran_verifikasi'",
+    )
+    assert hasil.stdout.split() == ["SELECT"]
+
+
+def test_peran_dokumen_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64, TK-83: tiap peran tersambung sendiri dan menjalankan perintahnya —
+    terima, tinjau, setujui, tolak, cabut — dengan pernyataan berbentuk T-4.
+
+    M-3: `DELETE` atas karantina dicabut dari verifikator — `setujui` merah."""
+    _jalan("peran_ingesti", _terima_sql())
+    _jalan("peran_ingesti", _terima_sql())  # unggahan ulang selama di karantina
+    for kueri in (
+        f"select nomor, judul, samaran from karantina.penerimaan where id_dokumen = '{_DOK_037}'",
+        "select pola, mulai, akhir, kutipan from karantina.temuan_pola",
+        f"select isi from karantina.dokumen_sumber where id = '{_DOK_037}'",
+        f"select id from korpus.dokumen_sumber where id = '{_DOK_037}'",
+        _tinjau_sql(),
+        _setujui_sql(),
+    ):
+        _jalan("peran_verifikasi", kueri)
+    for kueri in (
+        "insert into indeks_utama.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+        "anonimisasi_terverifikasi, penanda_bagian) values "
+        f"('seg-037-u', '{_DOK_037}', 'Rapat pleno.', 'terbuka', true, 'Bagian 1')",
+        "insert into indeks_metadata.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+        "anonimisasi_terverifikasi, penanda_bagian) values "
+        f"('seg-037-m', '{_DOK_037}', 'Abstrak.', 'tertutup', true, 'Abstrak')",
+    ):
+        _jalan(PENGELOLA, kueri)
+
+    # TK-85 A: selama di korpus, unggahan ulang tidak menulis apa pun.
+    _jalan("peran_ingesti", _terima_sql())
+    _jalan("peran_penarikan_dokumen", _cabut_sql())
+
+    # Dokumen lain: ditolak, lalu persetujuannya dicabut selagi di karantina.
+    _jalan("peran_ingesti", _terima_sql(id_dokumen="dok-037-b"))
+    _jalan("peran_verifikasi", _jejak_sql(id_dokumen="dok-037-b"))
+    _jalan("peran_penarikan_dokumen", _cabut_sql(id_dokumen="dok-037-b"))
+
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-At",
+        "-c",
+        "select string_agg(r, ' ' order by r) from ("
+        f"  select 'penerimaan:' || count(*) r from karantina.penerimaan where id_dokumen = '{_DOK_037}'"
+        "  union all select 'segmen:' || ("
+        f"    (select count(*) from indeks_utama.segmen_teks where id_dokumen = '{_DOK_037}')"
+        f"    + (select count(*) from indeks_metadata.segmen_teks where id_dokumen = '{_DOK_037}'))"
+        "  union all select 'korpus:' || count(*) from korpus.dokumen_sumber "
+        f"    where id = '{_DOK_037}'"
+        "  union all select 'karantina:' || count(*) from karantina.dokumen_sumber "
+        f"    where id = '{_DOK_037}'"
+        "  union all select 'jejak:' || string_agg(putusan || '/' || dari_area, ',' order by id) "
+        "    from karantina.jejak_area"
+        ") s",
+    )
+    assert hasil.stdout.split() == [
+        "jejak:setujui/karantina,cabut_persetujuan/korpus,tolak/karantina,"
+        "cabut_persetujuan/karantina",
+        "karantina:1",
+        "korpus:0",
+        "penerimaan:2",
+        "segmen:0",
+    ]
+
+
+def test_batasan_tabel_ingesti(basis_data_siap: None) -> None:
+    """M-11: batasan pola pelaku dihapus — merah di sini."""
+    _jalan(PENGELOLA, _terima_sql(id_dokumen="dok-037-c"))
+    for kueri, sebab in (
+        (_terima_sql(id_dokumen="dok-037-d", jenis="buku"), "jenis di luar JenisSumber"),
+        (_terima_sql(id_dokumen="dok-037-d", tingkat="rahasia"), "tingkat di luar daftar"),
+        (_terima_sql(id_dokumen="dok-037-d", persetujuan="lisan"), "persetujuan di luar daftar"),
+        (_terima_sql(id_dokumen="dok-037-d", tahun=1900), "tahun sebelum 1945"),
+        (_terima_sql(id_dokumen="dok-037-d", penerima="Budi Santoso"), "P-6 A — nama orang"),
+        (
+            _terima_sql(id_dokumen="dok-037-d", samaran='{"nik": 1}'),
+            "samaran wajib keenam jenis",
+        ),
+        (
+            _terima_sql(id_dokumen="dok-037-d", samaran=_SAMARAN.replace('"nik": 1', '"nik": -1')),
+            "jumlah samaran bukan bilangan cacah",
+        ),
+        (
+            _terima_sql(id_dokumen="dok-037-d", samaran=_SAMARAN.replace("1", '"3201"')),
+            "samaran tidak memuat nilai",
+        ),
+        (_jejak_sql(id_dokumen="dok-037-c", putusan="hapus"), "putusan di luar PutusanGerbang"),
+        (_jejak_sql(id_dokumen="dok-037-c", pelaku="vrf_001"), "P-6 A — pola kode tim"),
+        (_jejak_sql(id_dokumen="dok-037-c", alasan=" "), "alasan wajib"),
+        (_jejak_sql(id_dokumen="dok-037-c", ke="korpus"), "tolak tidak memindahkan ke korpus"),
+        (
+            _jejak_sql(id_dokumen="dok-037-c", putusan="setujui"),
+            "setujui selalu karantina ke korpus",
+        ),
+        (
+            _jejak_sql(id_dokumen="dok-037-c", putusan="cabut_persetujuan", ke="korpus"),
+            "pencabutan tidak memasukkan ke korpus",
+        ),
+        (_tinjau_sql(id_dokumen="dok-037-c", peninjau="Siti"), "P-6 A — peninjau"),
+        (
+            "insert into karantina.temuan_pola (nomor_penerimaan, pola, mulai, akhir, kutipan) "
+            f"values ({_nomor('dok-037-c')}, 'pola', 9, 3, '')",
+            "rentang terbalik",
+        ),
+    ):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, f"{sebab}: {hasil.stderr}"
+
+    hasil = _psql(PENGELOLA, "smart_coaching", "-c", _jejak_sql(id_dokumen="dok-037-tak-dikenal"))
+    assert "violates not-null constraint" in hasil.stderr, f"jejak tanpa penerimaan: {hasil.stderr}"
+
+
+def test_daftar_nilai_batasan_ingesti_sama_dengan_enumnya() -> None:
+    """Daftar nilai batasan dibaca dari enumnya, bukan dipercaya."""
+    import re
+
+    from src.ingest.dokumen import StatusPersetujuan, TingkatKerahasiaan
+    from src.ingest.peringkat import JenisSumber
+    from src.kamus.gerbang import PutusanGerbang
+    from src.nlp.anonimisasi.pola import JENIS
+    from src.penyimpanan.area import Area
+
+    sql = (BERKAS / "15-ingesti.sql").read_text(encoding="utf-8")
+
+    def daftar(penanda: str) -> set[str]:
+        mulai = sql.index(penanda)
+        return set(re.findall(r"'([a-z_]+)'", sql[mulai : sql.index(")", mulai)]))
+
+    assert daftar("jenis IN") == {j.value for j in JenisSumber}
+    assert daftar("tingkat_kerahasiaan IN") == {t.value for t in TingkatKerahasiaan}
+    assert daftar("status_persetujuan_pemilik IN") == {s.value for s in StatusPersetujuan}
+    assert daftar("putusan IN") == {p.value for p in PutusanGerbang}
+    assert daftar("dari_area IN") == {a.value for a in Area}
+    assert daftar("samaran ?& ARRAY[") == set(JENIS)

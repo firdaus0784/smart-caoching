@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 9 Oktober 2026 (KB-255); TK-84 A (KB-255), TK-85 A (KB-256) |
 | Plan | Gerbang 2 lolos 10 Oktober 2026 atas pendelegasian KB-168 (KB-256); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Satu dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 10 Oktober 2026 atas pendelegasian KB-168 (KB-256). Dua dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-11; FR-B01, FR-B04, FR-B05, FR-B06, FR-B07, FR-B08; C-02, C-03, C-05, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -30,12 +30,12 @@ baru (C-12, C-20). Uji fitur 002 lulus tanpa diubah (R-02).
 
 **Kebutuhan:** R-04, R-05; K-1; P-2 A.
 
-- [ ] Uji lebih dulu: katalog hak persis ketiga peran dokumen di seluruh
+- [x] Uji lebih dulu: katalog hak persis ketiga peran dokumen di seluruh
       skema; penolakan berpenyebab; peran aplikasi lain tanpa karantina;
       batasan pola pelaku dan `putusan` dibandingkan dengan enumnya
-- [ ] `01-peran-dan-basis-data.sql` + dua peran; `15-ingesti.sql`; hak bawaan
+- [x] `01-peran-dan-basis-data.sql` + dua peran; `15-ingesti.sql`; hak bawaan
       karantina bagi verifikator dicabut; `tests/peladen.py` dan README
-- [ ] Mutasi M-1, M-2, M-3, M-4, M-11
+- [x] Mutasi M-1, M-2, M-3, M-4, M-11
 
 ## T-3 · Penyamaran FR-B04
 

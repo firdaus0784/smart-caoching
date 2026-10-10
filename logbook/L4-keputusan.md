@@ -3806,3 +3806,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyimpan putusan sebagai jenis arah pemindahan saja — tidak dipilih: penolakan dan penarikan atas dokumen karantina sama-sama berarah karantina ke karantina, sehingga keadaan tidak dapat diturunkan tanpa menebak. |
 | Dampak | D-00 3.08. Tanpa rute; bentuk `/tanya` tidak berubah. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-258 · T-2 fitur 037: peladen catatan karantina dan tiga peran dokumen
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | K-1 plan fitur 037 (P-2 A, TK-83). Uji peladen ditulis lebih dulu dan merah: penolakan berpenyebab bagi ketiga peran dokumen dan dua peran aplikasi; katalog hak persis di seluruh skema; hak bawaan karantina; setiap peran menjalankan perintahnya dengan haknya sendiri dalam bentuk pernyataan T-4; batasan tabel dibandingkan dengan enumnya. |
+| Keputusan | `15-ingesti.sql`: empat catatan tambah-saja di karantina dengan batasan pola kode tim, arah jejak menurut putusan, dan `samaran` berisi tepat enam jenis bercacah. `peran_ingesti` dan `peran_penarikan_dokumen` baru; `peran_verifikasi` kehilangan tambah dan ubah atas karantina — termasuk pada hak bawaan skema, dicabut sebelum tabel dibuat — dan memperoleh hapus saja. **Temuan pada penulisan uji:** `INSERT ... ON CONFLICT DO UPDATE SET isi = excluded.isi` ditolak peladen bagi ingesti, sebab membaca `excluded.isi` menuntut hak baca `isi`. Bentuk pernyataan `terima` diganti `UPDATE` lalu `INSERT` dalam satu CTE, sehingga ingesti tetap tidak dapat membaca bahan yang ditaruhnya. Uji USAGE skema fitur 032 diperbarui: karantina kini dijangkau ketiga peran dokumen saja. Mutasi M-1, M-2, M-3, M-4, M-11 merah. |
+| Alternatif | Memberi ingesti `SELECT (isi)` agar `ON CONFLICT` berjalan — tidak dipilih: P-2 A menyatakan ingesti tidak membaca isi. Menghapus lalu menyisipkan ulang — tidak dipilih: ingesti akan memegang hapus atas karantina. |
+| Dampak | `01-peran-dan-basis-data.sql`, `tests/peladen.py`, README peladen. Uji penyimpanan, ingesti, dan perkakas lulus tanpa diubah. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

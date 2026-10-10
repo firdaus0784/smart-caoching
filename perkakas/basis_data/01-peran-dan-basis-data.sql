@@ -6,7 +6,8 @@
 -- Peran yang berpasangan dengan `src/penyimpanan/kredensial_baku.py` mencerminkannya
 -- satu lawan satu; `peran_riwayat`, `peran_autentikasi`, `peran_pengelola_akun`,
 -- `peran_pengguna`, `peran_kurasi`, `peran_penayangan`, `peran_pengisi_antrean`,
--- `peran_telemetri`, `peran_pembaca_sumber`, dan `peran_koleksi` dipakai lewat
+-- `peran_telemetri`, `peran_pembaca_sumber`, `peran_koleksi`, `peran_ingesti`, dan
+-- `peran_penarikan_dokumen` dipakai lewat
 -- tetapan namanya pada modul penyimpannya sendiri.
 -- Bila berkas itu berubah, berkas ini wajib ikut berubah — dua daftar yang
 -- bercerita berbeda adalah cacat, dan yang salah justru daftar yang dibaca orang.
@@ -38,7 +39,8 @@ BEGIN
                               'peran_telemetri','peran_penarikan',
                               'peran_penarikan_pseudonim','peran_analitik',
                               'peran_penilaian','peran_pembaca_sumber',
-                              'peran_koleksi'] LOOP
+                              'peran_koleksi','peran_ingesti',
+                              'peran_penarikan_dokumen'] LOOP
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
       EXECUTE format('CREATE ROLE %I LOGIN', nama);
     END IF;
@@ -65,7 +67,7 @@ GRANT CONNECT ON DATABASE smart_coaching
      peran_riwayat, peran_autentikasi, peran_pengelola_akun, peran_pengguna,
      peran_kurasi, peran_penayangan, peran_pengisi_antrean, peran_telemetri,
      peran_penarikan, peran_analitik, peran_penilaian, peran_pembaca_sumber,
-     peran_koleksi;
+     peran_koleksi, peran_ingesti, peran_penarikan_dokumen;
 
 -- `peran_penyematan` (fitur 026, TK-63) sengaja TIDAK diberi CONNECT ke basis
 -- data pseudonim. Jalur penyematan tidak membutuhkannya, dan C-05 menuntut
@@ -93,6 +95,9 @@ GRANT CONNECT ON DATABASE smart_coaching
 --
 -- `peran_pembaca_sumber` dan `peran_koleksi` (fitur 032) sama: pembaca sumber
 -- tidak menyentuh data peserta sama sekali, dan koleksi dimiliki pseudonim akun.
+--
+-- `peran_ingesti` dan `peran_penarikan_dokumen` (fitur 037) sama: keduanya
+-- menangani dokumen sumber, bukan data peserta, dan pelakunya kode anggota tim.
 
 GRANT CONNECT ON DATABASE smart_coaching_pseudonim
   TO peran_pseudonim, peran_penarikan_pseudonim;

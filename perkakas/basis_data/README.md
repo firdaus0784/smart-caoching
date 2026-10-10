@@ -27,6 +27,7 @@ psql -U <superuser> -d smart_coaching_pseudonim -v ON_ERROR_STOP=1 -f 11b-penari
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 12-analitik.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 13-penilaian.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 14-sumber-dan-koleksi.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 15-ingesti.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -230,3 +231,24 @@ dokumen utuh dan segmen berlisensi tertutup tidak (P-2 A, C-02, C-03).
 hak apa pun atasnya, sehingga pemilihan beranda tidak dapat membaca koleksi
 (R-03, C-14). Hak bawaan skema korpus memberi verifikator `UPDATE` atas tabel
 baru; berkas ini mencabutnya, sebab kedua catatan tambah-saja.
+
+## Catatan gerbang ingesti dan peran dokumen (fitur 037)
+
+`15-ingesti.sql` menambah empat catatan tambah-saja di skema `karantina` —
+`penerimaan`, `temuan_pola`, `tinjauan_temuan`, `jejak_area` — tempat keadaan
+gerbang ingesti diturunkan (P-1 A), dan memasangkan tiap kredensial dokumen
+dengan satu peran (TK-83, P-2 A):
+
+- `peran_ingesti` menaruh dan mengganti teks karantina **tanpa dapat
+  membacanya**, dan membaca kolom `id` korpus saja agar unggahan ulang atas
+  dokumen korpus ditolak di dalam pernyataan sisipnya (TK-85 A). Penggantian
+  memakai `UPDATE` lalu `INSERT`, bukan `ON CONFLICT`: `excluded.isi` menuntut
+  hak baca `isi`.
+- `peran_verifikasi` membaca karantina dan hanya dapat **mengeluarkan** dokumen
+  darinya. Hak bawaan skema karantina yang memberinya tambah dan ubah dicabut,
+  juga bagi tabel karantina kelak.
+- `peran_penarikan_dokumen` mengeluarkan dokumen dari korpus dan menghapus
+  segmennya dari kedua indeks tanpa membaca teksnya (TK-84 A).
+
+Pelaku pada ketiga catatan berupa kode anggota tim berpola `tm-001`, bukan nama
+orang (P-6 A); ditegakkan batasan tabel.
