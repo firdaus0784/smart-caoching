@@ -94,12 +94,7 @@ class JejakArea:
         karantina adalah putusan, dan putusan menahan sama perlu ditelusuri
         dengan putusan memindahkan.
         """
-        if not id_pelaku:
-            raise GalatJejak("perpindahan tanpa pelaku tidak dapat dipertanggungjawabkan")
-        if not alasan:
-            raise GalatJejak("perpindahan wajib menyertakan alasan")
-        self._pastikan_tanpa_data_pribadi(alasan)
-
+        self.periksa(id_pelaku=id_pelaku, alasan=alasan)
         self._baris.append(
             Baris(
                 id_dokumen=id_dokumen,
@@ -110,6 +105,21 @@ class JejakArea:
                 waktu=datetime.now(UTC),
             )
         )
+
+    @staticmethod
+    def periksa(id_pelaku: str, alasan: str) -> None:
+        """Pemeriksaan baris tanpa menambahkannya — fitur 037, R-06.
+
+        Gerbang memeriksa lebih dulu, lalu menulis jejak **bersama**
+        pemindahannya. Pemeriksaan yang hanya hidup di dalam `catat` memaksa
+        pilihan antara jejak sebelum pemindahan — yang tertinggal bila
+        pemindahan gagal — atau pemindahan tanpa pemeriksaan.
+        """
+        if not id_pelaku:
+            raise GalatJejak("perpindahan tanpa pelaku tidak dapat dipertanggungjawabkan")
+        if not alasan:
+            raise GalatJejak("perpindahan wajib menyertakan alasan")
+        JejakArea._pastikan_tanpa_data_pribadi(alasan)
 
     @staticmethod
     def _pastikan_tanpa_data_pribadi(alasan: str) -> None:

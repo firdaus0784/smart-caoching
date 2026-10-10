@@ -3839,3 +3839,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Pencabutan lewat membaca area lalu `pindahkan()` — tidak dipilih: dua pernyataan membuka celah, dan peran penarikan tidak dapat membaca keadaan penuh. Menyimpan status sebagai kolom — ditolak P-1 A. |
 | Dampak | Gerbang ingesti belum memakainya; disambungkan pada T-5. Uji penyimpanan, ingesti, dan pengambilan lulus tanpa diubah. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-261 · T-5 fitur 037: gerbang ingesti memakai catatan; penyamaran saat menerima
+
+| | |
+|---|---|
+| Tanggal | 2026-10-10 |
+| Konteks | K-2, K-3, K-6 plan fitur 037. Uji ditulis lebih dulu dan merah: keadaan bertahan antarobjek `Gerbang` di atas PostgreSQL dengan tiap langkah tersambung sebagai perannya sendiri — terima, tinjau, setujui, cabut — seperti perkakas yang dijalankan per perintah; unggahan ulang membatalkan tinjauan antarobjek; teks tersimpan bertoken dan kutipan temuan tanpa pengenal; unggahan ulang atas dokumen korpus ditolak pada kedua pelaksana. |
+| Keputusan | `Gerbang` kini menyimpan keadaannya lewat `CatatanGerbang`; tanpa catatan yang diberikan, pelaksana memori di atas penyimpan dokumennya (jalur fitur 002). `terima` menyamarkan lebih dulu lalu menjalankan pemeriksa pola atas teks tersamar; teks asli tidak diteruskan. `samaran()` baru, digerbangi kredensial seperti `temuan()`. `JejakArea.periksa` memeriksa baris tanpa menambahkannya, sehingga putusan diperiksa dulu dan jejak ditulis bersama pemindahan. **Seluruh 55 uji gerbang fitur 002 lulus tanpa diubah.** Mutasi M-7, M-8, M-9, M-10 merah. |
+| **Perubahan perilaku fitur 002, dinyatakan agar dapat ditolak pada Gerbang 4** | (1) Unggahan ulang atas dokumen korpus ditolak — TK-85 A, diputus pemegang gerbang. (2) Urutan jejak: diperiksa dulu, ditulis sesudah pemindahan berhasil — plan K-3. (3) **Penolakan atas dokumen yang sudah di korpus ditolak** — tidak tertulis pada plan, ditemukan saat menulis: fitur 002 mencatat jejak berarah korpus ke karantina tanpa memindahkan apa pun, sedangkan batasan `jejak_arah` peladen menolaknya; dokumen korpus dikeluarkan lewat pencabutan. Tidak ada uji fitur 002 yang menolak sesudah menyetujui. (4) Persetujuan dan pencabutan atas dokumen yang tidak pernah diterima melempar `GalatDokumenTidakAda`, bukan `KeyError`. (5) Status anonimisasi pada `Dokumen` yang diserahkan ke `terima` tidak lagi dipakai; status selalu diturunkan dari putusan (P-1 A). `terima` memperoleh `id_penerima` berkata kunci, kosong pada jalur memori agar uji fitur 002 tidak berubah; catatan PostgreSQL menolaknya kosong lewat batasan pola. |
+| Alternatif | Menolak `Gerbang` tanpa catatan — tidak dipilih: mengubah setiap uji fitur 002. Membiarkan penolakan atas dokumen korpus — tidak dipilih: jejaknya tidak dapat disimpan peladen tanpa melonggarkan batasan arah. |
+| Dampak | `src/ingest/gerbang.py`, `src/ingest/jejak.py`. Perkakas menyusunnya pada T-6. |
+| Pemutus | Agen, atas pendelegasian KB-168; perubahan (3) dan (4) menunggu Gerbang 4 |

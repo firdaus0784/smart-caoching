@@ -19,9 +19,21 @@ diserahkan pada kedisiplinan.
 sekadar mencegahnya masuk. Persetujuan yang ditarik tetapi dokumennya tetap
 dipakai bukan penarikan.
 
-Batas yang dinyatakan terbuka: fitur ini belum memiliki indeks pengambilan,
-sehingga pencabutan segmen dari indeks menjadi kewajiban fitur 006 dan 007.
-Tanpa itu, penarikan tampak tuntas padahal segmennya masih terindeks.
+Batas yang dinyatakan terbuka pada fitur 002 — pencabutan segmen dari indeks
+— tidak pernah dibangun fitur 006 maupun 007 (TK-84). Sejak fitur 037 segmen
+dokumen yang keluar dari korpus ikut terhapus dari kedua indeks dalam
+pernyataan pemindahannya.
+
+**Keadaan tinggal pada catatan, aturan tinggal di sini** (fitur 037, P-1 A).
+Kamus di memori fitur 002 diganti `CatatanGerbang`: pelaksana memori bagi uji
+dan pengembangan, PostgreSQL bagi perkakas yang dijalankan per perintah.
+Keadaannya diturunkan dari catatan tambah-saja. Tanpa catatan yang diberikan,
+gerbang memakai pelaksana memori di atas penyimpan dokumennya — jalur fitur
+002 apa adanya.
+
+**Teks disamarkan sebelum apa pun** (P-5 A): enam pengenal berpola diganti
+token D-03, pemeriksa pola berjalan atas teks tersamar, dan teks aslinya tidak
+diteruskan ke penyimpan mana pun. Nama dan alamat tidak tersamarkan (BT-70).
 """
 
 from __future__ import annotations
@@ -29,12 +41,21 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from src.ingest.adversarial import Temuan, periksa_pola
-from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan
+from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan, TingkatKerahasiaan
 from src.ingest.jejak import JejakArea
+from src.ingest.peringkat import JenisSumber
 from src.kamus.segmen import Peringkat
+from src.nlp.anonimisasi.samaran import samarkan
 from src.penyimpanan.area import Area
 from src.penyimpanan.dasar import MetadataDokumen, PenyimpanDasar
-from src.penyimpanan.galat import GalatAksesDitolak
+from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenDiKorpus, GalatDokumenTidakAda
+from src.penyimpanan.karantina import (
+    CatatanGerbang,
+    CatatanGerbangMemori,
+    CatatanPenerimaan,
+    KeadaanKarantina,
+    TemuanPola,
+)
 from src.penyimpanan.kredensial import Kredensial
 
 
@@ -53,18 +74,22 @@ class Gerbang:
         self,
         penyimpan: PenyimpanDasar,
         pemeriksa: Callable[[str], list[Temuan]] = periksa_pola,
+        catatan: CatatanGerbang | None = None,
     ) -> None:
+        """`catatan` dipilih pemanggil. Tanpanya, pelaksana memori di atas
+        `penyimpan` — jalur fitur 002. Perkakas yang dijalankan per perintah
+        wajib memberinya pelaksana PostgreSQL, atau keadaannya hilang bersama
+        prosesnya.
+
+        `jejak` mencatat putusan yang dijalankan objek ini; jejak yang
+        bertahan tinggal pada catatan (`karantina.jejak_area`).
+        """
         self.penyimpan = penyimpan
         self.jejak = JejakArea()
         self._pemeriksa = pemeriksa
-        self._dokumen: dict[str, Dokumen] = {}
-        self._area: dict[str, Area] = {}
-        self._alasan: dict[str, str] = {}
-        self._temuan: dict[str, list[Temuan]] = {}
-        self._ditinjau: set[str] = set()
-        self._catatan_tinjauan: dict[str, str] = {}
+        self._catatan = catatan if catatan is not None else CatatanGerbangMemori(penyimpan)
 
-    async def terima(self, dokumen: Dokumen, teks: str) -> None:
+    async def terima(self, dokumen: Dokumen, teks: str, *, id_penerima: str = "") -> None:
         """Terima dokumen baru — selalu ke karantina (R-03).
 
         Tidak menerima parameter area. Jalan yang tidak ada tidak dapat
@@ -89,13 +114,38 @@ class Gerbang:
         temuan muncul**. Aturan yang bersyarat temuan akan gagal justru pada
         isi yang tampak bersih bagi pemeriksa — dan cakupan pemeriksa memang
         tipis (lihat `src.ingest.adversarial`).
+
+        **Fitur 037.** Teks disamarkan lebih dulu, dan pemeriksa berjalan atas
+        hasilnya, sehingga kutipan temuan tidak membawa pengenal (P-5 A).
+        Dokumen yang sedang di korpus tidak dapat diunggah ulang dengan id yang
+        sama (TK-85 A): versi lama akan tertinggal di korpus tanpa terjangkau
+        penarikan persetujuan. `id_penerima` kode anggota tim (P-6 A); jalur
+        memori fitur 002 menerimanya kosong, catatan PostgreSQL tidak.
         """
-        self._dokumen[dokumen.id] = dokumen
-        self._area[dokumen.id] = Area.KARANTINA
-        self._temuan[dokumen.id] = self._jalankan_pemeriksa(teks)
-        self._ditinjau.discard(dokumen.id)
-        self._catatan_tinjauan.pop(dokumen.id, None)
-        await self.penyimpan.tulis_dokumen(_KREDENSIAL_INGESTI, Area.KARANTINA, dokumen.id, teks)
+        hasil = samarkan(teks)
+        temuan = self._jalankan_pemeriksa(hasil.teks)
+        penerimaan = CatatanPenerimaan(
+            id_dokumen=dokumen.id,
+            judul=dokumen.judul,
+            jenis=dokumen.jenis.value,
+            penerbit=dokumen.penerbit,
+            tahun=dokumen.tahun,
+            tingkat_kerahasiaan=dokumen.tingkat_kerahasiaan.value,
+            status_persetujuan_pemilik=dokumen.status_persetujuan_pemilik.value,
+            samaran=hasil.jumlah,
+            id_penerima=id_penerima,
+        )
+        try:
+            await self._catatan.terima(
+                _KREDENSIAL_INGESTI,
+                penerimaan,
+                hasil.teks,
+                [TemuanPola(t.pola, t.mulai, t.akhir, t.kutipan) for t in temuan],
+            )
+        except GalatDokumenDiKorpus as galat:
+            raise GalatGerbang(
+                "dokumen ini sedang berada di korpus — versi baru diterima dengan id baru (TK-85 A)"
+            ) from galat
 
     def _jalankan_pemeriksa(self, teks: str) -> list[Temuan]:
         """Jalankan pemeriksa; kegagalannya menahan, bukan meloloskan — R-10.
@@ -120,7 +170,7 @@ class Gerbang:
                 )
             ]
 
-    async def _pastikan_terbaca(self, kredensial: Kredensial, id_dokumen: str) -> Area:
+    async def _pastikan_terbaca(self, kredensial: Kredensial, id_dokumen: str) -> KeadaanKarantina:
         """Satu tempat penjagaan bagi **seluruh** keterangan tentang dokumen.
 
         Ia benar-benar melewati penyimpan, bukan menyalin aturannya. Aturan
@@ -131,11 +181,11 @@ class Gerbang:
         terjangkau. Jawaban yang berbeda sudah cukup untuk menyusun daftar
         dokumen karantina.
         """
-        area = self._area.get(id_dokumen)
-        if area is None:
+        keadaan = await self._catatan.keadaan(id_dokumen)
+        if keadaan is None:
             raise GalatAksesDitolak(kredensial=kredensial, area=Area.KARANTINA, operasi="baca")
-        await self.penyimpan.baca_dokumen(kredensial, area, id_dokumen)
-        return area
+        await self.penyimpan.baca_dokumen(kredensial, keadaan.area, id_dokumen)
+        return keadaan
 
     async def area(self, kredensial: Kredensial, id_dokumen: str) -> Area:
         """Area tempat dokumen berada — R-02.
@@ -144,7 +194,7 @@ class Gerbang:
         dapat menanyakan area sembarang id dapat menyusun daftar isi karantina
         tanpa membaca satu dokumen pun.
         """
-        return await self._pastikan_terbaca(kredensial, id_dokumen)
+        return (await self._pastikan_terbaca(kredensial, id_dokumen)).area
 
     async def alasan_terakhir(self, kredensial: Kredensial, id_dokumen: str) -> str:
         """Alasan putusan terakhir — R-12.
@@ -153,13 +203,19 @@ class Gerbang:
         dokumen: "memuat NIK pada halaman 3". Dokumennya berada di karantina,
         dan alasannya tidak boleh lebih mudah dijangkau daripada dokumennya.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
-        return self._alasan.get(id_dokumen, "")
+        return (await self._pastikan_terbaca(kredensial, id_dokumen)).alasan_terakhir
 
     async def dokumen(self, kredensial: Kredensial, id_dokumen: str) -> Dokumen:
         """Metadata dokumen, digerbangi sama dengan yang lain."""
-        await self._pastikan_terbaca(kredensial, id_dokumen)
-        return self._dokumen[id_dokumen]
+        return _dokumen_dari(await self._pastikan_terbaca(kredensial, id_dokumen))
+
+    async def samaran(self, kredensial: Kredensial, id_dokumen: str) -> dict[str, int]:
+        """Jumlah samaran per jenis pada unggahan terbaru — fitur 037, P-5 A.
+
+        Digerbangi seperti temuan: jumlah pengenal pada sebuah dokumen adalah
+        keterangan tentang isinya. Nilainya tidak pernah tersimpan.
+        """
+        return dict((await self._pastikan_terbaca(kredensial, id_dokumen)).penerimaan.samaran)
 
     async def temuan(self, kredensial: Kredensial, id_dokumen: str) -> list[Temuan]:
         """Temuan pola adversarial pada dokumen — digerbangi.
@@ -167,8 +223,8 @@ class Gerbang:
         Kutipan temuan memuat potongan isi dokumen, sehingga ia tidak boleh
         lebih mudah dijangkau daripada dokumennya sendiri.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
-        return list(self._temuan.get(id_dokumen, []))
+        keadaan = await self._pastikan_terbaca(kredensial, id_dokumen)
+        return [Temuan(t.pola, t.mulai, t.akhir, t.kutipan) for t in keadaan.temuan]
 
     async def tinjau_temuan(
         self, kredensial: Kredensial, id_dokumen: str, id_peninjau: str, catatan: str
@@ -190,13 +246,12 @@ class Gerbang:
         "memuat NIK pada halaman 3" — verifikator berikutnya kehilangan justru
         keterangan yang paling perlu diketahuinya. Dua putusan, dua bidang.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
+        keadaan = await self._pastikan_terbaca(kredensial, id_dokumen)
         if not id_peninjau:
             raise GalatGerbang("tinjauan tanpa nama peninjau tidak dapat ditelusuri")
-        if not self._temuan.get(id_dokumen):
+        if not keadaan.temuan:
             raise GalatGerbang("dokumen tanpa temuan tidak memiliki apa pun untuk ditinjau")
-        self._ditinjau.add(id_dokumen)
-        self._catatan_tinjauan[id_dokumen] = catatan
+        await self._catatan.tinjau(kredensial, id_dokumen, id_peninjau, catatan)
 
     async def catatan_tinjauan(self, kredensial: Kredensial, id_dokumen: str) -> str:
         """Catatan peninjau atas temuan — digerbangi.
@@ -205,8 +260,7 @@ class Gerbang:
         menjelaskan mengapa sebuah kutipan dianggap sah. Ia tidak boleh lebih
         mudah dijangkau daripada kutipan yang dibicarakannya.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
-        return self._catatan_tinjauan.get(id_dokumen, "")
+        return (await self._pastikan_terbaca(kredensial, id_dokumen)).catatan_tinjauan
 
     async def sudah_ditinjau(self, kredensial: Kredensial, id_dokumen: str) -> bool:
         """Apakah temuan dokumen sudah ditinjau manusia — digerbangi.
@@ -214,8 +268,7 @@ class Gerbang:
         Jawabannya menyiratkan dokumen itu bertemuan, dan itu keterangan
         tentang isi karantina.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
-        return id_dokumen in self._ditinjau
+        return (await self._pastikan_terbaca(kredensial, id_dokumen)).ditinjau
 
     async def peringkat(self, kredensial: Kredensial, id_dokumen: str) -> Peringkat:
         """Peringkat kepercayaan dokumen — hanya dari area yang dijangkau
@@ -237,8 +290,7 @@ class Gerbang:
         yang boleh Anda baca" adalah keterangan yang memang hak pemanggil,
         sedangkan di sini pertanyaannya melintasi area.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
-        return self._dokumen[id_dokumen].peringkat
+        return _dokumen_dari(await self._pastikan_terbaca(kredensial, id_dokumen)).peringkat
 
     async def setujui(
         self, kredensial: Kredensial, id_dokumen: str, id_verifikator: str, alasan: str
@@ -256,42 +308,42 @@ class Gerbang:
         **Metadata asal ikut pemindahan** (TK-82 A, fitur 032): yang tercatat
         adalah `Dokumen` yang baru saja diperiksa `boleh_masuk_korpus`, bukan
         salinan yang diketik ulang orang. Aturan gerbang tidak berubah.
+
+        **Fitur 037: jejak diperiksa dulu, ditulis bersama pemindahan** (R-06).
+        Alasan berdata pribadi tetap membatalkan persetujuan sebelum apa pun
+        tersentuh; pemindahan yang gagal tidak lagi meninggalkan baris jejak
+        tanpa perpindahan.
         """
         if not id_verifikator:
             raise GalatGerbang("persetujuan tanpa nama verifikator tidak dapat ditelusuri")
 
-        if self._temuan.get(id_dokumen) and id_dokumen not in self._ditinjau:
+        keadaan = await self._catatan.keadaan(id_dokumen)
+        if keadaan is None:
+            raise GalatDokumenTidakAda(id_dokumen)
+
+        if keadaan.temuan and not keadaan.ditinjau:
             raise GalatGerbang(
                 "dokumen memuat pola instruksi adversarial dan belum ditinjau "
                 "manusia — persetujuan anonimisasi tidak menggantikannya (FR-B08)"
             )
 
-        dokumen = self._dokumen[id_dokumen]
+        dokumen = _dokumen_dari(keadaan)
         if not dokumen.boleh_masuk_korpus():
             raise GalatGerbang(
                 "persetujuan pemilik dokumen belum ada atau sudah ditarik — "
                 "verifikator tidak dapat menggantikannya (ET-04)"
             )
 
+        self.jejak.periksa(id_pelaku=id_verifikator, alasan=alasan)
+        await self._catatan.setujui(
+            kredensial, id_dokumen, id_verifikator, alasan, _metadata(dokumen)
+        )
         self.jejak.catat(
             id_dokumen=id_dokumen,
             id_pelaku=id_verifikator,
             dari_area=Area.KARANTINA,
             ke_area=Area.KORPUS,
             alasan=alasan,
-        )
-        await self.penyimpan.pindahkan(
-            kredensial,
-            id_dokumen,
-            Area.KARANTINA,
-            Area.KORPUS,
-            alasan,
-            metadata=_metadata(dokumen),
-        )
-        self._area[id_dokumen] = Area.KORPUS
-        self._alasan[id_dokumen] = alasan
-        self._dokumen[id_dokumen] = dokumen.model_copy(
-            update={"status_anonimisasi": StatusAnonimisasi.TERVERIFIKASI}
         )
 
     async def tolak(
@@ -307,24 +359,28 @@ class Gerbang:
         membacanya. Versi pertama modul ini menerima parameter kredensial lalu
         tidak pernah memakainya, sehingga jalur penjawaban dapat menolak
         dokumen orang. Tertangkap pemeriksaan Fase B, bukan oleh uji.
+
+        **Fitur 037: hanya atas dokumen di karantina.** Penolakan tidak
+        memindahkan apa pun; atas dokumen korpus ia hanya akan mencatat jejak
+        berarah korpus ke karantina tanpa perpindahan — keadaan yang jejaknya
+        sendiri menyangkal. Dokumen korpus dikeluarkan lewat pencabutan.
         """
-        await self._pastikan_terbaca(kredensial, id_dokumen)
+        keadaan = await self._pastikan_terbaca(kredensial, id_dokumen)
         if not id_verifikator:
             raise GalatGerbang("penolakan tanpa nama verifikator tidak dapat ditelusuri")
         if not alasan:
             raise GalatGerbang("penolakan wajib menyertakan alasan")
+        if keadaan.area is not Area.KARANTINA:
+            raise GalatGerbang("dokumen sudah di korpus — keluarkan lewat pencabutan persetujuan")
 
+        self.jejak.periksa(id_pelaku=id_verifikator, alasan=alasan)
+        await self._catatan.tolak(kredensial, id_dokumen, id_verifikator, alasan)
         self.jejak.catat(
             id_dokumen=id_dokumen,
             id_pelaku=id_verifikator,
-            dari_area=self._area[id_dokumen],
+            dari_area=Area.KARANTINA,
             ke_area=Area.KARANTINA,
             alasan=alasan,
-        )
-        self._area[id_dokumen] = Area.KARANTINA
-        self._alasan[id_dokumen] = alasan
-        self._dokumen[id_dokumen] = self._dokumen[id_dokumen].model_copy(
-            update={"status_anonimisasi": StatusAnonimisasi.DITOLAK}
         )
 
     async def cabut_persetujuan(self, id_dokumen: str, id_pemohon: str, alasan: str) -> None:
@@ -354,26 +410,41 @@ class Gerbang:
         Yang dicatat adalah pihak yang menjalankan penarikan, bukan pemilik
         dokumen. Identitas pemilik berasal dari formulir persetujuan ET-02,
         yang belum dibangun pada fitur ini.
-        """
-        dokumen = self._dokumen[id_dokumen]
 
+        **Fitur 037: satu pernyataan.** Pencatatan dan pengeluaran dari korpus
+        — beserta segmennya dari kedua indeks (TK-84 A) — terjadi bersama,
+        tanpa celah antara membaca area dan mencatatnya.
+        """
+        self.jejak.periksa(id_pelaku=id_pemohon, alasan=alasan)
+        dari = await self._catatan.cabut(_KREDENSIAL_PENARIKAN, id_dokumen, id_pemohon, alasan)
         self.jejak.catat(
             id_dokumen=id_dokumen,
             id_pelaku=id_pemohon,
-            dari_area=self._area[id_dokumen],
+            dari_area=dari,
             ke_area=Area.KARANTINA,
             alasan=alasan,
         )
-        self._dokumen[id_dokumen] = dokumen.model_copy(
-            update={"status_persetujuan_pemilik": StatusPersetujuan.DICABUT}
-        )
-        self._alasan[id_dokumen] = alasan
 
-        if self._area[id_dokumen] is Area.KORPUS:
-            await self.penyimpan.pindahkan(
-                _KREDENSIAL_PENARIKAN, id_dokumen, Area.KORPUS, Area.KARANTINA, alasan
-            )
-            self._area[id_dokumen] = Area.KARANTINA
+
+def _dokumen_dari(keadaan: KeadaanKarantina) -> Dokumen:
+    """`Dokumen` sebagaimana gerbang memandangnya kini: metadata penerimaan
+    terbaru, dengan status yang diturunkan dari catatan — bukan yang diisi
+    pengunggah."""
+    p = keadaan.penerimaan
+    return Dokumen(
+        id=p.id_dokumen,
+        judul=p.judul,
+        jenis=JenisSumber(p.jenis),
+        penerbit=p.penerbit,
+        tahun=p.tahun,
+        tingkat_kerahasiaan=TingkatKerahasiaan(p.tingkat_kerahasiaan),
+        status_persetujuan_pemilik=(
+            StatusPersetujuan.DICABUT
+            if keadaan.persetujuan_dicabut
+            else StatusPersetujuan(p.status_persetujuan_pemilik)
+        ),
+        status_anonimisasi=StatusAnonimisasi(keadaan.status_anonimisasi),
+    )
 
 
 def _metadata(dokumen: Dokumen) -> MetadataDokumen:
