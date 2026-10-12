@@ -3903,3 +3903,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-2 mengubah hak peladen milik fitur yang lolos Gerbang 4 dan memutus temuan. |
 | Dampak | `specs/038-segmentasi-dan-penempatan-indeks/spec.md`; `docs/D00.md` 3.11. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-266 · Gerbang 1 fitur 038 lolos; TK-86 diputus
+
+| | |
+|---|---|
+| Tanggal | 2026-10-11 |
+| Konteks | Usulan KB-265 mengajukan empat pertanyaan, salah satunya memutus TK-86. Gerbang 1 tidak didelegasikan untuk putusan yang memutus temuan, sehingga keempatnya ditanyakan tegas lewat pilihan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keempatnya. **P-1 A**: pemotongan otomatis menurut D-07 Bagian 3.2, dengan pratinjau. **P-2 A**: perintah `indeks --id` sebagai `peran_pengindeks` baru; hak tambah dan ubah `peran_verifikasi` atas kedua indeks dicabut, juga pada hak bawaan skema — TK-86 diputus. **P-3 A**: lisensi dicatat saat `terima`, tersimpan pada penerimaan dan catatan metadata korpus. **P-4 A**: peringkat kepercayaan dan status keberlakuan diturunkan saat dibaca. |
+| Alternatif | P-1 B tanda manual atau C dengan persetujuan; P-2 B di dalam persetujuan atau C tanpa mencabut; P-3 B saat indeks; P-4 B disimpan pada segmen — tidak dipilih. |
+| Dampak | Status spec fitur 038; D-00 3.12 (TK-86 diputus, tetap terbuka sampai fitur 038 selesai); D-12 0.44 (baris 038 menyebut lisensi dan TK-86; cakupan bertambah atas putusan). Plan menyusul atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |

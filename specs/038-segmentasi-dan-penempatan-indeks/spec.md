@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 | Dokumen terkait | D-06 KL-01, KL-02 · D-07 Bagian 3.1, 3.2, 3.3 · D-13 Bagian 6 · D-14 Bagian 5.1 (`segmen_teks`, `dokumen_sumber.lisensi`) · spec fitur 006, 007, 019, 026, 032, 037 · TK-86 |
-| Status | **Diajukan ke Gerbang 1** — 10 Oktober 2026 (KB-265) |
+| Status | **Gerbang 1 lolos** — 11 Oktober 2026 (KB-266) |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -111,6 +111,17 @@ segmen.
 kurasi tanpa pengindeksan ulang, dan peringkat tidak dapat berselisih dengan
 jenis dokumennya.
 
+## Putusan Gerbang 1 (KB-266)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — pemotongan otomatis menurut D-07 Bagian 3.2, dengan pratinjau sebelum menulis |
+| P-2 | **A** — perintah perkakas `indeks --id` sebagai `peran_pengindeks` baru; hak tambah dan ubah `peran_verifikasi` atas kedua indeks dicabut, juga pada hak bawaan skema. TK-86 diputus |
+| P-3 | **A** — lisensi dicatat saat `terima`, tersimpan pada penerimaan dan catatan metadata korpus; tanpa keterangan berarti tertutup |
+| P-4 | **A** — peringkat kepercayaan dan status keberlakuan diturunkan saat dibaca dari catatan korpus, tidak disimpan pada segmen |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -126,7 +137,7 @@ jenis dokumennya.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-4 diputus pada Gerbang 1
+- [x] P-1 s.d. P-4 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Hak peran yang menulis segmen diuji terhadap peladen, termasuk
       penolakan bagi peran yang tidak semestinya menulisnya
