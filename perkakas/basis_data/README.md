@@ -28,6 +28,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 12-analiti
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 13-penilaian.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 14-sumber-dan-koleksi.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 15-ingesti.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 16-segmen-dan-lisensi.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -252,3 +253,15 @@ dengan satu peran (TK-83, P-2 A):
 
 Pelaku pada ketiga catatan berupa kode anggota tim berpola `tm-001`, bukan nama
 orang (P-6 A); ditegakkan batasan tabel.
+
+## Penulis segmen dan lisensi (fitur 038)
+
+`16-segmen-dan-lisensi.sql` menambah kolom `lisensi` pada `karantina.penerimaan`
+dan `korpus.metadata_dokumen` — boleh kosong, berarti tertutup (KL-01) — dan
+memasang `peran_pengindeks`, satu-satunya penulis segmen: membaca teks dan
+metadata korpus, menambah dan menghapus segmen kedua indeks, tanpa karantina,
+tanpa kolom vektor, tanpa menyunting segmen yang ada.
+
+Hak bawaan skema indeks yang memberi `peran_verifikasi` tambah dan ubah atas
+segmen dicabut (TK-86): peran yang membaca karantina tidak menulis indeks yang
+dibaca pemanggil model.

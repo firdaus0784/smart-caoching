@@ -3936,3 +3936,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | — |
 | Dampak | D-00 3.13. Tanpa rute; bentuk `/tanya` tidak berubah. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-269 · T-2 fitur 038: peladen penulis segmen dan lisensi; TK-86
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | K-1 plan fitur 038 (P-2 A, P-3 A, TK-86 A). Uji peladen ditulis lebih dulu dan merah: penolakan berpenyebab bagi pengindeks dan verifikator; katalog penulis segmen persis; hak bawaan kedua skema indeks; pengindeks berjalan dengan haknya sendiri dalam bentuk pernyataan T-5; batasan lisensi. |
+| Keputusan | `16-segmen-dan-lisensi.sql`: kolom `lisensi` boleh kosong pada penerimaan dan catatan metadata korpus, tidak boleh hampa; `peran_pengindeks` membaca teks dan metadata korpus, menambah segmen hanya pada kolom isi, menghapus segmen, tanpa karantina dan tanpa kolom vektor. **TK-86**: tambah dan ubah `peran_verifikasi` atas kedua `segmen_teks` dicabut, juga pada hak bawaan kedua skema indeks; baca dibiarkan sesuai kredensial `VERIFIKASI`. Uji katalog fitur 032 dan 037 diperbarui sebab pembaca skema dan catatan korpus bertambah satu peran. Mutasi M-1, M-2, M-3 merah. |
+| Alternatif | Memberi pengindeks `UPDATE` agar pengindeksan ulang menyunting — tidak dipilih: segmen yang disunting tidak dapat dibedakan dari yang disisipkan ulang, dan pernyataan ganti sudah diverifikasi pada peladen (KB-267). |
+| Dampak | `01-peran-dan-basis-data.sql`, `tests/peladen.py`, README peladen. Uji penyimpanan, ingesti, perkakas, pengambilan, dan pembaca sumber lulus. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

@@ -70,6 +70,7 @@ def basis_data_siap() -> None:
         "peran_koleksi",
         "peran_ingesti",
         "peran_penarikan_dokumen",
+        "peran_pengindeks",
     ):
         _psql(PENGELOLA, "postgres", "-c", f"DROP ROLE IF EXISTS {peran}")
 
@@ -152,6 +153,7 @@ def basis_data_siap() -> None:
         ("13-penilaian.sql", "smart_coaching"),
         ("14-sumber-dan-koleksi.sql", "smart_coaching"),
         ("15-ingesti.sql", "smart_coaching"),
+        ("16-segmen-dan-lisensi.sql", "smart_coaching"),
     ):
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
@@ -2203,6 +2205,7 @@ def test_skema_korpus_indeks_dan_penemuan_hanya_bagi_perannya(basis_data_siap: N
                 "peran_pemanggil_llm",
                 "peran_pembaca_sumber",
                 "peran_penarikan_dokumen",
+                "peran_pengindeks",
                 "peran_pengisi_antrean",
                 "peran_penjawaban",
                 "peran_verifikasi",
@@ -2214,6 +2217,7 @@ def test_skema_korpus_indeks_dan_penemuan_hanya_bagi_perannya(basis_data_siap: N
                 "peran_pemanggil_llm",
                 "peran_pembaca_sumber",
                 "peran_penarikan_dokumen",
+                "peran_pengindeks",
                 "peran_penjawaban",
                 "peran_penyematan",
                 "peran_verifikasi",
@@ -2223,6 +2227,7 @@ def test_skema_korpus_indeks_dan_penemuan_hanya_bagi_perannya(basis_data_siap: N
             "indeks_metadata",
             [
                 "peran_penarikan_dokumen",
+                "peran_pengindeks",
                 "peran_penjawaban",
                 "peran_penyematan",
                 "peran_verifikasi",
@@ -2259,6 +2264,8 @@ def test_hak_catatan_korpus_persis_menurut_katalog(basis_data_siap: None) -> Non
         "peran_pemanggil_llm:korpus.status_dokumen:SELECT",
         "peran_pembaca_sumber:korpus.metadata_dokumen:SELECT",
         "peran_pembaca_sumber:korpus.status_dokumen:SELECT",
+        # Fitur 038: pengindeks membaca lisensi dari catatan metadata.
+        "peran_pengindeks:korpus.metadata_dokumen:SELECT",
         "peran_pengisi_antrean:korpus.status_dokumen:INSERT",
         "peran_penjawaban:korpus.metadata_dokumen:SELECT",
         "peran_penjawaban:korpus.status_dokumen:SELECT",
@@ -2829,3 +2836,208 @@ def test_daftar_nilai_batasan_ingesti_sama_dengan_enumnya() -> None:
     assert daftar("putusan IN") == {p.value for p in PutusanGerbang}
     assert daftar("dari_area IN") == {a.value for a in Area}
     assert daftar("samaran ?& ARRAY[") == set(JENIS)
+
+
+# ── Fitur 038 · Penulis segmen dan lisensi ──────────────────────────────────
+#
+# `peran_pengindeks` satu-satunya penulis segmen: membaca korpus, menulis kedua
+# indeks, tanpa karantina dan tanpa kolom vektor (P-2 A). Verifikator, yang
+# membaca karantina, tidak lagi menulis indeks (TK-86).
+
+_DOK_038 = "dok-038"
+
+
+def _ganti_segmen_sql(id_dokumen: str = _DOK_038, indeks: str = "indeks_utama") -> str:
+    """Bentuk pernyataan `ganti` T-5: hapus dari kedua indeks, sisipkan ke
+    indeks tujuan, hanya bila dokumennya di korpus."""
+    return (
+        f"with ada as (select 1 from korpus.dokumen_sumber where id = '{id_dokumen}'), "
+        "hapus_utama as (delete from indeks_utama.segmen_teks "
+        f"  where id_dokumen = '{id_dokumen}' and exists (select 1 from ada)), "
+        "hapus_metadata as (delete from indeks_metadata.segmen_teks "
+        f"  where id_dokumen = '{id_dokumen}' and exists (select 1 from ada)) "
+        f"insert into {indeks}.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+        "anonimisasi_terverifikasi, penanda_bagian) "
+        f"select s.id, '{id_dokumen}', s.teks, 'terbuka', true, s.penanda "
+        f"from unnest(array['{id_dokumen}:0001', '{id_dokumen}:0002'], "
+        "array['Kepala sekolah menyusun rencana.', 'Rencana ditetapkan bersama.'], "
+        "array['Pasal 1', 'Pasal 2']) as s(id, teks, penanda) "
+        "where exists (select 1 from ada)"
+    )
+
+
+DITOLAK_PENGINDEKS = [
+    *[
+        (peran, "smart_coaching", kueri, sebab)
+        for peran, kueri, sebab in (
+            (
+                "peran_pengindeks",
+                "select * from karantina.dokumen_sumber",
+                "C-03 — pengindeks tidak menjangkau karantina",
+            ),
+            (
+                "peran_pengindeks",
+                "update indeks_utama.segmen_teks set teks = 'x' where false",
+                "segmen diganti, tidak disunting",
+            ),
+            (
+                "peran_pengindeks",
+                "update indeks_metadata.segmen_teks set vektor_sematan = null where false",
+                "vektor milik penyematan",
+            ),
+            (
+                "peran_pengindeks",
+                "insert into korpus.dokumen_sumber (id, isi) values ('x', '{}'::jsonb)",
+                "pengindeks tidak menambah korpus",
+            ),
+            (
+                "peran_pengindeks",
+                "select vektor_sematan from indeks_utama.segmen_teks",
+                "kolom vektor milik penyematan",
+            ),
+            (
+                "peran_verifikasi",
+                "insert into indeks_utama.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+                "anonimisasi_terverifikasi, penanda_bagian) values "
+                "('v', 'v', 'teks karantina', 'terbuka', true, 'Pasal 1')",
+                "TK-86 — verifikator tidak menulis indeks utama",
+            ),
+            (
+                "peran_verifikasi",
+                "update indeks_metadata.segmen_teks set teks = 'x' where false",
+                "TK-86 — verifikator tidak menyunting indeks metadata",
+            ),
+        )
+    ],
+    (
+        "peran_pengindeks",
+        "smart_coaching_pseudonim",
+        "select 1",
+        "C-05 — tanpa basis data pseudonim",
+    ),
+]
+
+
+@pytest.mark.parametrize(("peran", "basis_data", "kueri", "sebab"), DITOLAK_PENGINDEKS)
+def test_peladen_menolak_hak_pengindeks(
+    basis_data_siap: None, peran: str, basis_data: str, kueri: str, sebab: str
+) -> None:
+    hasil = _psql(peran, basis_data, "-c", kueri)
+    assert hasil.returncode != 0, sebab
+    assert "permission denied" in hasil.stderr, (
+        f"ditolak karena sebab lain, bukan hak akses — {sebab}: {hasil.stderr.strip()}"
+    )
+
+
+def test_hak_pengindeks_dan_tulis_indeks_persis(basis_data_siap: None) -> None:
+    """M-1: `GRANT INSERT` atas segmen kepada `peran_verifikasi` (TK-86).
+    M-3: `GRANT UPDATE (vektor_sematan)` kepada `peran_pengindeks`.
+
+    Seluruh skema bagi pengindeks; pada kedua indeks, penulis segmen
+    seluruhnya — siapa pun yang memegang tambah, ubah, atau hapus."""
+    tabel = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select grantee || ':' || table_schema || '.' || table_name || ':' "
+        "|| string_agg(privilege_type, ',' order by privilege_type) "
+        "from information_schema.role_table_grants "
+        "where grantee like 'peran\\_%' and (grantee = 'peran_pengindeks' "
+        "or (table_name = 'segmen_teks' and privilege_type in ('INSERT', 'UPDATE', 'DELETE'))) "
+        "group by grantee, table_schema, table_name order by 1",
+    )
+    assert tabel.stdout.split() == [
+        "peran_penarikan_dokumen:indeks_metadata.segmen_teks:DELETE",
+        "peran_penarikan_dokumen:indeks_utama.segmen_teks:DELETE",
+        "peran_pengindeks:indeks_metadata.segmen_teks:DELETE",
+        "peran_pengindeks:indeks_utama.segmen_teks:DELETE",
+        "peran_pengindeks:korpus.metadata_dokumen:SELECT",
+    ]
+    kolom = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select a.rolname || ':' || n.nspname || '.' || c.relname || ':' || x.privilege_type "
+        "|| ':' || string_agg(att.attname, ',' order by att.attname) "
+        "from pg_attribute att join pg_class c on c.oid = att.attrelid "
+        "join pg_namespace n on n.oid = c.relnamespace "
+        "cross join lateral aclexplode(att.attacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where att.attacl is not null and a.rolname = 'peran_pengindeks' "
+        "group by a.rolname, n.nspname, c.relname, x.privilege_type order by 1",
+    )
+    assert kolom.stdout.split() == [
+        "peran_pengindeks:indeks_metadata.segmen_teks:INSERT:"
+        "anonimisasi_terverifikasi,id_dokumen,id_segmen,lisensi,penanda_bagian,teks",
+        "peran_pengindeks:indeks_metadata.segmen_teks:SELECT:id_dokumen,id_segmen",
+        "peran_pengindeks:indeks_utama.segmen_teks:INSERT:"
+        "anonimisasi_terverifikasi,id_dokumen,id_segmen,lisensi,penanda_bagian,teks",
+        "peran_pengindeks:indeks_utama.segmen_teks:SELECT:id_dokumen,id_segmen",
+        "peran_pengindeks:korpus.dokumen_sumber:SELECT:id,isi",
+    ]
+
+
+def test_hak_bawaan_indeks_tanpa_tulis_bagi_verifikator(basis_data_siap: None) -> None:
+    """TK-86 berlaku juga bagi tabel indeks yang dibuat kelak."""
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-c",
+        "select n.nspname || ':' || string_agg(x.privilege_type, ',' order by x.privilege_type) "
+        "from pg_default_acl d join pg_namespace n on n.oid = d.defaclnamespace "
+        "cross join lateral aclexplode(d.defaclacl) x "
+        "join pg_roles a on a.oid = x.grantee "
+        "where n.nspname in ('indeks_utama', 'indeks_metadata') and d.defaclobjtype = 'r' "
+        "and a.rolname = 'peran_verifikasi' group by n.nspname order by 1",
+    )
+    assert hasil.stdout.split() == ["indeks_metadata:SELECT", "indeks_utama:SELECT"]
+
+
+def test_peran_pengindeks_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64: pengindeks membaca bahan dan mengganti segmen dengan haknya
+    sendiri; pengindeksan ulang mengganti, dan dokumen di luar korpus tidak
+    menulis apa pun."""
+    for kueri in (
+        f"insert into korpus.dokumen_sumber (id, isi) values ('{_DOK_038}', '\"Pasal 1\"'::jsonb)",
+        "insert into korpus.metadata_dokumen (id_dokumen, judul, jenis, penerbit, tahun, "
+        f"tingkat_kerahasiaan, lisensi) values ('{_DOK_038}', 'Peraturan Contoh', "
+        "'regulasi_resmi', 'Kementerian Contoh', 2026, 'publik', 'public domain')",
+    ):
+        _jalan(PENGELOLA, kueri)
+    for kueri in (
+        f"select isi from korpus.dokumen_sumber where id = '{_DOK_038}'",
+        f"select lisensi from korpus.metadata_dokumen where id_dokumen = '{_DOK_038}' "
+        "order by nomor desc limit 1",
+        _ganti_segmen_sql(),
+        _ganti_segmen_sql(indeks="indeks_metadata"),
+        _ganti_segmen_sql(id_dokumen="dok-038-tak-ada"),
+    ):
+        _jalan("peran_pengindeks", kueri)
+    hasil = _psql(
+        PENGELOLA,
+        "smart_coaching",
+        "-At",
+        "-c",
+        f"select (select count(*) from indeks_utama.segmen_teks where id_dokumen = '{_DOK_038}') "
+        f"|| ':' || (select count(*) from indeks_metadata.segmen_teks where id_dokumen = "
+        f"'{_DOK_038}') || ':' || (select count(*) from indeks_utama.segmen_teks "
+        "where id_dokumen = 'dok-038-tak-ada')",
+    )
+    assert hasil.stdout.split() == ["0:2:0"]
+
+
+def test_batasan_lisensi(basis_data_siap: None) -> None:
+    """Lisensi boleh kosong (`null` — tertutup), tidak boleh hampa."""
+    for kueri in (
+        "insert into korpus.metadata_dokumen (id_dokumen, judul, jenis, penerbit, tahun, "
+        "tingkat_kerahasiaan, lisensi) values ('dok-038-l', 'J', 'regulasi_resmi', 'P', 2026, "
+        "'publik', '  ')",
+        _terima_sql(id_dokumen="dok-038-l")
+        .replace(
+            "status_persetujuan_pemilik, samaran, id_penerima)",
+            "status_persetujuan_pemilik, samaran, id_penerima, lisensi)",
+        )
+        .replace("'tm-001' from tulis", "'tm-001', '  ' from tulis"),
+    ):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, hasil.stderr

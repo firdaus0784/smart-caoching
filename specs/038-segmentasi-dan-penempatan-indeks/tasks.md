@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 11 Oktober 2026 (KB-266); TK-86 A (KB-266) |
 | Plan | Gerbang 2 lolos 12 Oktober 2026 atas pendelegasian KB-168 (KB-267); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Satu dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Dua dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -29,12 +29,12 @@ baru (C-12, C-20). Ukuran segmen milik D-07 (C-16).
 
 **Kebutuhan:** R-04; K-1; P-2 A; TK-86.
 
-- [ ] Uji lebih dulu: katalog `peran_pengindeks` persis; verifikator tanpa
+- [x] Uji lebih dulu: katalog `peran_pengindeks` persis; verifikator tanpa
       tulis indeks pada katalog dan hak bawaan; penolakan berpenyebab; tiap
       peran berjalan pada haknya; batasan lisensi
-- [ ] `01-peran-dan-basis-data.sql` + peran; `16-segmen-dan-lisensi.sql`;
+- [x] `01-peran-dan-basis-data.sql` + peran; `16-segmen-dan-lisensi.sql`;
       `tests/peladen.py` dan README
-- [ ] Mutasi M-1, M-2, M-3
+- [x] Mutasi M-1, M-2, M-3
 
 ## T-3 · Lisensi dicatat
 

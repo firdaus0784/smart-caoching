@@ -6,8 +6,8 @@
 -- Peran yang berpasangan dengan `src/penyimpanan/kredensial_baku.py` mencerminkannya
 -- satu lawan satu; `peran_riwayat`, `peran_autentikasi`, `peran_pengelola_akun`,
 -- `peran_pengguna`, `peran_kurasi`, `peran_penayangan`, `peran_pengisi_antrean`,
--- `peran_telemetri`, `peran_pembaca_sumber`, `peran_koleksi`, `peran_ingesti`, dan
--- `peran_penarikan_dokumen` dipakai lewat
+-- `peran_telemetri`, `peran_pembaca_sumber`, `peran_koleksi`, `peran_ingesti`,
+-- `peran_penarikan_dokumen`, dan `peran_pengindeks` dipakai lewat
 -- tetapan namanya pada modul penyimpannya sendiri.
 -- Bila berkas itu berubah, berkas ini wajib ikut berubah — dua daftar yang
 -- bercerita berbeda adalah cacat, dan yang salah justru daftar yang dibaca orang.
@@ -40,7 +40,7 @@ BEGIN
                               'peran_penarikan_pseudonim','peran_analitik',
                               'peran_penilaian','peran_pembaca_sumber',
                               'peran_koleksi','peran_ingesti',
-                              'peran_penarikan_dokumen'] LOOP
+                              'peran_penarikan_dokumen','peran_pengindeks'] LOOP
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = nama) THEN
       EXECUTE format('CREATE ROLE %I LOGIN', nama);
     END IF;
@@ -67,7 +67,7 @@ GRANT CONNECT ON DATABASE smart_coaching
      peran_riwayat, peran_autentikasi, peran_pengelola_akun, peran_pengguna,
      peran_kurasi, peran_penayangan, peran_pengisi_antrean, peran_telemetri,
      peran_penarikan, peran_analitik, peran_penilaian, peran_pembaca_sumber,
-     peran_koleksi, peran_ingesti, peran_penarikan_dokumen;
+     peran_koleksi, peran_ingesti, peran_penarikan_dokumen, peran_pengindeks;
 
 -- `peran_penyematan` (fitur 026, TK-63) sengaja TIDAK diberi CONNECT ke basis
 -- data pseudonim. Jalur penyematan tidak membutuhkannya, dan C-05 menuntut
@@ -98,6 +98,9 @@ GRANT CONNECT ON DATABASE smart_coaching
 --
 -- `peran_ingesti` dan `peran_penarikan_dokumen` (fitur 037) sama: keduanya
 -- menangani dokumen sumber, bukan data peserta, dan pelakunya kode anggota tim.
+--
+-- `peran_pengindeks` (fitur 038) sama: ia memotong dokumen korpus menjadi
+-- segmen, tanpa menyentuh data peserta.
 
 GRANT CONNECT ON DATABASE smart_coaching_pseudonim
   TO peran_pseudonim, peran_penarikan_pseudonim;
