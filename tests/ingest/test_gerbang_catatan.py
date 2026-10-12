@@ -36,7 +36,7 @@ from src.penyimpanan.kredensial_baku import PENJAWABAN, VERIFIKASI
 from src.penyimpanan.postgres import PenyimpanPostgres
 from src.penyimpanan.tiruan import PenyimpanTiruan
 from tests.konftes_asinkron import jalankan
-from tests.peladen import siapkan
+from tests.peladen import psql, siapkan
 from tests.penyimpanan.test_akun import SambunganPeran
 
 siapkan()
@@ -191,3 +191,31 @@ def test_persetujuan_atas_dokumen_tak_dikenal() -> None:
                 VERIFIKASI, _id(), id_verifikator="tm-002", alasan="terperiksa"
             )
         )
+
+
+def test_lisensi_dokumen_sampai_ke_metadata_korpus(susun: Penyusun) -> None:
+    """P-3 A fitur 038: lisensi dari pengunggah sampai ke catatan metadata
+    korpus lewat gerbang, dan terbaca kembali pada `Dokumen`."""
+    pembuat = susun
+    d = _id()
+    dokumen = _dokumen(d).model_copy(update={"lisensi": "CC BY 4.0"})
+    jalankan(pembuat(PERAN_INGESTI).terima(dokumen, "Versi satu.", id_penerima="tm-001"))
+    verifikator = pembuat(PERAN_VERIFIKASI)
+    assert jalankan(verifikator.dokumen(VERIFIKASI, d)).lisensi == "CC BY 4.0"
+    jalankan(verifikator.setujui(VERIFIKASI, d, id_verifikator="tm-002", alasan="terperiksa"))
+    if isinstance(verifikator.penyimpan, PenyimpanTiruan):
+        assert verifikator.penyimpan.metadata_tercatat(d)[0].lisensi == "CC BY 4.0"
+    else:
+        hasil = psql(
+            "smart_coaching",
+            "-c",
+            f"select lisensi from korpus.metadata_dokumen where id_dokumen = '{d}'",
+        )
+        assert hasil.stdout.strip() == "CC BY 4.0"
+
+
+def test_lisensi_hampa_ditolak_dokumen() -> None:
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        _dokumen(_id()).model_validate({**_dokumen("x").model_dump(), "lisensi": "  "})

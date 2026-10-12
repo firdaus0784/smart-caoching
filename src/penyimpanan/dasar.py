@@ -42,6 +42,9 @@ class MetadataDokumen:
     penerbit: str
     tahun: int
     tingkat_kerahasiaan: str
+    lisensi: str | None = None
+    """Keterangan lisensi dari metadata sumber, apa adanya — fitur 038, P-3 A.
+    Kosong berarti tertutup; dibaca `lisensi_dari_metadata`, tidak disimpulkan."""
 
 
 @dataclass(frozen=True)

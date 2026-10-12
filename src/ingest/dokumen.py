@@ -31,7 +31,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, Field, computed_field
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 from src.ingest.peringkat import JenisSumber, peringkat_bagi
 from src.kamus.segmen import Peringkat
@@ -94,6 +94,20 @@ class Dokumen(BaseModel):
     tingkat_kerahasiaan: TingkatKerahasiaan
     status_persetujuan_pemilik: StatusPersetujuan
     status_anonimisasi: StatusAnonimisasi = StatusAnonimisasi.MENUNGGU
+    lisensi: str | None = None
+    """Keterangan lisensi dari metadata sumber, apa adanya — fitur 038, P-3 A.
+
+    Kosong berarti tertutup: indeks tujuannya ditetapkan
+    `lisensi_dari_metadata` saat pengindeksan, **tidak disimpulkan** dari jenis
+    (D-06 KL-01). Keterangan hampa ditolak — ia terbaca seperti keterangan.
+    """
+
+    @field_validator("lisensi")
+    @classmethod
+    def _lisensi_berisi(cls, nilai: str | None) -> str | None:
+        if nilai is not None and not nilai.strip():
+            raise ValueError("keterangan lisensi hampa — kosongkan bila tidak diketahui")
+        return nilai
 
     @computed_field  # type: ignore[prop-decorator]
     @property

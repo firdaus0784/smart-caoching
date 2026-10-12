@@ -414,3 +414,37 @@ def test_daftar_memuat_dokumen_karantina_saja(pelaksana: Pelaksana) -> None:
     assert {a, b} <= set(daftar) and c not in daftar
     assert daftar[b].status_anonimisasi == "ditolak"
     assert daftar[a] == jalankan(pelaksana.verifikasi.keadaan(a))
+
+
+# ── Lisensi — T-3 fitur 038, P-3 A ──────────────────────────────────────
+
+
+def test_lisensi_ikut_penerimaan_dan_metadata_korpus(pelaksana: Pelaksana) -> None:
+    """M-10 fitur 038: lisensi tercatat saat menerima dan ikut catatan
+    metadata pemindahan ke korpus; tanpa keterangan berarti kosong."""
+    d, tanpa = _id(), _id()
+    _terima(pelaksana, d, lisensi="CC BY 4.0")
+    _terima(pelaksana, tanpa)
+    keadaan = jalankan(pelaksana.verifikasi.keadaan(d))
+    assert keadaan is not None and keadaan.penerimaan.lisensi == "CC BY 4.0"
+    kosong = jalankan(pelaksana.verifikasi.keadaan(tanpa))
+    assert kosong is not None and kosong.penerimaan.lisensi is None
+    metadata = MetadataDokumen(
+        judul="Notulen rapat pleno",
+        jenis="dokumen_sekolah",
+        penerbit="SDN Sukamaju",
+        tahun=2026,
+        tingkat_kerahasiaan="internal_sekolah",
+        lisensi="CC BY 4.0",
+    )
+    jalankan(pelaksana.verifikasi.setujui(VERIFIKASI, d, "tm-002", "terperiksa", metadata))
+    if pelaksana.postgres:
+        hasil = psql(
+            "smart_coaching",
+            "-c",
+            f"select lisensi from korpus.metadata_dokumen where id_dokumen = '{d}'",
+        )
+        assert hasil.stdout.strip() == "CC BY 4.0"
+    else:
+        assert isinstance(pelaksana.teks, PenyimpanTiruan)
+        assert pelaksana.teks.metadata_tercatat(d) == (metadata,)

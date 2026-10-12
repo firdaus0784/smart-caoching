@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 11 Oktober 2026 (KB-266); TK-86 A (KB-266) |
 | Plan | Gerbang 2 lolos 12 Oktober 2026 atas pendelegasian KB-168 (KB-267); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Dua dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Tiga dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -40,11 +40,11 @@ baru (C-12, C-20). Ukuran segmen milik D-07 (C-16).
 
 **Kebutuhan:** R-03; K-4; P-3 A.
 
-- [ ] Uji lebih dulu: lisensi ikut penerimaan dan catatan metadata korpus atas
+- [x] Uji lebih dulu: lisensi ikut penerimaan dan catatan metadata korpus atas
       memori dan PostgreSQL; bawaan kosong; uji fitur 002, 032, 037 tetap lulus
-- [ ] `Dokumen`, `CatatanPenerimaan`, `MetadataDokumen`; gerbang, catatan,
+- [x] `Dokumen`, `CatatanPenerimaan`, `MetadataDokumen`; gerbang, catatan,
       pemindahan; `terima --lisensi`
-- [ ] Mutasi M-10
+- [x] Mutasi M-10
 
 ## T-4 · Pemotongan
 

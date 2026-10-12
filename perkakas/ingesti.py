@@ -120,6 +120,7 @@ def _penghurai() -> argparse.ArgumentParser:
         "--persetujuan", required=True, choices=[s.value for s in StatusPersetujuan]
     )
     terima.add_argument("--pelaku", required=True)
+    terima.add_argument("--lisensi", default=None)
     sub.add_parser("daftar", help="dokumen yang menunggu di karantina")
     baca = sub.add_parser("baca", help="teks tersamar dan temuan, bagi verifikator")
     baca.add_argument("--id", required=True)
@@ -184,6 +185,7 @@ async def _jalankan(
             tahun=argumen.tahun,
             tingkat_kerahasiaan=TingkatKerahasiaan(argumen.kerahasiaan),
             status_persetujuan_pemilik=StatusPersetujuan(argumen.persetujuan),
+            lisensi=argumen.lisensi,
         )
         if isinstance(teks, TeksPindaian):
             catat_keluaran_ocr(akar_logbook, teks)

@@ -317,3 +317,16 @@ def test_penolakan_peladen_tanpa_kutipan(tmp_path: Path) -> None:
         "smart_coaching", "-c", f"select count(*) from karantina.dokumen_sumber where id = '{d}'"
     )
     assert hasil.stdout.split() == ["0"]
+
+
+def test_terima_dengan_lisensi(tmp_path: Path) -> None:
+    """P-3 A fitur 038: `--lisensi` tercatat pada penerimaan."""
+    j = Jalankan(tmp_path)
+    d = _id()
+    assert j(*_terima(j, d, lisensi="CC BY 4.0"))[0] == 0
+    hasil = psql(
+        "smart_coaching",
+        "-c",
+        f"select lisensi from karantina.penerimaan where id_dokumen = '{d}'",
+    )
+    assert hasil.stdout.strip() == "CC BY 4.0"

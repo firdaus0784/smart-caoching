@@ -155,6 +155,7 @@ class Gerbang:
             status_persetujuan_pemilik=dokumen.status_persetujuan_pemilik.value,
             samaran=hasil.jumlah,
             id_penerima=id_penerima,
+            lisensi=dokumen.lisensi,
         )
         try:
             await self._catatan.terima(
@@ -485,6 +486,7 @@ def _dokumen_dari(keadaan: KeadaanKarantina) -> Dokumen:
             else StatusPersetujuan(p.status_persetujuan_pemilik)
         ),
         status_anonimisasi=StatusAnonimisasi(keadaan.status_anonimisasi),
+        lisensi=p.lisensi,
     )
 
 
@@ -496,6 +498,7 @@ def _metadata(dokumen: Dokumen) -> MetadataDokumen:
         penerbit=dokumen.penerbit,
         tahun=dokumen.tahun,
         tingkat_kerahasiaan=dokumen.tingkat_kerahasiaan.value,
+        lisensi=dokumen.lisensi,
     )
 
 

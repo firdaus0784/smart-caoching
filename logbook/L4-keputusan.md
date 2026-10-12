@@ -3947,3 +3947,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memberi pengindeks `UPDATE` agar pengindeksan ulang menyunting — tidak dipilih: segmen yang disunting tidak dapat dibedakan dari yang disisipkan ulang, dan pernyataan ganti sudah diverifikasi pada peladen (KB-267). |
 | Dampak | `01-peran-dan-basis-data.sql`, `tests/peladen.py`, README peladen. Uji penyimpanan, ingesti, perkakas, pengambilan, dan pembaca sumber lulus. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-270 · T-3 fitur 038: lisensi dicatat saat menerima
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | K-4 plan fitur 038 (P-3 A). Uji ditulis lebih dulu dan merah atas catatan gerbang (memori dan PostgreSQL), gerbang ingesti, dan perkakas. |
+| Keputusan | `Dokumen.lisensi`, `CatatanPenerimaan.lisensi`, dan `MetadataDokumen.lisensi`, ketiganya boleh kosong dengan bawaan kosong; keterangan hampa ditolak `Dokumen`. Gerbang meneruskannya ke penerimaan dan ke catatan metadata korpus dalam pernyataan pemindahan yang sama; keadaan membacanya kembali. `terima --lisensi` opsional. Uji fitur 002, 032, dan 037 lulus tanpa diubah. Mutasi M-10 merah. |
+| Alternatif | Lisensi wajib saat menerima — tidak dipilih: dokumen tanpa keterangan memang ada, dan D-06 KL-01 sudah menetapkan perlakuannya: tertutup. |
+| Dampak | Belum dibaca siapa pun; pengindeksan memakainya pada T-5. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

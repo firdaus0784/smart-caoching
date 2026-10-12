@@ -170,8 +170,8 @@ class PenyimpanPostgres(PenyimpanDasar):
         if metadata is not None:
             bagian.append(
                 "catat AS (INSERT INTO korpus.metadata_dokumen "
-                "(id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan) "
-                "SELECT id, $2, $3, $4, $5, $6 FROM pindah)"
+                "(id_dokumen, judul, jenis, penerbit, tahun, tingkat_kerahasiaan, lisensi) "
+                "SELECT id, $2, $3, $4, $5, $6, $7 FROM pindah)"
             )
             argumen += [
                 metadata.judul,
@@ -179,6 +179,7 @@ class PenyimpanPostgres(PenyimpanDasar):
                 metadata.penerbit,
                 metadata.tahun,
                 metadata.tingkat_kerahasiaan,
+                metadata.lisensi,
             ]
         if dari is Area.KORPUS:
             bagian += BAGIAN_SEGMEN_KELUAR
