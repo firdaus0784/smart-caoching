@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 11 Oktober 2026 (KB-266); TK-86 A (KB-266) |
 | Plan | Gerbang 2 lolos 12 Oktober 2026 atas pendelegasian KB-168 (KB-267); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Lima dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Enam dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -69,10 +69,10 @@ baru (C-12, C-20). Ukuran segmen milik D-07 (C-16).
 
 **Kebutuhan:** R-07; K-5.
 
-- [ ] Uji lebih dulu: peran, pratinjau, keluaran tanpa teks, tanpa log;
+- [x] Uji lebih dulu: peran, pratinjau, keluaran tanpa teks, tanpa log;
       pembaca sumber menampilkan teks bagian dokumen yang diindeks
-- [ ] `perkakas/ingesti.py`
-- [ ] Mutasi M-11
+- [x] `perkakas/ingesti.py`
+- [x] Mutasi M-11
 
 ## T-7 · Bukti, penutupan
 

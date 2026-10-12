@@ -10,13 +10,16 @@
     python -m perkakas.ingesti setujui --id <id> --pelaku <kode-tim> --alasan <alasan>
     python -m perkakas.ingesti tolak --id <id> --pelaku <kode-tim> --alasan <alasan>
     python -m perkakas.ingesti cabut --id <id> --pelaku <kode-tim> --alasan <alasan>
+    python -m perkakas.ingesti indeks --id <id> [--pratinjau]
 
 **Satu peran per perintah** (P-2 A): `terima` tersambung sebagai
 `peran_ingesti`, yang menaruh dokumen tanpa dapat membacanya; `daftar`, `baca`,
 `tinjau`, `setujui`, dan `tolak` sebagai `peran_verifikasi`; `cabut` sebagai
-`peran_penarikan_dokumen`. Alamat dari `PGHOST` dan `PGPORT`, sandi dari
-`PGPASSWORD` bila peladen memintanya. Tiap perintah objek `Gerbang` baru di
-atas catatan PostgreSQL: keadaannya bertahan antarperintah (P-1 A).
+`peran_penarikan_dokumen`; `indeks` sebagai `peran_pengindeks` (fitur 038),
+yang membaca korpus dan menulis segmen tanpa menjangkau karantina. Alamat dari
+`PGHOST` dan `PGPORT`, sandi dari `PGPASSWORD` bila peladen memintanya. Tiap
+perintah objek `Gerbang` baru di atas catatan PostgreSQL: keadaannya bertahan
+antarperintah (P-1 A).
 
 **Aturan tetap milik gerbang fitur 002.** Perkakas hanya mengekstrak berkas,
 memeriksa bentuk masukan, dan menyusun gerbang dengan peran yang benar.
@@ -25,7 +28,9 @@ memeriksa bentuk masukan, dan menyusun gerbang dengan peran yang benar.
 `tm-001`, bukan nama orang. Masukan yang ditolak tidak dikutip.
 
 **Teks hanya pada keluaran `baca`**, ke keluaran baku, diawali pernyataan
-bahwa nama dan alamat tidak tersamarkan otomatis (BT-70, R-08). Perkakas tidak
+bahwa nama dan alamat tidak tersamarkan otomatis (BT-70, R-08). `indeks`
+mencetak indeks tujuan, penanda, dan jumlah kata — tidak pernah teks segmen
+(R-07 fitur 038). Perkakas tidak
 menulis apa pun ke log. Keluaran OCR dicatat ke logbook L2 seperti fitur 015
 (C-09): versi mesin dan sidik model, bukan teksnya.
 """
@@ -51,7 +56,9 @@ from src.ingest.ekstraksi.pdf import GalatTanpaLapisanTeks, PengekstrakPdf
 from src.ingest.ekstraksi.xlsx import PengekstrakXlsx
 from src.ingest.gerbang import GalatGerbang, Gerbang
 from src.ingest.jejak import GalatJejak
+from src.ingest.pengindeksan import indekskan
 from src.ingest.peringkat import JenisSumber
+from src.kamus.segmen import IndeksTujuan
 from src.nlp.anonimisasi.pola import JENIS
 from src.penyimpanan.galat import GalatAksesDitolak, GalatDokumenTidakAda
 from src.penyimpanan.karantina import (
@@ -60,7 +67,8 @@ from src.penyimpanan.karantina import (
     PERAN_VERIFIKASI,
     CatatanGerbangPostgres,
 )
-from src.penyimpanan.kredensial_baku import VERIFIKASI
+from src.penyimpanan.kredensial_baku import PENGINDEKSAN, VERIFIKASI
+from src.penyimpanan.pengindeks import PERAN_PENGINDEKS, PenulisIndeksPostgres
 from src.penyimpanan.postgres import PenyimpanPostgres
 from src.penyimpanan.sambungan import SambunganAktif
 
@@ -75,14 +83,21 @@ PERAN_PERINTAH: Final[dict[str, str]] = {
     "setujui": PERAN_VERIFIKASI,
     "tolak": PERAN_VERIFIKASI,
     "cabut": PERAN_PENARIKAN_DOKUMEN,
+    "indeks": PERAN_PENGINDEKS,
 }
-"""Satu peran per perintah — P-2 A. Perintah kedelapan tanpa baris di sini
+"""Satu peran per perintah — P-2 A. Perintah kesembilan tanpa baris di sini
 berhenti pada `KeyError`, bukan tersambung dengan peran yang kebetulan ada."""
 
 PERNYATAAN_BT70: Final = (
     "Perhatian: nama orang, alamat, dan nomor yang ditulis dengan kata tidak tersamarkan "
     "otomatis. Periksa teks di bawah sebelum menyetujui."
 )
+
+_LABEL_INDEKS: Final[dict[IndeksTujuan, str]] = {
+    IndeksTujuan.UTAMA: "indeks utama — teks dapat dikutip jawaban dan pembaca sumber",
+    IndeksTujuan.METADATA: "indeks metadata — lisensi tertutup atau tidak tercatat, teks "
+    "tidak dikirim ke model maupun ditampilkan",
+}
 
 _LABEL_SAMARAN: Final[dict[str, str]] = {
     "nik": "NIK",
@@ -103,7 +118,7 @@ def pengekstrak_baku() -> list[Pengekstrak]:
 def _penghurai() -> argparse.ArgumentParser:
     penghurai = argparse.ArgumentParser(
         prog="python -m perkakas.ingesti",
-        description="Gerbang ingesti: terima, daftar, baca, tinjau, setujui, tolak, cabut.",
+        description="Gerbang ingesti: terima, daftar, baca, tinjau, setujui, tolak, cabut, indeks.",
     )
     sub = penghurai.add_subparsers(dest="perintah", required=True)
     terima = sub.add_parser("terima", help="terima berkas ke karantina")
@@ -137,6 +152,9 @@ def _penghurai() -> argparse.ArgumentParser:
         putusan.add_argument("--id", required=True)
         putusan.add_argument("--pelaku", required=True)
         putusan.add_argument("--alasan", required=True)
+    indeks = sub.add_parser("indeks", help="potong dokumen korpus dan ganti segmennya")
+    indeks.add_argument("--id", required=True)
+    indeks.add_argument("--pratinjau", action="store_true", help="tampilkan tanpa menulis")
     return penghurai
 
 
@@ -196,6 +214,19 @@ async def _jalankan(
             f"Temuan pola instruksi: {hasil.jumlah_temuan}.",
             file=keluar,
         )
+        return
+
+    if perintah == "indeks":
+        penulis = PenulisIndeksPostgres(sambung(PERAN_PERINTAH[perintah]))
+        indeksan = await indekskan(penulis, PENGINDEKSAN, argumen.id, tulis=not argumen.pratinjau)
+        awal = "Diindeks" if indeksan.ditulis else "Pratinjau, tidak ada yang ditulis"
+        print(
+            f"{awal}: {indeksan.id_dokumen}. {len(indeksan.segmen)} segmen ke "
+            f"{_LABEL_INDEKS[indeksan.indeks_tujuan]}.",
+            file=keluar,
+        )
+        for s in indeksan.segmen:
+            print(f"- {s.penanda}: {s.jumlah_kata} kata", file=keluar)
         return
 
     gerbang = _susun(sambung, perintah)

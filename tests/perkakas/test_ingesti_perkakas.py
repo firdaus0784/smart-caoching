@@ -19,10 +19,14 @@ import secrets
 from pathlib import Path
 
 import pytest
+from src.api.sumber import AlasanTanpaTeks, baca_sumber
 from src.ingest.ekstraksi.dasar import Pengekstrak, TeksKanonik
 from src.ingest.ekstraksi.ocr import TeksPindaian
 from src.ingest.ekstraksi.pdf import GalatTanpaLapisanTeks
 from src.penyimpanan.karantina import PERAN_INGESTI, PERAN_PENARIKAN_DOKUMEN, PERAN_VERIFIKASI
+from src.penyimpanan.pengindeks import PERAN_PENGINDEKS
+from src.penyimpanan.sumber import PERAN_PEMBACA_SUMBER, PembacaSumberPostgres
+from tests.konftes_asinkron import jalankan
 from tests.peladen import psql, siapkan
 from tests.penyimpanan.test_akun import SambunganPeran
 
@@ -330,3 +334,103 @@ def test_terima_dengan_lisensi(tmp_path: Path) -> None:
         f"select lisensi from karantina.penerimaan where id_dokumen = '{d}'",
     )
     assert hasil.stdout.strip() == "CC BY 4.0"
+
+
+# ── perintah `indeks` — T-6 fitur 038, R-07, K-5 ────────────────────
+
+REGULASI = (
+    "PERATURAN CONTOH NOMOR 1 TAHUN 2026\n"
+    "Pasal 1\nKepala sekolah menyusun rencana kerja tahunan.\n"
+    "Pasal 2\nRencana kerja ditetapkan bersama komite sekolah."
+)
+
+
+def _korpus_regulasi(j: Jalankan, d: str, lisensi: str | None) -> None:
+    """Regulasi publik melewati gerbang sungguhan sampai korpus, dengan status
+    berlaku tercatat — prasyarat pembaca sumber (TK-81 A)."""
+    ubah = {"jenis": "regulasi_resmi", "kerahasiaan": "publik", "judul": "Peraturan Contoh"}
+    if lisensi is not None:
+        ubah["lisensi"] = lisensi
+    kode, _, galat = j(*_terima(j, d, **ubah), pengekstrak=[_Stub(REGULASI)])
+    assert kode == 0, galat
+    kode, _, galat = j("setujui", "--id", d, "--pelaku", "tm-002", "--alasan", "terperiksa")
+    assert kode == 0, galat
+    hasil = psql(
+        "smart_coaching",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-c",
+        f"insert into korpus.status_dokumen (id_dokumen, status) values ('{d}', 'berlaku')",
+    )
+    assert hasil.returncode == 0, hasil.stderr
+
+
+def _jumlah_segmen(d: str) -> str:
+    return psql(
+        "smart_coaching",
+        "-c",
+        f"select (select count(*) from indeks_utama.segmen_teks where id_dokumen = '{d}') "
+        f"|| ':' || (select count(*) from indeks_metadata.segmen_teks where id_dokumen = '{d}')",
+    ).stdout.strip()
+
+
+def test_indeks_pratinjau_lalu_tulis_dengan_perannya(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """K-5, R-07, M-11: sebagai `peran_pengindeks`; pratinjau tidak menulis;
+    keluaran penanda dan jumlah kata, tanpa teks, dan tidak ada yang ke log."""
+    caplog.set_level(logging.DEBUG)
+    j = Jalankan(tmp_path)
+    d = _id()
+    _korpus_regulasi(j, d, "public domain")
+    j.peran.clear()
+
+    kode, keluar, galat = j("indeks", "--id", d, "--pratinjau")
+    assert kode == 0, galat
+    assert "Pratinjau" in keluar and "tidak ada yang ditulis" in keluar
+    assert "indeks utama" in keluar and "3 segmen" in keluar
+    assert "- Pasal 2: 8 kata" in keluar
+    assert _jumlah_segmen(d) == "0:0"
+
+    kode, keluar, galat = j("indeks", "--id", d)
+    assert kode == 0, galat
+    assert "Diindeks" in keluar and "3 segmen" in keluar
+    assert _jumlah_segmen(d) == "3:0"
+
+    assert j.peran == [PERAN_PENGINDEKS, PERAN_PENGINDEKS]
+    for teks in (keluar, *(c.getMessage() for c in caplog.records)):
+        assert "Kepala sekolah menyusun" not in teks and "ditetapkan bersama" not in teks
+
+
+def test_pembaca_sumber_menampilkan_teks_bagian_yang_diindeks(tmp_path: Path) -> None:
+    """Kriteria penerimaan spec 038: sitasi `Pasal 2` kini membuka teks pasal
+    itu — lewat pembaca sumber fitur 032 apa adanya, sebagai perannya sendiri.
+    Dokumen tanpa keterangan lisensi masuk indeks metadata, dan teksnya tidak
+    tampil (KL-01, C-02)."""
+    j = Jalankan(tmp_path)
+    terbuka, tanpa_lisensi = _id(), _id()
+    _korpus_regulasi(j, terbuka, "public domain")
+    _korpus_regulasi(j, tanpa_lisensi, None)
+    for d in (terbuka, tanpa_lisensi):
+        kode, _, galat = j("indeks", "--id", d)
+        assert kode == 0, galat
+    assert _jumlah_segmen(tanpa_lisensi) == "0:3"
+
+    pembaca = PembacaSumberPostgres(SambunganPeran(PERAN_PEMBACA_SUMBER))  # type: ignore[arg-type]
+    tampil = jalankan(baca_sumber(pembaca, terbuka, "Pasal 2"))
+    assert tampil.tanpa_teks is None
+    assert tampil.teks_bagian == ["Pasal 2\nRencana kerja ditetapkan bersama komite sekolah."]
+    tertutup = jalankan(baca_sumber(pembaca, tanpa_lisensi, "Pasal 2"))
+    assert tertutup.tanpa_teks is AlasanTanpaTeks.BAGIAN_TIDAK_TERSEDIA
+    assert tertutup.teks_bagian == []
+
+
+def test_indeks_di_luar_korpus_ditolak_tanpa_menulis(tmp_path: Path) -> None:
+    """R-04, C-03: dokumen karantina dan yang tak dikenal — pesan yang sama."""
+    j = Jalankan(tmp_path)
+    di_karantina = _id()
+    assert j(*_terima(j, di_karantina))[0] == 0
+    for d in (di_karantina, _id()):
+        kode, _, galat = j("indeks", "--id", d)
+        assert kode == 1 and "tidak dikenal" in galat
+        assert _jumlah_segmen(d) == "0:0"

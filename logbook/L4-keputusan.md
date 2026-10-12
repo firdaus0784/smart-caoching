@@ -3980,3 +3980,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Dua pernyataan dalam satu transaksi — tidak tersedia: `SambunganAktif` tanpa transaksi, dan ia pola yang sama yang M-5 tolak. `ON CONFLICT DO UPDATE` — menuntut hak ubah yang sengaja tidak dipegang pengindeks (KB-269). |
 | Dampak | Belum dipanggil perkakas; T-6. **Pengamatan, tidak diubah:** daftar putih lisensi fitur 006 membaca awalan `cc-by`, sehingga `CC-BY-NC-ND` terbaca terbuka. Tidak ada dokumen yang mengatur varian NC dan ND; diajukan kepada pemegang Gerbang, bukan diputus agen. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-273 · T-6 fitur 038: perintah `indeks`
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | K-5 plan fitur 038. Uji ditulis lebih dulu dan merah atas PostgreSQL dengan peran sungguhan: regulasi publik berlisensi terbuka dan tanpa lisensi melewati `terima` dan `setujui` sampai korpus, status berlaku dicatat, lalu `indeks --pratinjau` dan `indeks`. |
+| Keputusan | `indeks --id <id> [--pratinjau]` tersambung sebagai `peran_pengindeks`; mencetak indeks tujuan beserta artinya, jumlah segmen, dan penanda dengan jumlah kata — tanpa teks segmen, tanpa log. Dokumen karantina dan dokumen tak dikenal ditolak dengan pesan yang sama, tanpa menulis. **Kriteria penerimaan spec terbukti di dalam `make check`**: pembaca sumber fitur 032, tanpa diubah dan tersambung sebagai perannya sendiri, menampilkan teks `Pasal 2` dokumen yang diindeks; dokumen tanpa lisensi masuk indeks metadata dan tampil tanpa teks. Mutasi M-11 merah; varian yang menulis teks ke log juga merah. |
+| Alternatif | `--pelaku` pada `indeks` — tidak dipilih: plan tidak menuntutnya, pengindeksan tidak memutus apa pun tentang dokumen, dan jejak area mencatat putusan, bukan pekerjaan mesin. |
+| Dampak | `src/api/`, `src/rag/`, dan pembaca sumber tidak berubah. Bukti di luar `make check` pada T-7. |
+| Pemutus | Agen, atas pendelegasian KB-168 |
