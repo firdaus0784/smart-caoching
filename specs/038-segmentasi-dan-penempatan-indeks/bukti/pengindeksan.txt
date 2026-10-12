@@ -1,0 +1,90 @@
+Berkas contoh dan keterangan lisensinya dibuat naskah bukti; peraturannya rekaan.
+Tidak ada segmen yang ditanam: seluruhnya ditulis perintah indeks.
+
+== segmen (indeks | id_segmen | penanda | lisensi | jumlah kata) ==
+utama | reg-038-31013f-a:0001 | Pembukaan | terbuka | 18 kata
+utama | reg-038-31013f-a:0002 | Pasal 1 | terbuka | 17 kata
+utama | reg-038-31013f-a:0003 | Pasal 2 | terbuka | 20 kata
+utama | reg-038-31013f-a:0004 | Pasal 3 | terbuka | 14 kata
+utama | reg-038-31013f-a:0005 | Pasal 4 ayat (1)–(2) | terbuka | 396 kata
+utama | reg-038-31013f-a:0006 | Pasal 4 ayat (3) | terbuka | 197 kata
+utama | reg-038-31013f-a:0007 | Pasal 5 | terbuka | 13 kata
+metadata | reg-038-31013f-b:0001 | Pembukaan | tertutup | 18 kata
+metadata | reg-038-31013f-b:0002 | Pasal 1 | tertutup | 17 kata
+metadata | reg-038-31013f-b:0003 | Pasal 2 | tertutup | 20 kata
+metadata | reg-038-31013f-b:0004 | Pasal 3 | tertutup | 14 kata
+metadata | reg-038-31013f-b:0005 | Pasal 4 ayat (1)–(2) | tertutup | 396 kata
+metadata | reg-038-31013f-b:0006 | Pasal 4 ayat (3) | tertutup | 197 kata
+metadata | reg-038-31013f-b:0007 | Pasal 5 | tertutup | 13 kata
+
+== jalannya perintah ==
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/038-segmentasi-dan-penempatan-indeks/bukti/contoh-regulasi-berpasal.docx --id reg-038-31013f-a --judul Peraturan Contoh Nomor 2 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Contoh --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi public domain
+[kode 0]
+  Diterima ke karantina: reg-038-31013f-a. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/038-segmentasi-dan-penempatan-indeks/bukti/contoh-regulasi-berpasal.docx --id reg-038-31013f-b --judul Peraturan Contoh Nomor 2 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Contoh --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001
+[kode 0]
+  Diterima ke karantina: reg-038-31013f-b. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/038-segmentasi-dan-penempatan-indeks/bukti/contoh-regulasi-berpasal.docx --id reg-038-31013f-c --judul Peraturan Contoh Nomor 2 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Contoh --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi public domain
+[kode 0]
+  Diterima ke karantina: reg-038-31013f-c. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-038-31013f-a --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-038-31013f-a.
+$ python -m perkakas.kurasi status --dokumen reg-038-31013f-a --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti setujui --id reg-038-31013f-b --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-038-31013f-b.
+$ python -m perkakas.kurasi status --dokumen reg-038-31013f-b --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti indeks --id reg-038-31013f-a --pratinjau
+[kode 0]
+  Pratinjau, tidak ada yang ditulis: reg-038-31013f-a. 7 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 18 kata
+  - Pasal 1: 17 kata
+  - Pasal 2: 20 kata
+  - Pasal 3: 14 kata
+  - Pasal 4 ayat (1)–(2): 396 kata
+  - Pasal 4 ayat (3): 197 kata
+  - Pasal 5: 13 kata
+$ python -m perkakas.ingesti indeks --id reg-038-31013f-a
+[kode 0]
+  Diindeks: reg-038-31013f-a. 7 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 18 kata
+  - Pasal 1: 17 kata
+  - Pasal 2: 20 kata
+  - Pasal 3: 14 kata
+  - Pasal 4 ayat (1)–(2): 396 kata
+  - Pasal 4 ayat (3): 197 kata
+  - Pasal 5: 13 kata
+$ python -m perkakas.ingesti indeks --id reg-038-31013f-a
+[kode 0]
+  Diindeks: reg-038-31013f-a. 7 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 18 kata
+  - Pasal 1: 17 kata
+  - Pasal 2: 20 kata
+  - Pasal 3: 14 kata
+  - Pasal 4 ayat (1)–(2): 396 kata
+  - Pasal 4 ayat (3): 197 kata
+  - Pasal 5: 13 kata
+$ python -m perkakas.ingesti indeks --id reg-038-31013f-b
+[kode 0]
+  Diindeks: reg-038-31013f-b. 7 segmen ke indeks metadata — lisensi tertutup atau tidak tercatat, teks tidak dikirim ke model maupun ditampilkan.
+  - Pembukaan: 18 kata
+  - Pasal 1: 17 kata
+  - Pasal 2: 20 kata
+  - Pasal 3: 14 kata
+  - Pasal 4 ayat (1)–(2): 396 kata
+  - Pasal 4 ayat (3): 197 kata
+  - Pasal 5: 13 kata
+$ python -m perkakas.ingesti indeks --id reg-038-31013f-c
+[kode 1]
+  Ditolak: dokumen tidak dikenal pada area yang dapat dijangkau perintah ini.
+GET /api/v1/sumber/reg-038-31013f-a?bagian=Pasal 2 → 200
+  {"id_dokumen":"reg-038-31013f-a","judul":"Peraturan Contoh Nomor 2 Tahun 2026","jenis":"regulasi_resmi","penerbit":"Kementerian Contoh","tahun":2026,"status_keberlakuan":"berlaku","rujukan_pengganti":null,"bagian":"Pasal 2","teks_bagian":["Pasal 2\n(1) Rencana kerja tahunan memuat sasaran, program, dan anggaran.\n(2) Rencana kerja tahunan ditetapkan sebelum tahun ajaran dimulai."],"tanpa_teks":null}
+GET /api/v1/sumber/reg-038-31013f-a?bagian=Pasal 4 ayat (1)–(2) → 200
+  {"id_dokumen":"reg-038-31013f-a","judul":"Peraturan Contoh Nomor 2 Tahun 2026","jenis":"regulasi_resmi","penerbit":"Kementerian Contoh","tahun":2026,"status_keberlakuan":"berlaku","rujukan_pengganti":null,"bagian":"Pasal 4 ayat (1)–(2)","teks_bagian":["Pasal 4\n(1) Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester.\n(2) Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester. Kepala sekolah memantau pelaksanaan program dan melaporkan capaiannya kepada dinas pendidikan setiap akhir semester."],"tanpa_teks":null}
+GET /api/v1/sumber/reg-038-31013f-b?bagian=Pasal 2 → 200
+  {"id_dokumen":"reg-038-31013f-b","judul":"Peraturan Contoh Nomor 2 Tahun 2026","jenis":"regulasi_resmi","penerbit":"Kementerian Contoh","tahun":2026,"status_keberlakuan":"berlaku","rujukan_pengganti":null,"bagian":"Pasal 2","teks_bagian":[],"tanpa_teks":"bagian_tidak_tersedia"}

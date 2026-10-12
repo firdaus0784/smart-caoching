@@ -655,3 +655,26 @@ Fitur ini menguatkan lima pasal yang sudah lulus:
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 037 mengisi korpus, tetapi tidak menyentuh jalur
 penjawaban maupun validatornya; segmentasi milik baris 038.
+
+### Fitur 038 — 12 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 037. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan enam pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 038 |
+|---|---|
+| C-02 | Indeks tujuan ditetapkan saat masuk lewat `lisensi_dari_metadata` dan `indeks_bagi` apa adanya; tanpa keterangan lisensi berarti indeks metadata (M-4); pengindeksan ulang menghapus dari kedua indeks, sehingga dokumen yang lisensinya kini tertutup tidak meninggalkan segmen di indeks utama |
+| C-03 | Penulis segmen tidak menjangkau karantina (M-2); verifikator, yang membaca karantina, tidak lagi dapat menulis indeks — juga pada hak bawaan skema (M-1, TK-86); dokumen di luar korpus tidak sampai ke indeks mana pun (M-6) |
+| C-12 | Tanpa paket baru: pemotongan dengan pustaka baku |
+| C-16 | Ukuran segmen dan tumpang tindih dibaca uji dari tabel D-07, bukan disalin; tiga tafsiran rentang D-07 tercatat (KB-267) |
+| C-17 | Pengindeks hanya mengganti segmen — tanpa ubah dan tanpa kolom vektor (M-3); jalur penjawaban tetap tanpa hak tulis; tanpa rute |
+| C-20 | D-14 0.20 sebelum kodenya; tanpa rute baru; bentuk `/tanya` tidak berubah |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 038 mengisi indeks, tetapi jalur penjawab belum memuat
+segmen dari PostgreSQL dan validatornya tidak disentuh; segmen baru tanpa
+vektor sampai model sematan diputus (ADR-12).

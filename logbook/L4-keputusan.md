@@ -3991,3 +3991,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | `--pelaku` pada `indeks` — tidak dipilih: plan tidak menuntutnya, pengindeksan tidak memutus apa pun tentang dokumen, dan jejak area mencatat putusan, bukan pekerjaan mesin. |
 | Dampak | `src/api/`, `src/rag/`, dan pembaca sumber tidak berubah. Bukti di luar `make check` pada T-7. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-274 · T-7 fitur 038: bukti ujung ke ujung, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | `plan.md` Bagian 9.2, di luar `make check`. Perkakas ingesti dan kurasi dijalankan lewat baris perintah, tiap perintah sebagai perannya sendiri; pembaca sumber dibaca lewat `make jalan` dengan riwayat PostgreSQL dan sesi akun uji `ks-381`, yang dinonaktifkan sesudahnya dan sandinya tidak pernah tercetak. Tidak ada segmen yang ditanam pengelola. Naskah dan keluarannya di `specs/038-segmentasi-dan-penempatan-indeks/bukti/`. |
+| Keputusan | **Putaran pertama**: dua puluh tiga pemeriksaan perilaku lulus, lalu naskah berhenti pada kueri ringkasan miliknya sendiri — `union` dengan `*` atas dua tabel yang urutan kolomnya berbeda; dokumen `reg-038-9ecdbf-*` tertinggal di basis data uji. **Putaran kedua** sesudah kueri itu diperbaiki: **dua puluh empat pemeriksaan lulus**. Regulasi rekaan berlisensi `public domain`: tujuh segmen di indeks utama — pasal pendek berdiri sendiri, pasal 4 di atas 500 kata terpecah `ayat (1)–(2)` dan `ayat (3)`; pratinjau tidak menulis; pengindeksan ulang mengganti; `GET /sumber/{id}?bagian=Pasal 2` menampilkan teks pasal itu. Dokumen yang sama tanpa lisensi: tujuh segmen di indeks metadata, tampil tanpa teks. Dokumen karantina ditolak tanpa menulis. **Mutasi diulang atas kode akhir: sebelas dari sebelas merah**, ditambah dua mutasi tambahan — syarat urutan penggantian dibuang (KB-272) dan teks ke log — juga merah. Penutupan: L8 (tagihan tidak menyusut, enam pasal dikuatkan); dokumen HKI (pekerja latar, basis data, keamanan, mutu, yang belum terbangun; uji 3.516 dan 337); D-00 3.14 (TK-86 menunggu Gerbang 4); D-04 0.17 dan D-14 0.21 — tanda titik yang hilang pada tulisan T-1, isi tidak berubah. Kriteria penerimaan spec dicentang; R-08 dijaga uji dan pemeriksa C-17 dan C-20 yang sudah ada, bukan uji baru. |
+| Alternatif | — |
+| Dampak | Diajukan kepada pemegang Gerbang 4. **Diajukan pula, tidak diputus agen**: daftar putih lisensi fitur 006 membaca awalan `cc-by`, sehingga `CC-BY-NC-ND` terbaca terbuka dan masuk indeks utama (KB-272). Jalur penjawab yang memuat segmen dari PostgreSQL tidak dimiliki baris mana pun. |
+| Pemutus | Agen, atas pendelegasian KB-168; Gerbang 4 tidak didelegasikan |
