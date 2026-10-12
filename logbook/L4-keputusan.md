@@ -3958,3 +3958,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Lisensi wajib saat menerima — tidak dipilih: dokumen tanpa keterangan memang ada, dan D-06 KL-01 sudah menetapkan perlakuannya: tertutup. |
 | Dampak | Belum dibaca siapa pun; pengindeksan memakainya pada T-5. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-271 · T-4 fitur 038: pemotongan D-07 Bagian 3.2
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | K-2 plan fitur 038 (P-1 A). Uji ditulis lebih dulu dan merah atas teks berpasal dan tanpa pasal; angka ukuran dan tumpang tindih dibaca uji dari tabel D-07, bukan disalin (C-16). |
+| Keputusan | `src/ingest/segmentasi.py`, fungsi murni tanpa basis data. Baris utuh `Pasal N` memulai satuan; rujukan pasal di tengah kalimat tidak. Judul `BAB`, `Bagian Kesatu`, `Paragraf 1` ikut ke awal pasal sesudahnya; teks sebelum pasal pertama berpenanda `Pembukaan`; `PENJELASAN` dan `LAMPIRAN` membuka bagian berawalan. Pasal di atas 500 kata dipecah di batas ayat tanpa tumpang tindih; teks tanpa batas alami dipecah menjadi jendela sama besar, paling banyak 500 kata, bertumpang tindih sedikitnya 60 kata, berpenanda `…, potongan i dari n`. Dokumen tanpa pasal dikumpulkan per paragraf, berpenanda `Bagian k`. Mutasi M-7 dan M-8 merah. **M-9 dipindah ke T-5**: pengenal segmen ditetapkan pengindeksan, sehingga mutasinya baru bermakna di sana; `plan.md` Bagian 10 dan `tasks.md` dikoreksi. |
+| Alternatif | Memaksa pasal pendek mencapai 300 kata dengan menggabungnya — ditolak D-07 sendiri, dan oleh M-7. Mengenali butir bernomor dan subjudul sebagai batas — tidak dipilih pada tugas ini: polanya tidak seragam antardokumen, dan ayat sudah memberi batas di dalam pasal; butir tetap utuh di dalam ayatnya. |
+| Dampak | Belum dipanggil siapa pun; pengindeksan memakainya pada T-5. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

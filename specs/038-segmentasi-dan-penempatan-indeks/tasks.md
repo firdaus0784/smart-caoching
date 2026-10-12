@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 11 Oktober 2026 (KB-266); TK-86 A (KB-266) |
 | Plan | Gerbang 2 lolos 12 Oktober 2026 atas pendelegasian KB-168 (KB-267); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Tiga dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Empat dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -50,9 +50,10 @@ baru (C-12, C-20). Ukuran segmen milik D-07 (C-16).
 
 **Kebutuhan:** R-01, R-02, R-06; K-2; P-1 A.
 
-- [ ] Uji lebih dulu atas teks berpasal dan tanpa pasal
-- [ ] `src/ingest/segmentasi.py`
-- [ ] Mutasi M-7, M-8, M-9
+- [x] Uji lebih dulu atas teks berpasal dan tanpa pasal
+- [x] `src/ingest/segmentasi.py`
+- [x] Mutasi M-7, M-8. M-9 pindah ke T-5: pengenal segmen ditetapkan
+      pengindeksan, bukan pemotongan (KB-271)
 
 ## T-5 · Pengindeksan
 
@@ -62,7 +63,7 @@ baru (C-12, C-20). Ukuran segmen milik D-07 (C-16).
       `peran_pengindeks`: indeks tujuan menurut lisensi; ganti, bukan tambah;
       di luar korpus ditolak; pratinjau tidak menulis
 - [ ] `PENGINDEKSAN`; `src/penyimpanan/pengindeks.py`; `src/ingest/pengindeksan.py`
-- [ ] Mutasi M-4, M-5, M-6
+- [ ] Mutasi M-4, M-5, M-6, M-9
 
 ## T-6 · Perkakas `indeks`
 

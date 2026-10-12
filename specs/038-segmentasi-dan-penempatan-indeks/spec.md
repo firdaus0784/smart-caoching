@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 | Dokumen terkait | D-06 KL-01, KL-02 · D-07 Bagian 3.1, 3.2, 3.3 · D-13 Bagian 6 · D-14 Bagian 5.1 (`segmen_teks`, `dokumen_sumber.lisensi`) · spec fitur 006, 007, 019, 026, 032, 037 · TK-86 |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Tiga dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Empat dari tujuh tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 

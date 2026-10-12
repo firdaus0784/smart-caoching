@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 11 Oktober 2026 (KB-266); P-1 s.d. P-4 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-86 A (KB-266): hak tulis indeks `peran_verifikasi` dicabut |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Tiga dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Empat dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08 `spec.md`; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 ## 1. Letak dan batas
@@ -180,8 +180,8 @@ Keluaran ke `bukti/`.
 | T-1 | Kontrak: D-14 5.1; D-04 7.2 dan KA-04; D-00 |
 | T-2 | Peladen: `16-segmen-dan-lisensi.sql`, `peran_pengindeks`, TK-86; M-1, M-2, M-3 |
 | T-3 | Lisensi dicatat: `Dokumen`, catatan, pemindahan, `terima --lisensi`; M-10 |
-| T-4 | Pemotongan D-07 Bagian 3.2; M-7, M-8, M-9 |
-| T-5 | Penulis indeks dan pengindeksan; `PENGINDEKSAN`; M-4, M-5, M-6 |
+| T-4 | Pemotongan D-07 Bagian 3.2; M-7, M-8 |
+| T-5 | Penulis indeks dan pengindeksan; `PENGINDEKSAN`; M-4, M-5, M-6, M-9 (pindah dari T-4, KB-271) |
 | T-6 | Perkakas `indeks`; pembaca sumber menampilkan teks; M-11 |
 | T-7 | Bukti, penutupan: L8, HKI, L4; status menunggu Gerbang 4 |
 
