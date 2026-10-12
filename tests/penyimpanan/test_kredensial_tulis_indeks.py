@@ -19,9 +19,15 @@ from pydantic import ValidationError
 from src.kamus.segmen import IndeksTujuan
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial import Kredensial
-from src.penyimpanan.kredensial_baku import PEMANGGIL_LLM, PENJAWABAN, PENYEMATAN, VERIFIKASI
+from src.penyimpanan.kredensial_baku import (
+    PEMANGGIL_LLM,
+    PENGINDEKSAN,
+    PENJAWABAN,
+    PENYEMATAN,
+    VERIFIKASI,
+)
 
-SELURUH_BAKU = (PENJAWABAN, VERIFIKASI, PEMANGGIL_LLM, PENYEMATAN)
+SELURUH_BAKU = (PENJAWABAN, VERIFIKASI, PEMANGGIL_LLM, PENYEMATAN, PENGINDEKSAN)
 
 
 # ── bidangnya wajib, bukan berbawaan ────────────────────────────────
@@ -116,12 +122,32 @@ def test_penyematan_tidak_menulis_ke_area_mana_pun() -> None:
     assert PENYEMATAN.tulis == frozenset()
 
 
-def test_tepat_satu_kredensial_baku_yang_boleh_menulis_indeks() -> None:
+def test_kredensial_baku_yang_boleh_menulis_indeks_persis() -> None:
     """Sifat seluruh daftar, bukan satu kredensial.
 
     Kredensial kelima yang ditambahkan kelak wajib memutuskan sendiri apakah
     ia boleh menulis indeks, dan uji ini yang memaksanya diputuskan alih-alih
-    diwarisi.
+    diwarisi. Kredensial kelima itu `PENGINDEKSAN` (fitur 038), dan
+    keputusannya P-2 A — bukan warisan.
     """
     boleh = [k.nama for k in SELURUH_BAKU if k.tulis_indeks]
-    assert boleh == [PENYEMATAN.nama], f"yang boleh menulis indeks: {boleh}"
+    assert boleh == [PENYEMATAN.nama, PENGINDEKSAN.nama], f"yang boleh menulis indeks: {boleh}"
+
+
+# ── kredensial kelima — fitur 038 ───────────────────────────────────
+
+
+def test_pengindeksan_membaca_korpus_dan_menulis_kedua_indeks() -> None:
+    """P-2 A: membaca teks dan metadata korpus, mengganti segmen kedua indeks —
+    penggantian menghapus dari keduanya, sehingga keduanya wajib."""
+    assert PENGINDEKSAN.baca == frozenset({Area.KORPUS})
+    assert PENGINDEKSAN.tulis_indeks == frozenset(IndeksTujuan)
+
+
+def test_pengindeksan_tanpa_karantina_tanpa_tulis_area_tanpa_baca_indeks() -> None:
+    """C-03: tidak menjangkau karantina. Tidak menulis dokumen pada area mana
+    pun, dan tidak membaca segmen — perannya hanya memegang pengenal segmen
+    untuk menghapusnya, bukan teksnya (TK-86, `16-segmen-dan-lisensi.sql`)."""
+    assert not PENGINDEKSAN.boleh_baca(Area.KARANTINA)
+    assert PENGINDEKSAN.tulis == frozenset()
+    assert PENGINDEKSAN.indeks == frozenset()

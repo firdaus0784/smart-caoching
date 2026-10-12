@@ -113,3 +113,30 @@ yang bercerita berbeda. Rumusan kalimat ini sebelum 25 September 2026
 menyatakan pemisahannya ditegakkan peladen padahal peran itu belum ada —
 dikoreksi pada KB-121, dan kini benar pada KB-122.
 """
+
+
+PENGINDEKSAN = Kredensial(
+    nama="pengindeks",
+    baca=frozenset({Area.KORPUS}),
+    tulis=frozenset(),
+    indeks=frozenset(),
+    tulis_indeks=frozenset({IndeksTujuan.UTAMA, IndeksTujuan.METADATA}),
+)
+"""Jalur pengindeksan korpus — fitur 038, P-2 A, TK-86.
+
+**Kredensial kelima.** Ia membaca teks dan metadata dokumen **korpus**, lalu
+mengganti segmen dokumen itu pada kedua indeks: penggantian menghapus dari
+keduanya, sehingga keduanya wajib meski segmen baru hanya masuk satu.
+Karantina tidak dijangkau sama sekali (C-03) — dokumen sampai ke indeks hanya
+sesudah melewati gerbang.
+
+`tulis` kosong, alasan yang sama dengan `PENYEMATAN`: ia menulis segmen pada
+indeks, bukan dokumen pada area. `indeks` kosong pula: ia tidak membaca teks
+segmen. Perannya hanya memegang pengenal segmen untuk menghapusnya, dan objek
+yang mengizinkan lebih daripada perannya adalah dua daftar yang bercerita
+berbeda.
+
+**Pasangannya di peladen: `peran_pengindeks`** (`16-segmen-dan-lisensi.sql`)
+— tanpa karantina, tanpa kolom vektor, tanpa mengubah segmen. Tidak masuk
+`SELURUH_KREDENSIAL`: daftar itu tiga jalur KD-10, sama dengan `PENYEMATAN`.
+"""

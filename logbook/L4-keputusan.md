@@ -3969,3 +3969,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memaksa pasal pendek mencapai 300 kata dengan menggabungnya — ditolak D-07 sendiri, dan oleh M-7. Mengenali butir bernomor dan subjudul sebagai batas — tidak dipilih pada tugas ini: polanya tidak seragam antardokumen, dan ayat sudah memberi batas di dalam pasal; butir tetap utuh di dalam ayatnya. |
 | Dampak | Belum dipanggil siapa pun; pengindeksan memakainya pada T-5. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-272 · T-5 fitur 038: pengindeksan; urutan penggantian
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | K-3 plan fitur 038 (P-2 A, P-4 A). Uji ditulis lebih dulu dan merah atas memori dan PostgreSQL sebagai `peran_pengindeks`: bahan hanya dari korpus; indeks tujuan menurut lisensi; ganti dari kedua indeks, bukan tambah; di luar korpus ditolak tanpa menulis; pratinjau tidak menulis; segmen utuh saat sambungan putus di titik mana pun. **Uji yang terakhir menemukan bahwa penggantian kunci yang sama ditolak peladen sebagai kembar**: PostgreSQL tidak menjamin urutan bagian `WITH` yang mengubah data, dan bagian yang tidak dibaca dijalankan sesudah kueri utama. Verifikasi KB-267 hanya mencoba indeks yang kosong, sehingga tidak menangkapnya; pernyataan contoh pada uji peladen T-2 berbentuk sama dan lolos karena alasan yang sama. |
+| Keputusan | Sisip membaca jumlah baris kedua penghapusan lewat syarat yang selalu benar, sehingga penghapusan selesai lebih dulu — tetap satu pernyataan. Uji peladen T-2 diselaraskan dengan bentuk itu dan kini mengganti kunci yang sama dua kali; uraian K-3 pada `plan.md` diberi catatan. `PENGINDEKSAN` (nama `pengindeks`, pasangan `peran_pengindeks`): baca korpus, tulis kedua indeks, tanpa karantina, tanpa tulis area, tanpa baca indeks; di luar `SELURUH_KREDENSIAL` seperti `PENYEMATAN`. Uji fitur 026 yang menyatakan tepat satu kredensial menulis indeks kini menyatakan dua, sesuai P-2 A. `src/penyimpanan/pengindeks.py`: `bahan` dan `ganti`, memori dan PostgreSQL; penolakan tulis indeks berupa `PermissionError` seperti penyematan. `src/ingest/pengindeksan.py`: `indekskan(penulis, kredensial, id, *, tulis)` — kredensial ditambahkan pada tanda tangan plan, sebab setiap akses penyimpanan menuntutnya; pengenal `<id>:<4 digit>`; ringkasan tanpa teks. Mutasi M-4, M-5, M-6, M-9 merah; mutasi tambahan — syarat urutan dibuang — merah pada tiga uji. |
+| Alternatif | Dua pernyataan dalam satu transaksi — tidak tersedia: `SambunganAktif` tanpa transaksi, dan ia pola yang sama yang M-5 tolak. `ON CONFLICT DO UPDATE` — menuntut hak ubah yang sengaja tidak dipegang pengindeks (KB-269). |
+| Dampak | Belum dipanggil perkakas; T-6. **Pengamatan, tidak diubah:** daftar putih lisensi fitur 006 membaca awalan `cc-by`, sehingga `CC-BY-NC-ND` terbaca terbuka. Tidak ada dokumen yang mengatur varian NC dan ND; diajukan kepada pemegang Gerbang, bukan diputus agen. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

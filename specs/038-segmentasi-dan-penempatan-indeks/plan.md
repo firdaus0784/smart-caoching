@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 11 Oktober 2026 (KB-266); P-1 s.d. P-4 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-86 A (KB-266): hak tulis indeks `peran_verifikasi` dicabut |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Empat dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Lima dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08 `spec.md`; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 ## 1. Letak dan batas
@@ -91,7 +91,9 @@ dokumen itu. Tanpa `tulis` ia pratinjau: penanda dan jumlah kata, tanpa teks.
 - `ganti(kredensial, id, segmen)`: **satu pernyataan** — hapus segmen dokumen
   itu dari kedua indeks, sisipkan yang baru ke indeks tujuannya — hanya bila
   dokumennya di korpus (R-04, R-05). Penghapusan dan penyisipan kunci yang
-  sama dalam satu pernyataan diverifikasi pada peladen sebelum plan ini.
+  sama dalam satu pernyataan diverifikasi pada peladen sebelum plan ini. Verifikasi
+  itu tidak mencakup urutan bagian `WITH`; sisip kini menunggu penghapusan
+  selesai (KB-272).
 
 Kredensial `PENGINDEKSAN` baru pada `kredensial_baku.py`: membaca korpus,
 menulis kedua indeks, tanpa karantina.

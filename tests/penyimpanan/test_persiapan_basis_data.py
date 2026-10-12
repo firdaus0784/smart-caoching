@@ -2849,20 +2849,22 @@ _DOK_038 = "dok-038"
 
 def _ganti_segmen_sql(id_dokumen: str = _DOK_038, indeks: str = "indeks_utama") -> str:
     """Bentuk pernyataan `ganti` T-5: hapus dari kedua indeks, sisipkan ke
-    indeks tujuan, hanya bila dokumennya di korpus."""
+    indeks tujuan sesudah penghapusan selesai, hanya bila dokumennya di korpus
+    (KB-272)."""
     return (
         f"with ada as (select 1 from korpus.dokumen_sumber where id = '{id_dokumen}'), "
         "hapus_utama as (delete from indeks_utama.segmen_teks "
-        f"  where id_dokumen = '{id_dokumen}' and exists (select 1 from ada)), "
+        f"  where id_dokumen = '{id_dokumen}' and exists (select 1 from ada) returning id_segmen), "
         "hapus_metadata as (delete from indeks_metadata.segmen_teks "
-        f"  where id_dokumen = '{id_dokumen}' and exists (select 1 from ada)) "
+        f"  where id_dokumen = '{id_dokumen}' and exists (select 1 from ada) returning id_segmen) "
         f"insert into {indeks}.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
         "anonimisasi_terverifikasi, penanda_bagian) "
         f"select s.id, '{id_dokumen}', s.teks, 'terbuka', true, s.penanda "
         f"from unnest(array['{id_dokumen}:0001', '{id_dokumen}:0002'], "
         "array['Kepala sekolah menyusun rencana.', 'Rencana ditetapkan bersama.'], "
         "array['Pasal 1', 'Pasal 2']) as s(id, teks, penanda) "
-        "where exists (select 1 from ada)"
+        "where exists (select 1 from ada) and (select count(*) from hapus_utama) "
+        "+ (select count(*) from hapus_metadata) >= 0"
     )
 
 
@@ -3008,6 +3010,7 @@ def test_peran_pengindeks_berjalan_pada_haknya(basis_data_siap: None) -> None:
         f"select isi from korpus.dokumen_sumber where id = '{_DOK_038}'",
         f"select lisensi from korpus.metadata_dokumen where id_dokumen = '{_DOK_038}' "
         "order by nomor desc limit 1",
+        _ganti_segmen_sql(),
         _ganti_segmen_sql(),
         _ganti_segmen_sql(indeks="indeks_metadata"),
         _ganti_segmen_sql(id_dokumen="dok-038-tak-ada"),
