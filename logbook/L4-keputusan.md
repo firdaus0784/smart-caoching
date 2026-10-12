@@ -3925,3 +3925,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Tumpang tindih pada setiap batas — tidak dipilih: pembaca sumber akan menampilkan teks ganda, dan menghapusnya menuntut perubahan fitur 032. Menyimpan peringkat pada segmen — ditolak P-4 A. |
 | Dampak | `plan.md` dan `tasks.md` fitur 038 terbit. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-268 · T-1 fitur 038: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | K-6 plan fitur 038: lisensi, bidang turunan segmen, dan penulis segmen ditulis ke kontrak sebelum kodenya (R-08). Tidak ada enum baru, sehingga tidak ada uji kamus baru pada tugas ini. |
+| Keputusan | D-14 0.20 Bagian 5.1: `lisensi` pada penerimaan dan catatan metadata korpus; `dokumen_sumber.lisensi` dicatat saat menerima; peringkat kepercayaan dan indeks tujuan segmen dinyatakan bidang turunan; aturan pengenal segmen dan penulisnya. D-04 0.16 Bagian 7.2 dan KA-04: `peran_pengindeks`, TK-86. |
+| Alternatif | — |
+| Dampak | D-00 3.13. Tanpa rute; bentuk `/tanya` tidak berubah. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

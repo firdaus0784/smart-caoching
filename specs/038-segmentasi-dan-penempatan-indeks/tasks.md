@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 11 Oktober 2026 (KB-266); TK-86 A (KB-266) |
 | Plan | Gerbang 2 lolos 12 Oktober 2026 atas pendelegasian KB-168 (KB-267); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Nol dari tujuh tugas selesai |
+| Status | **Gerbang 3 lolos** — 12 Oktober 2026 atas pendelegasian KB-168 (KB-267). Satu dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -19,11 +19,11 @@ baru (C-12, C-20). Ukuran segmen milik D-07 (C-16).
 
 **Kebutuhan:** R-02, R-03, R-08; K-6; P-3 A, P-4 A.
 
-- [ ] D-14 Bagian 5.1: lisensi pada penerimaan dan metadata korpus;
+- [x] D-14 Bagian 5.1: lisensi pada penerimaan dan metadata korpus;
       `dokumen_sumber.lisensi`; peringkat dan indeks tujuan segmen sebagai
       bidang turunan; aturan `id_segmen`
-- [ ] D-04 Bagian 7.2 dan KA-04: `peran_pengindeks`, TK-86
-- [ ] Register D-00
+- [x] D-04 Bagian 7.2 dan KA-04: `peran_pengindeks`, TK-86
+- [x] Register D-00
 
 ## T-2 · Peladen
 
