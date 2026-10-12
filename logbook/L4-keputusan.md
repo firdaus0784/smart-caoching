@@ -3914,3 +3914,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | P-1 B tanda manual atau C dengan persetujuan; P-2 B di dalam persetujuan atau C tanpa mencabut; P-3 B saat indeks; P-4 B disimpan pada segmen — tidak dipilih. |
 | Dampak | Status spec fitur 038; D-00 3.12 (TK-86 diputus, tetap terbuka sampai fitur 038 selesai); D-12 0.44 (baris 038 menyebut lisensi dan TK-86; cakupan bertambah atas putusan). Plan menyusul atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-267 · Plan dan tasks fitur 038 — Gerbang 2 dan 3 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-12 |
+| Konteks | Gerbang 1 fitur 038 lolos (KB-266). Gerbang 2 dan 3 didelegasikan KB-168. Sebelum menulis plan, penggantian segmen dalam satu pernyataan — hapus lalu sisip kunci yang sama — diverifikasi pada peladen, sebab pengindeksan ulang yang atomik bergantung padanya. |
+| Keputusan | **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-6, tujuh tugas, sebelas mutasi. Tiga tafsiran D-07 Bagian 3.2 yang perlu terlihat pada Gerbang 4: (1) **500 kata dibaca sebagai batas atas** satu segmen, 300 sebagai sasaran bawah yang tidak dipaksakan pada pasal pendek; (2) **tumpang tindih hanya diberikan saat teks tanpa batas alami dipecah** — pemecahan di batas ayat tidak memotong ketentuan, sehingga tumpang tindih tidak menambah apa pun selain teks ganda pada pembaca sumber; (3) **tumpang tindih 60 kata**, titik di dalam rentang 50–80 D-07, bukan angka baru. Jendela berpenanda sendiri (`…, potongan i dari n`) agar pembaca sumber fitur 032 tidak berubah. |
+| Alternatif | Tumpang tindih pada setiap batas — tidak dipilih: pembaca sumber akan menampilkan teks ganda, dan menghapusnya menuntut perubahan fitur 032. Menyimpan peringkat pada segmen — ditolak P-4 A. |
+| Dampak | `plan.md` dan `tasks.md` fitur 038 terbit. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
