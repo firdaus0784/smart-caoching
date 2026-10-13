@@ -4322,3 +4322,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-1 dan P-3 menentukan apa yang dibaca model dan apa yang ditolak saat menerima. |
 | Dampak | `specs/041-identitas-regulasi-pengambilan/spec.md`; D-00 3.25. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-304 · Gerbang 1 fitur 041 lolos; TK-88 diputus
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Usulan KB-303: lima pertanyaan. P-1 ditanyakan tersendiri dengan empat pilihan; P-2 dan P-3 bersama; P-4 dan P-5 bersama; masing-masing dengan pilihan yang tidak dianjurkan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada kelimanya. **P-1 A**: identitas dokumen ikut teks pencarian leksikal, tidak disimpan pada segmen. **P-2 A**: identitas dari judul catatan metadata korpus. **P-3 A**: judul `regulasi_resmi` wajib memuat `Nomor … Tahun …`, ditegakkan saat menerima, pola pada D-06. **P-4 A**: sisi leksikal saja. **P-5 A**: seluruh dokumen kedua indeks. TK-88 diputus; fitur 039 (`bangun_muatan`) dan gerbang ingesti (`terima`) berubah atas putusan ini. |
+| Alternatif | P-1 B, C, D; P-2 B, C; P-3 B; P-4 B; P-5 B — tidak dipilih. |
+| Dampak | `spec.md` fitur 041; D-00 3.26; D-12 0.49. Gerbang 2 dan 3 atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |

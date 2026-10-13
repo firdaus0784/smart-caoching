@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | TK-88; FR-F02, FR-F11; ADR-03; D-08 Bagian 6; C-02, C-16, C-18, C-20 |
 | Dokumen terkait | D-07 Bagian 3.2, 3.3, 4.3, 4.4, 7 · D-08 Bagian 5.3, 6 · D-04 ADR-03 · D-06 · spec fitur 026, 032, 038, 039, 040 |
-| Status | **Diajukan ke Gerbang 1** — 13 Oktober 2026 (KB-303) |
+| Status | **Gerbang 1 lolos** — 13 Oktober 2026 (KB-304) |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -113,6 +113,18 @@ ditinjau bersama ADR-12.
 dua. Pembatasan pada regulasi membiarkan masalah yang sama pada panduan
 bernomor, seperti petunjuk teknis.
 
+## Putusan Gerbang 1 (KB-304)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — identitas dokumen ikut teks pencarian leksikal, tidak disimpan pada segmen; yang dibaca model, kurator, dan pengguna tidak berubah |
+| P-2 | **A** — identitas diambil dari judul pada catatan metadata korpus |
+| P-3 | **A** — judul `regulasi_resmi` wajib memuat pola `Nomor … Tahun …`, ditegakkan saat menerima; polanya pada D-06; dokumen yang sudah di korpus tidak tersentuh |
+| P-4 | **A** — sisi leksikal saja; penyematan fitur 026 tidak berubah |
+| P-5 | **A** — seluruh dokumen kedua indeks |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -126,7 +138,7 @@ bernomor, seperti petunjuk teknis.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-5 diputus pada Gerbang 1
+- [x] P-1 s.d. P-5 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Bukti sebelum dan sesudah atas PostgreSQL sebagai peran sungguhan,
       dengan *gold set* rekaan beku yang sama dan dinyatakan rekaan
