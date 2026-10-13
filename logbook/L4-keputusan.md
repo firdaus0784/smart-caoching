@@ -4388,3 +4388,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengukur sebelum lebih dulu dari pohon kerja lalu sesudah setelah kode — tidak dipilih: peladen bersama berubah di antara dua pengukuran. |
 | Dampak | `specs/041-identitas-regulasi-pengambilan/bukti/`; L8; dokumen HKI Bagian 4 dan 8; D-00 3.28 (TK-88 terbangun); status spec, plan, tasks menunggu Gerbang 4. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-310 · Gerbang 4 fitur 041 lolos; TK-88 selesai
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Penutupan KB-309: empat dari empat tugas, `make check` lulus enam gerbang, mutasi tujuh dari tujuh merah, bukti sebelum dan sesudah 0/100 lalu 100/100 atas data rekaan. Tiga tafsiran diajukan untuk dinilai: judul ditulis sekali tanpa bobot; `No. 6/2021` ditolak; isi `versi_indeks` pada `/tanya` berubah sementara bidangnya tetap untai. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Lolos"** bagi Gerbang 4 fitur 041. TK-88 selesai. |
+| Alternatif | Belum lolos — tidak dipilih. |
+| Dampak | Status spec, plan, tasks fitur 041; D-00 3.29; dokumen HKI Bagian 4 dan 8. Fitur lolos Gerbang 4: 36 dari 42. |
+| Pemutus | Pemegang Gerbang 1–4 |

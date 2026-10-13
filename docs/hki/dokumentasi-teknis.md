@@ -98,7 +98,7 @@ Sumber: D-07 Bagian 4. Sepuluh tahap; keadaan tiap tahap:
 | 1 | Pemeriksaan cakupan domain | **Terbangun** | Pertanyaan di luar domain ditolak sebelum pengambilan (fitur 009) |
 | 2 | Pencocokan jawaban terkurasi | **Dirancang** | Tidak ditemukan pada jalur penjawaban; isinya pekerjaan kurator |
 | 3 | Klasifikasi K1–K8 dan ekstraksi entitas | **Dirancang** | Menuntut model fitur 017 |
-| 4 | Pengambilan hibrida BM25 + vektor | **Sebagian** | Kedua sumber terbangun dan diuji atas PostgreSQL; **bobot model penyemat sungguhan belum dipasang** — sisi vektor berjalan dengan penyemat tiruan. Sisi leksikal mencari judul dokumen bersama setiap segmen, sehingga pasal ditemukan dengan menyebut nomor dan tahun regulasinya; judul regulasi resmi wajib bernomor dan bertahun saat diterima (fitur 041, menunggu Gerbang 4) |
+| 4 | Pengambilan hibrida BM25 + vektor | **Sebagian** | Kedua sumber terbangun dan diuji atas PostgreSQL; **bobot model penyemat sungguhan belum dipasang** — sisi vektor berjalan dengan penyemat tiruan. Sisi leksikal mencari judul dokumen bersama setiap segmen, sehingga pasal ditemukan dengan menyebut nomor dan tahun regulasinya; judul regulasi resmi wajib bernomor dan bertahun saat diterima (fitur 041, lolos Gerbang 4 pada 13 Oktober 2026) |
 | 5 | Penggabungan dan pemeringkatan ulang | **Terbangun** | *Reciprocal Rank Fusion*; tanpa model pemeringkat ulang, jalur mundur BT-30 **menyatakan dirinya** pada keluaran |
 | 6 | Pemeriksaan keberlakuan regulasi | **Terbangun** | Regulasi berstatus dicabut tidak dipakai (C-07) |
 | 7 | Penilaian kecukupan bukti | **Sebagian** | Logikanya terbangun; **ambangnya belum dikalibrasi** dan sengaja tidak diisi (C-16, fitur 025) |
@@ -193,7 +193,7 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
 | Jumlah uji otomatis | 3.765 pada backend dan perkakas; 337 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 35 dari 42 (fitur 041 menunggu Gerbang 4) |
+| Fitur lolos Gerbang 4 | 36 dari 42 |
 | Pengujian pengambilan U3 (D-08 Bagian 6) | Alat terbangun: bentuk *gold set*, pemeriksaan kunci terhadap korpus, pembekuan bersidik ke logbook, dan pengukuran yang mencatat setiap putaran (fitur 040, lolos Gerbang 4 pada 13 Oktober 2026). **Belum ada angka U3**: *gold set* belum disusun (BT-35), dan putaran satu sumber leksikal tidak menyatakan U3 lulus |
 | Anggaran muat aplikasi web | 91.845 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
