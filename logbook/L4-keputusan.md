@@ -4267,3 +4267,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Meminta putusan pemegang gerbang atas perubahan fitur 026 — tidak dipilih: perubahannya tidak diperlukan untuk memenuhi R-03 dan R-06. |
 | Dampak | `src/rag/evaluasi/jejak.py`; `tests/rag/evaluasi/test_jejak.py`; `plan.md` dan `tasks.md` fitur 040. |
 | Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2) |
+
+## KB-299 · T-7 fitur 040: perkakas evaluasi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-7. |
+| Keputusan | `perkakas/evaluasi.py` dengan `periksa`, `bekukan`, `ukur`. Berkas yang terurai ke dalam pohon kerja repositori — termasuk lewat tautan simbolik — ditolak sebelum dibaca (R-01). Korpus dibaca dengan `PERAN_INDEKS` fitur 039; muatan dirakit `bangun_muatan`; sumbernya `SumberBM25` atas indeks leksikal utama; pengenal indeks metadata menjadi dasar kebocoran. `ukur` menolak berkas yang belum beku, id percobaan yang salah bentuk atau sudah tercatat **sebelum menyambung** dan tanpa baris L1; sesudah itu setiap putaran tercatat, termasuk yang ditolak peladen (`versi_indeks` `tidak-terbaca`) dan yang bocor (kode 3). `versi_kode` dari `git`, berakhiran `+ubahan` bila pohon kerja di luar `logbook/` berubah. Laporan menyatakan konfigurasi, putusan, angka beserta hitungannya, per kelas, kebocoran, dan pertanyaan gagal dengan pengenal saja. Uji atas PostgreSQL sebagai peran sungguhan dengan logbook dan repositori tiruan di `tmp_path`; uji kebocoran menanam salinan segmen pada indeks metadata lalu menghapusnya. Uji ditulis lebih dulu dan merah. Mutasi M-1, M-2, M-10, M-11, M-12 merah. |
+| Alternatif | Akar logbook sebagai argumen baris perintah — tidak dipilih: pembekuan dapat diarahkan ke logbook lain lalu diukur seolah beku. |
+| Dampak | `perkakas/evaluasi.py`; `tests/perkakas/test_evaluasi_perkakas.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

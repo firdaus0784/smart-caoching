@@ -83,12 +83,12 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-01 s.d. R-08; K-7.
 
-- [ ] Uji lebih dulu atas PostgreSQL sebagai peran sungguhan: `periksa`,
+- [x] Uji lebih dulu atas PostgreSQL sebagai peran sungguhan: `periksa`,
       `bekukan`, `ukur`; komposisi menyimpang ditolak; belum beku ditolak tanpa
       baris L1; ditolak peladen tercatat gagal; kebocoran berkode 3; keluaran
       dan L1 tanpa teks; berkas di dalam repositori ditolak
-- [ ] `perkakas/evaluasi.py`
-- [ ] Mutasi M-1, M-2, M-10, M-11, M-12
+- [x] `perkakas/evaluasi.py`
+- [x] Mutasi M-1, M-2, M-10, M-11, M-12
 
 ## T-8 · Bukti, penutupan
 
