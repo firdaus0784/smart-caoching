@@ -293,7 +293,7 @@ def test_sumber_layak_membatasi_kandidat_tanpa_mengubah_identitasnya() -> None:
 def test_versi_indeks_menyebut_kedua_sidik() -> None:
     """R-06, RT-05: bacaan lanjutan berasal dari indeks metadata, sehingga
     versinya ikut."""
-    assert _muatan([], []).versi_indeks == "utama:sidik-u;metadata:sidik-m"
+    assert _muatan([], []).versi_indeks.startswith("utama:sidik-u;metadata:sidik-m;")
 
 
 # ── PenjawabKorpus atas PostgreSQL ───────────────────────────────────

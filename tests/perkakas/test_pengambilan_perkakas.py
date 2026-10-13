@@ -14,6 +14,7 @@ import secrets
 
 import pytest
 from src.kamus.segmen import IndeksTujuan
+from src.rag.pengambilan.teks_pencarian import ATURAN_PENCARIAN
 from tests.api.test_penjawab_korpus import _kata_unik, _tanam
 from tests.penyimpanan.test_akun import SambunganPeran
 
@@ -55,6 +56,7 @@ def test_cari_indeks_utama_tanpa_teks_dengan_perannya(caplog: pytest.LogCaptureF
     assert kode == 0, galat
     assert j.peran == ["peran_pemanggil_llm"]
     assert "Indeks utama" in keluar and "versi utama:" in keluar
+    assert f";{ATURAN_PENCARIAN}." in keluar, "R-04 fitur 041: versi memuat penanda aturan"
     baris = [b for b in keluar.splitlines() if awal in b and b[:1].isdigit()]
     assert len(baris) == 1 and layak.split(":")[0] in baris[0]
     assert "Pasal 1" in baris[0] and "Peraturan Contoh A" in baris[0] and "skor" in baris[0]

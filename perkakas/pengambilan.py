@@ -72,7 +72,7 @@ async def _cari(
     )
     baris = {b.id_segmen: b for b in potret.baris}
     tak_layak = muatan.tak_layak[indeks]
-    print(f"Indeks {indeks.value}, versi {indeks.value}:{potret.sidik}.", file=keluar)
+    print(f"Indeks {indeks.value}, versi {muatan.indeks_leksikal[indeks].versi}.", file=keluar)
     rincian = ", ".join(
         f"{a.value} {n}" for a, n in sorted(tak_layak.items(), key=lambda x: x[0].value)
     )

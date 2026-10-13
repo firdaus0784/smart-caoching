@@ -28,13 +28,13 @@ baru (R-06). Tanpa bobot, faktor pengali, maupun ambang (R-03, C-16).
 
 **Kebutuhan:** R-01, R-03, R-04, R-05; K-1, K-2; P-1 A, P-2 A, P-4 A, P-5 A.
 
-- [ ] Uji lebih dulu: aturan dibaca dari D-07; pasal regulasi berjudul serupa
+- [x] Uji lebih dulu: aturan dibaca dari D-07; pasal regulasi berjudul serupa
       terbedakan oleh judulnya, dengan uji pembanding tanpa judul; teks
       bahan, sitasi, dan `layak_utama` tidak berubah; indeks metadata; versi
       memuat penanda; uji fitur 039 yang menyatakan bentuk versi disesuaikan
-- [ ] `src/rag/pengambilan/teks_pencarian.py`, `src/api/penjawab_korpus.py`,
+- [x] `src/rag/pengambilan/teks_pencarian.py`, `src/api/penjawab_korpus.py`,
       `perkakas/pengambilan.py`
-- [ ] Mutasi M-1, M-2, M-3, M-4
+- [x] Mutasi M-1, M-2, M-3, M-4
 
 ## T-3 · Judul regulasi
 

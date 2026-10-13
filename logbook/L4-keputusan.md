@@ -4355,3 +4355,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Contoh judul memakai nama regulasi sungguhan — tidak dipilih: kebenaran nomor dan judulnya bukan wewenang agen memeriksa. |
 | Dampak | D-07 0.4; D-06 0.6; D-00 3.27. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-307 · T-2 fitur 041: teks pencarian dan versi
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 041 K-1 dan K-2; D-07 Bagian 3.3 (KB-306). Perubahan atas fitur 039 berdasar putusan Gerbang 1 KB-304. |
+| Keputusan | `src/rag/pengambilan/teks_pencarian.py`: `teks_pencarian(judul, teks)` dan `ATURAN_PENCARIAN = "pencarian:judul-1"`, dicocokkan uji dengan D-07. `bangun_muatan` membentuk `SegmenTerindeks` bagi indeks leksikal dari teks pencarian, pada kedua indeks, sedangkan `BahanSegmen`, sitasi, bacaan lanjutan, dan `layak_utama` tetap dari baris. Versi indeks leksikal dan `Muatan.versi_indeks` berakhiran penanda aturan; perkakas pencarian mencetak versi indeks leksikal. Uji membuktikan pasal regulasi Nomor 12 menjadi pasal teratas di antara sepuluh regulasi berjudul serupa berisi sama, dengan **uji pembanding** yang membuktikan tanpa judul kesepuluh pasal berskor sama dan urutannya ditentukan pengenal. Satu uji fitur 039 yang menyatakan bentuk versi persis disesuaikan atas putusan KB-304. Uji ditulis lebih dulu dan merah. Mutasi M-1 s.d. M-4 merah. |
+| Alternatif | Mengubah `bangun_indeks` fitur 007 agar menerima judul — tidak dipilih: kontrak sumber kandidat tidak mengenal catatan metadata. |
+| Dampak | `src/rag/pengambilan/teks_pencarian.py`, `src/api/penjawab_korpus.py`, `perkakas/pengambilan.py`; uji baru dan dua uji fitur 039 disesuaikan. |
+| Pemutus | Agen atas pendelegasian KB-168 |

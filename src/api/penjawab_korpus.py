@@ -73,6 +73,7 @@ from src.rag.pengambilan.bm25 import IndeksLeksikal, SumberBM25, bangun_indeks
 from src.rag.pengambilan.kandidat import HasilSumber, SumberKandidat
 from src.rag.pengambilan.kecukupan import AmbangKecukupan, PenilaianKecukupan
 from src.rag.pengambilan.peringkat_ulang import Pemeringkat
+from src.rag.pengambilan.teks_pencarian import ATURAN_PENCARIAN, teks_pencarian
 from src.rag.pengambilan.tetapan import (
     JUMLAH_KANDIDAT_PER_SUMBER,
     JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM,
@@ -163,14 +164,16 @@ class Muatan:
 
     @property
     def versi_indeks(self) -> str:
-        return f"utama:{self.sidik_utama};metadata:{self.sidik_metadata}"
+        return f"utama:{self.sidik_utama};metadata:{self.sidik_metadata};{ATURAN_PENCARIAN}"
 
 
-def _segmen(baris: BarisKorpus, indeks: IndeksTujuan) -> SegmenTerindeks:
+def _segmen(baris: BarisKorpus, indeks: IndeksTujuan, *, judul: str) -> SegmenTerindeks:
+    """Segmen bagi indeks leksikal saja: teksnya teks pencarian (fitur 041,
+    TK-88). Bahan bagi model dibentuk terpisah dari `baris.teks`."""
     return SegmenTerindeks(
         id_segmen=baris.id_segmen,
         id_dokumen=baris.id_dokumen,
-        teks=baris.teks,
+        teks=teks_pencarian(judul, baris.teks),
         lisensi=StatusLisensi(baris.lisensi_segmen),
         indeks_tujuan=indeks,
         anonimisasi_terverifikasi=baris.anonimisasi_terverifikasi,
@@ -196,9 +199,9 @@ def bangun_muatan(utama: MuatanKorpus, metadata: MuatanKorpus) -> Muatan:
                 if alasan is AlasanTakLayak.LISENSI_TERTUTUP:
                     perlu_ulang.add(baris.id_dokumen)
                 continue
-            layak[indeks].append(_segmen(baris, indeks))
             # Baris layak selalu bercatatan metadata — alasan pertama di atas.
             m = cast(MetadataDokumen, baris.metadata)
+            layak[indeks].append(_segmen(baris, indeks, judul=m.judul))
             if indeks is METADATA:
                 if m.tautan is not None:
                     bacaan[baris.id_segmen] = (
@@ -238,7 +241,7 @@ def bangun_muatan(utama: MuatanKorpus, metadata: MuatanKorpus) -> Muatan:
             {
                 indeks: bangun_indeks(
                     layak[indeks],
-                    versi=f"{indeks.value}:{potret.sidik}",
+                    versi=f"{indeks.value}:{potret.sidik};{ATURAN_PENCARIAN}",
                     indeks_tujuan=indeks,
                 )
                 for indeks, potret in ((UTAMA, utama), (METADATA, metadata))
