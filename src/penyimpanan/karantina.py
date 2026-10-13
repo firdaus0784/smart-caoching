@@ -73,6 +73,8 @@ class CatatanPenerimaan:
     id_penerima: str
     lisensi: str | None = None
     """Keterangan lisensi dari metadata sumber — fitur 038, P-3 A."""
+    tautan: str | None = None
+    """Tautan ke halaman sumber asli — fitur 039, P-5 A."""
 
 
 @dataclass(frozen=True)
@@ -344,8 +346,8 @@ WITH ganti AS (
   SELECT id FROM ganti UNION ALL SELECT id FROM baru
 ), terima AS (
   INSERT INTO karantina.penerimaan (id_dokumen, judul, jenis, penerbit, tahun,
-    tingkat_kerahasiaan, status_persetujuan_pemilik, samaran, id_penerima, lisensi)
-  SELECT id, $3, $4, $5, $6, $7, $8, $9, $10, $15 FROM tulis
+    tingkat_kerahasiaan, status_persetujuan_pemilik, samaran, id_penerima, lisensi, tautan)
+  SELECT id, $3, $4, $5, $6, $7, $8, $9, $10, $15, $16 FROM tulis
   RETURNING nomor
 ), temuan AS (
   INSERT INTO karantina.temuan_pola (nomor_penerimaan, pola, mulai, akhir, kutipan)
@@ -365,6 +367,7 @@ WITH p AS (
 )
 SELECT p.id_dokumen, p.judul, p.jenis, p.penerbit, p.tahun, p.tingkat_kerahasiaan,
   p.status_persetujuan_pemilik, p.samaran::text AS samaran, p.id_penerima, p.lisensi,
+  p.tautan,
   EXISTS (SELECT 1 FROM korpus.dokumen_sumber WHERE id = $1) AS di_korpus,
   (SELECT coalesce(json_agg(json_build_object('pola', t.pola, 'mulai', t.mulai,
      'akhir', t.akhir, 'kutipan', t.kutipan) ORDER BY t.nomor), '[]'::json)::text
@@ -465,6 +468,7 @@ class CatatanGerbangPostgres(CatatanGerbang):
             [t.akhir for t in temuan],
             [t.kutipan for t in temuan],
             p.lisensi,
+            p.tautan,
         )
         if baris is None:
             raise GalatDokumenDiKorpus(p.id_dokumen)
@@ -486,6 +490,7 @@ class CatatanGerbangPostgres(CatatanGerbang):
                 samaran=cast(dict[str, int], json.loads(str(b["samaran"]))),
                 id_penerima=str(b["id_penerima"]),
                 lisensi=None if b["lisensi"] is None else str(b["lisensi"]),
+                tautan=None if b["tautan"] is None else str(b["tautan"]),
             ),
             area=Area.KORPUS if b["di_korpus"] else Area.KARANTINA,
             temuan=tuple(

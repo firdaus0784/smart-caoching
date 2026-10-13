@@ -214,8 +214,58 @@ def test_lisensi_dokumen_sampai_ke_metadata_korpus(susun: Penyusun) -> None:
         assert hasil.stdout.strip() == "CC BY 4.0"
 
 
+def _bidang_dokumen() -> dict[str, object]:
+    """Bidang `Dokumen` yang dapat divalidasi ulang. `peringkat` diturunkan,
+    bukan masukan: menyertakannya membuat validasi gagal karena bidang asing,
+    dan uji penolakan lulus karena alasan yang salah — keadaan uji lisensi
+    hampa fitur 038 sampai T-4 fitur 039 menemukannya."""
+    return _dokumen("x").model_dump(exclude={"peringkat"})
+
+
 def test_lisensi_hampa_ditolak_dokumen() -> None:
     from pydantic import ValidationError
 
-    with pytest.raises(ValidationError):
-        _dokumen(_id()).model_validate({**_dokumen("x").model_dump(), "lisensi": "  "})
+    with pytest.raises(ValidationError, match="lisensi hampa"):
+        _dokumen(_id()).model_validate({**_bidang_dokumen(), "lisensi": "  "})
+
+
+def test_tautan_dokumen_sampai_ke_metadata_korpus(susun: Penyusun) -> None:
+    """P-5 A fitur 039, KL-04: tautan sumber asli dari pengunggah sampai ke
+    catatan metadata korpus lewat gerbang, dan terbaca kembali pada `Dokumen`."""
+    pembuat = susun
+    d = _id()
+    tautan = "https://jdih.contoh.go.id/peraturan/3"
+    dokumen = _dokumen(d).model_copy(update={"tautan": tautan})
+    jalankan(pembuat(PERAN_INGESTI).terima(dokumen, "Versi satu.", id_penerima="tm-001"))
+    verifikator = pembuat(PERAN_VERIFIKASI)
+    assert jalankan(verifikator.dokumen(VERIFIKASI, d)).tautan == tautan
+    jalankan(verifikator.setujui(VERIFIKASI, d, id_verifikator="tm-002", alasan="terperiksa"))
+    if isinstance(verifikator.penyimpan, PenyimpanTiruan):
+        assert verifikator.penyimpan.metadata_tercatat(d)[0].tautan == tautan
+    else:
+        hasil = psql(
+            "smart_coaching",
+            "-c",
+            f"select tautan from korpus.metadata_dokumen where id_dokumen = '{d}'",
+        )
+        assert hasil.stdout.strip() == tautan
+
+
+@pytest.mark.parametrize(
+    "tautan", ["  ", "ftp://contoh.go.id/x", "jdih.contoh.go.id", "https://contoh go.id"]
+)
+def test_tautan_tidak_sah_ditolak_dokumen(tautan: str) -> None:
+    """Hanya `http` atau `https`, tanpa spasi — sama dengan batasan peladen,
+    sehingga yang ditolak tidak sempat sampai ke sana."""
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError, match="tautan sumber"):
+        _dokumen(_id()).model_validate({**_bidang_dokumen(), "tautan": tautan})
+
+
+@pytest.mark.parametrize("tautan", [None, "https://jdih.contoh.go.id/p/1", "http://contoh.id"])
+def test_tautan_sah_atau_kosong_diterima_dokumen(tautan: str | None) -> None:
+    """Pasangan uji penolakan di atas: tanpa ini, penolakan dapat lulus karena
+    bidangnya sendiri tidak dikenal."""
+    dokumen = _dokumen(_id()).model_validate({**_bidang_dokumen(), "tautan": tautan})
+    assert dokumen.tautan == tautan

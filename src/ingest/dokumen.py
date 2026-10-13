@@ -29,12 +29,16 @@ pemilik dokumen tidak pantas dapat kurang.
 
 from __future__ import annotations
 
+import re
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 from src.ingest.peringkat import JenisSumber, peringkat_bagi
 from src.kamus.segmen import Peringkat
+
+_POLA_TAUTAN = re.compile(r"https?://\S+")
+"""Bentuk tautan sumber asli — padanan batasan `17-tautan-sumber.sql`."""
 
 TAHUN_PALING_AWAL = 1945
 
@@ -102,11 +106,26 @@ class Dokumen(BaseModel):
     (D-06 KL-01). Keterangan hampa ditolak — ia terbaca seperti keterangan.
     """
 
+    tautan: str | None = None
+    """Tautan ke halaman sumber asli — fitur 039, P-5 A, KL-04.
+
+    Boleh kosong; bila berisi, `http` atau `https` tanpa spasi — sama dengan
+    batasan peladen, sehingga yang ditolak tidak sempat sampai ke sana. Dibawa
+    sitasi; dokumen indeks metadata tanpa tautan tidak menjadi bacaan lanjutan.
+    """
+
     @field_validator("lisensi")
     @classmethod
     def _lisensi_berisi(cls, nilai: str | None) -> str | None:
         if nilai is not None and not nilai.strip():
             raise ValueError("keterangan lisensi hampa — kosongkan bila tidak diketahui")
+        return nilai
+
+    @field_validator("tautan")
+    @classmethod
+    def _tautan_sah(cls, nilai: str | None) -> str | None:
+        if nilai is not None and not _POLA_TAUTAN.fullmatch(nilai):
+            raise ValueError("tautan sumber wajib berawalan http:// atau https:// tanpa spasi")
         return nilai
 
     @computed_field  # type: ignore[prop-decorator]

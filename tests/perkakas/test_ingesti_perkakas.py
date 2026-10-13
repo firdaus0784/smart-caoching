@@ -323,6 +323,25 @@ def test_penolakan_peladen_tanpa_kutipan(tmp_path: Path) -> None:
     assert hasil.stdout.split() == ["0"]
 
 
+def test_terima_dengan_tautan(tmp_path: Path) -> None:
+    """P-5 A fitur 039: `--tautan` tercatat pada penerimaan; yang tidak sah
+    ditolak sebelum menyambung, tanpa dikutip."""
+    j = Jalankan(tmp_path)
+    d = _id()
+    tautan = "https://jdih.contoh.go.id/peraturan/5"
+    assert j(*_terima(j, d, tautan=tautan))[0] == 0
+    hasil = psql(
+        "smart_coaching",
+        "-c",
+        f"select tautan from karantina.penerimaan where id_dokumen = '{d}'",
+    )
+    assert hasil.stdout.strip() == tautan
+    j.peran.clear()
+    kode, _, galat = j(*_terima(j, _id(), tautan="ftp://rahasia.contoh/x"))
+    assert kode == 2 and j.peran == []
+    assert "rahasia.contoh" not in galat
+
+
 def test_terima_dengan_lisensi(tmp_path: Path) -> None:
     """P-3 A fitur 038: `--lisensi` tercatat pada penerimaan."""
     j = Jalankan(tmp_path)

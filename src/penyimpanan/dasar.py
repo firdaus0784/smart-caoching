@@ -45,6 +45,9 @@ class MetadataDokumen:
     lisensi: str | None = None
     """Keterangan lisensi dari metadata sumber, apa adanya — fitur 038, P-3 A.
     Kosong berarti tertutup; dibaca `lisensi_dari_metadata`, tidak disimpulkan."""
+    tautan: str | None = None
+    """Tautan ke halaman sumber asli — fitur 039, P-5 A, KL-04. Bentuknya
+    dijaga `Dokumen` dan batasan tabel peladen."""
 
 
 @dataclass(frozen=True)

@@ -4091,3 +4091,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menerjemahkan nama panjang ("Creative Commons Attribution") — tidak dipilih: daftar terjemahan adalah daftar kedua yang dapat hanyut, dan arah kekeliruan tanpanya yang dikehendaki KL-01. |
 | Dampak | Segmen berlisensi SA, NC, atau ND yang sudah di indeks utama tetap di sana sampai diindeks ulang; lapis kedua pada pemuat (T-6) tidak memuatnya. |
 | Pemutus | Agen, atas pendelegasian KB-168; perubahan fitur 006 atas putusan P-6 A |
+
+## KB-283 · T-4 fitur 039: tautan sumber asli dicatat saat menerima
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-3 plan fitur 039 (P-5 A, KL-04). Uji ditulis lebih dulu dan merah atas catatan gerbang (memori dan PostgreSQL), gerbang ingesti, dan perkakas. Uji penolakan tautan tidak sah ternyata lulus sebelum bidangnya ada — karena alasan yang salah: `model_dump()` memuat bidang turunan `peringkat`, sehingga validasi ulang gagal sebagai bidang asing. **Uji lisensi hampa fitur 038 lulus karena alasan yang sama**, bukan karena validatornya. |
+| Keputusan | `Dokumen.tautan`, `CatatanPenerimaan.tautan`, `MetadataDokumen.tautan`, ketiganya boleh kosong dengan bawaan kosong; `Dokumen` menolak yang bukan `http` atau `https` atau yang memuat spasi, padanan batasan peladen. Gerbang meneruskannya ke penerimaan dan ke catatan metadata korpus dalam pernyataan pemindahan yang sama; keadaan membacanya kembali. `terima --tautan` opsional; tautan tidak sah ditolak sebelum menyambung, tanpa dikutip. Pembantu uji `_bidang_dokumen()` membuang `peringkat` sebelum validasi ulang, dan kedua uji penolakan kini mencocokkan pesan alasannya — uji fitur 038 dikuatkan, tidak dilonggarkan. Mutasi M-11 merah. |
+| Alternatif | — |
+| Dampak | Pembaca sumber tidak membaca tautan; `/sumber` tidak berubah. Dibaca pemuat pada T-5. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

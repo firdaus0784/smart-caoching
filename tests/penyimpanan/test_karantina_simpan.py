@@ -448,3 +448,38 @@ def test_lisensi_ikut_penerimaan_dan_metadata_korpus(pelaksana: Pelaksana) -> No
     else:
         assert isinstance(pelaksana.teks, PenyimpanTiruan)
         assert pelaksana.teks.metadata_tercatat(d) == (metadata,)
+
+
+# ── Tautan — T-4 fitur 039, P-5 A ───────────────────────────────────────
+
+
+def test_tautan_ikut_penerimaan_dan_metadata_korpus(pelaksana: Pelaksana) -> None:
+    """M-11 fitur 039: tautan tercatat saat menerima dan ikut catatan metadata
+    pemindahan ke korpus; tanpa keterangan berarti kosong (KL-04)."""
+    d, tanpa = _id(), _id()
+    tautan = "https://jdih.contoh.go.id/peraturan/4"
+    _terima(pelaksana, d, tautan=tautan)
+    _terima(pelaksana, tanpa)
+    keadaan = jalankan(pelaksana.verifikasi.keadaan(d))
+    assert keadaan is not None and keadaan.penerimaan.tautan == tautan
+    kosong = jalankan(pelaksana.verifikasi.keadaan(tanpa))
+    assert kosong is not None and kosong.penerimaan.tautan is None
+    metadata = MetadataDokumen(
+        judul="Notulen rapat pleno",
+        jenis="dokumen_sekolah",
+        penerbit="SDN Sukamaju",
+        tahun=2026,
+        tingkat_kerahasiaan="internal_sekolah",
+        tautan=tautan,
+    )
+    jalankan(pelaksana.verifikasi.setujui(VERIFIKASI, d, "tm-002", "terperiksa", metadata))
+    if pelaksana.postgres:
+        hasil = psql(
+            "smart_coaching",
+            "-c",
+            f"select tautan from korpus.metadata_dokumen where id_dokumen = '{d}'",
+        )
+        assert hasil.stdout.strip() == tautan
+    else:
+        assert isinstance(pelaksana.teks, PenyimpanTiruan)
+        assert pelaksana.teks.metadata_tercatat(d) == (metadata,)

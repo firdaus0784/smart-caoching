@@ -3,7 +3,7 @@
     python -m perkakas.ingesti terima --berkas <jalur> --id <id> --judul <judul>
         --jenis <JenisSumber> --penerbit <penerbit> --tahun <tahun>
         --kerahasiaan <TingkatKerahasiaan> --persetujuan <StatusPersetujuan>
-        --pelaku <kode-tim>
+        --pelaku <kode-tim> [--lisensi <keterangan>] [--tautan <https://…>]
     python -m perkakas.ingesti daftar
     python -m perkakas.ingesti baca --id <id>
     python -m perkakas.ingesti tinjau --id <id> --pelaku <kode-tim> --catatan <catatan>
@@ -136,6 +136,7 @@ def _penghurai() -> argparse.ArgumentParser:
     )
     terima.add_argument("--pelaku", required=True)
     terima.add_argument("--lisensi", default=None)
+    terima.add_argument("--tautan", default=None)
     sub.add_parser("daftar", help="dokumen yang menunggu di karantina")
     baca = sub.add_parser("baca", help="teks tersamar dan temuan, bagi verifikator")
     baca.add_argument("--id", required=True)
@@ -204,6 +205,7 @@ async def _jalankan(
             tingkat_kerahasiaan=TingkatKerahasiaan(argumen.kerahasiaan),
             status_persetujuan_pemilik=StatusPersetujuan(argumen.persetujuan),
             lisensi=argumen.lisensi,
+            tautan=argumen.tautan,
         )
         if isinstance(teks, TeksPindaian):
             catat_keluaran_ocr(akar_logbook, teks)
@@ -316,7 +318,8 @@ def utama(
         return 2
     except ValidationError:
         print(
-            "Ditolak: metadata dokumen tidak sah. Periksa judul, penerbit, dan tahun.", file=galat
+            "Ditolak: metadata dokumen tidak sah. Periksa judul, penerbit, tahun, dan tautan.",
+            file=galat,
         )
         return 2
     except (GalatGerbang, GalatJejak) as g:

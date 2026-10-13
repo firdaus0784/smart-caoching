@@ -156,6 +156,7 @@ class Gerbang:
             samaran=hasil.jumlah,
             id_penerima=id_penerima,
             lisensi=dokumen.lisensi,
+            tautan=dokumen.tautan,
         )
         try:
             await self._catatan.terima(
@@ -487,6 +488,7 @@ def _dokumen_dari(keadaan: KeadaanKarantina) -> Dokumen:
         ),
         status_anonimisasi=StatusAnonimisasi(keadaan.status_anonimisasi),
         lisensi=p.lisensi,
+        tautan=p.tautan,
     )
 
 
@@ -499,6 +501,7 @@ def _metadata(dokumen: Dokumen) -> MetadataDokumen:
         tahun=dokumen.tahun,
         tingkat_kerahasiaan=dokumen.tingkat_kerahasiaan.value,
         lisensi=dokumen.lisensi,
+        tautan=dokumen.tautan,
     )
 
 
