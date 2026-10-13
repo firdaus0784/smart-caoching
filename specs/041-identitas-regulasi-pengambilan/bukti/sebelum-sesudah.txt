@@ -1,0 +1,428 @@
+GOLD SET DAN PERATURAN DI BAWAH INI REKAAN, disusun naskah bukti.
+Angkanya ditentukan susunannya dan TIDAK BERMAKNA sebagai hasil U3; yang
+dibuktikan hanya perbandingan sebelum dan sesudah atas keadaan peladen yang sama.
+Sepuluh peraturan berjudul serupa (nomor 7 s.d. 16) berisi pasal yang sama persis.
+Logbook pembekuan dan putaran adalah logbook worktree, dibuang sesudahnya.
+
+Sebelum: 06ab8ab02abc (induk commit T-2)
+Sesudah: e49281ab4bab (HEAD)
+
+== ringkasan ==
+sebelum  Versi indeks: utama:f7c63c5e777877532c1c764714dcfa99;metadata:d41d8cd98f00b204e9800998ecf8427e.
+         Recall bernomor regulasi (jenis A): 0,0% — 0 dari 100
+sesudah  Versi indeks: utama:f7c63c5e777877532c1c764714dcfa99;metadata:d41d8cd98f00b204e9800998ecf8427e;pencarian:judul-1.
+         Recall bernomor regulasi (jenis A): 100,0% — 100 dari 100
+
+== jalannya perintah ==
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-07.docx --id reg-041-5031a5-07 --judul Peraturan Rekaan zqpwtljgvpx Nomor 7 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-07. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-07 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-07.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-07 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-07
+[kode 0]
+  Diindeks: reg-041-5031a5-07. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-08.docx --id reg-041-5031a5-08 --judul Peraturan Rekaan zqpwtljgvpx Nomor 8 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-08. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-08 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-08.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-08 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-08
+[kode 0]
+  Diindeks: reg-041-5031a5-08. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-09.docx --id reg-041-5031a5-09 --judul Peraturan Rekaan zqpwtljgvpx Nomor 9 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-09. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-09 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-09.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-09 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-09
+[kode 0]
+  Diindeks: reg-041-5031a5-09. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-10.docx --id reg-041-5031a5-10 --judul Peraturan Rekaan zqpwtljgvpx Nomor 10 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-10. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-10 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-10.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-10 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-10
+[kode 0]
+  Diindeks: reg-041-5031a5-10. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-11.docx --id reg-041-5031a5-11 --judul Peraturan Rekaan zqpwtljgvpx Nomor 11 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-11. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-11 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-11.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-11 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-11
+[kode 0]
+  Diindeks: reg-041-5031a5-11. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-12.docx --id reg-041-5031a5-12 --judul Peraturan Rekaan zqpwtljgvpx Nomor 12 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-12. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-12 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-12.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-12 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-12
+[kode 0]
+  Diindeks: reg-041-5031a5-12. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-13.docx --id reg-041-5031a5-13 --judul Peraturan Rekaan zqpwtljgvpx Nomor 13 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-13. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-13 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-13.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-13 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-13
+[kode 0]
+  Diindeks: reg-041-5031a5-13. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-14.docx --id reg-041-5031a5-14 --judul Peraturan Rekaan zqpwtljgvpx Nomor 14 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-14. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-14 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-14.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-14 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-14
+[kode 0]
+  Diindeks: reg-041-5031a5-14. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-15.docx --id reg-041-5031a5-15 --judul Peraturan Rekaan zqpwtljgvpx Nomor 15 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-15. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-15 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-15.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-15 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-15
+[kode 0]
+  Diindeks: reg-041-5031a5-15. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-16.docx --id reg-041-5031a5-16 --judul Peraturan Rekaan zqpwtljgvpx Nomor 16 Tahun 2026 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-16. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-16 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-16.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-16 --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-16
+[kode 0]
+  Diindeks: reg-041-5031a5-16. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-99.docx --id reg-041-5031a5-99 --judul Peraturan Rekaan zqpwtljgvpx Nomor 99 Tahun 2016 --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2016 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-041-5031a5-99. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ [repo] python -m perkakas.ingesti setujui --id reg-041-5031a5-99 --pelaku tm-002 --alasan ok
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-041-5031a5-99.
+$ [repo] python -m perkakas.kurasi status --dokumen reg-041-5031a5-99 --status dicabut
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ [repo] python -m perkakas.ingesti indeks --id reg-041-5031a5-99
+[kode 0]
+  Diindeks: reg-041-5031a5-99. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 7 kata
+  - Pasal 1: 8 kata
+  - Pasal 2: 7 kata
+$ [repo] python -m perkakas.ingesti terima --berkas <sementara>/rekaan-tanpa-nomor.docx --id reg-041-5031a5-tolak --judul Juknis Rekaan zqpwtljgvpx --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001
+[kode 2]
+  Ditolak: Berkas terbuka tetapi kosong. Mohon periksa isinya lalu unggah ulang.
+$ [sebelum] python -m perkakas.evaluasi bekukan --berkas <sementara>/gold-set-rekaan.jsonl --versi GS-REKAAN-041 --pelaku naskah bukti
+[kode 0]
+  Sidik: sha256:d1484aa2760e15bde1b9cebb959730f77ae7b4a3d6207667dd5740c83fb47ec8.
+  Pertanyaan: 200; bernomor regulasi: 155.
+  Komposisi per jenis (ada/D-08 Bagian 5.1): A 100/100, B 30/30, C 30/30, D 15/15, E 15/15, F 10/10.
+  Komposisi per kategori: K1 25, K2 25, K3 24, K4 24, K5 23, K6 23, K7 21, K8 20, tanpa-kategori 15.
+  Dibekukan sebagai versi GS-REKAAN-041, sidik sha256:d1484aa2760e15bde1b9cebb959730f77ae7b4a3d6207667dd5740c83fb47ec8. Satu baris L2 ditulis.
+$ [sebelum] python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan.jsonl --id-percobaan EXP-2026-911
+[kode 0]
+  Gold set GS-REKAAN-041, sidik sha256:d1484aa2760e15bde1b9cebb959730f77ae7b4a3d6207667dd5740c83fb47ec8, pembukaan ke-1 (AP-05).
+  Konfigurasi: sumber bm25, indeks utama, kedalaman 20; penyemat tidak dipakai.
+  Versi indeks: utama:f7c63c5e777877532c1c764714dcfa99;metadata:d41d8cd98f00b204e9800998ecf8427e.
+  Putusan: diukur; ambang U3 D-08 Bagian 6 berlaku bagi pengambilan hibrida dan tidak diterapkan pada putaran satu sumber.
+  Recall@8 (jenis A): 0,0% — 0 dari 100
+  MRR (jenis A): 6,6% — jumlah kebalikan peringkat 155685007/23279256 atas 100 pertanyaan
+  Precision@5 (jenis A, batas bawah): 0,0% — jumlah porsi cocok kunci 0 atas 100 pertanyaan
+  Recall bernomor regulasi (jenis A): 0,0% — 0 dari 100
+  Jenis A: Recall@8 0,0% (100), MRR 6,6%, Precision@5 0,0%
+  Jenis B: Recall@8 0,0% (30), MRR 6,6%, Precision@5 0,0%
+  Jenis E: Recall@8 0,0% (15), MRR 0,0%, Precision@5 0,0%
+  Jenis F: Recall@8 0,0% (10), MRR 6,6%, Precision@5 0,0%
+  Kategori K1 (jenis A): Recall@8 0,0% (13), MRR 6,8%, Precision@5 0,0%
+  Kategori K2 (jenis A): Recall@8 0,0% (13), MRR 6,4%, Precision@5 0,0%
+  Kategori K3 (jenis A): Recall@8 0,0% (13), MRR 7,0%, Precision@5 0,0%
+  Kategori K4 (jenis A): Recall@8 0,0% (13), MRR 6,5%, Precision@5 0,0%
+  Kategori K5 (jenis A): Recall@8 0,0% (12), MRR 6,9%, Precision@5 0,0%
+  Kategori K6 (jenis A): Recall@8 0,0% (12), MRR 6,4%, Precision@5 0,0%
+  Kategori K7 (jenis A): Recall@8 0,0% (12), MRR 6,8%, Precision@5 0,0%
+  Kategori K8 (jenis A): Recall@8 0,0% (12), MRR 6,3%, Precision@5 0,0%
+  Kebocoran indeks: 0 segmen.
+  Pertanyaan gagal: 155.
+  - REKAAN-A-000 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-001 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-002 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-003 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-004 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-005 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-006 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-007 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-008 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-009 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-010 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-011 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-012 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-013 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-014 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-015 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-016 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-017 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-018 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-019 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-020 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-021 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-022 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-023 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-024 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-025 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-026 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-027 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-028 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-029 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-030 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-031 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-032 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-033 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-034 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-035 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-036 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-037 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-038 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-039 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-040 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-041 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-042 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-043 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-044 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-045 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-046 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-047 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-048 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-049 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-050 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-051 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-052 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-053 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-054 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-055 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-056 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-057 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-058 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-059 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-060 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-061 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-062 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-063 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-064 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-065 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-066 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-067 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-068 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-069 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-070 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-071 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-072 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-073 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-074 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-075 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-076 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-077 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-078 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-079 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-080 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-081 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-082 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-083 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-084 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-085 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-086 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-087 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-088 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-089 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-090 (A): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-091 (A): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-092 (A): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-093 (A): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-094 (A): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-095 (A): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-096 (A): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-097 (A): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-098 (A): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-099 (A): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-B-000 (B): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-001 (B): kunci 1 reg-041-5031a5-08, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-002 (B): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-003 (B): kunci 1 reg-041-5031a5-10, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-004 (B): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-005 (B): kunci 1 reg-041-5031a5-12, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-006 (B): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-007 (B): kunci 1 reg-041-5031a5-14, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-008 (B): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-009 (B): kunci 1 reg-041-5031a5-16, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-010 (B): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-011 (B): kunci 1 reg-041-5031a5-08, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-012 (B): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-013 (B): kunci 1 reg-041-5031a5-10, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-014 (B): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-015 (B): kunci 1 reg-041-5031a5-12, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-016 (B): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-017 (B): kunci 1 reg-041-5031a5-14, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-018 (B): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-019 (B): kunci 1 reg-041-5031a5-16, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-020 (B): kunci 1 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-021 (B): kunci 1 reg-041-5031a5-08, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-022 (B): kunci 1 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-023 (B): kunci 1 reg-041-5031a5-10, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-024 (B): kunci 1 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-025 (B): kunci 1 reg-041-5031a5-12, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-026 (B): kunci 1 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-027 (B): kunci 1 reg-041-5031a5-14, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-028 (B): kunci 1 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-029 (B): kunci 1 reg-041-5031a5-16, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-E-000 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-001 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-002 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-003 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-004 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-005 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-006 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-007 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-008 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-009 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-010 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-011 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-012 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-013 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-014 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-F-000 (F): kunci 1 reg-041-5031a5-07, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-000 (F): kunci 2 reg-041-5031a5-07, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-001 (F): kunci 1 reg-041-5031a5-08, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-001 (F): kunci 2 reg-041-5031a5-08, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-002 (F): kunci 1 reg-041-5031a5-09, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-002 (F): kunci 2 reg-041-5031a5-09, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-003 (F): kunci 1 reg-041-5031a5-10, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-003 (F): kunci 2 reg-041-5031a5-10, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-004 (F): kunci 1 reg-041-5031a5-11, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-004 (F): kunci 2 reg-041-5031a5-11, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-005 (F): kunci 1 reg-041-5031a5-12, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-005 (F): kunci 2 reg-041-5031a5-12, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-006 (F): kunci 1 reg-041-5031a5-13, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-006 (F): kunci 2 reg-041-5031a5-13, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-007 (F): kunci 1 reg-041-5031a5-14, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-007 (F): kunci 2 reg-041-5031a5-14, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-008 (F): kunci 1 reg-041-5031a5-15, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-008 (F): kunci 2 reg-041-5031a5-15, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-F-009 (F): kunci 1 reg-041-5031a5-16, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-F-009 (F): kunci 2 reg-041-5031a5-16, Pasal 2 — kunci di luar 8 teratas
+  Tercatat pada L1 sebagai EXP-2026-911 (berhasil).
+$ [sesudah] python -m perkakas.evaluasi bekukan --berkas <sementara>/gold-set-rekaan.jsonl --versi GS-REKAAN-041 --pelaku naskah bukti
+[kode 0]
+  Sidik: sha256:d1484aa2760e15bde1b9cebb959730f77ae7b4a3d6207667dd5740c83fb47ec8.
+  Pertanyaan: 200; bernomor regulasi: 155.
+  Komposisi per jenis (ada/D-08 Bagian 5.1): A 100/100, B 30/30, C 30/30, D 15/15, E 15/15, F 10/10.
+  Komposisi per kategori: K1 25, K2 25, K3 24, K4 24, K5 23, K6 23, K7 21, K8 20, tanpa-kategori 15.
+  Dibekukan sebagai versi GS-REKAAN-041, sidik sha256:d1484aa2760e15bde1b9cebb959730f77ae7b4a3d6207667dd5740c83fb47ec8. Satu baris L2 ditulis.
+$ [sesudah] python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan.jsonl --id-percobaan EXP-2026-912
+[kode 0]
+  Gold set GS-REKAAN-041, sidik sha256:d1484aa2760e15bde1b9cebb959730f77ae7b4a3d6207667dd5740c83fb47ec8, pembukaan ke-1 (AP-05).
+  Konfigurasi: sumber bm25, indeks utama, kedalaman 20; penyemat tidak dipakai.
+  Versi indeks: utama:f7c63c5e777877532c1c764714dcfa99;metadata:d41d8cd98f00b204e9800998ecf8427e;pencarian:judul-1.
+  Putusan: diukur; ambang U3 D-08 Bagian 6 berlaku bagi pengambilan hibrida dan tidak diterapkan pada putaran satu sumber.
+  Recall@8 (jenis A): 100,0% — 100 dari 100
+  MRR (jenis A): 100,0% — jumlah kebalikan peringkat 100 atas 100 pertanyaan
+  Precision@5 (jenis A, batas bawah): 20,0% — jumlah porsi cocok kunci 20 atas 100 pertanyaan
+  Recall bernomor regulasi (jenis A): 100,0% — 100 dari 100
+  Jenis A: Recall@8 100,0% (100), MRR 100,0%, Precision@5 20,0%
+  Jenis B: Recall@8 100,0% (30), MRR 100,0%, Precision@5 20,0%
+  Jenis E: Recall@8 0,0% (15), MRR 0,0%, Precision@5 0,0%
+  Jenis F: Recall@8 100,0% (10), MRR 100,0%, Precision@5 40,0%
+  Kategori K1 (jenis A): Recall@8 100,0% (13), MRR 100,0%, Precision@5 20,0%
+  Kategori K2 (jenis A): Recall@8 100,0% (13), MRR 100,0%, Precision@5 20,0%
+  Kategori K3 (jenis A): Recall@8 100,0% (13), MRR 100,0%, Precision@5 20,0%
+  Kategori K4 (jenis A): Recall@8 100,0% (13), MRR 100,0%, Precision@5 20,0%
+  Kategori K5 (jenis A): Recall@8 100,0% (12), MRR 100,0%, Precision@5 20,0%
+  Kategori K6 (jenis A): Recall@8 100,0% (12), MRR 100,0%, Precision@5 20,0%
+  Kategori K7 (jenis A): Recall@8 100,0% (12), MRR 100,0%, Precision@5 20,0%
+  Kategori K8 (jenis A): Recall@8 100,0% (12), MRR 100,0%, Precision@5 20,0%
+  Kebocoran indeks: 0 segmen.
+  Pertanyaan gagal: 15.
+  - REKAAN-E-000 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-001 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-002 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-003 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-004 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-005 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-006 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-007 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-008 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-009 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-010 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-011 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-012 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-013 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-014 (E): kunci 1 reg-041-5031a5-99, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  Tercatat pada L1 sebagai EXP-2026-912 (berhasil).

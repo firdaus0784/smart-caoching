@@ -4377,3 +4377,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memeriksa pada model `Dokumen` — tidak dipilih: `Dokumen` juga dibentuk ulang dari catatan karantina, dan dokumen lama yang sudah di korpus tidak boleh tersentuh (P-3 A). |
 | Dampak | `src/ingest/judul_regulasi.py`, `src/ingest/gerbang.py`, `perkakas/ingesti.py`; `tests/ingest/test_judul_regulasi.py`; satu uji perkakas ingesti baru dan satu pembantu disesuaikan. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-309 · T-4 fitur 041: bukti sebelum dan sesudah, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 041 Bagian 7.2. |
+| Keputusan | `bukti/sebelum_sesudah.py`: sebelas peraturan rekaan — sepuluh berjudul serupa bernomor 7 s.d. 16 berisi pasal sama persis, satu dicabut — melewati `terima`, `setujui`, `status`, `indeks` lewat baris perintah; judul regulasi tanpa nomor dan tahun ditolak berkode 2. *Gold set* 200 pertanyaan **rekaan** dibekukan dan diukur lewat baris perintah pada dua *worktree* git atas keadaan peladen yang sama: induk commit T-2 (06ab8ab) dan `HEAD` (e49281a). Logbook kedua *worktree* dibuang bersamanya. **Recall pertanyaan bernomor regulasi rekaan: 0/100 sebelum, 100/100 sesudah**; versi indeks sesudah berpenanda `pencarian:judul-1`; kebocoran nol. Angkanya ditentukan susunan rekaan dan tidak bermakna sebagai hasil U3. Putaran mutasi M-1 s.d. M-7: **tujuh dari tujuh merah**. Rangkaian uji 3.765 lulus. |
+| Alternatif | Mengukur sebelum lebih dulu dari pohon kerja lalu sesudah setelah kode — tidak dipilih: peladen bersama berubah di antara dua pengukuran. |
+| Dampak | `specs/041-identitas-regulasi-pengambilan/bukti/`; L8; dokumen HKI Bagian 4 dan 8; D-00 3.28 (TK-88 terbangun); status spec, plan, tasks menunggu Gerbang 4. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

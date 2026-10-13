@@ -724,3 +724,23 @@ Fitur ini menguatkan lima pasal yang sudah lulus:
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 040 menyediakan alat yang kelak dipakai kalibrasi BT-29,
 tetapi tidak menyentuh validator maupun jalur penjawab.
+
+### Fitur 041 — 13 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 040. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan empat pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 041 |
+|---|---|
+| C-02 | Judul dokumen ikut teks pencarian pada indeks masing-masing; indeks utama tetap hanya memuat segmen utama yang layak (M-4) |
+| C-16 | Perbaikan pengambilan tanpa bobot, faktor pengali, maupun ambang — judul ditulis sekali; perbaikan diputus sebelum kalibrasi BT-29 |
+| C-18 | Teks yang dikirim ke model tetap teks segmen; judul tidak masuk bahan (M-2) |
+| C-20 | D-07 0.4 dan D-06 0.6 sebelum kodenya; bentuk `/tanya` tidak berubah — `versi_indeks` tetap untai, kini berpenanda aturan (M-3) |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 041 memperbaiki pengambilan leksikal dan tidak menyentuh
+validator.
