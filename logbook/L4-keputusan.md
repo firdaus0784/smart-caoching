@@ -4179,3 +4179,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-3 dan P-6 menentukan apa yang dianggap memenuhi D-08. |
 | Dampak | `specs/040-gold-set-dan-uji-pengambilan/spec.md`. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-291 · Gerbang 1 fitur 040 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Usulan KB-290: enam pertanyaan, P-3 ditanyakan tersendiri, P-1 dan P-2 bersama, P-4 s.d. P-6 bersama, masing-masing dengan pilihan yang tidak dianjurkan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keenamnya. **P-1 A**: JSON Lines di luar repositori; bentuknya pada D-08. **P-2 A**: kunci dokumen dan pasal. **P-3 A**: pembekuan ditolak bila komposisi menyimpang dari D-08 Bagian 5.1. **P-4 A**: konfigurasi yang tersedia dinyatakan; laporan leksikal tidak menyatakan U3 lulus. **P-5 A**: relevan berarti cocok dengan kunci, batas bawah. **P-6 A**: pertanyaan bernomor regulasi ditandai tim. |
+| Alternatif | P-1 B dan C; P-2 B dan C; P-3 B; P-4 B; P-5 B; P-6 B — tidak dipilih. |
+| Dampak | `spec.md` fitur 040. Gerbang 2 dan 3 atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |

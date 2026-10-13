@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | D-08 Bagian 5 dan 6 (U3); BT-35, BT-29; KL-01; C-09, C-16, C-17, C-20 |
 | Dokumen terkait | D-08 Bagian 5.1, 5.2, 6 · D-07 Bagian 4.6 · D-10 L1, L2 · spec fitur 004, 025, 039 |
-| Status | **Diajukan ke Gerbang 1** — 13 Oktober 2026 (KB-290) |
+| Status | **Gerbang 1 lolos** — 13 Oktober 2026 (KB-291) |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -117,6 +117,19 @@ bentuk berkas.
 **Anjuran: A.** Pola yang ditulis agen adalah penafsiran yang menentukan
 himpunan bagian pengukuran berambang 95%; tanda dari tim tidak.
 
+## Putusan Gerbang 1 (KB-291)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — JSON Lines di luar repositori, jalurnya diserahkan pada perkakas; bentuknya pada D-08, contoh rekaan pada uji |
+| P-2 | **A** — kunci berupa dokumen dan pasal; ayat dan potongan jendela pasal itu terhitung kunci |
+| P-3 | **A** — pembekuan ditolak bila komposisi menyimpang dari D-08 Bagian 5.1 |
+| P-4 | **A** — konfigurasi yang tersedia dinyatakan pada laporan dan L1; laporan leksikal tidak menyatakan U3 lulus |
+| P-5 | **A** — relevan berarti cocok dengan kunci; Precision@5 dilaporkan sebagai batas bawah |
+| P-6 | **A** — pertanyaan bernomor regulasi ditandai tim pada bidang tersendiri |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -132,7 +145,7 @@ himpunan bagian pengukuran berambang 95%; tanda dari tim tidak.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-6 diputus pada Gerbang 1
+- [x] P-1 s.d. P-6 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Pengukur dijalankan atas korpus PostgreSQL sebagai peran sungguhan,
       dengan *gold set* rekaan yang dinyatakan rekaan
