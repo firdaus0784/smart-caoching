@@ -4024,3 +4024,15 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | TK-87 sebagai baris tersendiri — tidak dipilih: putusan KB-275 menaruh perbaikannya pada usulan berikutnya, dan isinya menentukan segmen mana yang boleh masuk konteks jalur penjawab. |
 | Dampak | Usulan `spec.md` fitur 039 menyusul untuk Gerbang 1. |
 | Pemutus | Pemegang Gerbang 1–4 (KB-275); dicatat agen |
+
+## KB-277 · Usulan spec fitur 039 diajukan ke Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Putusan KB-275 dan baris D-12 039 (KB-276). Jalur penjawab ditelusuri sebelum menulis: rute `/tanya` menerima `Jalur` apa pun lewat `susun_aplikasi`; `make jalan` memasang `PenjawabBelumSiap`; peran `peran_penjawaban` dan `peran_pemanggil_llm` sudah membaca catatan metadata dan status korpus; `rag` tidak boleh memanggil `ingest`, tempat `peringkat_bagi` tinggal. |
+| Keputusan | `specs/039-jalur-penjawab-postgresql/spec.md` ditulis dan diajukan dengan delapan kebutuhan yang tidak bergantung pada pertanyaan dan enam pertanyaan: **P-1** cakupan, termasuk perkakas pencarian satu sumber bagi penyusunan *gold set*; **P-2** indeks leksikal; **P-3** keberlakuan pada bahan; **P-4** dokumen tidak publik dan dokumen sekolah; **P-5** tautan sumber asli; **P-6** TK-87. Usulan menyatakan lebih dulu bahwa jalur penjawab tetap tidak menghasilkan jawaban sesudah fitur ini — penghalangnya BT-29, ADR-12, dan fitur 020. |
+| Temuan — celah kontrak | D-14 Bagian 4.10 menyatakan korpus tidak menyimpan tautan, padahal `sitasi[].tautan` dan `bacaan_lanjutan[].tautan` ada pada kontrak `/tanya` dan KL-04 mewajibkannya; `BacaanLanjutan.tautan` wajib berisi, sehingga bacaan lanjutan tidak dapat disusun sama sekali. Diajukan sebagai P-5, bukan baris temuan baru. |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-5 mengubah kontrak catatan korpus, P-6 mengubah fitur yang lolos Gerbang 4. |
+| Dampak | `specs/039-jalur-penjawab-postgresql/spec.md`. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
