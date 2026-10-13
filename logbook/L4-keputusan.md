@@ -4278,3 +4278,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Akar logbook sebagai argumen baris perintah — tidak dipilih: pembekuan dapat diarahkan ke logbook lain lalu diukur seolah beku. |
 | Dampak | `perkakas/evaluasi.py`; `tests/perkakas/test_evaluasi_perkakas.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-300 · T-8 fitur 040: bukti ujung ke ujung, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 Bagian 11.2. |
+| Keputusan | `bukti/ujung_ke_ujung.py`: tiga peraturan rekaan — berlisensi terbuka, nonkomersial, dan dicabut — melewati `terima`, `setujui`, `status`, `indeks` lewat baris perintah; *gold set* 200 pertanyaan **rekaan** berkomposisi D-08 disusun naskah di direktori sementara; `periksa`, `bekukan`, dan `ukur` atas PostgreSQL dengan peran sungguhan dan **akar logbook sementara**. Seluruh pemeriksaan lulus: berkas di dalam repositori ditolak; `ukur` sebelum beku ditolak tanpa L1; satu baris L2; dua putaran berurutan pembukaan 1 dan 2; satu huruf berubah ditolak sebagai belum beku; kunci ke indeks metadata dan regulasi dicabut luput *di luar bahan* (25), pertanyaan tanpa kata kode *di luar peringkat*; salinan segmen yang ditanam di indeks metadata tertangkap sebagai kebocoran berkode 3 lalu dihapus; L1 dan L2 tanpa teks pertanyaan. Putaran mutasi M-1 s.d. M-12: **dua belas dari dua belas merah**. Keterangan MRR dan Precision@5 pada laporan diperjelas menjadi "jumlah kebalikan peringkat" dan "jumlah porsi cocok kunci". **Pengamatan, bukan hasil**: pada putaran bukti keempat, recall pertanyaan bernomor regulasi rekaan turun dari 20/20 menjadi 0/20 — pasal sasaran berada di peringkat 10, didesak pembukaan peraturan rekaan berjudul serupa dari putaran sebelumnya. Segmen pasal tidak membawa judul maupun nomor regulasinya; keduanya hanya ada pada segmen pembukaan. Ini perilaku pengambilan leksikal atas data rekaan, bukan ukuran U3, dan tidak ada yang diubah; ia dicatat agar dapat ditimbang tim saat *gold set* dan kalibrasi BT-29 dijalankan, sebab D-08 memberi pertanyaan bernomor regulasi ambang 95%. |
+| Alternatif | Menulis pembekuan dan putaran bukti ke logbook repositori — tidak dipilih: logbook tambah-saja dan *gold set* rekaan tidak boleh terbaca sebagai pembekuan sungguhan. Menghapus sisa putaran bukti dari peladen bersama — tidak dipilih: naskah memeriksa penyebut dan sebab luput yang tidak bergantung pada sisa itu. |
+| Dampak | `specs/040-gold-set-dan-uji-pengambilan/bukti/`; `perkakas/evaluasi.py` (keterangan laporan); L8; dokumen HKI Bagian 8 dan 9; status spec, plan, tasks menunggu Gerbang 4. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |

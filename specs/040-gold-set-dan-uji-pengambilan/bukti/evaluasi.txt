@@ -1,0 +1,355 @@
+GOLD SET DI BAWAH INI REKAAN, disusun naskah bukti, bukan tim substansi.
+Angkanya ditentukan susunannya dan TIDAK BERMAKNA sebagai hasil U3.
+Angka juga bergantung pada isi peladen bersama, termasuk sisa putaran bukti
+sebelumnya; naskah memeriksa penyebut dan sebab luput, bukan angkanya.
+Peraturan contoh rekaan; setiap pasal memuat kata kode rekaan berpola zq...x.
+Logbook L1 dan L2 di direktori sementara, bukan logbook repositori.
+Satu salinan segmen indeks utama ditanam di indeks metadata lalu dihapus.
+
+== tiga baris pertama gold set rekaan (bentuk D-08 Bagian 5.3) ==
+{"id": "REKAAN-A-000", "pertanyaan": "REKAAN: bagaimana ketentuan zqrmmrfbjkx dijalankan?", "jenis": "A", "kategori": "K1", "kunci": [{"dokumen": "reg-040-00dfa1-by", "bagian": "Pasal 1"}], "bernomor_regulasi": false}
+{"id": "REKAAN-A-001", "pertanyaan": "REKAAN: bagaimana ketentuan zqsglslkltx dijalankan?", "jenis": "A", "kategori": "K2", "kunci": [{"dokumen": "reg-040-00dfa1-by", "bagian": "Pasal 2"}], "bernomor_regulasi": false}
+{"id": "REKAAN-A-002", "pertanyaan": "REKAAN: bagaimana ketentuan zqlsjwhctbx dijalankan?", "jenis": "A", "kategori": "K3", "kunci": [{"dokumen": "reg-040-00dfa1-by", "bagian": "Pasal 3"}], "bernomor_regulasi": false}
+
+== segmen (indeks | id_segmen | penanda) ==
+utama | reg-040-00dfa1-by:0001 | Pembukaan
+utama | reg-040-00dfa1-by:0002 | Pasal 1
+utama | reg-040-00dfa1-by:0003 | Pasal 2
+utama | reg-040-00dfa1-by:0004 | Pasal 3
+utama | reg-040-00dfa1-by:0005 | Pasal 4
+utama | reg-040-00dfa1-by:0006 | Pasal 5
+utama | reg-040-00dfa1-cabut:0001 | Pembukaan
+utama | reg-040-00dfa1-cabut:0002 | Pasal 1
+metadata | reg-040-00dfa1-nc:0001 | Pembukaan
+metadata | reg-040-00dfa1-nc:0002 | Pasal 1
+
+== L2 sementara ==
+{"artefak": "gold-set", "dibekukan_pada": "2026-10-13T06:10:24.915810Z", "dicatat_pada": "2026-10-13T06:10:24.917292+00:00", "jumlah": 200, "jumlah_bernomor_regulasi": 20, "komposisi_jenis": {"A": 100, "B": 30, "C": 30, "D": 15, "E": 15, "F": 10}, "komposisi_kategori": {"K1": 25, "K2": 25, "K3": 24, "K4": 24, "K5": 23, "K6": 23, "K7": 21, "K8": 20, "tanpa-kategori": 15}, "pelaku": "naskah bukti", "sidik": "sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f", "versi": "GS-REKAAN-040"}
+
+== L1 sementara (bidang terpilih; hasil lengkap pada berkasnya) ==
+{"id_percobaan": "EXP-2026-901", "status": "berhasil", "catatan": "", "pembukaan_gold_set": 1, "versi_kode": "1d85e2a137e2+ubahan", "versi_indeks": "utama:08e028be482e1111788c3379f7e48c0a;metadata:9e50dbf68b9341f5043f267887c62d6d", "sidik_gold_set": "sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f"}
+{"id_percobaan": "EXP-2026-902", "status": "berhasil", "catatan": "", "pembukaan_gold_set": 2, "versi_kode": "1d85e2a137e2+ubahan", "versi_indeks": "utama:08e028be482e1111788c3379f7e48c0a;metadata:9e50dbf68b9341f5043f267887c62d6d", "sidik_gold_set": "sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f"}
+{"id_percobaan": "EXP-2026-904", "status": "gagal", "catatan": "kebocoran indeks 1 segmen: segmen indeks metadata di antara kandidat penyusunan (KL-01)", "pembukaan_gold_set": 3, "versi_kode": "1d85e2a137e2+ubahan", "versi_indeks": "utama:08e028be482e1111788c3379f7e48c0a;metadata:1e0bd29ae2ea096fd7e5c0b71c5eb149", "sidik_gold_set": "sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f"}
+
+== jalannya perintah ==
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/040-gold-set-dan-uji-pengambilan/bukti/rekaan-040-utama.docx --id reg-040-00dfa1-by --judul Peraturan Rekaan (reg-040-00dfa1-by) --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-040-00dfa1-by. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-040-00dfa1-by --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-040-00dfa1-by.
+$ python -m perkakas.kurasi status --dokumen reg-040-00dfa1-by --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti indeks --id reg-040-00dfa1-by
+[kode 0]
+  Diindeks: reg-040-00dfa1-by. 6 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 6 kata
+  - Pasal 1: 10 kata
+  - Pasal 2: 10 kata
+  - Pasal 3: 10 kata
+  - Pasal 4: 10 kata
+  - Pasal 5: 10 kata
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/040-gold-set-dan-uji-pengambilan/bukti/rekaan-040-nc.docx --id reg-040-00dfa1-nc --judul Peraturan Rekaan (reg-040-00dfa1-nc) --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC-BY-NC 4.0
+[kode 0]
+  Diterima ke karantina: reg-040-00dfa1-nc. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-040-00dfa1-nc --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-040-00dfa1-nc.
+$ python -m perkakas.kurasi status --dokumen reg-040-00dfa1-nc --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti indeks --id reg-040-00dfa1-nc
+[kode 0]
+  Diindeks: reg-040-00dfa1-nc. 2 segmen ke indeks metadata — lisensi tertutup atau tidak tercatat, teks tidak dikirim ke model maupun ditampilkan.
+  - Pembukaan: 6 kata
+  - Pasal 1: 10 kata
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/040-gold-set-dan-uji-pengambilan/bukti/rekaan-040-cabut.docx --id reg-040-00dfa1-cabut --judul Peraturan Rekaan (reg-040-00dfa1-cabut) --jenis regulasi_resmi --penerbit Kementerian Rekaan --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0
+[kode 0]
+  Diterima ke karantina: reg-040-00dfa1-cabut. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-040-00dfa1-cabut --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-040-00dfa1-cabut.
+$ python -m perkakas.kurasi status --dokumen reg-040-00dfa1-cabut --status dicabut
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti indeks --id reg-040-00dfa1-cabut
+[kode 0]
+  Diindeks: reg-040-00dfa1-cabut. 2 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 6 kata
+  - Pasal 1: 10 kata
+$ python -m perkakas.evaluasi periksa --berkas <sementara>/gold-set-rekaan.jsonl   [akar logbook sementara]
+[kode 0]
+  Sidik: sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f.
+  Pertanyaan: 200; bernomor regulasi: 20.
+  Komposisi per jenis (ada/D-08 Bagian 5.1): A 100/100, B 30/30, C 30/30, D 15/15, E 15/15, F 10/10.
+  Komposisi per kategori: K1 25, K2 25, K3 24, K4 24, K5 23, K6 23, K7 21, K8 20, tanpa-kategori 15.
+  Dapat dibekukan: ya.
+$ python -m perkakas.evaluasi periksa --berkas /home/user/smart-caoching/specs/040-gold-set-dan-uji-pengambilan/bukti/.gold-set-dalam-repositori.jsonl   [akar logbook sementara]
+[kode 2]
+  Ditolak: berkas gold set berada di dalam repositori; D-08 Bagian 5.3 menuntutnya disimpan di luar.
+$ python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan.jsonl --id-percobaan EXP-2026-901   [akar logbook sementara]
+[kode 2]
+  Ditolak: gold set ini belum beku; bekukan lebih dulu (D-08 Bagian 5.2). Tidak ada yang dicatat.
+$ python -m perkakas.evaluasi bekukan --berkas <sementara>/gold-set-rekaan.jsonl --versi GS-REKAAN-040 --pelaku naskah bukti   [akar logbook sementara]
+[kode 0]
+  Sidik: sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f.
+  Pertanyaan: 200; bernomor regulasi: 20.
+  Komposisi per jenis (ada/D-08 Bagian 5.1): A 100/100, B 30/30, C 30/30, D 15/15, E 15/15, F 10/10.
+  Komposisi per kategori: K1 25, K2 25, K3 24, K4 24, K5 23, K6 23, K7 21, K8 20, tanpa-kategori 15.
+  Dibekukan sebagai versi GS-REKAAN-040, sidik sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f. Satu baris L2 ditulis.
+$ python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan.jsonl --id-percobaan EXP-2026-901   [akar logbook sementara]
+[kode 0]
+  Gold set GS-REKAAN-040, sidik sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f, pembukaan ke-1 (AP-05).
+  Konfigurasi: sumber bm25, indeks utama, kedalaman 20; penyemat tidak dipakai.
+  Versi indeks: utama:08e028be482e1111788c3379f7e48c0a;metadata:9e50dbf68b9341f5043f267887c62d6d.
+  Putusan: diukur; ambang U3 D-08 Bagian 6 berlaku bagi pengambilan hibrida dan tidak diterapkan pada putaran satu sumber.
+  Recall@8 (jenis A): 60,0% — 60 dari 100
+  MRR (jenis A): 62,0% — jumlah kebalikan peringkat 62 atas 100 pertanyaan
+  Precision@5 (jenis A, batas bawah): 12,0% — jumlah porsi cocok kunci 12 atas 100 pertanyaan
+  Recall bernomor regulasi (jenis A): 0,0% — 0 dari 20
+  Jenis A: Recall@8 60,0% (100), MRR 62,0%, Precision@5 12,0%
+  Jenis B: Recall@8 86,6% (30), MRR 21,4%, Precision@5 17,3%
+  Jenis E: Recall@8 0,0% (15), MRR 0,0%, Precision@5 0,0%
+  Jenis F: Recall@8 100,0% (10), MRR 100,0%, Precision@5 40,0%
+  Kategori K1 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K2 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K3 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K4 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K5 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K6 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K7 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K8 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kebocoran indeks: 0 segmen.
+  Pertanyaan gagal: 59.
+  - REKAAN-A-060 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-061 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-062 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-063 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-064 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-065 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-066 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-067 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-068 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-069 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-070 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-071 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-072 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-073 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-074 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-075 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-076 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-077 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-078 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-079 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-080 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-081 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-082 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-083 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-084 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-085 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-086 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-087 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-088 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-089 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-090 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-091 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-092 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-093 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-094 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-095 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-096 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-097 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-098 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-099 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-B-001 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-003 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-004 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-005 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-E-000 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-001 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-002 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-003 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-004 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-005 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-006 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-007 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-008 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-009 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-010 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-011 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-012 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-013 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-014 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  Tercatat pada L1 sebagai EXP-2026-901 (berhasil).
+$ python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan.jsonl --id-percobaan EXP-2026-902   [akar logbook sementara]
+[kode 0]
+  Gold set GS-REKAAN-040, sidik sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f, pembukaan ke-2 (AP-05).
+  Konfigurasi: sumber bm25, indeks utama, kedalaman 20; penyemat tidak dipakai.
+  Versi indeks: utama:08e028be482e1111788c3379f7e48c0a;metadata:9e50dbf68b9341f5043f267887c62d6d.
+  Putusan: diukur; ambang U3 D-08 Bagian 6 berlaku bagi pengambilan hibrida dan tidak diterapkan pada putaran satu sumber.
+  Recall@8 (jenis A): 60,0% — 60 dari 100
+  MRR (jenis A): 62,0% — jumlah kebalikan peringkat 62 atas 100 pertanyaan
+  Precision@5 (jenis A, batas bawah): 12,0% — jumlah porsi cocok kunci 12 atas 100 pertanyaan
+  Recall bernomor regulasi (jenis A): 0,0% — 0 dari 20
+  Jenis A: Recall@8 60,0% (100), MRR 62,0%, Precision@5 12,0%
+  Jenis B: Recall@8 86,6% (30), MRR 21,4%, Precision@5 17,3%
+  Jenis E: Recall@8 0,0% (15), MRR 0,0%, Precision@5 0,0%
+  Jenis F: Recall@8 100,0% (10), MRR 100,0%, Precision@5 40,0%
+  Kategori K1 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K2 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K3 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K4 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K5 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K6 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K7 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K8 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kebocoran indeks: 0 segmen.
+  Pertanyaan gagal: 59.
+  - REKAAN-A-060 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-061 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-062 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-063 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-064 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-065 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-066 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-067 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-068 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-069 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-070 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-071 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-072 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-073 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-074 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-075 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-076 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-077 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-078 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-079 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-080 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-081 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-082 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-083 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-084 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-085 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-086 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-087 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-088 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-089 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-090 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-091 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-092 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-093 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-094 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-095 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-096 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-097 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-098 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-099 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-B-001 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-003 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-004 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-005 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-E-000 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-001 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-002 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-003 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-004 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-005 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-006 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-007 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-008 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-009 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-010 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-011 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-012 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-013 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-014 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  Tercatat pada L1 sebagai EXP-2026-902 (berhasil).
+$ python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan-berubah.jsonl --id-percobaan EXP-2026-903   [akar logbook sementara]
+[kode 2]
+  Ditolak: gold set ini belum beku; bekukan lebih dulu (D-08 Bagian 5.2). Tidak ada yang dicatat.
+$ python -m perkakas.evaluasi ukur --berkas <sementara>/gold-set-rekaan.jsonl --id-percobaan EXP-2026-904   [akar logbook sementara]
+[kode 3]
+  Gold set GS-REKAAN-040, sidik sha256:69f29e8687764f2448b02b72891b2b46af1150c02003a3c983f2b63c0b35335f, pembukaan ke-3 (AP-05).
+  Konfigurasi: sumber bm25, indeks utama, kedalaman 20; penyemat tidak dipakai.
+  Versi indeks: utama:08e028be482e1111788c3379f7e48c0a;metadata:1e0bd29ae2ea096fd7e5c0b71c5eb149.
+  Putusan: gagal kepatuhan KL-01: segmen indeks metadata di antara kandidat.
+  Recall@8 (jenis A): 60,0% — 60 dari 100
+  MRR (jenis A): 62,0% — jumlah kebalikan peringkat 62 atas 100 pertanyaan
+  Precision@5 (jenis A, batas bawah): 12,0% — jumlah porsi cocok kunci 12 atas 100 pertanyaan
+  Recall bernomor regulasi (jenis A): 0,0% — 0 dari 20
+  Jenis A: Recall@8 60,0% (100), MRR 62,0%, Precision@5 12,0%
+  Jenis B: Recall@8 86,6% (30), MRR 21,4%, Precision@5 17,3%
+  Jenis E: Recall@8 0,0% (15), MRR 0,0%, Precision@5 0,0%
+  Jenis F: Recall@8 100,0% (10), MRR 100,0%, Precision@5 40,0%
+  Kategori K1 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K2 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K3 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K4 (jenis A): Recall@8 61,5% (13), MRR 63,0%, Precision@5 12,3%
+  Kategori K5 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K6 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K7 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kategori K8 (jenis A): Recall@8 58,3% (12), MRR 60,8%, Precision@5 11,6%
+  Kebocoran indeks: 1 segmen — reg-040-00dfa1-by:0002.
+  Pertanyaan gagal: 59.
+  - REKAAN-A-060 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-061 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-062 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-063 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-064 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-065 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-066 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-067 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-068 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-069 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-070 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-071 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-072 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-073 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-074 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-075 (A): kunci 1 reg-040-00dfa1-by, Pasal 1 — kunci di luar 8 teratas
+  - REKAAN-A-076 (A): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-A-077 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-078 (A): kunci 1 reg-040-00dfa1-by, Pasal 4 — kunci di luar 8 teratas
+  - REKAAN-A-079 (A): kunci 1 reg-040-00dfa1-by, Pasal 5 — kunci di luar 8 teratas
+  - REKAAN-A-080 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-081 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-082 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-083 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-084 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-085 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-086 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-087 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-088 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-089 (A): kunci 1 reg-040-00dfa1-nc, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-A-090 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-091 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-092 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-093 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-094 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-095 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-096 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-097 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-098 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-A-099 (A): kunci 1 reg-040-00dfa1-by, Pasal 3 — kunci di luar 8 teratas
+  - REKAAN-B-001 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-003 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-004 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-B-005 (B): kunci 1 reg-040-00dfa1-by, Pasal 2 — kunci di luar 8 teratas
+  - REKAAN-E-000 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-001 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-002 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-003 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-004 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-005 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-006 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-007 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-008 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-009 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-010 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-011 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-012 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-013 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  - REKAAN-E-014 (E): kunci 1 reg-040-00dfa1-cabut, Pasal 1 — kunci ada di korpus tetapi bukan bahan indeks utama
+  Tercatat pada L1 sebagai EXP-2026-904 (gagal).

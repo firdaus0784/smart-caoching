@@ -703,3 +703,24 @@ dan BT-29"`. Fitur 039 merakit jalur penjawab atas korpus dan memilih sitasi
 dari klaim, tetapi VS-03 tetap menunggu model; jawaban tidak keluar sampai
 fitur 020, BT-29, dan ADR-12.
 
+
+### Fitur 040 — 13 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 039. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan lima pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 040 |
+|---|---|
+| C-02 | Kebocoran indeks — segmen indeks metadata di antara kandidat — diukur setiap putaran atas kueri apa pun, dan putaran yang bocor tercatat gagal kepatuhan KL-01 dengan kode keluar tersendiri (M-6) |
+| C-09 | Setiap putaran pengukuran tercatat ke L1 dengan kelima bidang versi, sidik *gold set*, konfigurasi sumber, dan urutan pembukaan — termasuk putaran yang ditolak peladen (M-11); pembekuan tercatat ke L2 bersidik (M-5) |
+| C-16 | Ambang U3 tidak ditulis ke kode; putaran satu sumber tidak menyatakan U3 lulus; komposisi *gold set* tidak dapat dilonggarkan agar dapat dibekukan (M-1) |
+| C-17 | Perkakas evaluasi hanya membaca korpus dengan peran pemuat yang sudah ada; tanpa rute |
+| C-20 | D-08 0.5 dan D-10 0.4 sebelum kodenya; bentuk `/tanya` tidak berubah |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 040 menyediakan alat yang kelak dipakai kalibrasi BT-29,
+tetapi tidak menyentuh validator maupun jalur penjawab.

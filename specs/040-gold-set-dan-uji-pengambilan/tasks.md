@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 13 Oktober 2026 (KB-291); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 13 Oktober 2026 atas pendelegasian KB-168 (KB-292); K-1 s.d. K-8 |
-| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-292). Nol dari delapan tugas selesai |
+| Status | **Menunggu Gerbang 4** — 13 Oktober 2026 (KB-300). Delapan dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; D-08 Bagian 5 dan 6 (U3); BT-35; KL-01; AP-01 s.d. AP-07; C-09, C-16, C-17, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -92,6 +92,6 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 ## T-8 · Bukti, penutupan
 
-- [ ] Bagian 11.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] Bagian 11.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

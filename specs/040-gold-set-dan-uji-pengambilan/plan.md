@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 13 Oktober 2026 (KB-291); P-1 s.d. P-6 sesuai anjuran |
 | Perubahan atas fitur yang lolos Gerbang 4 | Tidak ada. `src/logbook/` tidak disentuh — perubahan rancangan pada T-6 (KB-298), lihat Bagian 7 |
-| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-292). Nol dari delapan tugas selesai |
+| Status | **Menunggu Gerbang 4** — 13 Oktober 2026 (KB-300). Delapan dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08 `spec.md`; D-08 Bagian 5 dan 6 (U3); BT-35; KL-01; AP-01 s.d. AP-07; C-09, C-16, C-17, C-20 |
 
 ## 1. Letak dan batas

@@ -188,12 +188,13 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 
 ## 8. Mutu dan verifikasi
 
-| Ukuran | Keadaan penutupan fitur 039 |
+| Ukuran | Keadaan penutupan fitur 040 |
 |---|---|
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
-| Jumlah uji otomatis | 3.611 pada backend dan perkakas; 337 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 34 dari 40 |
+| Jumlah uji otomatis | 3.737 pada backend dan perkakas; 337 pada aplikasi web |
+| Fitur lolos Gerbang 4 | 34 dari 41 (fitur 040 menunggu Gerbang 4) |
+| Pengujian pengambilan U3 (D-08 Bagian 6) | Alat terbangun: bentuk *gold set*, pemeriksaan kunci terhadap korpus, pembekuan bersidik ke logbook, dan pengukuran yang mencatat setiap putaran (fitur 040, menunggu Gerbang 4). **Belum ada angka U3**: *gold set* belum disusun (BT-35), dan putaran satu sumber leksikal tidak menyatakan U3 lulus |
 | Anggaran muat aplikasi web | 91.845 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,
@@ -211,6 +212,7 @@ Dinyatakan terpisah agar tidak tersamar di antara tabel di atas.
 |---|---|
 | Penerapan J4 | Baris 031 (KB-178) |
 | Jawaban sungguhan atas korpus: penjawab korpus terbangun dan diuji atas PostgreSQL (fitur 039, lolos Gerbang 4 pada 13 Oktober 2026), tetapi tidak dipasang pada titik jalan mana pun. Segmen tersimpan tanpa vektor | Ambang kecukupan BT-29, model sematan dan penjawab ADR-12, dan VS-03/05/07 fitur 020 |
+| Angka pengujian pengambilan U3 | *Gold set* 200 pertanyaan dari tim substansi (BT-35); ambang U3 berlaku bagi pengambilan hibrida, menunggu model sematan (ADR-12) |
 | Alur aduan pada naskah persetujuan | Perlu tidaknya naskah ET-02 menyebutnya — putusan tim etik (KB-227) |
 | Ekspor Parquet | Persetujuan paket `pyarrow` (C-12) |
 | Penyaring relevansi otomatis L4 | Model klasifikasi (fitur 017) dan ambang BT-24; sementara itu kurator yang menyaring (TK-72 B) |

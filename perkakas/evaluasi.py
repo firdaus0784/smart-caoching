@@ -219,12 +219,13 @@ def _bekukan(
     return 0
 
 
-def _rinci(nama: str, n: Nilai, *, hitungan: bool = False) -> str:
+def _rinci(nama: str, n: Nilai, jumlah: str | None = None) -> str:
+    """Persen beserta asalnya: hitungan, atau jumlah pecahan atas penyebut."""
     if not n.terhitung:
         return f"{nama}: {n.persen()}"
-    if hitungan:
+    if jumlah is None:
         return f"{nama}: {n.persen()} — {n.pembilang} dari {n.penyebut}"
-    return f"{nama}: {n.persen()} — {n.pembilang} atas {n.penyebut} pertanyaan"
+    return f"{nama}: {n.persen()} — {jumlah} {n.pembilang} atas {n.penyebut} pertanyaan"
 
 
 def _tiga(label: str, t: TigaMetrik) -> str:
@@ -250,11 +251,18 @@ def _laporan(
     )
     print(f"Versi indeks: {versi_indeks}.", file=keluar)
     print(f"Putusan: {putaran.putusan.value}.", file=keluar)
-    print(_rinci(f"Recall@{K_RECALL} (jenis A)", r.utama.recall_8, hitungan=True), file=keluar)
-    print(_rinci("MRR (jenis A)", r.utama.mrr), file=keluar)
-    print(_rinci(f"Precision@{K_PRESISI} (jenis A, batas bawah)", r.utama.presisi_5), file=keluar)
+    print(_rinci(f"Recall@{K_RECALL} (jenis A)", r.utama.recall_8), file=keluar)
+    print(_rinci("MRR (jenis A)", r.utama.mrr, "jumlah kebalikan peringkat"), file=keluar)
     print(
-        _rinci("Recall bernomor regulasi (jenis A)", r.recall_bernomor, hitungan=True),
+        _rinci(
+            f"Precision@{K_PRESISI} (jenis A, batas bawah)",
+            r.utama.presisi_5,
+            "jumlah porsi cocok kunci",
+        ),
+        file=keluar,
+    )
+    print(
+        _rinci("Recall bernomor regulasi (jenis A)", r.recall_bernomor),
         file=keluar,
     )
     for j, t in r.per_jenis.items():
