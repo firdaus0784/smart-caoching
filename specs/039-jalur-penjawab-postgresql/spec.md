@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | FR-F02, FR-F03, FR-F11, FR-F14, FR-D06; KL-01, KL-04, KL-07; C-02, C-07, C-16, C-17, C-19, C-20 |
 | Dokumen terkait | D-07 Bagian 3.3, 4, 4.5, 4.6 · D-14 Bagian 4.1, 4.10, 5.1 · D-13 Bagian 6 · D-06 aturan pelaksanaan KL-01 · spec fitur 006, 007, 019, 021, 032, 038 · TK-81, TK-87 |
-| Status | **Diajukan ke Gerbang 1** — 13 Oktober 2026 (KB-277) |
+| Status | **Gerbang 1 lolos** — 13 Oktober 2026 (KB-278); P-1 s.d. P-6 sesuai anjuran |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -159,6 +159,19 @@ bergantung pada pemanfaatan hasil penelitian kelak, dan SA menuntut turunan
 berlisensi sama — tiga hal yang bukan wewenang agen menilainya. Normalisasi
 membuat `CC BY 4.0` terbaca seperti yang dimaksud penulisnya.
 
+## Putusan Gerbang 1 (KB-278)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — pemuat, bahan, perakit, dan perkakas pencarian satu sumber; titik jalan tetap `PenjawabBelumSiap` sampai BT-29 dan ADR-12 |
+| P-2 | **A** — indeks leksikal dibangun di memori dari PostgreSQL, versi sidik isi, pemuatan ulang atomik |
+| P-3 | **A** — regulasi tanpa catatan status dan regulasi dicabut dikeluarkan dari bahan; bukan regulasi bernilai `berlaku`; D-14 dijelaskan lebih dulu |
+| P-4 | **A** — dokumen tidak publik dan dokumen sekolah dikeluarkan dari bahan, satu aturan dengan pembaca sumber, sampai ET-04 |
+| P-5 | **A** — tautan sumber asli dicatat saat menerima, tersimpan pada penerimaan dan catatan metadata korpus; D-14 lebih dulu |
+| P-6 | **A** — keterangan lisensi dinormalisasi; NC, ND, SA tertutup; TK-87 diputus |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -174,7 +187,7 @@ membuat `CC BY 4.0` terbaca seperti yang dimaksud penulisnya.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-6 diputus pada Gerbang 1
+- [x] P-1 s.d. P-6 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Pemuatan diuji terhadap peladen sebagai peran sungguhan, termasuk
       penolakan teks indeks metadata bagi pemuat konteks

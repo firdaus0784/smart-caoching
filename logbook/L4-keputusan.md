@@ -4036,3 +4036,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-5 mengubah kontrak catatan korpus, P-6 mengubah fitur yang lolos Gerbang 4. |
 | Dampak | `specs/039-jalur-penjawab-postgresql/spec.md`. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-278 · Gerbang 1 fitur 039 lolos; TK-87 diputus
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Usulan KB-277: enam pertanyaan, tiga ditanyakan tersendiri (P-1, P-5, P-6) dan tiga bersama (P-2, P-3, P-4), masing-masing dengan pilihan yang tidak dianjurkan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keenamnya. **P-1 A**: pemuat, bahan, perakit, dan perkakas pencarian satu sumber; titik jalan tetap `PenjawabBelumSiap`. **P-2 A**: indeks leksikal di memori, versi sidik isi. **P-3 A**: regulasi tanpa status dan regulasi dicabut keluar dari bahan; bukan regulasi bernilai `berlaku`. **P-4 A**: dokumen tidak publik dan dokumen sekolah keluar dari bahan sampai ET-04. **P-5 A**: tautan sumber asli dicatat saat menerima. **P-6 A**: TK-87 diputus — NC, ND, SA tertutup, penulisan dinormalisasi; fitur 006 berubah atas putusan ini. |
+| Alternatif | P-1 B dan D; P-5 B; P-6 B dan C; anjuran berbeda pada P-2 s.d. P-4 — tidak dipilih. |
+| Dampak | `spec.md` fitur 039; D-00 3.17; D-12 0.46. Gerbang 2 dan 3 atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |
