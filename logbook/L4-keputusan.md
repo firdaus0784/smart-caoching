@@ -4256,3 +4256,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Kebocoran dihitung per kemunculan — tidak dipilih: D-08 menyebut "jumlah segmen"; per pertanyaan tetap dirinci pada hasil. |
 | Dampak | `src/rag/evaluasi/pengukur.py`; `tests/rag/evaluasi/test_pengukur.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-298 · T-6 fitur 040: jejak logbook; `src/logbook/` tidak disentuh
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-6 semula menambah `VersiGoldSet` pada `src/logbook/artefak.py` dan membuat `src/logbook/pembaca.py`. Saat T-6 dimulai, keduanya ternyata menyentuh fitur 026 yang sudah lolos Gerbang 4, sedangkan perubahan atas fitur yang lolos Gerbang 4 menuntut putusan pemegang gerbang. Empat modul jejak yang ada — termasuk pencatatan ekspor ontologi fitur 005 — sudah menulis L2 lewat `tambah_baris` tanpa bentuk pada `artefak.py`. |
+| Keputusan | **Plan diubah atas pendelegasian Gerbang 2 KB-168**, alih-alih meminta putusan atas perubahan yang tidak diperlukan: bentuk `VersiGoldSet`, pembekuan, pencatatan putaran, dan pembacaan L1 dan L2 tinggal di `src/rag/evaluasi/jejak.py`; `src/logbook/` tidak disentuh. Plan Bagian 1, 7, 10, 12 dan tasks T-6 diperbarui. `bekukan()` menolak komposisi yang menyimpang dari D-08 Bagian 5.1 di dalam dirinya, menolak sidik yang sudah beku dan label versi yang terpakai, dan tidak menulis apa pun saat menolak. `catat_putaran()` menulis kelima bidang `Versi`, bidang D-10 Bagian 3 dengan `belum-berlaku` bagi yang tidak berlaku, sidik dan versi *gold set*, dan urutan pembukaan yang dihitung dari L1 (AP-05); menolak bentuk id, id kembar, status di luar berhasil dan gagal, dan putaran gagal tanpa dugaan penyebab. Baris *gold set* L2 yang rusak menolak, tidak diabaikan. Uji memastikan baris L1 lulus pemeriksa catatan versi `make check`, dan tidak satu pun teks pertanyaan sampai ke L1 maupun L2. Uji ditulis lebih dulu dan merah; seluruhnya menulis ke `tmp_path`. Mutasi M-1 merah. |
+| Alternatif | Meminta putusan pemegang gerbang atas perubahan fitur 026 — tidak dipilih: perubahannya tidak diperlukan untuk memenuhi R-03 dan R-06. |
+| Dampak | `src/rag/evaluasi/jejak.py`; `tests/rag/evaluasi/test_jejak.py`; `plan.md` dan `tasks.md` fitur 040. |
+| Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2) |

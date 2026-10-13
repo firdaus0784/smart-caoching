@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | Spec | **Gerbang 1 lolos** — 13 Oktober 2026 (KB-291); P-1 s.d. P-6 sesuai anjuran |
-| Perubahan atas fitur yang lolos Gerbang 4 | Tidak ada. `src/logbook/artefak.py` (fitur 026) bertambah satu jenis artefak sebagaimana dijanjikan uraiannya: *"sisanya menyusul bersama fitur yang menghasilkannya"* |
+| Perubahan atas fitur yang lolos Gerbang 4 | Tidak ada. `src/logbook/` tidak disentuh — perubahan rancangan pada T-6 (KB-298), lihat Bagian 7 |
 | Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-292). Nol dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08 `spec.md`; D-08 Bagian 5 dan 6 (U3); BT-35; KL-01; AP-01 s.d. AP-07; C-09, C-16, C-17, C-20 |
 
@@ -16,15 +16,13 @@ src/rag/evaluasi/
   kunci.py           baru — satuan penanda, pencocokan kunci, pemeriksaan terhadap korpus
   metrik.py          baru — Recall@8, MRR, Precision@5, recall bernomor regulasi; persen D-08
   pengukur.py        baru — satu putaran atas satu sumber kandidat; kebocoran; sebab luput
-  jejak.py           baru — pembekuan ke L2, putaran ke L1, pembacaan keduanya
-src/logbook/artefak.py   VersiGoldSet; KeteranganArtefak menjadi dua jenis
-src/logbook/pembaca.py   baru — membaca baris L1 dan L2; tanpa cara menulis
+  jejak.py           baru — VersiGoldSet; pembekuan ke L2, putaran ke L1, pembacaan keduanya
 perkakas/evaluasi.py     baru — periksa, bekukan, ukur
 docs/                    D-08 Bagian 5.3 baru dan 6; D-10 Bagian 3 dan 4; D-00
 ```
 
 **Tidak disentuh:** `src/api/`, `src/penyimpanan/`, `src/ingest/`, `src/llm/`,
-`src/pengguna/`, `src/telemetri/`, `web/`, `perkakas/basis_data/`, dan
+`src/logbook/`, `src/pengguna/`, `src/telemetri/`, `web/`, `perkakas/basis_data/`, dan
 `perkakas/jalankan_lokal.py`. Tanpa rute, tanpa skema, tanpa peran, tanpa hak
 peladen baru (R-08, C-17, C-20). Tanpa paket baru (C-12): `json`, `hashlib`,
 `fractions`, dan `decimal` pustaka baku.
@@ -181,9 +179,20 @@ selain itu *diukur*. Putusan bagi pengambilan hibrida menyusul bersama ADR-12.
 
 ## 7. K-6 · Logbook (R-03, R-06, R-07, AP-05)
 
-`src/logbook/pembaca.py`: `baca(akar, buku)` → baris terurai; berkas yang
-belum ada → kosong. Modul itu tidak menyediakan cara menulis; `penulis.py`
-tetap satu-satunya jalur menulis.
+**Perubahan rancangan pada T-6 (KB-298).** Rancangan semula menambah
+`VersiGoldSet` pada `src/logbook/artefak.py` dan membuat
+`src/logbook/pembaca.py`. Keduanya menyentuh fitur 026 yang sudah lolos
+Gerbang 4. Bentuk baris dan pembacaannya dipindah ke
+`src/rag/evaluasi/jejak.py`, yang menulis lewat `tambah_baris` — pola
+`src/rag/ontologi/jejak.py` fitur 005 dan tiga modul jejak lain. `penulis.py`
+tetap satu-satunya jalur menulis; membaca tidak dibatasi aturan itu, dan
+pemeriksa catatan versi sudah membaca L1 langsung.
+
+`VersiGoldSet` bertipe pydantic: `artefak = "gold-set"`, `versi`, `sidik`,
+`dibekukan_pada` berzona, `jumlah`, kedua komposisi yang wajib menjumlah,
+`jumlah_bernomor_regulasi`, `pelaku`. Pembekuan menolak komposisi yang
+menyimpang **di fungsi pembekuan itu sendiri**, sehingga tidak ada jalur yang
+dapat membekukan *gold set* menyimpang.
 
 **Satu baris L1 per putaran** lewat `tambah_baris(…, Buku.L1, …)` dengan
 kelima bidang `Versi` (pemeriksa V-0x tetap lulus) dan bidang D-10 Bagian 3:
@@ -245,7 +254,7 @@ Keluaran tanpa teks pertanyaan dan teks segmen; tanpa log.
 | K-3 | Pembekuan | Bagian 4 — sidik kanonik; komposisi D-08 persis; ukur menolak sebelum menyentuh peladen |
 | K-4 | Metrik | Bagian 5 — setiap kunci; tidak keluar dari penyebut; dipangkas ke bawah; tanpa tetapan ambang |
 | K-5 | Pengukur | Bagian 6 — seluruh pertanyaan dicari; tiga sebab luput; dua putusan |
-| K-6 | Logbook | Bagian 7 — pembaca terpisah; L1 tiap putaran; pembukaan dihitung; akar bukan argumen |
+| K-6 | Logbook | Bagian 7 — bentuk dan pembacaan di `jejak.py`, `src/logbook/` tidak disentuh; L1 tiap putaran; pembukaan dihitung; akar bukan argumen |
 | K-7 | Perkakas | Bagian 8 — peran pemuat fitur 039; empat kode keluar |
 | K-8 | Kontrak | Bagian 9 |
 
@@ -305,7 +314,7 @@ angkanya tidak bermakna sebagai hasil U3.
 | T-3 | Kunci dan pemeriksaan korpus; M-3 |
 | T-4 | Metrik; M-7, M-8 |
 | T-5 | Pengukur; M-6, M-9 |
-| T-6 | Logbook: `VersiGoldSet`, pembaca, jejak |
+| T-6 | Logbook: `VersiGoldSet`, pembekuan, putaran, pembacaan — `src/rag/evaluasi/jejak.py` |
 | T-7 | Perkakas `periksa`, `bekukan`, `ukur`; M-1, M-2, M-10, M-11, M-12 |
 | T-8 | Bukti, penutupan: L8, HKI, L4; status menunggu Gerbang 4 |
 

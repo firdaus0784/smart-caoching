@@ -10,8 +10,8 @@
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
 implementasinya. `make check` lulus sesudah entri L4 ditulis, tepat sebelum
 commit. **`src/api/`, `src/penyimpanan/`, `src/ingest/`, `src/llm/`,
-`src/pengguna/`, `src/telemetri/`, `web/`, dan `perkakas/basis_data/` tidak
-berubah.** Tanpa rute, peran, hak, atau paket baru (R-08, C-12, C-20). Isi
+`src/logbook/`, `src/pengguna/`, `src/telemetri/`, `web/`, dan
+`perkakas/basis_data/` tidak berubah.** Tanpa rute, peran, hak, atau paket baru (R-08, C-12, C-20). Isi
 *gold set* sungguhan dan ambang tidak dibuat di mana pun (D-08 Bagian 5.2,
 C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
@@ -73,12 +73,11 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-03, R-06, R-07; K-6; AP-05.
 
-- [ ] Uji lebih dulu: `VersiGoldSet` menjumlah, berzona, sidik berbentuk;
+- [x] Uji lebih dulu: `VersiGoldSet` menjumlah, berzona, sidik berbentuk;
       pembaca atas berkas ada dan tidak ada; L1 berbidang versi lengkap dan
       lulus pemeriksa catatan versi; pembukaan dihitung; pembekuan dicari
       menurut sidik
-- [ ] `src/logbook/artefak.py`, `src/logbook/pembaca.py`,
-      `src/rag/evaluasi/jejak.py`
+- [x] `src/rag/evaluasi/jejak.py` — `src/logbook/` tidak disentuh (KB-298)
 
 ## T-7 · Perkakas
 
