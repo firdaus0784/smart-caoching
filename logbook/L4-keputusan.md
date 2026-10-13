@@ -4300,3 +4300,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Belum lolos; pengamatan cukup pada L4 — tidak dipilih. |
 | Dampak | Status spec, plan, tasks fitur 040; D-00 3.23 (TK-88); dokumen HKI Bagian 8. Fitur lolos Gerbang 4: 35 dari 41. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-302 · Baris D-12 041 disisipkan: identitas regulasi pada pengambilan (TK-88)
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Sesudah Gerbang 4 fitur 040 dan pencatatan TK-88 (KB-301), pekerjaan tersisa sebagian besar terhalang BT-29, BT-35, ADR-12, fitur 017 dan 020, ET-02, ET-04, TK-71, dan TK-73. Pemegang gerbang ditanya langkah berikutnya, dengan empat pilihan: usulan TK-88, penjalan uji U5, penelusuran lebih jauh, atau berhenti. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Usulan TK-88"**: baris D-12 041 *identitas regulasi pada pengambilan* disisipkan (D-12 0.48). Spec diajukan ke Gerbang 1 dengan pilihan perbaikan; D-07 Bagian 3 diubah lebih dulu bila pilihan menuntutnya. Perbaikan diputus sebelum kalibrasi BT-29. |
+| Alternatif | Penjalan uji U5; penelusuran lebih jauh; berhenti — tidak dipilih. |
+| Dampak | D-12 0.48; D-00 3.24. Usulan `spec.md` fitur 041 menyusul. |
+| Pemutus | Pemegang Gerbang 1–4 |
