@@ -1,0 +1,91 @@
+Berkas contoh, lisensi, dan tautannya dibuat naskah bukti; peraturannya rekaan.
+Satu segmen dokumen CC-BY-SA ditanam pengelola di indeks utama, meniru keadaan
+sebelum TK-87; perintah indeks memindahkannya.
+
+== catatan metadata (dokumen | lisensi | tautan) ==
+reg-039-3f9431-by | CC BY 4.0 | https://jdih.contoh.go.id/peraturan/reg-039-3f9431-by
+reg-039-3f9431-nc | CC-BY-NC 4.0 | https://jdih.contoh.go.id/peraturan/reg-039-3f9431-nc
+reg-039-3f9431-sa | CC-BY-SA 4.0 | https://jdih.contoh.go.id/peraturan/reg-039-3f9431-sa
+
+== segmen akhir (indeks | id_segmen | penanda | lisensi) ==
+utama | reg-039-3f9431-by:0001 | Pembukaan | terbuka
+utama | reg-039-3f9431-by:0002 | Pasal 1 | terbuka
+utama | reg-039-3f9431-by:0003 | Pasal 2 | terbuka
+metadata | reg-039-3f9431-nc:0001 | Pembukaan | tertutup
+metadata | reg-039-3f9431-nc:0002 | Pasal 1 | tertutup
+metadata | reg-039-3f9431-nc:0003 | Pasal 2 | tertutup
+metadata | reg-039-3f9431-sa:0001 | Pembukaan | tertutup
+metadata | reg-039-3f9431-sa:0002 | Pasal 1 | tertutup
+metadata | reg-039-3f9431-sa:0003 | Pasal 2 | tertutup
+
+== jalannya perintah ==
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/039-jalur-penjawab-postgresql/bukti/contoh-regulasi-039.docx --id reg-039-3f9431-by --judul Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0) --jenis regulasi_resmi --penerbit Kementerian Contoh --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC BY 4.0 --tautan https://jdih.contoh.go.id/peraturan/reg-039-3f9431-by
+[kode 0]
+  Diterima ke karantina: reg-039-3f9431-by. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-039-3f9431-by --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-039-3f9431-by.
+$ python -m perkakas.kurasi status --dokumen reg-039-3f9431-by --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/039-jalur-penjawab-postgresql/bukti/contoh-regulasi-039.docx --id reg-039-3f9431-nc --judul Peraturan Contoh Nomor 3 Tahun 2026 (CC-BY-NC 4.0) --jenis regulasi_resmi --penerbit Kementerian Contoh --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC-BY-NC 4.0 --tautan https://jdih.contoh.go.id/peraturan/reg-039-3f9431-nc
+[kode 0]
+  Diterima ke karantina: reg-039-3f9431-nc. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-039-3f9431-nc --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-039-3f9431-nc.
+$ python -m perkakas.kurasi status --dokumen reg-039-3f9431-nc --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti terima --berkas /home/user/smart-caoching/specs/039-jalur-penjawab-postgresql/bukti/contoh-regulasi-039.docx --id reg-039-3f9431-sa --judul Peraturan Contoh Nomor 3 Tahun 2026 (CC-BY-SA 4.0) --jenis regulasi_resmi --penerbit Kementerian Contoh --tahun 2026 --kerahasiaan publik --persetujuan belum_diminta --pelaku tm-001 --lisensi CC-BY-SA 4.0 --tautan https://jdih.contoh.go.id/peraturan/reg-039-3f9431-sa
+[kode 0]
+  Diterima ke karantina: reg-039-3f9431-sa. Disamarkan: NIK 0, NIP 0, NISN 0, NUPTK 0, telepon 0, rekening 0. Temuan pola instruksi: 0.
+$ python -m perkakas.ingesti setujui --id reg-039-3f9431-sa --pelaku tm-002 --alasan terperiksa
+[kode 0]
+  Disetujui dan dipindahkan ke korpus: reg-039-3f9431-sa.
+$ python -m perkakas.kurasi status --dokumen reg-039-3f9431-sa --status berlaku
+[kode 0]
+  Status dokumen diperbarui. Butir tayang ditarik: 0.
+$ python -m perkakas.ingesti indeks --id reg-039-3f9431-by
+[kode 0]
+  Diindeks: reg-039-3f9431-by. 3 segmen ke indeks utama — teks dapat dikutip jawaban dan pembaca sumber.
+  - Pembukaan: 10 kata
+  - Pasal 1: 9 kata
+  - Pasal 2: 16 kata
+$ python -m perkakas.ingesti indeks --id reg-039-3f9431-nc
+[kode 0]
+  Diindeks: reg-039-3f9431-nc. 3 segmen ke indeks metadata — lisensi tertutup atau tidak tercatat, teks tidak dikirim ke model maupun ditampilkan.
+  - Pembukaan: 10 kata
+  - Pasal 1: 9 kata
+  - Pasal 2: 16 kata
+$ python -m perkakas.pengambilan cari --kueri inventarisasi sarana prasarana
+[kode 0]
+  Indeks utama, versi utama:f45f9d8b823cd52e994ccd7af1edbd23.
+  Segmen layak: 3. Tak layak: 1 — lisensi_tertutup 1.
+  Perlu diindeks ulang karena lisensinya kini tertutup: reg-039-3f9431-sa.
+  Peringkat: 3.
+  1. skor 2.2060 | reg-039-3f9431-by | Pasal 2 | Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0)
+  2. skor 0.1505 | reg-039-3f9431-by | Pasal 1 | Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0)
+  3. skor 0.1374 | reg-039-3f9431-by | Pembukaan | Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0)
+$ python -m perkakas.pengambilan cari --kueri inventarisasi sarana prasarana --indeks metadata
+[kode 0]
+  Indeks metadata, versi metadata:e029d2c988085fc261d36db68cb10926.
+  Segmen layak: 3. Tak layak: 0.
+  Peringkat: 3.
+  1. skor 2.2060 | reg-039-3f9431-nc | Pasal 2 | Peraturan Contoh Nomor 3 Tahun 2026 (CC-BY-NC 4.0)
+  2. skor 0.1505 | reg-039-3f9431-nc | Pasal 1 | Peraturan Contoh Nomor 3 Tahun 2026 (CC-BY-NC 4.0)
+  3. skor 0.1374 | reg-039-3f9431-nc | Pembukaan | Peraturan Contoh Nomor 3 Tahun 2026 (CC-BY-NC 4.0)
+$ python -m perkakas.ingesti indeks --id reg-039-3f9431-sa
+[kode 0]
+  Diindeks: reg-039-3f9431-sa. 3 segmen ke indeks metadata — lisensi tertutup atau tidak tercatat, teks tidak dikirim ke model maupun ditampilkan.
+  - Pembukaan: 10 kata
+  - Pasal 1: 9 kata
+  - Pasal 2: 16 kata
+$ python -m perkakas.pengambilan cari --kueri inventarisasi sarana prasarana
+[kode 0]
+  Indeks utama, versi utama:ebb1871b9ea9e85ee6bcdd231799760a.
+  Segmen layak: 3. Tak layak: 0.
+  Peringkat: 3.
+  1. skor 2.2060 | reg-039-3f9431-by | Pasal 2 | Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0)
+  2. skor 0.1505 | reg-039-3f9431-by | Pasal 1 | Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0)
+  3. skor 0.1374 | reg-039-3f9431-by | Pembukaan | Peraturan Contoh Nomor 3 Tahun 2026 (CC BY 4.0)

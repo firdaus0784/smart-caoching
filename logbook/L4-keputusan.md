@@ -4135,3 +4135,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mencetak teks agar tim menilai relevansi — tidak dipilih: R-08; teks bagian dapat dibuka lewat pembaca sumber atau `indeks --pratinjau`. |
 | Dampak | Bahan penyusunan *gold set* BT-35 tersedia sebelum ADR-12. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-287 · T-8 fitur 039: bukti ujung ke ujung, penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | `plan.md` Bagian 11.2, di luar `make check`. Perkakas ingesti, kurasi, dan pengambilan lewat baris perintah, tiap perintah sebagai perannya sendiri. Satu hal buatan, dinyatakan: segmen dokumen `CC-BY-SA 4.0` ditanam pengelola di indeks utama, meniru keadaan sebelum TK-87. Naskah dan keluarannya di `specs/039-jalur-penjawab-postgresql/bukti/`. |
+| Keputusan | **Dua puluh satu pemeriksaan lulus pada putaran pertama.** `CC BY 4.0` kini terbaca terbuka dan masuk indeks utama; `CC-BY-NC 4.0` ke indeks metadata; tautan tercatat pada catatan metadata korpus; `cari` menemukan Pasal 2 yang dirujuk di urutan teratas tanpa teks, menyebut dokumen SA perlu diindeks ulang, dan tidak memasukkannya ke peringkat; `indeks --id` memindahkannya ke indeks metadata, sesudahnya tidak lagi disebut. **Mutasi diulang atas kode akhir: dua belas dari dua belas merah.** Penutupan: L8 (tagihan tidak menyusut, tujuh pasal dikuatkan); dokumen HKI (pekerja latar, basis data, keamanan, mutu, yang belum terbangun; uji 3.611 dan 337); D-00 3.19 (TK-87 menunggu Gerbang 4). Kriteria penerimaan spec dicentang. |
+| Alternatif | Memasang `PenjawabKorpus` pada `make jalan` untuk bukti — ditolak P-1 A dan C-16: ia menuntut ambang dan model yang belum ada. |
+| Dampak | Diajukan kepada pemegang Gerbang 4, bersama perubahan atas fitur 006 (P-6 A) dan 021 (KB-279). Jawaban sungguhan tetap menunggu BT-29, ADR-12, dan fitur 020. |
+| Pemutus | Agen, atas pendelegasian KB-168; Gerbang 4 tidak didelegasikan |

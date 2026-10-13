@@ -678,3 +678,28 @@ Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 038 mengisi indeks, tetapi jalur penjawab belum memuat
 segmen dari PostgreSQL dan validatornya tidak disentuh; segmen baru tanpa
 vektor sampai model sematan diputus (ADR-12).
+
+### Fitur 039 — 13 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 038. Tidak ada pasal berpindah.
+
+Fitur ini menguatkan tujuh pasal yang sudah lulus:
+
+| Pasal | Yang bertambah pada fitur 039 |
+|---|---|
+| C-01 | Sitasi dipilih dari segmen yang dirujuk klaim tervalidasi, satu per dokumen dan bagian; segmen yang diambil tetapi tidak dirujuk tidak menjadi sitasi, dan klaim tanpa sitasi menghentikan penyusunan (M-8) |
+| C-02 | Teks konteks dimuat dengan peran yang tidak menjangkau indeks metadata — ditolak di kode dan peladen (M-1); lisensi dicocokkan persis, NC, ND, SA tertutup (M-7); lisensi dibaca ulang pada pemuat sebagai lapis kedua (M-6) |
+| C-03 | Segmen yang dokumennya tidak di korpus tidak termuat (M-2) |
+| C-07 | Regulasi dicabut dan regulasi tanpa catatan status tidak masuk bahan, sebelum penilaian kecukupan (M-3, M-4); perubahan status mengganti muatan (M-9) |
+| C-16 | Ambang, penyemat, dan model sungguhan tidak dibuat; penjawab korpus menuntut ambang berasal BT-29 dari pemanggilnya dan tidak dipasang pada titik jalan |
+| C-17 | Pemuat dan perkakas pencarian hanya membaca; tanpa rute |
+| C-20 | D-14 0.22 sebelum kodenya; bentuk `/tanya` dan `/sumber` tidak berubah |
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Fitur 039 merakit jalur penjawab atas korpus dan memilih sitasi
+dari klaim, tetapi VS-03 tetap menunggu model; jawaban tidak keluar sampai
+fitur 020, BT-29, dan ADR-12.
+
