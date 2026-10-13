@@ -364,10 +364,30 @@ REGULASI = (
 )
 
 
+def test_regulasi_tanpa_nomor_dan_tahun_ditolak_tanpa_kutipan(tmp_path: Path) -> None:
+    """P-3 A fitur 041: kode 2, judul tidak dikutip, tidak satu catatan pun."""
+    j = Jalankan(tmp_path)
+    d = _id()
+    ubah = {"jenis": "regulasi_resmi", "kerahasiaan": "publik", "judul": "Juknis Zqmvtrx 2026"}
+    kode, _, galat = j(*_terima(j, d, **ubah), pengekstrak=[_Stub(REGULASI)])
+    assert kode == 2
+    assert galat.startswith("Ditolak:") and "Zqmvtrx" not in galat
+    hasil = psql(
+        "smart_coaching",
+        "-c",
+        f"select count(*) from karantina.penerimaan where id_dokumen = '{d}'",
+    )
+    assert hasil.stdout.split() == ["0"]
+
+
 def _korpus_regulasi(j: Jalankan, d: str, lisensi: str | None) -> None:
     """Regulasi publik melewati gerbang sungguhan sampai korpus, dengan status
     berlaku tercatat — prasyarat pembaca sumber (TK-81 A)."""
-    ubah = {"jenis": "regulasi_resmi", "kerahasiaan": "publik", "judul": "Peraturan Contoh"}
+    ubah = {
+        "jenis": "regulasi_resmi",
+        "kerahasiaan": "publik",
+        "judul": "Peraturan Contoh Nomor 1 Tahun 2026",
+    }
     if lisensi is not None:
         ubah["lisensi"] = lisensi
     kode, _, galat = j(*_terima(j, d, **ubah), pengekstrak=[_Stub(REGULASI)])

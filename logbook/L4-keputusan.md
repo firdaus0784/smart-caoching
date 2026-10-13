@@ -4366,3 +4366,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Mengubah `bangun_indeks` fitur 007 agar menerima judul — tidak dipilih: kontrak sumber kandidat tidak mengenal catatan metadata. |
 | Dampak | `src/rag/pengambilan/teks_pencarian.py`, `src/api/penjawab_korpus.py`, `perkakas/pengambilan.py`; uji baru dan dua uji fitur 039 disesuaikan. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-308 · T-3 fitur 041: judul regulasi bernomor dan bertahun
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 041 K-3; D-06 kanal K-A (KB-306). Perubahan atas gerbang ingesti berdasar putusan Gerbang 1 KB-304. |
+| Keputusan | `src/ingest/judul_regulasi.py`: `POLA_JUDUL_REGULASI` dan `judul_regulasi_sah()`; sepuluh contoh D-06 diuji dari dokumennya. `Gerbang.terima` menolak `regulasi_resmi` tanpa pola dengan `GalatJudulRegulasi` — turunan `GalatGerbang`, tinggal di `gerbang.py` agar tidak ada impor melingkar — **sebelum penyamaran dan sebelum apa pun tertulis**; pesan tidak mengutip judul. Perkakas ingesti mencetak `Ditolak:` berkode 2. Jenis lain tidak diperiksa. Satu pembantu uji fitur 037 yang menerima regulasi berjudul "Peraturan Contoh" disesuaikan menjadi berpola. Seluruh rangkaian lulus tanpa perubahan uji lain. Uji ditulis lebih dulu dan merah. Mutasi M-5, M-6, M-7 merah. |
+| Alternatif | Memeriksa pada model `Dokumen` — tidak dipilih: `Dokumen` juga dibentuk ulang dari catatan karantina, dan dokumen lama yang sudah di korpus tidak boleh tersentuh (P-3 A). |
+| Dampak | `src/ingest/judul_regulasi.py`, `src/ingest/gerbang.py`, `perkakas/ingesti.py`; `tests/ingest/test_judul_regulasi.py`; satu uji perkakas ingesti baru dan satu pembantu disesuaikan. |
+| Pemutus | Agen atas pendelegasian KB-168 |

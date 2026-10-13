@@ -44,6 +44,7 @@ from dataclasses import dataclass
 from src.ingest.adversarial import Temuan, periksa_pola
 from src.ingest.dokumen import Dokumen, StatusAnonimisasi, StatusPersetujuan, TingkatKerahasiaan
 from src.ingest.jejak import JejakArea
+from src.ingest.judul_regulasi import judul_regulasi_sah
 from src.ingest.peringkat import JenisSumber
 from src.kamus.segmen import Peringkat
 from src.nlp.anonimisasi.samaran import samarkan
@@ -66,6 +67,19 @@ class GalatGerbang(Exception):
     Berbeda dari `GalatAksesDitolak`: yang ini berarti kredensialnya memadai
     tetapi keadaan dokumennya belum layak berpindah.
     """
+
+
+class GalatJudulRegulasi(GalatGerbang):
+    """Judul regulasi resmi tanpa nomor dan tahun — fitur 041, P-3 A, D-06 K-A.
+
+    Pesannya tidak mengutip judul.
+    """
+
+    def __init__(self) -> None:
+        super().__init__(
+            "judul regulasi resmi wajib memuat 'Nomor <nomor> Tahun <tahun>' "
+            "(D-06 kanal K-A); tidak ada yang diterima"
+        )
 
 
 @dataclass(frozen=True)
@@ -142,7 +156,14 @@ class Gerbang:
         sama (TK-85 A): versi lama akan tertinggal di korpus tanpa terjangkau
         penarikan persetujuan. `id_penerima` kode anggota tim (P-6 A); jalur
         memori fitur 002 menerimanya kosong, catatan PostgreSQL tidak.
+
+        **Fitur 041.** Judul regulasi resmi wajib bernomor dan bertahun (P-3 A,
+        D-06 K-A), diperiksa paling awal: sebelum penyamaran dan sebelum apa
+        pun tertulis. Gerbang ini satu-satunya pintu penerimaan, sehingga
+        tidak ada jalur yang melewatinya.
         """
+        if dokumen.jenis is JenisSumber.REGULASI_RESMI and not judul_regulasi_sah(dokumen.judul):
+            raise GalatJudulRegulasi
         hasil = samarkan(teks)
         temuan = self._jalankan_pemeriksa(hasil.teks)
         penerimaan = CatatanPenerimaan(

@@ -40,12 +40,12 @@ baru (R-06). Tanpa bobot, faktor pengali, maupun ambang (R-03, C-16).
 
 **Kebutuhan:** R-06; K-3; P-3 A.
 
-- [ ] Uji lebih dulu: contoh D-06; hanya `regulasi_resmi`; `Gerbang.terima`
+- [x] Uji lebih dulu: contoh D-06; hanya `regulasi_resmi`; `Gerbang.terima`
       menolak sebelum menulis; perkakas berkode 2 tanpa mengutip judul; uji
       fitur 037 dan lainnya yang memakai judul regulasi tanpa pola
       disesuaikan
-- [ ] `src/ingest/judul_regulasi.py`, `src/ingest/gerbang.py`
-- [ ] Mutasi M-5, M-6, M-7
+- [x] `src/ingest/judul_regulasi.py`, `src/ingest/gerbang.py`
+- [x] Mutasi M-5, M-6, M-7
 
 ## T-4 · Bukti, penutupan
 

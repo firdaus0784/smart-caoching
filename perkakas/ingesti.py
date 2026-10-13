@@ -54,7 +54,7 @@ from src.ingest.ekstraksi.jejak_ocr import catat_keluaran_ocr
 from src.ingest.ekstraksi.ocr import PengekstrakOcr, TeksPindaian
 from src.ingest.ekstraksi.pdf import GalatTanpaLapisanTeks, PengekstrakPdf
 from src.ingest.ekstraksi.xlsx import PengekstrakXlsx
-from src.ingest.gerbang import GalatGerbang, Gerbang
+from src.ingest.gerbang import GalatGerbang, GalatJudulRegulasi, Gerbang
 from src.ingest.jejak import GalatJejak
 from src.ingest.pengindeksan import indekskan
 from src.ingest.peringkat import JenisSumber
@@ -321,6 +321,9 @@ def utama(
             "Ditolak: metadata dokumen tidak sah. Periksa judul, penerbit, tahun, dan tautan.",
             file=galat,
         )
+        return 2
+    except GalatJudulRegulasi as g:
+        print(f"Ditolak: {g}.", file=galat)
         return 2
     except (GalatGerbang, GalatJejak) as g:
         print(f"Ditolak gerbang: {g}", file=galat)
