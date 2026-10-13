@@ -4223,3 +4223,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Sidik atas bita berkas — tidak dipilih: menyunting di penyunting lain akan membuat *gold set* beku tampak berubah. |
 | Dampak | `src/rag/evaluasi/__init__.py`, `gold_set.py`, `kunci.py`; uji `tests/rag/evaluasi/`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-295 · T-3 fitur 040: kunci dokumen dan pasal, pemeriksaan korpus
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-2; D-08 Bagian 5.3 (KB-293). |
+| Keputusan | `src/rag/evaluasi/kunci.py`: `satuan()` membuang akhiran pemotongan fitur 038 (` ayat (` dan `, `); `Kunci` menolak bagian di bawah satuan dan nilai berspasi di tepi; `cocok()` satu-satunya aturan cocok, sama persis atas satuan; `periksa_korpus()` memakainya untuk dua sebab R-02 dan melaporkan pengenal saja. Uji memakai penanda dari `potong()` fitur 038 sungguhan, dengan prasyarat bahwa ketiga akhiran memang muncul. Uji ditulis lebih dulu dan merah. Mutasi M-3 merah. |
+| Alternatif | Pemeriksaan korpus memakai himpunan satuan tersendiri — tidak dipilih: dua aturan cocok akan berbeda, dan kunci yang lolos pemeriksaan dapat tidak ditemukan pengukur. |
+| Dampak | `src/rag/evaluasi/kunci.py`; `tests/rag/evaluasi/test_kunci.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

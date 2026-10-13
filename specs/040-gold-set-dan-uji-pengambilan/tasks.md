@@ -43,11 +43,11 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-02; K-2; P-2 A.
 
-- [ ] Uji lebih dulu: satuan penanda fitur 038; sama persis, bukan awalan;
+- [x] Uji lebih dulu: satuan penanda fitur 038; sama persis, bukan awalan;
       kunci di bawah pasal ditolak; dokumen di luar korpus dan bagian tanpa
       segmen
-- [ ] `src/rag/evaluasi/kunci.py`
-- [ ] Mutasi M-3
+- [x] `src/rag/evaluasi/kunci.py`
+- [x] Mutasi M-3
 
 ## T-4 · Metrik
 
