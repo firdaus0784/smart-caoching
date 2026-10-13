@@ -4168,3 +4168,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Alat uji kinerja U7; penjalan uji kepatuhan U5; berhenti — tidak dipilih. |
 | Dampak | Usulan `spec.md` fitur 040 menyusul untuk Gerbang 1. D-00 3.21. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-290 · Usulan spec fitur 040 diajukan ke Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Baris D-12 040 (KB-289). D-08 Bagian 5 dan 6, spec fitur 025, pola pembekuan fitur 004, dan penulis logbook L1 dan L2 ditelusuri sebelum menulis. |
+| Keputusan | `specs/040-gold-set-dan-uji-pengambilan/spec.md` ditulis dan diajukan dengan delapan kebutuhan yang tidak bergantung pada pertanyaan dan enam pertanyaan: **P-1** bentuk dan tempat berkas; **P-2** bentuk kunci jawaban; **P-3** komposisi saat pembekuan; **P-4** sumber yang diukur sebelum ADR-12; **P-5** arti relevan pada Precision@5; **P-6** penanda pertanyaan bernomor regulasi. Usulan menyatakan lebih dulu bahwa isi *gold set*, ambang, dan kalibrasi bukan cakupannya. |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-3 dan P-6 menentukan apa yang dianggap memenuhi D-08. |
+| Dampak | `specs/040-gold-set-dan-uji-pengambilan/spec.md`. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
