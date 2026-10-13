@@ -4013,3 +4013,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Belum lolos; membiarkan varian NC dan ND terbuka; menanyakan tim HKI lebih dulu; berhenti menunggu putusan tim — tidak dipilih. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 038; D-00 3.15; dokumen HKI. Baris D-12 dan TK-87 menyusul pada catatan tersendiri. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-276 · Baris D-12 039 disisipkan; TK-87 dicatat
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Putusan KB-275. Sebelum menulis baris, jalur penjawab ditelusuri: `make jalan` memakai `PenjawabBelumSiap`; `Jalur` tidak pernah dirakit di titik jalan mana pun; `AmbangKecukupan` tidak dapat dibentuk tanpa catatan kalibrasi BT-29; penggabungan menolak kurang dari dua sumber (ADR-03), dan sumber vektor menuntut penyemat sungguhan (ADR-12). Daftar putih lisensi diperiksa ulang pada sembilan penulisan. |
+| Keputusan | Baris **039** disisipkan sesudah 038 (D-12 0.45) dengan cakupan yang tidak dapat menghasilkan jawaban sendiri: pemuat segmen, bahan validator dan sitasi dari catatan korpus, dan perakitan pada titik jalan. **TK-87** dicatat (D-00 3.16) dengan dua arah yang terverifikasi: `CC-BY-NC-ND 4.0`, `CC-BY-NC 4.0`, `CC-BY-SA 4.0` terbaca terbuka; `CC BY 4.0` dan `Creative Commons Attribution 4.0` terbaca tertutup. |
+| Alternatif | TK-87 sebagai baris tersendiri — tidak dipilih: putusan KB-275 menaruh perbaikannya pada usulan berikutnya, dan isinya menentukan segmen mana yang boleh masuk konteks jalur penjawab. |
+| Dampak | Usulan `spec.md` fitur 039 menyusul untuk Gerbang 1. |
+| Pemutus | Pemegang Gerbang 1–4 (KB-275); dicatat agen |
