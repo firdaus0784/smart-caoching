@@ -21,12 +21,12 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-01 s.d. R-04, R-06; K-8; P-1 A, P-2 A, P-5 A, P-6 A.
 
-- [ ] D-08 Bagian 5.3 baru: bentuk berkas, satuan dan pencocokan kunci, batas
+- [x] D-08 Bagian 5.3 baru: bentuk berkas, satuan dan pencocokan kunci, batas
       dokumen tanpa pasal, sidik, pembekuan, penyimpanan di luar repositori
-- [ ] D-08 Bagian 6: aturan pelaksanaan metrik; konfigurasi dinyatakan;
+- [x] D-08 Bagian 6: aturan pelaksanaan metrik; konfigurasi dinyatakan;
       putaran satu sumber tidak menyatakan U3 lulus
-- [ ] D-10 Bagian 3 `tugas` dan Bagian 4 baris *gold set*
-- [ ] Register D-00
+- [x] D-10 Bagian 3 `tugas` dan Bagian 4 baris *gold set*
+- [x] Register D-00
 
 ## T-2 · Bentuk *gold set* dan sidik
 

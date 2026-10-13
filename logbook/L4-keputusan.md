@@ -4201,3 +4201,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Lapisan `src/evaluasi/` baru — tidak dipilih: menuntut baris arsitektur bagi tiga modul murni. Ambang ditulis sebagai tetapan pada rumah tetapan baru — tidak dipilih: putusan hibrida belum dapat dijalankan sebelum ADR-12. Pertanyaan berkunci hilang dikeluarkan dari penyebut — tidak dipilih: menaikkan angka atas pertanyaan yang gagal. |
 | Dampak | `plan.md` dan `tasks.md` fitur 040 terbit. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-293 · T-1 fitur 040: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-8 (KB-292): bentuk berkas dan aturan pelaksanaan metrik wajib tertulis pada pemiliknya, D-08, sebelum kode — R-04 menyatakan definisi metrik milik D-08 Bagian 6. |
+| Keputusan | D-08 Bagian 5.3 baru menetapkan bentuk JSON Lines, satuan dan pencocokan kunci, batas dokumen tanpa pasal, sidik kanonik, dan pembekuan yang menolak komposisi menyimpang. D-08 Bagian 6 memperoleh aturan pelaksanaan: populasi jenis A, setiap kunci, kedalaman 20, Precision@5 sebagai batas bawah, pertanyaan tidak keluar dari penyebut, angka dipangkas ke bawah, konfigurasi dinyatakan, putaran satu sumber tidak menyatakan U3 lulus. Tabel metrik dan ambangnya **tidak diubah**. D-10 Bagian 3 `tugas` bertambah `pengambilan`; Bagian 4 baris *gold set* dirinci. |
+| Alternatif | Menuliskan aturan pelaksanaan hanya pada plan — tidak dipilih: angka yang dilaporkan akan berdefinisi pada dokumen yang bukan pemiliknya. |
+| Dampak | D-08 0.5; D-10 0.4; D-00 3.22. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 |
