@@ -4333,3 +4333,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | P-1 B, C, D; P-2 B, C; P-3 B; P-4 B; P-5 B — tidak dipilih. |
 | Dampak | `spec.md` fitur 041; D-00 3.26; D-12 0.49. Gerbang 2 dan 3 atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-305 · Gerbang 2 dan 3 fitur 041
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Gerbang 1 fitur 041 lolos (KB-304). Gerbang 2 dan 3 didelegasikan KB-168. Penelusuran sebelum plan: praproses leksikal mempertahankan angka — `Nomor 6 Tahun 2021` menjadi `nomor`, `6`, `tahun`, `2021` — sehingga judul dapat membedakan regulasi; `bangun_muatan` memakai satu `SegmenTerindeks` bagi indeks dan `BahanSegmen` terpisah bagi model; `Gerbang.terima` dipanggil satu-satunya dari perkakas ingesti; D-06 K-A sudah mewajibkan nomor dan tahun sebagai metadata regulasi tanpa bidangnya. |
+| Keputusan | **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-4, empat tugas, tujuh mutasi. Tafsiran yang perlu terlihat pada Gerbang 4: (1) teks pencarian = judul, baris baru, teks segmen — tanpa pengulangan atau bobot; (2) penanda versi `pencarian:judul-1` pada versi indeks dan muatan, sehingga `versi_indeks` tanggapan `/tanya` berubah bentuk isinya tetapi tetap untai; (3) pola judul `Nomor <untai> Tahun <empat angka>` sebagai kata utuh, tanpa membedakan huruf besar; `No. 6/2021` ditolak; (4) penegakan pada `Gerbang.terima`, satu-satunya pintu penerimaan; (5) bukti sebelum dan sesudah dijalankan pada dua *worktree* git atas keadaan peladen yang sama, dengan logbook *worktree* yang dibuang. |
+| Alternatif | Menulis aturan pada `bangun_indeks` fitur 007 — tidak dipilih: indeks leksikal tidak mengenal catatan metadata, dan menambahkannya mengubah kontrak sumber. Bukti sebelum diambil lebih dulu dari pohon kerja — tidak dipilih: peladen bersama berubah di antara dua pengukuran. |
+| Dampak | `plan.md` dan `tasks.md` fitur 041 terbit. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
