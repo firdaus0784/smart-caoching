@@ -4124,3 +4124,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Membiarkan sitasi daftar tetap dan memilihnya di adaptor — tidak mungkin: `HasilTanya` hanya dibentuk `Jalur`, dan pemeriksanya menolak pembentukan di tempat lain. |
 | Dampak | `PenjawabKorpus` tidak dipasang pada titik jalan mana pun (P-1 A); `make jalan` tetap `PenjawabBelumSiap`. |
 | Pemutus | Agen, atas pendelegasian KB-168; perubahan fitur 021 atas putusan pemegang gerbang (KB-279) |
+
+## KB-286 · T-7 fitur 039: perkakas pencarian satu sumber
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-7 plan fitur 039 (P-1 A). Uji ditulis lebih dulu dan merah atas PostgreSQL dengan peran sungguhan: peran per indeks; peringkat tanpa teks; segmen tak layak tidak muncul; dokumen yang lisensinya kini tertutup disebut; kueri kosong dan argumen tidak sah ditolak sebelum menyambung; penolakan peladen tanpa mengutip kueri. |
+| Keputusan | `python -m perkakas.pengambilan cari --kueri <teks> [--indeks utama\|metadata]`, tersambung sebagai `peran_pemanggil_llm` atau `peran_penjawaban` — peran pemuat jalur penjawab, sehingga yang terlihat di sini yang terlihat olehnya. Kelayakan dan indeks leksikal dibaca dari `bangun_muatan`, tidak ditulis ulang. Satu sumber BM25; penggabungan hibrida tidak dipanggil. Keluaran: versi, layak dan tak layak per alasan, dokumen perlu diindeks ulang, lalu peringkat berskor dengan dokumen, penanda, dan judul. Cakupan 100%. Mutasi M-10 merah. |
+| Alternatif | Mencetak teks agar tim menilai relevansi — tidak dipilih: R-08; teks bagian dapat dibuka lewat pembaca sumber atau `indeks --pratinjau`. |
+| Dampak | Bahan penyusunan *gold set* BT-35 tersedia sebelum ADR-12. |
+| Pemutus | Agen, atas pendelegasian KB-168 |
