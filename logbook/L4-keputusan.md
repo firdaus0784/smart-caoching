@@ -4289,3 +4289,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis pembekuan dan putaran bukti ke logbook repositori — tidak dipilih: logbook tambah-saja dan *gold set* rekaan tidak boleh terbaca sebagai pembekuan sungguhan. Menghapus sisa putaran bukti dari peladen bersama — tidak dipilih: naskah memeriksa penyebut dan sebab luput yang tidak bergantung pada sisa itu. |
 | Dampak | `specs/040-gold-set-dan-uji-pengambilan/bukti/`; `perkakas/evaluasi.py` (keterangan laporan); L8; dokumen HKI Bagian 8 dan 9; status spec, plan, tasks menunggu Gerbang 4. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 menunggu pemegang Gerbang 1–4 |
+
+## KB-301 · Gerbang 4 fitur 040 lolos; TK-88 dicatat
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Penutupan KB-300: delapan dari delapan tugas, `make check` lulus enam gerbang, mutasi dua belas dari dua belas merah, bukti ujung ke ujung lulus. Enam tafsiran diajukan untuk dinilai: setiap kunci pada Recall@8; kunci yang hilang tetap di penyebut; kunci setingkat pasal dicocokkan sama persis; ambang U3 tidak ditulis ke kode; persen dipangkas ke bawah termasuk MRR; `src/logbook/` tidak disentuh (KB-298). Pengamatan pertanyaan bernomor regulasi dari bukti diajukan dengan dua pilihan pencatatan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Lolos"** bagi Gerbang 4 fitur 040, dan **"Catat TK-88"**: segmen pasal tidak membawa judul maupun nomor regulasinya, sehingga pertanyaan bernomor regulasi bergantung pada segmen pembukaan. TK-88 terbuka pada D-00 Bagian 7.12; perbaikannya diputus tim sebelum kalibrasi BT-29. Tidak ada kode yang diubah. |
+| Alternatif | Belum lolos; pengamatan cukup pada L4 — tidak dipilih. |
+| Dampak | Status spec, plan, tasks fitur 040; D-00 3.23 (TK-88); dokumen HKI Bagian 8. Fitur lolos Gerbang 4: 35 dari 41. |
+| Pemutus | Pemegang Gerbang 1–4 |

@@ -193,8 +193,8 @@ tersambung sebagai peran produksinya (TK-63, TK-64).
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
 | Jumlah uji otomatis | 3.737 pada backend dan perkakas; 337 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 34 dari 41 (fitur 040 menunggu Gerbang 4) |
-| Pengujian pengambilan U3 (D-08 Bagian 6) | Alat terbangun: bentuk *gold set*, pemeriksaan kunci terhadap korpus, pembekuan bersidik ke logbook, dan pengukuran yang mencatat setiap putaran (fitur 040, menunggu Gerbang 4). **Belum ada angka U3**: *gold set* belum disusun (BT-35), dan putaran satu sumber leksikal tidak menyatakan U3 lulus |
+| Fitur lolos Gerbang 4 | 35 dari 41 |
+| Pengujian pengambilan U3 (D-08 Bagian 6) | Alat terbangun: bentuk *gold set*, pemeriksaan kunci terhadap korpus, pembekuan bersidik ke logbook, dan pengukuran yang mencatat setiap putaran (fitur 040, lolos Gerbang 4 pada 13 Oktober 2026). **Belum ada angka U3**: *gold set* belum disusun (BT-35), dan putaran satu sumber leksikal tidak menyatakan U3 lulus |
 | Anggaran muat aplikasi web | 91.845 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,
