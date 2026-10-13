@@ -4157,3 +4157,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Belum lolos; berhenti menunggu putusan tim — tidak dipilih. |
 | Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 039; D-00 3.20; dokumen HKI. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-289 · Baris D-12 040 disisipkan: wadah gold set dan pengujian U3
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Putusan KB-288: telusuri pekerjaan yang tidak terhalang putusan tim. D-01, D-08, dan D-12 ditelusuri. Yang tersisa terhalang BT-29/BT-35, ADR-12, fitur 017 dan 020, ET-02/ET-04, atau TK-71. Tiga kandidat diajukan: wadah *gold set* dan U3 (D-08 Bagian 5–6), alat uji kinerja U7, dan penjalan uji kepatuhan U5. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **wadah *gold set* dan pengujian pengambilan U3** sebagai baris 040 (D-12 0.47): format berkas dengan kunci jawaban berupa dokumen dan bagian, validasi terhadap korpus, pembekuan bersidik ke logbook, dan pengukur D-08 Bagian 6. **Isi *gold set* tidak disusun agen** (D-08 Bagian 5.2; spec fitur 025). |
+| Alternatif | Alat uji kinerja U7; penjalan uji kepatuhan U5; berhenti — tidak dipilih. |
+| Dampak | Usulan `spec.md` fitur 040 menyusul untuk Gerbang 1. D-00 3.21. |
+| Pemutus | Pemegang Gerbang 1–4 |
