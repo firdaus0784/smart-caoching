@@ -4190,3 +4190,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | P-1 B dan C; P-2 B dan C; P-3 B; P-4 B; P-5 B; P-6 B — tidak dipilih. |
 | Dampak | `spec.md` fitur 040. Gerbang 2 dan 3 atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-292 · Gerbang 2 dan 3 fitur 040
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Gerbang 1 fitur 040 lolos (KB-291). Gerbang 2 dan 3 didelegasikan KB-168. Penelusuran sebelum plan: penanda segmen fitur 038 berakhiran ayat, potongan, atau bagian; `Muatan.layak_utama` dan `SumberBM25` fitur 039 adalah yang dilihat jalur penjawab; pemeriksa ambang C-16 hanya membaca bilangan pecahan bernama ambang; `tambah_percobaan` tidak membawa `status` dan `catatan` D-10 Bagian 3. |
+| Keputusan | **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-8, delapan tugas, dua belas mutasi. Modul murni di `src/rag/evaluasi/`, perakitan di `perkakas/evaluasi.py`, tanpa tepi impor baru. Tafsiran yang perlu terlihat pada Gerbang 4: (1) Recall@8 menghitung pertanyaan bila **setiap** kuncinya terambil, bukan salah satu; (2) kunci yang hilang dari korpus sesudah pembekuan **tetap di penyebut** sebagai luput; (3) kunci wajib berupa satuan — pasal atau setaranya — dan dicocokkan sama persis; kunci di bawah pasal ditolak; dokumen tanpa pasal dinyatakan tidak tahan perubahan ukuran segmen; (4) ambang 90% dan 95% **tidak** ditulis ke kode karena putaran satu sumber tidak menerapkannya; (5) `bernomor_regulasi` wajib tanpa nilai baku; (6) kategori wajib kecuali jenis D; (7) berkas di dalam pohon kerja repositori ditolak perkakas (R-01); (8) pembukaan *gold set* dihitung dari L1 (AP-05); (9) persen dipangkas ke bawah (AP-06). Seluruhnya ditulis ke D-08 pada T-1, sebelum kode. |
+| Alternatif | Lapisan `src/evaluasi/` baru — tidak dipilih: menuntut baris arsitektur bagi tiga modul murni. Ambang ditulis sebagai tetapan pada rumah tetapan baru — tidak dipilih: putusan hibrida belum dapat dijalankan sebelum ADR-12. Pertanyaan berkunci hilang dikeluarkan dari penyebut — tidak dipilih: menaikkan angka atas pertanyaan yang gagal. |
+| Dampak | `plan.md` dan `tasks.md` fitur 040 terbit. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |

@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | D-08 Bagian 5 dan 6 (U3); BT-35, BT-29; KL-01; C-09, C-16, C-17, C-20 |
 | Dokumen terkait | D-08 Bagian 5.1, 5.2, 6 · D-07 Bagian 4.6 · D-10 L1, L2 · spec fitur 004, 025, 039 |
-| Status | **Gerbang 1 lolos** — 13 Oktober 2026 (KB-291) |
+| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-292). Nol dari delapan tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 
