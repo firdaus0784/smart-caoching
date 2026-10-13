@@ -4002,3 +4002,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | — |
 | Dampak | Diajukan kepada pemegang Gerbang 4. **Diajukan pula, tidak diputus agen**: daftar putih lisensi fitur 006 membaca awalan `cc-by`, sehingga `CC-BY-NC-ND` terbaca terbuka dan masuk indeks utama (KB-272). Jalur penjawab yang memuat segmen dari PostgreSQL tidak dimiliki baris mana pun. |
 | Pemutus | Agen, atas pendelegasian KB-168; Gerbang 4 tidak didelegasikan |
+
+## KB-275 · Gerbang 4 fitur 038 lolos; TK-87 dicatat; baris 039 disisipkan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Laporan KB-274 mengajukan fitur 038 ke Gerbang 4, bersama temuan KB-272 tentang urutan penggantian segmen. Dua hal lain ditanyakan bersamaan karena tidak didelegasikan: pengamatan daftar putih lisensi fitur 006 (`CC-BY-NC-ND` terbaca terbuka), dan langkah sesudah 038, sebab D-12 tidak memiliki baris berikutnya. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Lolos"** bagi fitur 038 — jumlah baris lolos Gerbang 4 menjadi **33 dari 39**; TK-86 selesai (D-00 3.15). **"Catat TK-87, usulkan perbaikan"**: pengamatan lisensi menjadi temuan D-00, dan perbaikannya diajukan sebagai pertanyaan pada usulan berikutnya, bukan diputus agen. **"Sisipkan baris 039, susun spec"**: jalur penjawab yang memuat segmen dari PostgreSQL menjadi baris D-12 039; agen menyusun usulan spec untuk Gerbang 1. |
+| Alternatif | Belum lolos; membiarkan varian NC dan ND terbuka; menanyakan tim HKI lebih dulu; berhenti menunggu putusan tim — tidak dipilih. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 038; D-00 3.15; dokumen HKI. Baris D-12 dan TK-87 menyusul pada catatan tersendiri. |
+| Pemutus | Pemegang Gerbang 1–4 |

@@ -4,7 +4,7 @@
 |---|---|
 | Spec | **Gerbang 1 lolos** — 11 Oktober 2026 (KB-266); P-1 s.d. P-4 sesuai anjuran |
 | Temuan yang diputus sebelum plan | TK-86 A (KB-266): hak tulis indeks `peran_verifikasi` dicabut |
-| Status | **Menunggu Gerbang 4** — 12 Oktober 2026 (KB-274). Tujuh dari tujuh tugas selesai |
+| Status | **Gerbang 4 lolos** — 13 Oktober 2026 (KB-275). Tujuh dari tujuh tugas selesai |
 | Kebutuhan | R-01 s.d. R-08 `spec.md`; FR-D06, FR-F11; C-02, C-03, C-16, C-17, C-19, C-20 |
 
 ## 1. Letak dan batas
