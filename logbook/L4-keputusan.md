@@ -4212,3 +4212,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menuliskan aturan pelaksanaan hanya pada plan — tidak dipilih: angka yang dilaporkan akan berdefinisi pada dokumen yang bukan pemiliknya. |
 | Dampak | D-08 0.5; D-10 0.4; D-00 3.22. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-294 · T-2 fitur 040: bentuk gold set dan sidik
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-1 dan K-3; D-08 Bagian 5.1 dan 5.3 (KB-293). |
+| Keputusan | `src/rag/evaluasi/gold_set.py`: `JenisPertanyaan` enam nilai dan `KOMPOSISI_D08`, keduanya dicocokkan uji dengan tabel D-08 Bagian 5.1; `PertanyaanEmas` dengan kunci sesuai jenis, kategori wajib kecuali D, `bernomor_regulasi` ketat tanpa nilai baku; `urai()` mengumpulkan seluruh masalah sebagai nomor baris, bidang, dan sebab tanpa membawa `input`; sidik SHA-256 atas isi kanonik. `Kunci` berdiri di `kunci.py`; aturan satuannya menyusul T-3. Uji ditulis lebih dulu dan merah. Mutasi M-4 dan M-5 merah. **Temuan pada pelari mutasi**: mutan berpanjang sama yang ditulis pada detik yang sama memakai `.pyc` lama, sehingga M-4 sempat terbaca hidup; pelari kini memakai `PYTHONPYCACHEPREFIX` tersendiri per mutan. Akibatnya hanya dapat berupa hidup palsu, bukan merah palsu. |
+| Alternatif | Sidik atas bita berkas — tidak dipilih: menyunting di penyunting lain akan membuat *gold set* beku tampak berubah. |
+| Dampak | `src/rag/evaluasi/__init__.py`, `gold_set.py`, `kunci.py`; uji `tests/rag/evaluasi/`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

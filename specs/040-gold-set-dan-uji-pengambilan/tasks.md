@@ -32,12 +32,12 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-02, R-03, R-07; K-1, K-3; P-1 A, P-6 A.
 
-- [ ] Uji lebih dulu: aturan jenis dan kunci; kategori; `bernomor_regulasi`
+- [x] Uji lebih dulu: aturan jenis dan kunci; kategori; `bernomor_regulasi`
       wajib; pesan galat tanpa teks; enam jenis dan komposisi dibaca dari
       tabel D-08 Bagian 5.1; sidik tetap terhadap urutan dan berubah terhadap
       isi
-- [ ] `src/rag/evaluasi/gold_set.py`
-- [ ] Mutasi M-4, M-5
+- [x] `src/rag/evaluasi/gold_set.py`
+- [x] Mutasi M-4, M-5
 
 ## T-3 · Kunci dan pemeriksaan korpus
 
