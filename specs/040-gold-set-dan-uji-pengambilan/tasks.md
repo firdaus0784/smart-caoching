@@ -53,11 +53,11 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-04; K-4; P-5 A, AP-03, AP-06.
 
-- [ ] Uji lebih dulu: contoh yang dihitung tangan bagi setiap metrik; k dan
+- [x] Uji lebih dulu: contoh yang dihitung tangan bagi setiap metrik; k dan
       kebocoran nol dibaca dari tabel D-08 Bagian 6; setiap kunci; penyebut
       nol; pemangkasan satu desimal; per jenis dan per kategori
-- [ ] `src/rag/evaluasi/metrik.py`
-- [ ] Mutasi M-7, M-8
+- [x] `src/rag/evaluasi/metrik.py`
+- [x] Mutasi M-7, M-8
 
 ## T-5 · Pengukur
 

@@ -4234,3 +4234,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Pemeriksaan korpus memakai himpunan satuan tersendiri — tidak dipilih: dua aturan cocok akan berbeda, dan kunci yang lolos pemeriksaan dapat tidak ditemukan pengukur. |
 | Dampak | `src/rag/evaluasi/kunci.py`; `tests/rag/evaluasi/test_kunci.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-296 · T-4 fitur 040: metrik U3
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-4; aturan pelaksanaan D-08 Bagian 6 (KB-293). |
+| Keputusan | `src/rag/evaluasi/metrik.py`: `K_RECALL` dan `K_PRESISI` dicocokkan uji dengan nama metrik pada tabel D-08 Bagian 6, yang juga diuji tetap berisi lima metrik itu; `nilai_pertanyaan()` memakai `cocok()` T-3; Recall@8 menuntut setiap kunci; MRR atas daftar kandidat; Precision@5 dibagi lima walau daftar pendek; `Nilai` menyimpan pecahan tepat dan penyebut, persen satu desimal dipangkas ke bawah, penyebut nol *tidak terhitung*; per jenis berkunci dan per kategori jenis A. **Tafsiran**: MRR ikut ditulis sebagai persen satu desimal agar AP-06 berlaku seragam; pecahan tepatnya tetap tercatat. Tanpa tetapan ambang. Uji ditulis lebih dulu dan merah; angka contoh dihitung tangan pada uraian uji. Mutasi M-7 dan M-8 merah. |
+| Alternatif | Angka *float* — tidak dipilih: perbandingan dengan ambang kelak bergantung pada galat pembulatan. |
+| Dampak | `src/rag/evaluasi/metrik.py`; `tests/rag/evaluasi/test_metrik.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
