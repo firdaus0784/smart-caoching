@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 13 Oktober 2026 (KB-278); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 13 Oktober 2026 atas pendelegasian KB-168 (KB-279); K-1 s.d. K-8; perubahan fitur 021 atas putusan pemegang gerbang |
-| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Empat dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Lima dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-F02, FR-F03, FR-F11, FR-F14, FR-D06; KL-01, KL-04, KL-07; C-02, C-07, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -61,11 +61,11 @@ mana pun (C-16, ADR-12).
 
 **Kebutuhan:** R-01, R-04, R-06; K-4.
 
-- [ ] Uji kontrak lebih dulu atas memori **dan** PostgreSQL sebagai peran
+- [x] Uji kontrak lebih dulu atas memori **dan** PostgreSQL sebagai peran
       sungguhan: hanya korpus; catatan terbaru; sidik deterministik dan
       berubah bersama isi, metadata, status; kredensial ditolak sebelum menyentuh
-- [ ] `src/penyimpanan/korpus_penjawab.py`
-- [ ] Mutasi M-1, M-2, M-9
+- [x] `src/penyimpanan/korpus_penjawab.py`
+- [x] Mutasi M-1, M-2, M-9
 
 ## T-6 · Muatan dan penjawab korpus
 

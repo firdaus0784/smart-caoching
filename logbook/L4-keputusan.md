@@ -4102,3 +4102,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | — |
 | Dampak | Pembaca sumber tidak membaca tautan; `/sumber` tidak berubah. Dibaca pemuat pada T-5. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-284 · T-5 fitur 039: pemuat korpus
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-4 plan fitur 039. Uji kontrak ditulis lebih dulu dan merah atas memori dan PostgreSQL, tersambung sebagai `peran_pemanggil_llm` atas indeks utama dan `peran_penjawaban` atas indeks metadata: hanya segmen dokumen korpus; catatan metadata dan status terbaru; sidik deterministik, sama antara `muat` dan `sidik`, dan berubah bersama teks, catatan metadata, dan catatan status; pemanggil model ditolak atas indeks metadata dan kredensial tanpa korpus ditolak, keduanya sebelum peladen disentuh. |
+| Keputusan | `src/penyimpanan/korpus_penjawab.py`: `BarisKorpus` mentah, `PemuatKorpus` memori dan PostgreSQL. Pada PostgreSQL baris dan sidiknya keluar dari **satu pernyataan**; sidik dihitung peladen atas baris kanonik berurutan pengenal. Indeks kosong menghasilkan sidik yang sama dari `muat` dan `sidik` — diuji dengan sambungan tiruan, sebab peladen uji bersama tidak pernah kosong; tanpa kesamaan itu penjawab membangun ulang muatan pada setiap pertanyaan selama korpus kosong. Mutasi M-1, M-2, M-9 merah. |
+| Alternatif | Sidik dari stempel waktu terbaru — tidak dipilih: pengindeksan ulang yang menghasilkan isi sama mengubahnya, dan versi indeks pada jawaban berbeda untuk korpus yang sama (R-06, RT-05). |
+| Dampak | Belum dipanggil siapa pun; muatan dan penjawab pada T-6. |
+| Pemutus | Agen, atas pendelegasian KB-168 |
