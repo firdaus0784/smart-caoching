@@ -4344,3 +4344,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menulis aturan pada `bangun_indeks` fitur 007 — tidak dipilih: indeks leksikal tidak mengenal catatan metadata, dan menambahkannya mengubah kontrak sumber. Bukti sebelum diambil lebih dulu dari pohon kerja — tidak dipilih: peladen bersama berubah di antara dua pengukuran. |
 | Dampak | `plan.md` dan `tasks.md` fitur 041 terbit. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-306 · T-1 fitur 041: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 041 K-4 (KB-305); R-02 menuntut aturan pada D-07 Bagian 3 sebelum kode. |
+| Keputusan | D-07 Bagian 3.3 memperoleh baris *Teks pencarian* — judul catatan metadata, baris baru, teks segmen; yang disimpan, dikirim ke model, ditampilkan, dan diperiksa validator tidak berubah; kedua indeks; sisi vektor tidak — dan baris *Versi indeks* menyebut penanda `pencarian:judul-1`, beserta alasan TK-88. D-06 kanal K-A memperoleh baris *Judul*: `regulasi_resmi` wajib memuat `Nomor <nomor tanpa spasi> Tahun <empat angka>`, ditegakkan saat menerima; sepuluh contoh diterima dan ditolak, seluruhnya rekaan berlabel "Contoh". |
+| Alternatif | Contoh judul memakai nama regulasi sungguhan — tidak dipilih: kebenaran nomor dan judulnya bukan wewenang agen memeriksa. |
+| Dampak | D-07 0.4; D-06 0.6; D-00 3.27. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 |

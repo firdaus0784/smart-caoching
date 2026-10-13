@@ -20,9 +20,9 @@ baru (R-06). Tanpa bobot, faktor pengali, maupun ambang (R-03, C-16).
 
 **Kebutuhan:** R-02, R-04; K-4; P-1 A, P-3 A.
 
-- [ ] D-07 Bagian 3.3: teks pencarian dan penanda versinya
-- [ ] D-06 K-A: pola judul regulasi beserta contoh diterima dan ditolak
-- [ ] Register D-00
+- [x] D-07 Bagian 3.3: teks pencarian dan penanda versinya
+- [x] D-06 K-A: pola judul regulasi beserta contoh diterima dan ditolak
+- [x] Register D-00
 
 ## T-2 · Teks pencarian dan versi
 
