@@ -4047,3 +4047,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | P-1 B dan D; P-5 B; P-6 B dan C; anjuran berbeda pada P-2 s.d. P-4 — tidak dipilih. |
 | Dampak | `spec.md` fitur 039; D-00 3.17; D-12 0.46. Gerbang 2 dan 3 atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-279 · Gerbang 2 dan 3 fitur 039; Jalur fitur 021 memilih sitasi dari klaim
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Gerbang 1 fitur 039 lolos (KB-278). Gerbang 2 dan 3 didelegasikan KB-168. Penelusuran sebelum plan menemukan tiga hal yang membentuk rancangan: rute `/tanya` memanggil `jalur.jawab(pertanyaan)` tanpa argumen lain, sehingga perakitan menuntut adaptor; penggabungan menolak dua sumber bernama sama, sehingga `Jalur` memuat satu BM25 dan satu vektor atas indeks utama, dan indeks metadata hanya melayani bacaan lanjutan; dan **`Jalur.jawab()` fitur 021 menerima `sitasi` sebagai daftar tetap sebelum pengambilan**, sehingga tidak satu pemanggil pun dapat mengetahui segmen yang akan dirujuk klaim — dan tidak satu uji pun pernah mengirim sitasi lewat `Jalur`. Yang ketiga mengubah fitur yang lolos Gerbang 4, sehingga ditanyakan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Ya, ubah Jalur"**: `jawab()` menerima pemetaan pengenal segmen ke sitasi dan memilih sitasi dari klaim tervalidasi, satu per dokumen dan bagian; bentuk `/tanya` tidak berubah. **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-8, delapan tugas, dua belas mutasi. Tafsiran yang perlu terlihat pada Gerbang 4: (1) **segmen resmi** D-07 Bagian 4.6 dibaca sebagai peringkat T1, "regulasi dan panduan resmi" D-13 Bagian 6; (2) **bacaan lanjutan** paling banyak `JUMLAH_SEGMEN_DITERUSKAN_MAKSIMUM`, tetapan D-07 Bagian 9 yang dipakai ulang, bukan angka baru; (3) **sidik** memuat nomor catatan metadata dan status terbaru, sehingga regulasi yang baru dicabut memicu muatan baru; (4) **kelayakan sebelum indeks leksikal**: segmen tak layak tidak pernah menjadi kandidat, sehingga tahap 6 mendahului tahap 7 seperti urutan D-07 Bagian 4; (5) lisensi dibaca ulang pada pemuat sebagai lapis kedua TK-87 sampai segmen lama diindeks ulang. |
+| Alternatif | Tidak mengubah fitur 021 dan mencatat celahnya sebagai temuan — tidak dipilih pemegang gerbang. Menyaring kelayakan sesudah pengambilan — tidak dipilih: penilai kecukupan akan menghitung segmen yang tidak dapat dipakai. |
+| Dampak | `plan.md` dan `tasks.md` fitur 039 terbit. Belum ada kode. |
+| Pemutus | Pemegang Gerbang 1–4 (perubahan fitur 021); agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
