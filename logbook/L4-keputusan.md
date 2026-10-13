@@ -4146,3 +4146,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memasang `PenjawabKorpus` pada `make jalan` untuk bukti — ditolak P-1 A dan C-16: ia menuntut ambang dan model yang belum ada. |
 | Dampak | Diajukan kepada pemegang Gerbang 4, bersama perubahan atas fitur 006 (P-6 A) dan 021 (KB-279). Jawaban sungguhan tetap menunggu BT-29, ADR-12, dan fitur 020. |
 | Pemutus | Agen, atas pendelegasian KB-168; Gerbang 4 tidak didelegasikan |
+
+## KB-288 · Gerbang 4 fitur 039 lolos; TK-87 selesai
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Laporan KB-287 mengajukan fitur 039 ke Gerbang 4, bersama perubahan atas fitur 006 (P-6 A) dan 021 (KB-279) serta satu penyimpangan kecil dari plan — versi indeks menyebut kedua sidik (KB-285). D-12 tidak memiliki baris sesudah 039, sehingga langkah berikutnya ditanyakan bersamaan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Lolos"** bagi fitur 039 — jumlah baris lolos Gerbang 4 menjadi **34 dari 40**; TK-87 selesai (D-00 3.20). **"Telusuri dan usulkan"**: agen menelusuri D-01, D-08, dan D-12 untuk pekerjaan yang tidak terhalang putusan tim, dan mengajukannya sebagai usulan baris tanpa menulis kode. |
+| Alternatif | Belum lolos; berhenti menunggu putusan tim — tidak dipilih. |
+| Dampak | Status `spec.md`, `plan.md`, `tasks.md` fitur 039; D-00 3.20; dokumen HKI. |
+| Pemutus | Pemegang Gerbang 1–4 |
