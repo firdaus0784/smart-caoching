@@ -4245,3 +4245,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Angka *float* — tidak dipilih: perbandingan dengan ambang kelak bergantung pada galat pembulatan. |
 | Dampak | `src/rag/evaluasi/metrik.py`; `tests/rag/evaluasi/test_metrik.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-297 · T-5 fitur 040: pengukur satu putaran
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Plan fitur 040 K-5. |
+| Keputusan | `src/rag/evaluasi/pengukur.py`: `ukur()` asinkron murni atas satu `SumberKandidat`; setiap pertanyaan, termasuk C dan D, dicari dengan `JUMLAH_KANDIDAT_PER_SUMBER`; tiga sebab luput — di luar korpus, di luar bahan, di luar peringkat — memakai `cocok()` T-3; kebocoran adalah segmen indeks metadata berbeda di antara kandidat kueri mana pun; konfigurasi dinyatakan dari sumbernya, termasuk versi penyemat bila ada; dua putusan, *diukur* dan *gagal kepatuhan KL-01*, dan teks putusan *diukur* menyatakan ambang U3 tidak diterapkan pada putaran satu sumber. Kandidat yang tidak dikenal korpus yang dimuat menolak putaran alih-alih diabaikan. Uji membaca ambang kebocoran nol dari tabel D-08 Bagian 6. Uji ditulis lebih dulu dan merah. Mutasi M-6 dan M-9 merah. |
+| Alternatif | Kebocoran dihitung per kemunculan — tidak dipilih: D-08 menyebut "jumlah segmen"; per pertanyaan tetap dirinci pada hasil. |
+| Dampak | `src/rag/evaluasi/pengukur.py`; `tests/rag/evaluasi/test_pengukur.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

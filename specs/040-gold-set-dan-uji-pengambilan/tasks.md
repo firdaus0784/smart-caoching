@@ -63,11 +63,11 @@ C-16). Uji dan bukti tidak menulis ke `logbook/` repositori selain entri L4.
 
 **Kebutuhan:** R-05; K-5; P-4 A.
 
-- [ ] Uji lebih dulu: tiga sebab luput; kunci hilang tetap di penyebut;
+- [x] Uji lebih dulu: tiga sebab luput; kunci hilang tetap di penyebut;
       kebocoran dari sumber atas indeks metadata; pertanyaan C dan D ikut
       dicari; konfigurasi dinyatakan; dua putusan
-- [ ] `src/rag/evaluasi/pengukur.py`
-- [ ] Mutasi M-6, M-9
+- [x] `src/rag/evaluasi/pengukur.py`
+- [x] Mutasi M-6, M-9
 
 ## T-6 · Logbook
 
