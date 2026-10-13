@@ -78,13 +78,23 @@ class SumberTidakTampil(Exception):
     bentuk 404 (R-04)."""
 
 
+def teks_boleh_tayang(jenis: JenisSumber, tingkat: TingkatKerahasiaan) -> bool:
+    """Teks dokumen ini boleh tampil kepada peserta lain — alasan pertama di
+    atas, satu tempat bagi pembaca sumber dan jalur penjawab (fitur 039, P-4 A).
+
+    Parafrase jawaban tetap penayangan isi; aturan yang berbeda di dua tempat
+    membuat dokumen yang sama tertutup di pembaca sumber dan terbuka di
+    jawaban."""
+    return tingkat is TingkatKerahasiaan.PUBLIK and jenis is not JenisSumber.DOKUMEN_SEKOLAH
+
+
 def _alasan(
     jenis: JenisSumber,
     tingkat: TingkatKerahasiaan,
     status: StatusKeberlakuan | None,
     teks: list[str],
 ) -> AlasanTanpaTeks | None:
-    if tingkat is not TingkatKerahasiaan.PUBLIK or jenis is JenisSumber.DOKUMEN_SEKOLAH:
+    if not teks_boleh_tayang(jenis, tingkat):
         return AlasanTanpaTeks.DOKUMEN_TIDAK_PUBLIK
     if jenis is JenisSumber.REGULASI_RESMI and status is None:
         return AlasanTanpaTeks.STATUS_BELUM_TERCATAT

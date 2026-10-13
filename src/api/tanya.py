@@ -82,6 +82,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping, Sequence
 from enum import Enum
+from types import MappingProxyType
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -100,13 +101,16 @@ from src.rag.pengambilan.kandidat import SumberKandidat
 from src.rag.pengambilan.kecukupan import PenilaianKecukupan
 from src.rag.pengambilan.kecukupan import StatusDasar as StatusKecukupan
 from src.rag.pengambilan.peringkat_ulang import Pemeringkat
-from src.rag.validator.keluaran import KeluaranModel, SegmenRujukan
+from src.rag.validator.keluaran import KeluaranModel, Klaim, SegmenRujukan
 from src.rag.validator.pemeriksaan import KodePemeriksaan
 from src.rag.validator.validator import (
     HasilValidasi,
     pemeriksaan_menunggu_model,
     validasi,
 )
+
+_TANPA_SITASI: Mapping[str, Sitasi] = MappingProxyType({})
+"""Bawaan `sitasi`: pemetaan kosong yang tidak dapat ditambahi."""
 
 
 class AlasanBerhenti(Enum):
@@ -215,7 +219,7 @@ class Jalur:
         segmen_resmi: frozenset[str],
         id_pesan: str,
         versi: Versi,
-        sitasi: Sequence[Sitasi] = (),
+        sitasi: Mapping[str, Sitasi] = _TANPA_SITASI,
         bacaan_lanjutan: Sequence[BacaanLanjutan] = (),
     ) -> HasilTanya:
         """Jalankan urutan tetap — R-05.
@@ -223,6 +227,12 @@ class Jalur:
         `sitasi` dan `bacaan_lanjutan` diserahkan pemanggil, mengikuti `susun()`
         fitur 009: keduanya menuntut metadata dokumen yang tinggal di
         `src/ingest/`, dan `AGENTS.md` tidak memberi jalur ini tepi ke sana.
+
+        **`sitasi` berupa pemetaan pengenal segmen ke sitasinya, bukan daftar
+        tetap** (fitur 039, KB-279). Sampai fitur 039 ia daftar yang diserahkan
+        sebelum pengambilan berjalan, sehingga tidak satu pemanggil pun dapat
+        mengetahui segmen mana yang akan dirujuk klaim. Kini jalur ini yang
+        memilihnya dari klaim tervalidasi — lihat `_sitasi_dari_klaim`.
         """
         if not pertanyaan.strip():
             raise ValueError("pertanyaan kosong tidak dapat dijawab")
@@ -291,7 +301,7 @@ class Jalur:
                 id_pesan=id_pesan,
                 versi=versi,
                 status=kecukupan,
-                sitasi=sitasi,
+                sitasi=_sitasi_dari_klaim(tervalidasi.keluaran.klaim, sitasi),
                 bacaan_lanjutan=bacaan_lanjutan,
                 catatan_keberlakuan=keluaran.catatan_keberlakuan,
             ),
@@ -362,6 +372,36 @@ def baca_keluaran(teks: str) -> KeluaranModel | None:
         return KeluaranModel.model_validate(mentah)
     except ValidationError:
         return None
+
+
+def _sitasi_dari_klaim(klaim: Sequence[Klaim], sitasi: Mapping[str, Sitasi]) -> tuple[Sitasi, ...]:
+    """Sitasi dari segmen yang dirujuk klaim tervalidasi — D-14 Bagian 4.1.
+
+    Urutan kemunculan pada klaim, **satu per pasangan dokumen dan bagian**:
+    dua segmen dari pasal yang sama — jendela bertumpang tindih fitur 038 —
+    adalah satu rujukan bagi pembacanya. Segmen yang diambil tetapi tidak
+    dirujuk klaim tidak menjadi sitasi: sitasinya akan tampil sebagai dasar
+    jawaban padahal tidak satu klaim pun bersandar padanya (C-01).
+
+    Segmen yang dirujuk tetapi tidak ada pada pemetaan adalah kekeliruan
+    pemanggil, **bukan** penahanan: jawaban yang tampil tanpa sitasi bagi
+    salah satu klaimnya adalah persis yang C-01 larang.
+    """
+    hasil: list[Sitasi] = []
+    terlihat: set[tuple[str, str]] = set()
+    for satu in klaim:
+        for id_segmen in satu.id_segmen:
+            pilihan = sitasi.get(id_segmen)
+            if pilihan is None:
+                raise ValueError(
+                    f"segmen {id_segmen} dirujuk klaim tetapi tanpa sitasi — pemetaan "
+                    "sitasi pemanggil tidak lengkap (C-01, D-14 Bagian 4.1)"
+                )
+            kunci = (pilihan.id_dokumen, pilihan.bagian)
+            if kunci not in terlihat:
+                terlihat.add(kunci)
+                hasil.append(pilihan)
+    return tuple(hasil)
 
 
 def _alasan_penahanan(hasil: HasilValidasi, menunggu: Sequence[KodePemeriksaan]) -> AlasanBerhenti:

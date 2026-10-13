@@ -32,7 +32,7 @@ from src.llm.tipe import Tanggapan as TanggapanModel
 from src.logbook.versi import Versi as VersiLogbook
 from src.penyimpanan.area import Area
 from src.penyimpanan.kredensial import Kredensial
-from src.rag.jawaban.tanggapan import StatusDasar, Versi
+from src.rag.jawaban.tanggapan import Sitasi, StatusDasar, Versi
 from src.rag.pengambilan.kandidat import HasilSumber, Kandidat, SumberKandidat
 from src.rag.pengambilan.kecukupan import AmbangKecukupan, CatatanKalibrasi, PenilaianKecukupan
 from src.rag.pengambilan.peringkat_ulang import PemeringkatTidakTersedia
@@ -473,6 +473,36 @@ def test_pertanyaan_kosong_ditolak(tmp_path: Path) -> None:
 # ------------------------------------------ jalur sukses, sebagaimana fitur 020 kelak
 
 
+def pemeriksaan_model_lulus(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ganti **isi** VS-03, VS-05, VS-07 saja — lihat uraian uji di bawah."""
+    from src.rag.validator import validator as modul_validator
+    from src.rag.validator.pemeriksaan import HasilPemeriksaan, KodePemeriksaan, Status
+
+    def lulus_seluruhnya(
+        keluaran: object, *, segmen: object
+    ) -> dict[KodePemeriksaan, HasilPemeriksaan]:
+        return {
+            kode: HasilPemeriksaan(
+                kode=kode, status=Status.LULUS, alasan="disediakan fitur 020 pada uji ini"
+            )
+            for kode in (KodePemeriksaan.VS_03, KodePemeriksaan.VS_05, KodePemeriksaan.VS_07)
+        }
+
+    monkeypatch.setattr(modul_validator, "pemeriksaan_menunggu_model", lulus_seluruhnya)
+
+
+def _sitasi(id_dokumen: str, bagian: str = "Pasal 1") -> Sitasi:
+    return Sitasi(
+        id_dokumen=id_dokumen,
+        judul=f"Peraturan {id_dokumen}",
+        penerbit="Kementerian Contoh",
+        tahun=2026,
+        bagian=bagian,
+        status_keberlakuan=StatusKeberlakuan.BERLAKU,
+        tautan=f"https://jdih.contoh.go.id/{id_dokumen}",
+    )
+
+
 def test_jalur_menyusun_tanggapan_ketika_kesembilan_pemeriksaan_lulus(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -493,26 +523,81 @@ def test_jalur_menyusun_tanggapan_ketika_kesembilan_pemeriksaan_lulus(
 
     Uji ini **dihapus ketika fitur 020 mendarat**, digantikan jalur sungguhan.
     """
-    from src.rag.validator import validator as modul_validator
-    from src.rag.validator.pemeriksaan import HasilPemeriksaan, KodePemeriksaan, Status
-
-    def lulus_seluruhnya(
-        keluaran: object, *, segmen: object
-    ) -> dict[KodePemeriksaan, HasilPemeriksaan]:
-        return {
-            kode: HasilPemeriksaan(
-                kode=kode, status=Status.LULUS, alasan="disediakan fitur 020 pada uji ini"
-            )
-            for kode in (KodePemeriksaan.VS_03, KodePemeriksaan.VS_05, KodePemeriksaan.VS_07)
-        }
-
-    monkeypatch.setattr(modul_validator, "pemeriksaan_menunggu_model", lulus_seluruhnya)
+    pemeriksaan_model_lulus(monkeypatch)
 
     jalur, _, adaptor = _jalur(tmp_path)
-    hasil = _jawab(jalur, "Bagaimana menyusun jadwal supervisi akademik?")
+    hasil = _jawab(
+        jalur, "Bagaimana menyusun jadwal supervisi akademik?", sitasi={"S1": _sitasi("D1")}
+    )
 
     assert hasil.alasan_berhenti is None
     assert adaptor.jumlah_kirim == 1
     assert hasil.tanggapan.ringkasan_tindakan == ("Susun jadwal supervisi bulanan.",)
     assert [k.id_segmen for k in hasil.tanggapan.klaim] == [("S1",)]
     assert hasil.tanggapan.penafian
+
+
+# ------------------------------------------ sitasi dipilih dari klaim — fitur 039, KB-279
+
+KELUARAN_TIGA_SEGMEN = json.dumps(
+    {
+        "ringkasan_tindakan": ["Susun jadwal supervisi bulanan."],
+        "penjelasan": "Supervisi rutin menjaga mutu pembelajaran.",
+        "klaim": [
+            {"id_klaim": "K1", "teks": "Supervisi dijadwalkan bulanan.", "id_segmen": ["S2", "S1"]},
+            {
+                "id_klaim": "K2",
+                "teks": "Jadwal disepakati bersama guru.",
+                "id_segmen": ["S1", "S3"],
+            },
+        ],
+        "catatan_keberlakuan": "",
+    }
+)
+
+
+def _jalur_tiga_segmen(tmp_path: Path) -> Jalur:
+    kandidat = tuple(Kandidat(id_segmen=f"S{i}", skor=1.0 - i / 10) for i in (1, 2, 3, 4))
+    jalur, _, _ = _jalur(tmp_path, teks_model=KELUARAN_TIGA_SEGMEN, kandidat=kandidat)
+    return jalur
+
+
+def test_sitasi_dipilih_dari_segmen_yang_dirujuk_klaim(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """KB-279, D-14 Bagian 4.1, M-8 fitur 039: urutan kemunculan pada klaim,
+    satu per pasangan dokumen dan bagian; segmen yang diambil tetapi tidak
+    dirujuk klaim — S4 — tidak menjadi sitasi (C-01)."""
+    pemeriksaan_model_lulus(monkeypatch)
+    sitasi = {
+        "S1": _sitasi("D-A", "Pasal 1"),
+        "S2": _sitasi("D-B", "Pasal 7"),
+        "S3": _sitasi("D-A", "Pasal 1"),
+        "S4": _sitasi("D-C", "Pasal 9"),
+    }
+    hasil = _jawab(
+        _jalur_tiga_segmen(tmp_path),
+        "Bagaimana menyusun jadwal supervisi akademik?",
+        bahan={f"S{i}": _bahan(f"S{i}") for i in (1, 2, 3, 4)},
+        sitasi=sitasi,
+    )
+    assert hasil.alasan_berhenti is None
+    assert [(s.id_dokumen, s.bagian) for s in hasil.tanggapan.sitasi] == [
+        ("D-B", "Pasal 7"),
+        ("D-A", "Pasal 1"),
+    ]
+
+
+def test_segmen_dirujuk_tanpa_sitasi_adalah_kekeliruan_pemanggil(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Jawaban yang tampil tanpa sitasi bagi salah satu klaimnya adalah persis
+    yang C-01 larang — pemetaan yang tidak lengkap tidak boleh berakhir di sana."""
+    pemeriksaan_model_lulus(monkeypatch)
+    with pytest.raises(ValueError, match="S3"):
+        _jawab(
+            _jalur_tiga_segmen(tmp_path),
+            "Bagaimana menyusun jadwal supervisi akademik?",
+            bahan={f"S{i}": _bahan(f"S{i}") for i in (1, 2, 3, 4)},
+            sitasi={"S1": _sitasi("D-A"), "S2": _sitasi("D-B")},
+        )

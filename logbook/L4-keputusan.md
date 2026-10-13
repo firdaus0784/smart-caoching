@@ -4113,3 +4113,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Sidik dari stempel waktu terbaru — tidak dipilih: pengindeksan ulang yang menghasilkan isi sama mengubahnya, dan versi indeks pada jawaban berbeda untuk korpus yang sama (R-06, RT-05). |
 | Dampak | Belum dipanggil siapa pun; muatan dan penjawab pada T-6. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-285 · T-6 fitur 039: muatan, sitasi dari klaim, penjawab korpus
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-5 dan K-6 plan fitur 039. Uji ditulis lebih dulu dan merah: keenam alasan kelayakan berurutan; bahan, sitasi, bacaan lanjutan, dan hitungan tak layak dari muatan; pemilihan sitasi dari klaim pada `Jalur`; `PenjawabKorpus` dirakit atas PostgreSQL dengan peran sungguhan. Ambang, penyemat, dan model dalam uji itu tiruan yang menyatakan dirinya. Satu uji integrasi sempat gagal pada putaran kedua karena pertanyaannya memuat kata umum yang mencocokkan dokumen putaran sebelumnya di peladen bersama; pertanyaan kini hanya kata unik. |
+| Keputusan | `src/api/sumber.py`: `teks_boleh_tayang` diangkat menjadi fungsi bersama pembaca sumber dan penjawab (P-4 A); perilaku pembaca sumber tidak berubah. `src/api/tanya.py`: `Jalur.jawab(sitasi=…)` kini pemetaan pengenal segmen ke sitasi, dan `_sitasi_dari_klaim` memilihnya dari klaim tervalidasi, satu per dokumen dan bagian; segmen dirujuk tanpa sitasi melempar `ValueError`. **Uji sukses fitur 021 berubah**: ia kini mengirim pemetaan sitasi, sebab cabang sukses menuntutnya (KB-279); pembantu penggantian pemeriksaan model diangkat menjadi fungsi agar dipakai ulang. `src/api/penjawab_korpus.py`: kelayakan, `Muatan`, `bangun_muatan`, `pilih_bacaan_lanjutan`, `SumberLayak`, `PenjawabKorpus`. **Satu penyimpangan kecil dari plan**: versi indeks pada tanggapan menyebut kedua sidik — `utama:…;metadata:…` — bukan sidik utama saja, sebab bacaan lanjutan berasal dari indeks metadata dan RT-05 menuntut versi indeks yang benar-benar dipakai. Pertanyaan di luar domain tidak mencari bacaan lanjutan. Cakupan modul baru 100%. Mutasi M-3, M-4, M-5, M-6, M-8 merah. |
+| Alternatif | Membiarkan sitasi daftar tetap dan memilihnya di adaptor — tidak mungkin: `HasilTanya` hanya dibentuk `Jalur`, dan pemeriksanya menolak pembentukan di tempat lain. |
+| Dampak | `PenjawabKorpus` tidak dipasang pada titik jalan mana pun (P-1 A); `make jalan` tetap `PenjawabBelumSiap`. |
+| Pemutus | Agen, atas pendelegasian KB-168; perubahan fitur 021 atas putusan pemegang gerbang (KB-279) |

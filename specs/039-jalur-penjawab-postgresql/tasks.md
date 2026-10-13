@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 13 Oktober 2026 (KB-278); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 13 Oktober 2026 atas pendelegasian KB-168 (KB-279); K-1 s.d. K-8; perubahan fitur 021 atas putusan pemegang gerbang |
-| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Lima dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Enam dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-F02, FR-F03, FR-F11, FR-F14, FR-D06; KL-01, KL-04, KL-07; C-02, C-07, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -71,13 +71,13 @@ mana pun (C-16, ADR-12).
 
 **Kebutuhan:** R-01 s.d. R-08; K-5, K-6; P-2 A, P-3 A, P-4 A.
 
-- [ ] Uji lebih dulu: keenam alasan kelayakan berurutan; bahan, sitasi, dan
+- [x] Uji lebih dulu: keenam alasan kelayakan berurutan; bahan, sitasi, dan
       bacaan lanjutan; sitasi dari klaim pada `Jalur`; `PenjawabKorpus` atas
       PostgreSQL — data ke model, versi indeks, muatan diganti saat sidik
       berubah; uji fitur 021 tetap lulus
-- [ ] `src/api/sumber.py` (fungsi bersama), `src/api/tanya.py`,
+- [x] `src/api/sumber.py` (fungsi bersama), `src/api/tanya.py`,
       `src/api/penjawab_korpus.py`
-- [ ] Mutasi M-3, M-4, M-5, M-6, M-8
+- [x] Mutasi M-3, M-4, M-5, M-6, M-8
 
 ## T-7 · Perkakas pencarian
 
