@@ -57,6 +57,7 @@ menjadi kebocoran lisensi.
 
 from __future__ import annotations
 
+import re
 from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -77,13 +78,34 @@ class StatusLisensi(Enum):
     TERTUTUP = "tertutup"
 
 
-_AWALAN_TERBUKA = ("cc-by", "cc0", "cc-zero", "public domain", "pddl", "odc-by")
-"""Awalan lisensi terbuka yang terbaca mesin.
+_LISENSI_TERBUKA: frozenset[str] = frozenset(
+    {"cc0", "cc-zero", "cc-by", "public-domain", "domain-publik", "pddl", "odc-by"}
+)
+"""Lisensi terbuka yang terbaca mesin, sesudah dinormalkan — D-06 aturan
+pelaksanaan KL-01 sejak fitur 039.
 
 Daftar putih, bukan daftar hitam. Daftar hitam meloloskan setiap sebutan yang
 belum pernah terlihat, dan yang belum pernah terlihat justru yang paling
 mungkin salah dibaca.
+
+**Dicocokkan persis, bukan menurut awalan (TK-87).** Sampai fitur 039 daftar
+ini berupa awalan, dan awalan `cc-by` meloloskan `cc-by-nc-nd` — nonkomersial
+dan tanpa turunan — ke indeks utama yang dikirim ke model. Arah kekeliruan
+itu yang aturan pelaksanaan KL-01 sebut menggugurkan publikasi.
 """
+
+_SPASI = re.compile(r"[\s_]+")
+_HUBUNG_BERULANG = re.compile(r"-{2,}")
+_VERSI_DI_UJUNG = re.compile(r"(-v?\d+(\.\d+)*)+$")
+
+
+def _normalkan(nilai: str) -> str:
+    """Huruf kecil; spasi dan garis bawah menjadi tanda hubung; tanda hubung
+    berulang dirapatkan; nomor versi di ujung dibuang. `CC BY 4.0` dan
+    `cc_by_4.0` menjadi `cc-by`; nama panjang tidak diterjemahkan."""
+    bersih = _SPASI.sub("-", nilai.strip().lower())
+    bersih = _HUBUNG_BERULANG.sub("-", bersih).strip("-")
+    return _VERSI_DI_UJUNG.sub("", bersih)
 
 
 def lisensi_dari_metadata(nilai: str | None) -> StatusLisensi:
@@ -96,8 +118,7 @@ def lisensi_dari_metadata(nilai: str | None) -> StatusLisensi:
     """
     if not nilai:
         return StatusLisensi.TERTUTUP
-    bersih = nilai.strip().lower()
-    if any(bersih.startswith(awalan) for awalan in _AWALAN_TERBUKA):
+    if _normalkan(nilai) in _LISENSI_TERBUKA:
         return StatusLisensi.TERBUKA
     return StatusLisensi.TERTUTUP
 

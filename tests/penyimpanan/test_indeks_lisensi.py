@@ -131,9 +131,65 @@ def test_lisensi_yang_tidak_terbaca_mesin_diperlakukan_tertutup() -> None:
     assert lisensi_dari_metadata("hak cipta dilindungi") is StatusLisensi.TERTUTUP
 
 
-def test_lisensi_terbuka_yang_terbaca_mesin_dikenali() -> None:
-    for nilai in ("CC-BY", "cc-by-4.0", "CC0", "CC-BY-SA-4.0"):
-        assert lisensi_dari_metadata(nilai) is StatusLisensi.TERBUKA
+@pytest.mark.parametrize(
+    "nilai",
+    [
+        "CC-BY",
+        "cc-by-4.0",
+        "CC BY 4.0",
+        "cc_by_4.0",
+        "CC  BY   v4.0",
+        "CC0",
+        "CC0 1.0",
+        "cc-zero",
+        "Public Domain",
+        "domain publik",
+        "PDDL 1.0",
+        "ODC-BY-1.0",
+    ],
+)
+def test_lisensi_terbuka_yang_terbaca_mesin_dikenali(nilai: str) -> None:
+    """D-06 aturan pelaksanaan KL-01 sejak fitur 039: penulisan dinormalkan —
+    huruf, spasi, garis bawah, nomor versi — lalu dicocokkan persis. `CC BY 4.0`,
+    penulisan yang lazim, kini terbaca seperti yang dimaksud penulisnya (TK-87).
+
+    Sebelum fitur 039 daftar ini memuat `CC-BY-SA-4.0` sebagai terbuka; P-6 A
+    menutupnya."""
+    assert lisensi_dari_metadata(nilai) is StatusLisensi.TERBUKA
+
+
+@pytest.mark.parametrize(
+    "nilai",
+    [
+        "CC-BY-SA-4.0",
+        "CC BY-SA 4.0",
+        "CC-BY-NC 4.0",
+        "CC-BY-NC-ND 4.0",
+        "CC BY-ND",
+        "cc-by-nc-sa-4.0",
+    ],
+)
+def test_varian_berpembatas_tertutup(nilai: str) -> None:
+    """TK-87, P-6 A, M-7: nonkomersial, tanpa turunan, dan berbagi serupa
+    tertutup. Pencocokan awalan meloloskan ketiganya ke indeks utama."""
+    assert lisensi_dari_metadata(nilai) is StatusLisensi.TERTUTUP
+
+
+@pytest.mark.parametrize(
+    "nilai",
+    [
+        "cc-byx",
+        "cc0 tambahan",
+        "public domain mark",
+        "Creative Commons Attribution 4.0",
+        "CC BY 4.0 International",
+        "4.0",
+    ],
+)
+def test_pencocokan_persis_bukan_awalan(nilai: str) -> None:
+    """Nama panjang tidak diterjemahkan dan sisa yang tidak dikenal menutup —
+    arah kekeliruan yang dikehendaki KL-01."""
+    assert lisensi_dari_metadata(nilai) is StatusLisensi.TERTUTUP
 
 
 def test_lisensi_tidak_disimpulkan_dari_jenis_sumber() -> None:

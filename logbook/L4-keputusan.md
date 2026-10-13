@@ -4080,3 +4080,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memberi pemuat peran baru — tidak dipilih: kedua peran yang ada sudah memegang hak bacanya, dan peran ketiga hanya menambah satu daftar yang dapat hanyut. |
 | Dampak | Belum dibaca kode; pemuat pada T-5, tautan dicatat pada T-4. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-282 · T-3 fitur 039: lisensi dinormalkan, dicocokkan persis (TK-87)
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-2 plan fitur 039 (P-6 A). Uji ditulis lebih dulu dan merah atas kedua arah TK-87: penulisan lazim yang semestinya terbuka (`CC BY 4.0`, `cc_by_4.0`, `domain publik`) dan varian berpembatas yang semestinya tertutup (SA, NC, ND), serta sisa yang tidak dikenal. |
+| Keputusan | `lisensi_dari_metadata` menormalkan keterangan — huruf kecil; spasi dan garis bawah menjadi tanda hubung; tanda hubung berulang dirapatkan; nomor versi di ujung dibuang — lalu mencocokkannya persis dengan tujuh bentuk D-06 0.5. **Uji fitur 006 berubah atas P-6 A**: `test_lisensi_terbuka_yang_terbaca_mesin_dikenali` semula menyatakan `CC-BY-SA-4.0` terbuka; kini ia tertutup, dan perubahan itu tertulis pada uraian ujinya. **Dampak pada fitur 010**: penyaring kurasi lapis L1 memakai fungsi yang sama, sehingga butir berlisensi SA, NC, atau ND kini gugur di L1; uji fitur 010 lulus tanpa diubah karena tidak satu pun memakai varian itu. Mutasi M-7 — pencocokan awalan dikembalikan — merah pada sepuluh uji. |
+| Alternatif | Menerjemahkan nama panjang ("Creative Commons Attribution") — tidak dipilih: daftar terjemahan adalah daftar kedua yang dapat hanyut, dan arah kekeliruan tanpanya yang dikehendaki KL-01. |
+| Dampak | Segmen berlisensi SA, NC, atau ND yang sudah di indeks utama tetap di sana sampai diindeks ulang; lapis kedua pada pemuat (T-6) tidak memuatnya. |
+| Pemutus | Agen, atas pendelegasian KB-168; perubahan fitur 006 atas putusan P-6 A |
