@@ -4069,3 +4069,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | — |
 | Dampak | D-00 3.18. Tanpa rute; bentuk `/tanya` dan `/sumber` tidak berubah. |
 | Pemutus | Agen, atas pendelegasian KB-168 |
+
+## KB-281 · T-2 fitur 039: peladen tautan sumber
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-1 plan fitur 039 (P-5 A). Uji peladen ditulis lebih dulu dan merah: batasan tautan pada catatan metadata korpus dan penerimaan; tautan sah dan kosong diterima; kueri pemuat berjalan sebagai `peran_pemanggil_llm` atas indeks utama dan `peran_penjawaban` atas indeks metadata, tanpa memuat segmen yang dokumennya tidak di korpus. Penolakan pemanggil model atas indeks metadata — pernyataan pemuat yang sama — sudah lulus sebelum perubahan apa pun: ia dijaga sejak fitur 024, dan uji ini menautkannya ke bentuk pemuat. |
+| Keputusan | `17-tautan-sumber.sql`: kolom `tautan` boleh kosong pada `karantina.penerimaan` dan `korpus.metadata_dokumen`, berbatasan `http` atau `https` tanpa spasi. Tanpa peran dan tanpa hak baru; uji katalog yang menyatakan hak persis tetap lulus tanpa diubah, sehingga hak memang tidak bertambah. `tests/peladen.py` dan README peladen. Mutasi M-12 merah. |
+| Alternatif | Memberi pemuat peran baru — tidak dipilih: kedua peran yang ada sudah memegang hak bacanya, dan peran ketiga hanya menambah satu daftar yang dapat hanyut. |
+| Dampak | Belum dibaca kode; pemuat pada T-5, tautan dicatat pada T-4. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

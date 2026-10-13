@@ -29,6 +29,7 @@ psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 13-penilai
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 14-sumber-dan-koleksi.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 15-ingesti.sql
 psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 16-segmen-dan-lisensi.sql
+psql -U <superuser> -d smart_coaching           -v ON_ERROR_STOP=1 -f 17-tautan-sumber.sql
 ```
 
 `05` menuntut `-v dimensi=<N>` dan **tidak** berbawaan. Dimensi yang diam-diam
@@ -265,3 +266,12 @@ tanpa kolom vektor, tanpa menyunting segmen yang ada.
 Hak bawaan skema indeks yang memberi `peran_verifikasi` tambah dan ubah atas
 segmen dicabut (TK-86): peran yang membaca karantina tidak menulis indeks yang
 dibaca pemanggil model.
+
+## Tautan sumber asli (fitur 039)
+
+`17-tautan-sumber.sql` menambah kolom `tautan` pada `karantina.penerimaan` dan
+`korpus.metadata_dokumen` — boleh kosong; bila berisi, `http` atau `https`
+tanpa spasi (KL-04). Tanpa peran dan tanpa hak baru: kedua tabel disisipkan
+dan dibaca dengan hak per tabel. Jalur penjawab memuat segmen dengan peran yang
+sudah ada — `peran_pemanggil_llm` atas indeks utama, `peran_penjawaban` atas
+indeks metadata — dan peladen menolak yang pertama atas indeks metadata (C-02).

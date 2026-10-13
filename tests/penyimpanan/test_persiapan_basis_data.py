@@ -154,6 +154,7 @@ def basis_data_siap() -> None:
         ("14-sumber-dan-koleksi.sql", "smart_coaching"),
         ("15-ingesti.sql", "smart_coaching"),
         ("16-segmen-dan-lisensi.sql", "smart_coaching"),
+        ("17-tautan-sumber.sql", "smart_coaching"),
     ):
         hasil = _psql(PENGELOLA, basis, "-v", "ON_ERROR_STOP=1", "-f", str(BERKAS / nama))
         assert hasil.returncode == 0, f"{nama} gagal: {hasil.stderr}"
@@ -3044,3 +3045,95 @@ def test_batasan_lisensi(basis_data_siap: None) -> None:
     ):
         hasil = _psql(PENGELOLA, "smart_coaching", "-c", kueri)
         assert "violates check constraint" in hasil.stderr, hasil.stderr
+
+
+# ── fitur 039 · tautan sumber dan pemuat jalur penjawab ──────────────
+
+_DOK_039 = "dok-039"
+
+
+def _muat_sql(indeks: str, id_dokumen: str = _DOK_039) -> str:
+    """Bentuk pernyataan `muat` T-5: segmen yang dokumennya berada di korpus,
+    beserta catatan metadata dan status terbarunya (R-04, P-3 A)."""
+    return (
+        "select s.id_segmen || '|' || m.jenis || '|' || coalesce(m.tautan, '-') || '|' "
+        "|| coalesce(st.status, '-') "
+        f"from {indeks}.segmen_teks s join korpus.dokumen_sumber d on d.id = s.id_dokumen "
+        "left join lateral (select jenis, lisensi, tautan, nomor from korpus.metadata_dokumen "
+        "  where id_dokumen = s.id_dokumen order by nomor desc limit 1) m on true "
+        "left join lateral (select status, rujukan_pengganti, nomor from korpus.status_dokumen "
+        "  where id_dokumen = s.id_dokumen order by nomor desc limit 1) st on true "
+        f"where s.id_dokumen like '{id_dokumen}%' order by s.id_segmen"
+    )
+
+
+def _metadata_tautan_sql(id_dokumen: str, tautan: str | None) -> str:
+    nilai = "null" if tautan is None else "'" + tautan.replace("'", "''") + "'"
+    return (
+        "insert into korpus.metadata_dokumen (id_dokumen, judul, jenis, penerbit, tahun, "
+        f"tingkat_kerahasiaan, lisensi, tautan) values ('{id_dokumen}', 'Peraturan Contoh', "
+        f"'regulasi_resmi', 'Kementerian Contoh', 2026, 'publik', 'CC BY 4.0', {nilai})"
+    )
+
+
+@pytest.mark.parametrize(
+    "tautan", ["ftp://jdih.contoh.go.id/x", "https://jdih.contoh go.id", "", "jdih.contoh.go.id"]
+)
+def test_batasan_tautan(basis_data_siap: None, tautan: str) -> None:
+    """M-12: tautan boleh kosong (`null`), `http` atau `https` tanpa spasi —
+    pada catatan metadata korpus **dan** penerimaan (P-5 A, KL-04)."""
+    for kueri in (
+        _metadata_tautan_sql("dok-039-t", tautan),
+        _terima_sql(id_dokumen="dok-039-t")
+        .replace(
+            "status_persetujuan_pemilik, samaran, id_penerima)",
+            "status_persetujuan_pemilik, samaran, id_penerima, tautan)",
+        )
+        .replace("'tm-001' from tulis", f"'tm-001', '{tautan}' from tulis"),
+    ):
+        hasil = _psql(PENGELOLA, "smart_coaching", "-c", kueri)
+        assert "violates check constraint" in hasil.stderr, hasil.stderr
+
+
+def test_tautan_sah_dan_kosong_diterima(basis_data_siap: None) -> None:
+    for i, tautan in enumerate((None, "https://jdih.contoh.go.id/peraturan/2", "http://contoh.id")):
+        _jalan(PENGELOLA, _metadata_tautan_sql(f"dok-039-s{i}", tautan))
+
+
+def test_pemuat_jalur_penjawab_berjalan_pada_haknya(basis_data_siap: None) -> None:
+    """TK-64, R-01, R-04: pemuat konteks sebagai `peran_pemanggil_llm` atas
+    indeks utama, pemuat bacaan lanjutan sebagai `peran_penjawaban` atas indeks
+    metadata, keduanya dengan haknya sendiri; segmen yang dokumennya tidak di
+    korpus tidak termuat."""
+    for kueri in (
+        f"insert into korpus.dokumen_sumber (id, isi) values ('{_DOK_039}', '\"Pasal 1\"'::jsonb)",
+        _metadata_tautan_sql(_DOK_039, "https://jdih.contoh.go.id/peraturan/1"),
+        f"insert into korpus.status_dokumen (id_dokumen, status) values ('{_DOK_039}', 'berlaku')",
+        *(
+            f"insert into {indeks}.segmen_teks (id_segmen, id_dokumen, teks, lisensi, "
+            f"anonimisasi_terverifikasi, penanda_bagian) values ('{dok}:0001', '{dok}', "
+            "'Kepala sekolah menyusun rencana.', 'terbuka', true, 'Pasal 1')"
+            for indeks in ("indeks_utama", "indeks_metadata")
+            for dok in (_DOK_039, f"{_DOK_039}-yatim")
+        ),
+    ):
+        _jalan(PENGELOLA, kueri)
+    for peran, indeks in (
+        ("peran_pemanggil_llm", "indeks_utama"),
+        ("peran_penjawaban", "indeks_metadata"),
+    ):
+        hasil = _psql(
+            peran, "smart_coaching", "-At", "-v", "ON_ERROR_STOP=1", "-c", _muat_sql(indeks)
+        )
+        assert hasil.returncode == 0, f"{peran}: {hasil.stderr}"
+        assert hasil.stdout.split() == [
+            f"{_DOK_039}:0001|regulasi_resmi|https://jdih.contoh.go.id/peraturan/1|berlaku"
+        ], "segmen yatim — dokumennya tidak di korpus — tidak termuat (R-04)"
+
+
+def test_pemanggil_model_ditolak_peladen_atas_indeks_metadata(basis_data_siap: None) -> None:
+    """C-02 pada tingkat sambungan: pernyataan pemuat yang sama, atas indeks
+    metadata, ditolak peladen bagi pemanggil model — karena hak, bukan sebab lain."""
+    hasil = _psql("peran_pemanggil_llm", "smart_coaching", "-c", _muat_sql("indeks_metadata"))
+    assert hasil.returncode != 0
+    assert "permission denied" in hasil.stderr, hasil.stderr

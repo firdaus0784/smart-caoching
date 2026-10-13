@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 13 Oktober 2026 (KB-278); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 13 Oktober 2026 atas pendelegasian KB-168 (KB-279); K-1 s.d. K-8; perubahan fitur 021 atas putusan pemegang gerbang |
-| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Satu dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Dua dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-F02, FR-F03, FR-F11, FR-F14, FR-D06; KL-01, KL-04, KL-07; C-02, C-07, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -31,12 +31,12 @@ mana pun (C-16, ADR-12).
 
 **Kebutuhan:** R-01, R-04; K-1; P-5 A.
 
-- [ ] Uji lebih dulu: kolom dan batasan tautan; katalog hak tidak bertambah;
+- [x] Uji lebih dulu: kolom dan batasan tautan; katalog hak tidak bertambah;
       kueri pemuat berjalan sebagai `peran_pemanggil_llm` dan
       `peran_penjawaban`; penolakan berpenyebab bagi pemanggil model atas
       indeks metadata
-- [ ] `17-tautan-sumber.sql`; `tests/peladen.py` dan README
-- [ ] Mutasi M-12
+- [x] `17-tautan-sumber.sql`; `tests/peladen.py` dan README
+- [x] Mutasi M-12
 
 ## T-3 · Lisensi dinormalisasi
 
