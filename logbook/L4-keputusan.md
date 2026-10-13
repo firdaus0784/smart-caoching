@@ -4058,3 +4058,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Tidak mengubah fitur 021 dan mencatat celahnya sebagai temuan — tidak dipilih pemegang gerbang. Menyaring kelayakan sesudah pengambilan — tidak dipilih: penilai kecukupan akan menghitung segmen yang tidak dapat dipakai. |
 | Dampak | `plan.md` dan `tasks.md` fitur 039 terbit. Belum ada kode. |
 | Pemutus | Pemegang Gerbang 1–4 (perubahan fitur 021); agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-280 · T-1 fitur 039: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | K-8 plan fitur 039: tautan, keberlakuan pada bahan, aturan sitasi dan bacaan lanjutan, dan daftar lisensi ditulis ke pemiliknya sebelum kodenya (R-05). Tidak ada enum baru, sehingga tidak ada uji kamus baru pada tugas ini. |
+| Keputusan | D-14 0.22: `tautan` pada penerimaan, catatan metadata, dan `dokumen_sumber`; keberlakuan dokumen bukan regulasi pada bahan; lisensi dinormalkan; aturan `sitasi` — dari klaim, satu per dokumen dan bagian — dan `bacaan_lanjutan` — bertautan, unik per dokumen; alasan `/sumber` tidak mengirim tautan. D-04 0.18 Bagian 7.2. D-06 0.5: daftar lisensi terbuka persis pada aturan pelaksanaan KL-01, pemiliknya. |
+| Alternatif | — |
+| Dampak | D-00 3.18. Tanpa rute; bentuk `/tanya` dan `/sumber` tidak berubah. |
+| Pemutus | Agen, atas pendelegasian KB-168 |

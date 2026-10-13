@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 13 Oktober 2026 (KB-278); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 13 Oktober 2026 atas pendelegasian KB-168 (KB-279); K-1 s.d. K-8; perubahan fitur 021 atas putusan pemegang gerbang |
-| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Nol dari delapan tugas selesai |
+| Status | **Gerbang 3 lolos** — 13 Oktober 2026 atas pendelegasian KB-168 (KB-279). Satu dari delapan tugas selesai |
 | Kebutuhan | R-01 s.d. R-08; FR-F02, FR-F03, FR-F11, FR-F14, FR-D06; KL-01, KL-04, KL-07; C-02, C-07, C-16, C-17, C-19, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -20,12 +20,12 @@ mana pun (C-16, ADR-12).
 
 **Kebutuhan:** R-05; K-8; P-3 A, P-5 A, P-6 A.
 
-- [ ] D-14 Bagian 5.1: `tautan` pada penerimaan, catatan metadata, dan
+- [x] D-14 Bagian 5.1: `tautan` pada penerimaan, catatan metadata, dan
       `dokumen_sumber`; keberlakuan dokumen bukan regulasi pada bahan
-- [ ] D-14 Bagian 4.1: aturan `sitasi` dan `bacaan_lanjutan`; Bagian 4.10:
+- [x] D-14 Bagian 4.1: aturan `sitasi` dan `bacaan_lanjutan`; Bagian 4.10:
       alasan tautan tidak dikirim
-- [ ] D-04 Bagian 7.2; D-06 aturan pelaksanaan KL-01: daftar lisensi terbuka
-- [ ] Register D-00
+- [x] D-04 Bagian 7.2; D-06 aturan pelaksanaan KL-01: daftar lisensi terbuka
+- [x] Register D-00
 
 ## T-2 · Peladen
 
