@@ -4311,3 +4311,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Penjalan uji U5; penelusuran lebih jauh; berhenti — tidak dipilih. |
 | Dampak | D-12 0.48; D-00 3.24. Usulan `spec.md` fitur 041 menyusul. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-303 · Usulan spec fitur 041 diajukan ke Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-13 |
+| Konteks | Baris D-12 041 (KB-302). D-07 Bagian 3.2, 3.3, 4.3, 4.4, dan 7, ADR-03, `bangun_indeks` fitur 007, penyematan fitur 026, dan catatan metadata korpus fitur 032 ditelusuri sebelum menulis. Penelusuran menemukan bahwa indeks leksikal dan penyematan sama-sama membaca teks segmen saja, dan bahwa penguatan entitas D-07 Bagian 4.3 menemukan dokumen, bukan pasalnya. |
+| Keputusan | `specs/041-identitas-regulasi-pengambilan/spec.md` ditulis dan diajukan dengan enam kebutuhan yang tidak bergantung pada pertanyaan dan lima pertanyaan: **P-1** bentuk perbaikan; **P-2** sumber identitas; **P-3** bentuk judul regulasi; **P-4** sisi vektor; **P-5** cakupan dokumen. Usulan menyatakan lebih dulu bahwa ambang, bobot, dan angka penyetelan bukan cakupannya. TK-88 mencatat pengajuannya (D-00 3.25). |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-1 dan P-3 menentukan apa yang dibaca model dan apa yang ditolak saat menerima. |
+| Dampak | `specs/041-identitas-regulasi-pengambilan/spec.md`; D-00 3.25. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
