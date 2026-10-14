@@ -28,11 +28,11 @@ peladen selain akun uji yang dibuatnya sendiri.
 
 **Kebutuhan:** R-01, R-02, R-05, R-06; K-1, K-5; P-1 A, P-4 A, P-6 A.
 
-- [ ] Uji lebih dulu: daftar UK dibaca dari D-08 dan D-13; empat UK belum
+- [x] Uji lebih dulu: daftar UK dibaca dari D-08 dan D-13; empat UK belum
       dapat diperiksa beserta sebabnya; keadaan keseluruhan; kode keluar;
       masukan tidak sah; L1 lulus pemeriksa catatan versi; tanpa kuki
-- [ ] `perkakas/kepatuhan/` — `hasil.py`, `daftar.py`, `__main__.py`
-- [ ] Mutasi M-3, M-4, M-6, M-7
+- [x] `perkakas/kepatuhan/` — `hasil.py`, `daftar.py`, `__main__.py`
+- [x] Mutasi M-3, M-4, M-6, M-7
 
 ## T-3 · Pemeriksaan basis data
 

@@ -4454,3 +4454,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Aturan pelaksanaan hanya pada plan — tidak dipilih: D-08 pemilik prosedur uji. |
 | Dampak | D-08 0.6; D-09 0.5; D-10 0.5; D-13 0.2; D-00 3.31. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-316 · T-2 fitur 042: kerangka penjalan uji kepatuhan
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Plan fitur 042 K-1 dan K-5. |
+| Keputusan | `perkakas/kepatuhan/`: `daftar.py` — `KODE_UK` lima belas kode, dicocokkan uji dengan tabel D-08 Bagian 8 dan D-13 Bagian 8; `BELUM_BAHAN` empat UK beserta sebabnya, dicocokkan dengan aturan pelaksanaan D-08. `hasil.py` — `Keadaan` tiga nilai, `HasilUK`, `gabung`, `keseluruhan` (gagal mengalahkan belum, belum mengalahkan lulus), `laporan`, `catat_l1`; `KonfigurasiApi` tidak pernah menampilkan kuki pada `repr` maupun `str`. `__main__.py` — `utama()` berkode keluar 0, 1, 2, 4; masukan tidak sah ditolak sebelum apa pun dijalankan maupun dicatat; pemeriksa yang melempar dicatat gagal dengan nama jenis galatnya saja; pemeriksa yang belum terpasang belum dapat diperiksa; `konteks_dari_lingkungan` membaca alamat peladen dan API dari lingkungan, sandi lewat `PGPASSFILE`. Baris L1 lulus pemeriksa catatan versi. Uji ditulis lebih dulu dan merah. Mutasi M-3, M-4, M-6, M-7 merah. |
+| Alternatif | Pesan galat pemeriksa ikut laporan — tidak dipilih: pesan peladen dapat memuat nilai baris. |
+| Dampak | `perkakas/kepatuhan/__init__.py`, `daftar.py`, `hasil.py`, `__main__.py`; `tests/perkakas/test_kepatuhan_kerangka.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |
