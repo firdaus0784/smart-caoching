@@ -4509,3 +4509,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Bukti lewat `utama()` dengan akar logbook sementara — tidak dipilih: plan menuntut baris perintah, dan *worktree* menjaga logbook repositori tanpa argumen baru. |
 | Dampak | `specs/042-penjalan-uji-kepatuhan/bukti/`, `spec.md`, `plan.md`, `tasks.md`; `docs/hki/dokumentasi-teknis.md`; `logbook/L8-tagihan-pasal.md`. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 milik pemegang gerbang |
+
+## KB-321 · Gerbang 4 fitur 042: lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Fitur 042 menunggu Gerbang 4 (KB-320): penjalan uji kepatuhan U5; bukti atas lingkungan pengembangan bersesi — sebelas UK lulus, empat belum dapat diperiksa, nol gagal, kode keluar 4, jumlah baris 33 tabel tidak berubah; mutasi 8 dari 8 merah; tafsiran pada KB-320. |
+| Keputusan | Pemegang gerbang memilih **Lolos** lewat pertanyaan tegas. Status spec, plan, dan tasks menjadi Gerbang 4 lolos; dokumen HKI Bagian 8: 37 dari 43 fitur lolos Gerbang 4. D-00 tidak berubah — fitur ini tidak menyangkut temuan TK mana pun. Tafsiran KB-320 berlaku sebagaimana diajukan. |
+| Alternatif | — |
+| Dampak | `specs/042-penjalan-uji-kepatuhan/spec.md`, `plan.md`, `tasks.md`; `docs/hki/dokumentasi-teknis.md`. |
+| Pemutus | Pemegang Gerbang 4 |
