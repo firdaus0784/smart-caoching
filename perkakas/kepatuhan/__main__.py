@@ -20,6 +20,7 @@ from typing import Any, Final, TextIO
 from src.rag.evaluasi.jejak import id_percobaan_terpakai
 
 from perkakas.evaluasi import AKAR_LOGBOOK, versi_kode_git
+from perkakas.kepatuhan.api import periksa_uk05, periksa_uk07, periksa_uk14, periksa_uk15
 from perkakas.kepatuhan.basis_data import (
     BASIS_DATA,
     BASIS_DATA_PSEUDONIM,
@@ -153,6 +154,10 @@ def pemeriksa_bawaan() -> dict[str, Pemeriksa]:
         "UK-10": periksa_uk10,
         "UK-12": periksa_uk12,
         "UK-13": periksa_uk13,
+        "UK-05": periksa_uk05,
+        "UK-07": periksa_uk07,
+        "UK-14": periksa_uk14,
+        "UK-15": periksa_uk15,
     }
 
 

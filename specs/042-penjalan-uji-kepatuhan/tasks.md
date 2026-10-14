@@ -57,12 +57,12 @@ peladen selain akun uji yang dibuatnya sendiri.
 
 **Kebutuhan:** R-03, R-04, R-05; K-4; P-3 A.
 
-- [ ] Uji lebih dulu atas aplikasi bersesi yang berjalan: UK-05, UK-07,
+- [x] Uji lebih dulu atas aplikasi bersesi yang berjalan: UK-05, UK-07,
       UK-14, UK-15 lulus; aplikasi tiruan dilaporkan gagal; kewarasan;
       masukan API tidak lengkap; akun berpersetujuan; peran aplikasi
       tercakup UK-04
-- [ ] `perkakas/kepatuhan/api.py`
-- [ ] Mutasi M-5, M-8
+- [x] `perkakas/kepatuhan/api.py`
+- [x] Mutasi M-5, M-8
 
 ## T-6 · Bukti, penutupan
 
