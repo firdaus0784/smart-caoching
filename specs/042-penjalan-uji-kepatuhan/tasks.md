@@ -20,9 +20,9 @@ peladen selain akun uji yang dibuatnya sendiri.
 
 **Kebutuhan:** R-01 s.d. R-06; K-6.
 
-- [ ] D-08 Bagian 8: aturan pelaksanaan penjalan
-- [ ] D-13 Bagian 8; D-09 Bagian 2.1 dan 4.1; D-10 Bagian 3
-- [ ] Register D-00
+- [x] D-08 Bagian 8: aturan pelaksanaan penjalan
+- [x] D-13 Bagian 8; D-09 Bagian 2.1 dan 4.1; D-10 Bagian 3
+- [x] Register D-00
 
 ## T-2 · Kerangka
 

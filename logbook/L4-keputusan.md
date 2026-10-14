@@ -4443,3 +4443,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Penjalan masuk sendiri dengan sandi akun uji — tidak dipilih: masuk membuat sesi baru di produksi. Pemeriksaan API atas aplikasi dalam proses — ditolak Gerbang 1 (P-3 B). |
 | Dampak | `plan.md` dan `tasks.md` fitur 042 terbit. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |
+
+## KB-315 · T-1 fitur 042: kontrak lebih dulu
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Plan fitur 042 K-6 (KB-314). |
+| Keputusan | D-08 Bagian 8 memperoleh aturan pelaksanaan penjalan: tiga keadaan, kode keluar, tanpa perubahan pada lingkungan selain waktu aktif sesi akun uji, sebab lulus per UK (42501; 23503 bagi kurator pada UK-08), peran per UK, pemeriksaan API dengan akun uji kepatuhan, UK dalam proses, empat UK yang belum dapat diperiksa, dan baris L1. D-13 Bagian 8 merujuknya. D-09 PS-01, PS-14, dan langkah penyebaran 5 menyebut laporan penjalan berkode keluar 0 sebagai bukti dan akun uji buatan operator. D-10 Bagian 3 `tugas` bertambah `kepatuhan`. |
+| Alternatif | Aturan pelaksanaan hanya pada plan — tidak dipilih: D-08 pemilik prosedur uji. |
+| Dampak | D-08 0.6; D-09 0.5; D-10 0.5; D-13 0.2; D-00 3.31. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 |
