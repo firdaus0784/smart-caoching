@@ -4399,3 +4399,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Belum lolos — tidak dipilih. |
 | Dampak | Status spec, plan, tasks fitur 041; D-00 3.29; dokumen HKI Bagian 4 dan 8. Fitur lolos Gerbang 4: 36 dari 42. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-311 · Baris D-12 042 disisipkan: penjalan uji kepatuhan U5
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Sesudah Gerbang 4 fitur 041 (KB-310), pekerjaan tersisa terhalang BT-35, BT-29, ADR-12, fitur 017 dan 020, ET-02, ET-04, TK-71, dan TK-73. Pemegang gerbang ditanya langkah berikutnya, dengan pilihan penjalan uji U5, penelusuran lebih jauh, atau berhenti. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Penjalan uji U5"**: baris D-12 042 disisipkan (D-12 0.50). Spec diajukan ke Gerbang 1. |
+| Alternatif | Penelusuran lebih jauh; berhenti — tidak dipilih. |
+| Dampak | D-12 0.50; D-00 3.30. Usulan `spec.md` fitur 042 menyusul. |
+| Pemutus | Pemegang Gerbang 1–4 |
