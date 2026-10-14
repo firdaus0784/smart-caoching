@@ -4520,3 +4520,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | — |
 | Dampak | `specs/042-penjalan-uji-kepatuhan/spec.md`, `plan.md`, `tasks.md`; `docs/hki/dokumentasi-teknis.md`. |
 | Pemutus | Pemegang Gerbang 4 |
+
+## KB-322 · Baris D-12 043 disisipkan: wadah himpunan serangan dan uji adversarial
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Sesudah Gerbang 4 fitur 042 (KB-321), pemegang gerbang ditanya langkah berikutnya, dengan pilihan wadah uji adversarial, penerima telemetri peramban (sisa TK-73), atau berhenti. Penjalan fitur 042 menyatakan UK-11 belum dapat diperiksa karena himpunan serangan D-13 Bagian 9 belum ada, dan himpunan itu belum memiliki wadah. |
+| Keputusan | Pemegang Gerbang 1–4 memilih **"Wadah uji adversarial"**: baris D-12 043 disisipkan (D-12 0.51). Isi himpunan serangan tetap disusun anggota tim yang tidak membangun komponen RAG (D-13 Bagian 9); pola pemeriksa tidak disetel (C-16). Spec diajukan ke Gerbang 1. |
+| Alternatif | Penerima telemetri peramban; berhenti — tidak dipilih. |
+| Dampak | D-12 0.51; D-00 3.32. Usulan `spec.md` fitur 043 menyusul. |
+| Pemutus | Pemegang Gerbang 1–4 |
