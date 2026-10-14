@@ -4421,3 +4421,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-2 dan P-3 menentukan apa yang terjadi di produksi. |
 | Dampak | `specs/042-penjalan-uji-kepatuhan/spec.md`. Belum ada kode. |
 | Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
+
+## KB-313 · Gerbang 1 fitur 042 lolos
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Usulan KB-312: enam pertanyaan, P-2 dan P-3 bersama — keduanya menentukan apa yang terjadi di produksi — dan P-1, P-4, P-5, P-6 bersama, masing-masing dengan pilihan yang tidak dianjurkan. |
+| Keputusan | Pemegang Gerbang 1–4 memilih anjuran pada keenamnya. **P-1 A**: perkakas berketerangan tiga keadaan. **P-2 A**: transaksi yang selalu dibatalkan, tanpa data uji. **P-3 A**: API yang berjalan dengan akun uji kepatuhan buatan operator. **P-4 A**: satu baris L1 per putaran. **P-5 A**: UK-10, UK-12, UK-13 dijalankan ulang. **P-6 A**: empat UK belum dapat diperiksa sampai bahannya ada. |
+| Alternatif | P-2 C; P-3 C; P-4 B; P-6 B — tidak dipilih. |
+| Dampak | `spec.md` fitur 042. Gerbang 2 dan 3 atas pendelegasian KB-168. |
+| Pemutus | Pemegang Gerbang 1–4 |

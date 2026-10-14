@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | D-08 Bagian 8 (U5, UK-01 s.d. UK-08); D-13 Bagian 8 (UK-09 s.d. UK-15); D-09 PS-01, PS-14, langkah penyebaran 5; NFR-21, NFR-22; C-02, C-03, C-04, C-05, C-06, C-09, C-17, C-18, C-20 |
 | Dokumen terkait | D-08 Bagian 8, 11 · D-13 Bagian 8, 9 · D-09 Bagian 2.1, 4.1 · D-10 Bagian 3 · D-14 Bagian 3 · `perkakas/basis_data/README.md` · spec fitur 024, 034, 040 |
-| Status | **Diajukan ke Gerbang 1** — 14 Oktober 2026 (KB-312) |
+| Status | **Gerbang 1 lolos** — 14 Oktober 2026 (KB-313) |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -133,6 +133,19 @@ memastikan commit keduanya sama, dan pemastian itu yang paling mudah luput.
 belum dibahas D-13. Himpunan serangan juga wajib disusun anggota tim yang
 tidak membangun RAG; wadahnya lebih baik dirancang bersama mereka.
 
+## Putusan Gerbang 1 (KB-313)
+
+Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
+
+| Pertanyaan | Putusan |
+|---|---|
+| P-1 | **A** — perkakas `python -m perkakas.kepatuhan`; tiga keadaan per UK dan kode keluar |
+| P-2 | **A** — hanya percobaan yang semestinya ditolak, di dalam transaksi yang selalu dibatalkan; tanpa data uji |
+| P-3 | **A** — API yang berjalan, dengan satu akun uji kepatuhan buatan operator; token lewat variabel lingkungan, tidak pernah dicetak |
+| P-4 | **A** — satu baris L1 per putaran, `tugas` = `kepatuhan`; D-10 Bagian 3 bertambah |
+| P-5 | **A** — UK-10, UK-12, UK-13 dijalankan ulang atas kode yang terpasang |
+| P-6 | **A** — UK-01, UK-03, UK-06, UK-11 belum dapat diperiksa sampai bahannya ada |
+
 ## Ketertelusuran
 
 | Kebutuhan | Sumber |
@@ -147,7 +160,7 @@ tidak membangun RAG; wadahnya lebih baik dirancang bersama mereka.
 
 ## Kriteria penerimaan
 
-- [ ] P-1 s.d. P-6 diputus pada Gerbang 1
+- [x] P-1 s.d. P-6 diputus pada Gerbang 1
 - [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
 - [ ] Penjalan dijalankan atas PostgreSQL sebagai peran sungguhan dan atas
       API yang berjalan, dan lingkungan sesudahnya terbukti tidak berubah
