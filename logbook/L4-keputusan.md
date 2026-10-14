@@ -4476,3 +4476,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Pembanding cukup "dilaporkan gagal" — tidak dipilih: gagal karena sebab lain tidak membuktikan pembatalan transaksi. |
 | Dampak | `perkakas/kepatuhan/basis_data.py`, `__main__.py`; `tests/perkakas/test_kepatuhan_basis_data.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-318 · T-4 fitur 042: pemeriksaan dalam proses
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Plan fitur 042 K-3; P-5 A. |
+| Keputusan | `perkakas/kepatuhan/proses.py`: UK-10 menjalankan `periksa_pemisahan_instruksi` atas kode terpasang dan melaporkan temuan sebagai berkas dan baris; UK-12 menjalankan VS-09 atas keluaran rekaan bertautan asing dan berinstruksi; UK-13 menjalankan VS-08 atas klaim bersandar tunggal pada T3 dan pada T4. Kedua UK validator membawa **kendali** — keluaran bersih, dan klaim ditopang T1 serta T3, wajib lulus — sehingga validator yang menolak segalanya tidak terbaca patuh. Ketiganya lulus atas kode terpasang; validator yang dilonggarkan dan yang menolak segalanya dilaporkan gagal. **Urutan yang sebenarnya, dinyatakan**: uji dan implementasi ditulis dalam satu langkah; uji kemudian dijalankan tanpa `proses.py` dan merah, lalu hijau dengan modulnya. |
+| Alternatif | Tanpa kendali — tidak dipilih: kasus pelanggaran saja tidak membedakan validator yang benar dari validator yang menolak segalanya. |
+| Dampak | `perkakas/kepatuhan/proses.py`, `__main__.py`; `tests/perkakas/test_kepatuhan_proses.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

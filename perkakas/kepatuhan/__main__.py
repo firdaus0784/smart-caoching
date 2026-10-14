@@ -40,6 +40,7 @@ from perkakas.kepatuhan.hasil import (
     keseluruhan,
     laporan,
 )
+from perkakas.kepatuhan.proses import periksa_uk10, periksa_uk12, periksa_uk13
 
 _LINGKUNGAN: Final = re.compile(r"[a-z0-9][a-z0-9-]{0,31}")
 _ID_PERCOBAAN: Final = re.compile(r"EXP-\d{4}-\d{3}")
@@ -149,6 +150,9 @@ def pemeriksa_bawaan() -> dict[str, Pemeriksa]:
         "UK-04": periksa_uk04,
         "UK-08": periksa_uk08,
         "UK-09": periksa_uk09,
+        "UK-10": periksa_uk10,
+        "UK-12": periksa_uk12,
+        "UK-13": periksa_uk13,
     }
 
 

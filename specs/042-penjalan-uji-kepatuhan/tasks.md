@@ -49,9 +49,9 @@ peladen selain akun uji yang dibuatnya sendiri.
 
 **Kebutuhan:** K-3; P-5 A; NFR-22.
 
-- [ ] Uji lebih dulu: UK-10, UK-12, UK-13 lulus; pemeriksa atau validator
+- [x] Uji lebih dulu: UK-10, UK-12, UK-13 lulus; pemeriksa atau validator
       yang dilonggarkan dilaporkan gagal
-- [ ] `perkakas/kepatuhan/proses.py`
+- [x] `perkakas/kepatuhan/proses.py`
 
 ## T-5 · Pemeriksaan API
 
