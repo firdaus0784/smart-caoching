@@ -4,7 +4,7 @@
 |---|---|
 | Kebutuhan | D-08 Bagian 8 (U5, UK-01 s.d. UK-08); D-13 Bagian 8 (UK-09 s.d. UK-15); D-09 PS-01, PS-14, langkah penyebaran 5; NFR-21, NFR-22; C-02, C-03, C-04, C-05, C-06, C-09, C-17, C-18, C-20 |
 | Dokumen terkait | D-08 Bagian 8, 11 · D-13 Bagian 8, 9 · D-09 Bagian 2.1, 4.1 · D-10 Bagian 3 · D-14 Bagian 3 · `perkakas/basis_data/README.md` · spec fitur 024, 034, 040 |
-| Status | **Gerbang 3 lolos** — 14 Oktober 2026 atas pendelegasian KB-168 (KB-314). Nol dari enam tugas selesai |
+| Status | **Menunggu Gerbang 4** — 14 Oktober 2026 (KB-320). Enam dari enam tugas selesai |
 
 ## Mengapa fitur ini diusulkan sekarang
 
@@ -161,7 +161,7 @@ Pemegang Gerbang 1–4 memilih anjuran pada setiap pertanyaan:
 ## Kriteria penerimaan
 
 - [x] P-1 s.d. P-6 diputus pada Gerbang 1
-- [ ] Setiap kebutuhan punya uji yang gagal sebelum implementasi
-- [ ] Penjalan dijalankan atas PostgreSQL sebagai peran sungguhan dan atas
+- [x] Setiap kebutuhan punya uji yang gagal sebelum implementasi
+- [x] Penjalan dijalankan atas PostgreSQL sebagai peran sungguhan dan atas
       API yang berjalan, dan lingkungan sesudahnya terbukti tidak berubah
-- [ ] `make check` lulus enam gerbang
+- [x] `make check` lulus enam gerbang

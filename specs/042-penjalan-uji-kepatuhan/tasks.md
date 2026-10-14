@@ -4,7 +4,7 @@
 |---|---|
 | Spec | Gerbang 1 lolos 14 Oktober 2026 (KB-313); P-1 s.d. P-6 sesuai anjuran |
 | Plan | Gerbang 2 lolos 14 Oktober 2026 atas pendelegasian KB-168 (KB-314); K-1 s.d. K-6 |
-| Status | **Gerbang 3 lolos** — 14 Oktober 2026 atas pendelegasian KB-168 (KB-314). Nol dari enam tugas selesai |
+| Status | **Menunggu Gerbang 4** — 14 Oktober 2026 (KB-320). Enam dari enam tugas selesai |
 | Kebutuhan | R-01 s.d. R-07; D-08 Bagian 8; D-13 Bagian 8; D-09 PS-01, PS-14; NFR-21, NFR-22; C-02 s.d. C-06, C-09, C-17, C-18, C-20 |
 
 Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
@@ -66,6 +66,6 @@ peladen selain akun uji yang dibuatnya sendiri.
 
 ## T-6 · Bukti, penutupan
 
-- [ ] Bagian 9.2 plan; keluaran ke `bukti/`
-- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+- [x] Bagian 9.2 plan; keluaran ke `bukti/`
+- [x] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
       menunggu Gerbang 4

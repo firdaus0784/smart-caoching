@@ -182,19 +182,23 @@ menuntut penolakan:
 
 Setiap peran juga diuji **berjalan** dengan haknya sendiri, bukan hanya
 ditolak: pencarian vektor dan penyematan korpus masing-masing dijalankan
-tersambung sebagai peran produksinya (TK-63, TK-64).
+tersambung sebagai peran produksinya (TK-63, TK-64). Sejak fitur 042,
+penolakan yang sama dapat diperiksa atas lingkungan mana pun yang berjalan
+lewat penjalan uji kepatuhan (UK-02, UK-04, UK-08, UK-09), bukan hanya atas
+peladen uji.
 
 ---
 
 ## 8. Mutu dan verifikasi
 
-| Ukuran | Keadaan penutupan fitur 041 |
+| Ukuran | Keadaan penutupan fitur 042 |
 |---|---|
 | Gerbang verifikasi V-01 s.d. V-06 | Lulus seluruhnya |
 | Pasal konstitusi terperiksa mesin | 19 lulus, 0 gagal, 1 belum dapat diperiksa |
-| Jumlah uji otomatis | 3.765 pada backend dan perkakas; 337 pada aplikasi web |
-| Fitur lolos Gerbang 4 | 36 dari 42 |
+| Jumlah uji otomatis | 3.805 pada backend dan perkakas; 337 pada aplikasi web |
+| Fitur lolos Gerbang 4 | 36 dari 43 (fitur 042 menunggu Gerbang 4) |
 | Pengujian pengambilan U3 (D-08 Bagian 6) | Alat terbangun: bentuk *gold set*, pemeriksaan kunci terhadap korpus, pembekuan bersidik ke logbook, dan pengukuran yang mencatat setiap putaran (fitur 040, lolos Gerbang 4 pada 13 Oktober 2026). **Belum ada angka U3**: *gold set* belum disusun (BT-35), dan putaran satu sumber leksikal tidak menyatakan U3 lulus |
+| Pengujian kepatuhan U5 (D-08 Bagian 8, D-13 Bagian 8) | Penjalan terbangun (fitur 042, menunggu Gerbang 4): sebelas dari lima belas UK diperiksa atas PostgreSQL sebagai peran sungguhan, atas API yang berjalan, dan atas kode terpasang; tiga keadaan per UK, setiap putaran tercatat L1. Empat UK **belum dapat diperiksa** — UK-01, UK-03, UK-06, UK-11 — karena *gold set*, model penjawab, dan himpunan serangan belum ada. Putaran atas lingkungan pengembangan: 11 lulus, 0 gagal, 4 belum. **Belum ada putaran atas lingkungan pilot** |
 | Anggaran muat aplikasi web | 91.845 bait terkompresi dari batas 153.600 — batas **penetapan tim tanpa dasar literatur**, wajib diverifikasi di lokus pilot |
 
 Setiap fitur melewati empat gerbang persetujuan manusia (spesifikasi,

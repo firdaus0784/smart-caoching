@@ -744,3 +744,38 @@ Fitur ini menguatkan empat pasal yang sudah lulus:
 Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
 dan BT-29"`. Fitur 041 memperbaiki pengambilan leksikal dan tidak menyentuh
 validator.
+
+### Fitur 042 — 14 Oktober 2026
+
+**Tagihan tidak menyusut.** `make compliance` melaporkan **19 lulus, 0 gagal,
+1 belum** — sama dengan akhir fitur 041. Tidak ada pasal berpindah.
+
+`make compliance` memeriksa kode di repositori. Fitur ini menambah alat yang
+memeriksa **lingkungan yang berjalan** — peladen basis data sebagai peran
+sungguhan, API dengan kuki akun uji, dan kode yang terpasang — lewat lima
+belas UK D-08 Bagian 8 dan D-13 Bagian 8. Keduanya tidak saling menggantikan.
+Pasal yang kini dapat ditagih atas sebuah penyebaran:
+
+| Pasal | Yang dapat diperiksa penjalan |
+|---|---|
+| C-03 | UK-02: keempat peran RAG ditolak membaca karantina (42501); UK-09: pemanggil model juga |
+| C-04 | UK-05: membuka sumber tidak menambah peristiwa bagi akun tanpa persetujuan; dengan kendali positif |
+| C-05 | UK-04: dua belas peran aplikasi ditolak tersambung ke basis data pseudonim |
+| C-06 | UK-08: butir tayang tanpa putusan ditolak kunci asing; penayang tidak dapat menyisipkan |
+| C-17 | UK-09: pemanggil model tanpa tulis korpus dan indeks utama |
+| C-18 | UK-10: pemeriksa pemisahan instruksi atas kode terpasang |
+| C-19 | UK-13: klaim bersandar tunggal pada T3 atau T4 ditolak, dengan kendali |
+| C-20 | UK-07, UK-15: rute dibaca dari D-14 Bagian 3 saat berjalan |
+| C-09 | Setiap putaran tercatat L1 dengan kelima bidang versi |
+| KM-03 (bukan pasal) | UK-14: NIK rekaan yang diketik pengguna ditolak tanpa gema |
+
+Empat UK belum dapat diperiksa dan tercatat sebagai tagihan penjalan, bukan
+tagihan pasal: UK-01 (C-02, segmen tertutup di luar konteks model) dan UK-03
+(C-07) menunggu *gold set* (BT-35) dan model penjawab, UK-06 menunggu model
+penjawab, UK-11 menunggu himpunan serangan D-13 Bagian 9.
+
+#### C-01 ditinjau lagi
+
+Alasan tunggu tetap `"020 VS-03 dukungan isi klaim; menuntut model sematan
+dan BT-29"`. Tidak satu pun UK menagih C-01 secara langsung; UK-12 dan
+UK-13 menguji validator di sekitarnya, bukan dukungan isi klaim.

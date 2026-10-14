@@ -1,0 +1,172 @@
+# Bukti fitur 042 — penjalan uji kepatuhan atas lingkungan pengembangan bersesi
+
+Kode: worktree pada 47310c57e6cd; aplikasi `jalankan_lokal --riwayat postgres`
+Peladen: /tmp:55432
+
+ok   : akun uji pdawrs-042 dibuat lewat `perkakas.akun buat`
+ok   : sandi awal terbaca dari keluaran (tidak dicetak)
+ok   : masuk — HTTP 204
+Dokumen rekaan ditanam: rekaan-042-e83510
+Tabel dihitung sebelum putaran: 33
+
+## Keluaran penjalan, apa adanya
+
+```
+Lingkungan pengembangan-lokal; versi kode 47310c57e6cd.
+API: http://127.0.0.1:39205 sebagai pdawrs-042.
+UK-01 belum dapat diperiksa
+  - menunggu gold set (BT-35) dan model penjawab (ADR-12)
+UK-02 lulus
+  - peran_penjawaban: baca karantina.dokumen_sumber — ditolak 42501
+  - peran_penjawaban: baca karantina.penerimaan — ditolak 42501
+  - peran_pemanggil_llm: baca karantina.dokumen_sumber — ditolak 42501
+  - peran_pemanggil_llm: baca karantina.penerimaan — ditolak 42501
+  - peran_penyematan: baca karantina.dokumen_sumber — ditolak 42501
+  - peran_penyematan: baca karantina.penerimaan — ditolak 42501
+  - peran_pengindeks: baca karantina.dokumen_sumber — ditolak 42501
+  - peran_pengindeks: baca karantina.penerimaan — ditolak 42501
+UK-03 belum dapat diperiksa
+  - menunggu gold set jenis E (BT-35) dan model penjawab (ADR-12)
+UK-04 lulus
+  - peran_autentikasi: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_riwayat: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_pengguna: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_kurasi: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_penayangan: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_telemetri: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_penilaian: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_pembaca_sumber: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_koleksi: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_analitik: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_penjawaban: tersambung ke basis data pseudonim — ditolak 42501
+  - peran_pemanggil_llm: tersambung ke basis data pseudonim — ditolak 42501
+UK-05 lulus
+  - GET /api/v1/sumber/rekaan-042-e83510 — peristiwa akun uji 0 lalu 0
+UK-06 belum dapat diperiksa
+  - menunggu model penjawab (ADR-12)
+UK-07 lulus
+  - POST /api/v1/auth/keluar (semua) — HTTP 401
+  - GET /api/v1/saya/profil (pengguna) — HTTP 401
+  - PUT /api/v1/saya/profil (pengguna) — HTTP 401
+  - PUT /api/v1/saya/prioritas (pengguna) — HTTP 401
+  - POST /api/v1/saya/persetujuan (pengguna) — HTTP 401
+  - DELETE /api/v1/saya/data (pengguna) — HTTP 401
+  - POST /api/v1/tanya (pengguna) — HTTP 401
+  - GET /api/v1/percakapan (pengguna) — HTTP 401
+  - GET /api/v1/percakapan/{id} (pengguna) — HTTP 401
+  - POST /api/v1/pesan/{id}/penilaian (pengguna) — HTTP 401
+  - GET /api/v1/sumber/{id} (pengguna) — HTTP 401
+  - GET /api/v1/beranda (pengguna) — HTTP 401
+  - GET /api/v1/butir/{id} (pengguna) — HTTP 401
+  - POST /api/v1/butir/{id}/simpan (pengguna) — HTTP 401
+  - DELETE /api/v1/butir/{id}/simpan (pengguna) — HTTP 401
+  - GET /api/v1/koleksi (pengguna) — HTTP 401
+  - POST /api/v1/butir/{id}/tolak (pengguna) — HTTP 401
+  - GET /api/v1/butir/{id}/pemeriksaan (pengguna) — HTTP 404, rute tidak terpasang
+  - POST /api/v1/pemeriksaan/{id}/jawab (pengguna) — HTTP 404, rute tidak terpasang
+  - POST /api/v1/komitmen (pengguna) — HTTP 404, rute tidak terpasang
+  - GET /api/v1/komitmen (pengguna) — HTTP 404, rute tidak terpasang
+  - PATCH /api/v1/komitmen/{id} (pengguna) — HTTP 404, rute tidak terpasang
+  - GET /api/v1/jurnal (pengguna) — HTTP 404, rute tidak terpasang
+  - POST /api/v1/jurnal/ekspor (pengguna) — HTTP 404, rute tidak terpasang
+  - GET /api/v1/kurasi/antrean (kurator) — HTTP 401
+  - POST /api/v1/kurasi/{id}/putusan (kurator) — HTTP 401
+  - POST /api/v1/kurasi/{id}/tarik (kurator) — HTTP 401
+  - GET /api/v1/kurasi/aduan (kurator) — HTTP 401
+  - POST /api/v1/kurasi/aduan/{id}/tindak-lanjut (kurator) — HTTP 401
+  - GET /api/v1/analitik/ringkas (peneliti) — HTTP 401
+  - POST /api/v1/analitik/ekspor (peneliti) — HTTP 401
+UK-08 lulus
+  - peran_kurasi: sisip butir tayang tanpa putusan — ditolak 23503
+  - peran_penayangan: sisip butir tayang — ditolak 42501
+UK-09 lulus
+  - peran_pemanggil_llm: sisip korpus — ditolak 42501
+  - peran_pemanggil_llm: ubah korpus — ditolak 42501
+  - peran_pemanggil_llm: hapus korpus — ditolak 42501
+  - peran_pemanggil_llm: sisip indeks utama — ditolak 42501
+  - peran_pemanggil_llm: ubah indeks utama — ditolak 42501
+  - peran_pemanggil_llm: hapus indeks utama — ditolak 42501
+  - peran_pemanggil_llm: baca karantina.dokumen_sumber — ditolak 42501
+  - peran_pemanggil_llm: baca karantina.penerimaan — ditolak 42501
+  - peran_pemanggil_llm: tersambung ke basis data pseudonim — ditolak 42501
+UK-10 lulus
+  - pemeriksa pemisahan instruksi: nol temuan
+UK-11 belum dapat diperiksa
+  - menunggu himpunan serangan D-13 Bagian 9
+UK-12 lulus
+  - kendali: keluaran bersih — lulus, diharapkan lulus
+  - tautan asing — gagal, diharapkan gagal
+  - kalimat berinstruksi — gagal, diharapkan gagal
+UK-13 lulus
+  - kendali: klaim ditopang T1 dan T3 — lulus, diharapkan lulus
+  - klaim bersandar tunggal pada T3 — gagal, diharapkan gagal
+  - klaim bersandar tunggal pada T4 — gagal, diharapkan gagal
+UK-14 lulus
+  - POST /api/v1/tanya berpola NIK rekaan — HTTP 400, tanpa gema
+UK-15 lulus
+  - GET /api/v1/kurasi/antrean (kurator) — HTTP 403
+  - POST /api/v1/kurasi/{id}/putusan (kurator) — HTTP 403
+  - POST /api/v1/kurasi/{id}/tarik (kurator) — HTTP 403
+  - GET /api/v1/kurasi/aduan (kurator) — HTTP 403
+  - POST /api/v1/kurasi/aduan/{id}/tindak-lanjut (kurator) — HTTP 403
+  - GET /api/v1/analitik/ringkas (peneliti) — HTTP 403
+  - POST /api/v1/analitik/ekspor (peneliti) — HTTP 403
+Tidak lolos: 0 gagal, 4 belum dapat diperiksa.
+Tercatat pada L1 sebagai EXP-2026-001.
+```
+
+Kode keluar: 4
+
+## Pemeriksaan
+
+ok   : kode keluar 4 — tidak ada yang gagal, belum lengkap
+ok   : satu baris L1 bertambah pada logbook worktree (L1-percobaan.jsonl)
+ok   : belum dapat diperiksa hanya keempat UK tanpa bahan: UK-01, UK-03, UK-06, UK-11
+ok   : sebelas UK lainnya lulus, termasuk UK-05 atas sumber yang dapat dibuka
+ok   : baris L1 ber-id EXP-2026-001, tugas kepatuhan
+ok   : baris L1 memuat kelima bidang versi (C-09)
+ok   : kuki tidak muncul pada keluaran maupun L1 (R-05)
+ok   : jumlah baris 33 tabel pada kedua basis data sama sebelum dan sesudah putaran (R-04)
+
+## Ringkas baris L1 (logbook worktree, dibuang)
+
+```json
+{
+  "catatan": "",
+  "dicatat_pada": "2026-10-14T08:18:47.402085+00:00",
+  "id_percobaan": "EXP-2026-001",
+  "keseluruhan": "belum dapat diperiksa",
+  "lingkungan": "pengembangan-lokal",
+  "model_dasar": "belum-berlaku",
+  "pembagian_data": "belum-berlaku",
+  "perangkat_keras": "belum-berlaku",
+  "status": "berhasil",
+  "tugas": "kepatuhan",
+  "tujuan": "Menjalankan uji kepatuhan U5 (D-08 Bagian 8, D-13 Bagian 8) atas satu lingkungan",
+  "versi_indeks": "belum-berlaku",
+  "versi_kode": "47310c57e6cd",
+  "versi_model": "belum-berlaku",
+  "versi_skema_anotasi": "belum-berlaku",
+  "hasil": {
+    "UK-01": "belum dapat diperiksa",
+    "UK-02": "lulus",
+    "UK-03": "belum dapat diperiksa",
+    "UK-04": "lulus",
+    "UK-05": "lulus",
+    "UK-06": "belum dapat diperiksa",
+    "UK-07": "lulus",
+    "UK-08": "lulus",
+    "UK-09": "lulus",
+    "UK-10": "lulus",
+    "UK-11": "belum dapat diperiksa",
+    "UK-12": "lulus",
+    "UK-13": "lulus",
+    "UK-14": "lulus",
+    "UK-15": "lulus"
+  }
+}
+```
+
+Dokumen rekaan rekaan-042-e83510 dihapus sesudah putaran.
+
+Masalah: 0

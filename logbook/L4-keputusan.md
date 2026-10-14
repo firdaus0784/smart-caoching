@@ -4498,3 +4498,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Memanggil `/sumber` tanpa `bagian` dan menghitung 400 sebagai "dibuka" — tidak dipilih: rute berhenti di validasi sebelum titik rekam, sehingga UK-05 lulus tanpa menguji apa pun. |
 | Dampak | `perkakas/kepatuhan/api.py`, `__main__.py`; `tests/perkakas/test_kepatuhan_api.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-320 · T-6 fitur 042: bukti dan penutupan; menunggu Gerbang 4
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Plan fitur 042 Bagian 9.2 dan 9.3. |
+| Keputusan | **Bukti** `specs/042-penjalan-uji-kepatuhan/bukti/penjalan_lokal.py` dan keluarannya `penjalan-lokal.txt`: `jalankan_lokal --riwayat postgres` bersesi pada porta bebas; akun uji dibuat lewat `python -m perkakas.akun buat` dan masuk untuk kuki, sandinya tidak pernah dicetak; penjalan dijalankan lewat baris perintah dari *worktree* pada `HEAD`, sehingga baris L1 tertulis pada logbook *worktree* yang dibuang. Hasil: kode keluar 4; sebelas UK lulus, empat belum dapat diperiksa (UK-01, UK-03, UK-06, UK-11), nol gagal; satu baris L1 berbidang versi lengkap; kuki tidak muncul pada keluaran maupun L1; jumlah baris 33 tabel pada kedua basis data sama sebelum dan sesudah putaran. **Dinyatakan**: putaran bukti pertama melaporkan UK-05 belum dapat diperiksa — peladen uji hanya memuat segmen tanpa catatan metadata, sehingga setiap `/sumber` menjawab 404. Penjalan melaporkannya dengan benar; bukti kemudian menanam satu dokumen rekaan lewat SQL pengelola sebelum hitungan awal dan menghapusnya menurut id sesudahnya. **Mutasi** M-1 s.d. M-8 merah seluruhnya, ditambah mutan kendali "UK-05 selalu lulus" (KB-319). **Koreksi atas KB-319**: keempat dokumen rekaan `d42-*` yang dinyatakan tersisa tidak ada lagi — rangkaian uji membangun ulang basis data uji pada `make check` (`test_persiapan_basis_data`). Kontainer sempat dimulai ulang selama T-6; peladen dinyalakan lagi dengan datanya utuh. **Penutupan**: L8 fitur 042 (tagihan 19/0/1 tidak berubah; pasal yang kini dapat ditagih atas lingkungan berjalan); dokumen HKI Bagian 8; status spec, plan, tasks menunggu Gerbang 4. **Tafsiran yang diajukan ke Gerbang 4**: kode keluar 4 bagi putaran tanpa gagal tetapi belum lengkap; UK-08 kurator lulus pada 23503; dua belas peran aplikasi pada UK-04; 404 pada UK-07 dan UK-15 dicatat "rute tidak terpasang" dan tidak dihitung pelanggaran; satu-satunya perubahan pada lingkungan adalah waktu aktif sesi akun uji; UK-05 lewat `/sumber` beserta penanda bagian; NIK rekaan dibangkitkan tiap putaran. |
+| Alternatif | Bukti lewat `utama()` dengan akar logbook sementara — tidak dipilih: plan menuntut baris perintah, dan *worktree* menjaga logbook repositori tanpa argumen baru. |
+| Dampak | `specs/042-penjalan-uji-kepatuhan/bukti/`, `spec.md`, `plan.md`, `tasks.md`; `docs/hki/dokumentasi-teknis.md`; `logbook/L8-tagihan-pasal.md`. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 4 milik pemegang gerbang |
