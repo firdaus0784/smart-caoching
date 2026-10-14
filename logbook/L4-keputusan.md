@@ -4432,3 +4432,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | P-2 C; P-3 C; P-4 B; P-6 B — tidak dipilih. |
 | Dampak | `spec.md` fitur 042. Gerbang 2 dan 3 atas pendelegasian KB-168. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-314 · Gerbang 2 dan 3 fitur 042
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Gerbang 1 fitur 042 lolos (KB-313). Gerbang 2 dan 3 didelegasikan KB-168. Penelusuran sebelum plan: kuki sesi adalah satu-satunya jalur autentikasi API; `akun.pengguna` menyimpan pseudonim akun dan terbaca `peran_autentikasi`; peristiwa telemetri berkunci pseudonim; butir tayang menuntut kunci asing ke putusan menyetujui sehingga kurator yang berhak menyisip tetap ditolak tanpa putusan; perakitan aplikasi bersesi hanya ada di `main()` `perkakas/jalankan_lokal.py`. |
+| Keputusan | **Gerbang 2 dan 3 dinyatakan lolos** atas KB-168: K-1 s.d. K-6, enam tugas, delapan mutasi. Rancangan semula memindah perakitan `jalankan_lokal.py` ke satu fungsi; **ditarik sebelum terbit** karena menyentuh fitur yang lolos Gerbang 4 — uji merakit aplikasinya sendiri. Tafsiran yang perlu terlihat pada Gerbang 4: (1) kode keluar 4 bagi putaran tanpa gagal tetapi belum lengkap; (2) UK-08 lulus pada penolakan kunci asing 23503 bagi kurator, bukan penolakan hak; (3) dua belas peran layanan aplikasi bagi UK-04, dicocokkan dengan perakitan `jalankan_lokal.py`; (4) UK-07 menguji setiap rute non-publik tanpa kuki (401), UK-15 setiap rute non-pengguna dengan kuki (403); rute 404 dicatat, tidak dihitung pelanggaran, sesudah kewarasan; (5) waktu aktif terakhir sesi akun uji berubah oleh permintaan berkuki — satu-satunya perubahan, dinyatakan; (6) UK-05 diuji lewat `GET /api/v1/sumber/{id}` dan belum dapat diperiksa bila korpus kosong atau akun uji berpersetujuan. |
+| Alternatif | Penjalan masuk sendiri dengan sandi akun uji — tidak dipilih: masuk membuat sesi baru di produksi. Pemeriksaan API atas aplikasi dalam proses — ditolak Gerbang 1 (P-3 B). |
+| Dampak | `plan.md` dan `tasks.md` fitur 042 terbit. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168 (Gerbang 2 dan 3) |

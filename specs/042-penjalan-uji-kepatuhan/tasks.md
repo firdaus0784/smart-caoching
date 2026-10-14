@@ -1,0 +1,71 @@
+# Tasks: 042-penjalan-uji-kepatuhan
+
+| | |
+|---|---|
+| Spec | Gerbang 1 lolos 14 Oktober 2026 (KB-313); P-1 s.d. P-6 sesuai anjuran |
+| Plan | Gerbang 2 lolos 14 Oktober 2026 atas pendelegasian KB-168 (KB-314); K-1 s.d. K-6 |
+| Status | **Gerbang 3 lolos** — 14 Oktober 2026 atas pendelegasian KB-168 (KB-314). Nol dari enam tugas selesai |
+| Kebutuhan | R-01 s.d. R-07; D-08 Bagian 8; D-13 Bagian 8; D-09 PS-01, PS-14; NFR-21, NFR-22; C-02 s.d. C-06, C-09, C-17, C-18, C-20 |
+
+Satu tugas = satu commit. Uji ditulis lebih dulu dan dijalankan merah sebelum
+implementasinya. `make check` lulus sesudah entri L4 ditulis, tepat sebelum
+commit. **`src/`, `web/`, `perkakas/basis_data/`, dan
+`perkakas/jalankan_lokal.py` tidak berubah.** Tanpa
+rute, peran, hak, atau paket baru (R-07). Uji tidak meninggalkan baris pada
+peladen selain akun uji yang dibuatnya sendiri.
+
+---
+
+## T-1 · Kontrak lebih dulu
+
+**Kebutuhan:** R-01 s.d. R-06; K-6.
+
+- [ ] D-08 Bagian 8: aturan pelaksanaan penjalan
+- [ ] D-13 Bagian 8; D-09 Bagian 2.1 dan 4.1; D-10 Bagian 3
+- [ ] Register D-00
+
+## T-2 · Kerangka
+
+**Kebutuhan:** R-01, R-02, R-05, R-06; K-1, K-5; P-1 A, P-4 A, P-6 A.
+
+- [ ] Uji lebih dulu: daftar UK dibaca dari D-08 dan D-13; empat UK belum
+      dapat diperiksa beserta sebabnya; keadaan keseluruhan; kode keluar;
+      masukan tidak sah; L1 lulus pemeriksa catatan versi; tanpa kuki
+- [ ] `perkakas/kepatuhan/` — `hasil.py`, `daftar.py`, `__main__.py`
+- [ ] Mutasi M-3, M-4, M-6, M-7
+
+## T-3 · Pemeriksaan basis data
+
+**Kebutuhan:** R-03, R-04; K-2; P-2 A.
+
+- [ ] Uji lebih dulu atas PostgreSQL sebagai peran sungguhan: UK-02, UK-04,
+      UK-08, UK-09 lulus; percobaan yang semestinya berhasil dilaporkan
+      gagal; sisip yang berhasil tidak meninggalkan baris; sambungan gagal
+      dilaporkan gagal
+- [ ] `perkakas/kepatuhan/basis_data.py`
+- [ ] Mutasi M-1, M-2
+
+## T-4 · Pemeriksaan dalam proses
+
+**Kebutuhan:** K-3; P-5 A; NFR-22.
+
+- [ ] Uji lebih dulu: UK-10, UK-12, UK-13 lulus; pemeriksa atau validator
+      yang dilonggarkan dilaporkan gagal
+- [ ] `perkakas/kepatuhan/proses.py`
+
+## T-5 · Pemeriksaan API
+
+**Kebutuhan:** R-03, R-04, R-05; K-4; P-3 A.
+
+- [ ] Uji lebih dulu atas aplikasi bersesi yang berjalan: UK-05, UK-07,
+      UK-14, UK-15 lulus; aplikasi tiruan dilaporkan gagal; kewarasan;
+      masukan API tidak lengkap; akun berpersetujuan; peran aplikasi
+      tercakup UK-04
+- [ ] `perkakas/kepatuhan/api.py`
+- [ ] Mutasi M-5, M-8
+
+## T-6 · Bukti, penutupan
+
+- [ ] Bagian 9.2 plan; keluaran ke `bukti/`
+- [ ] Putaran mutasi dilaporkan apa adanya; L8, dokumen HKI, L4; status
+      menunggu Gerbang 4
