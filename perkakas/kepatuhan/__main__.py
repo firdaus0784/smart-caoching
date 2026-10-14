@@ -20,6 +20,14 @@ from typing import Any, Final, TextIO
 from src.rag.evaluasi.jejak import id_percobaan_terpakai
 
 from perkakas.evaluasi import AKAR_LOGBOOK, versi_kode_git
+from perkakas.kepatuhan.basis_data import (
+    BASIS_DATA,
+    BASIS_DATA_PSEUDONIM,
+    periksa_uk02,
+    periksa_uk04,
+    periksa_uk08,
+    periksa_uk09,
+)
 from perkakas.kepatuhan.daftar import BELUM_BAHAN, KODE_UK
 from perkakas.kepatuhan.hasil import (
     KODE_KELUAR,
@@ -109,10 +117,6 @@ def utama(
     return KODE_KELUAR[keseluruhan(hasil)]
 
 
-BASIS_DATA: Final = "smart_coaching"
-BASIS_DATA_PSEUDONIM: Final = "smart_coaching_pseudonim"
-
-
 def konteks_dari_lingkungan(env: Mapping[str, str], akar_repo: Path) -> Konteks:
     """Alamat peladen dari `PGHOST`/`PGPORT` — basis data pseudonim boleh di
     peladen lain lewat `PGHOST_PSEUDONIM`/`PGPORT_PSEUDONIM`. Sandi dibaca
@@ -140,7 +144,12 @@ def konteks_dari_lingkungan(env: Mapping[str, str], akar_repo: Path) -> Konteks:
 
 def pemeriksa_bawaan() -> dict[str, Pemeriksa]:
     """Pemeriksa yang terpasang; UK tanpa pemeriksa belum dapat diperiksa."""
-    return {}
+    return {
+        "UK-02": periksa_uk02,
+        "UK-04": periksa_uk04,
+        "UK-08": periksa_uk08,
+        "UK-09": periksa_uk09,
+    }
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -4465,3 +4465,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Pesan galat pemeriksa ikut laporan — tidak dipilih: pesan peladen dapat memuat nilai baris. |
 | Dampak | `perkakas/kepatuhan/__init__.py`, `daftar.py`, `hasil.py`, `__main__.py`; `tests/perkakas/test_kepatuhan_kerangka.py`. |
 | Pemutus | Agen atas pendelegasian KB-168 |
+
+## KB-317 · T-3 fitur 042: pemeriksaan basis data
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Plan fitur 042 K-2. Sebelum menulis, setiap penolakan dicoba pada peladen uji: tersambung ke basis data pseudonim ditolak 42501 pada saat sambungan; tulis dengan `WHERE false` ditolak 42501; sisip butir tayang oleh kurator ditolak 23503, oleh penayang 42501; `peran_verifikasi` membaca karantina berhasil. |
+| Keputusan | `perkakas/kepatuhan/basis_data.py`: `Percobaan` dan `coba()` — sambungan sebagai peran yang diuji, transaksi selalu dibatalkan, lulus hanya pada SQLSTATE yang diharapkan; pernyataan yang berhasil, galat lain, tersambung padahal semestinya ditolak, dan sambungan gagal dilaporkan gagal tanpa pesan peladen. UK-02 atas empat peran RAG; UK-04 atas dua belas peran aplikasi, yang diuji mencakup setiap konstanta `PERAN_*` pada `jalankan_lokal.py`; UK-08 kurator dan penayang; UK-09 enam tulis, dua baca karantina, dan sambungan pseudonim bagi pemanggil model. Keempatnya lulus atas peladen uji. **Temuan saat mutasi**: M-2 (transaksi di-*commit*) semula bertahan karena sisip pembanding sendiri ditolak batasan pola telemetri (23514), sehingga tidak pernah berhasil dan tidak membuktikan pembatalan. Uji diperbaiki dengan pseudonim dan jenis peristiwa yang sah serta menegaskan pembanding benar-benar berhasil; M-1 dan M-2 kini merah. |
+| Alternatif | Pembanding cukup "dilaporkan gagal" — tidak dipilih: gagal karena sebab lain tidak membuktikan pembatalan transaksi. |
+| Dampak | `perkakas/kepatuhan/basis_data.py`, `__main__.py`; `tests/perkakas/test_kepatuhan_basis_data.py`. |
+| Pemutus | Agen atas pendelegasian KB-168 |

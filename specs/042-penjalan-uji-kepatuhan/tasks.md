@@ -38,12 +38,12 @@ peladen selain akun uji yang dibuatnya sendiri.
 
 **Kebutuhan:** R-03, R-04; K-2; P-2 A.
 
-- [ ] Uji lebih dulu atas PostgreSQL sebagai peran sungguhan: UK-02, UK-04,
+- [x] Uji lebih dulu atas PostgreSQL sebagai peran sungguhan: UK-02, UK-04,
       UK-08, UK-09 lulus; percobaan yang semestinya berhasil dilaporkan
       gagal; sisip yang berhasil tidak meninggalkan baris; sambungan gagal
       dilaporkan gagal
-- [ ] `perkakas/kepatuhan/basis_data.py`
-- [ ] Mutasi M-1, M-2
+- [x] `perkakas/kepatuhan/basis_data.py`
+- [x] Mutasi M-1, M-2
 
 ## T-4 · Pemeriksaan dalam proses
 
