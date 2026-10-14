@@ -4410,3 +4410,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Penelusuran lebih jauh; berhenti — tidak dipilih. |
 | Dampak | D-12 0.50; D-00 3.30. Usulan `spec.md` fitur 042 menyusul. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-312 · Usulan spec fitur 042 diajukan ke Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-14 |
+| Konteks | Baris D-12 042 (KB-311). D-08 Bagian 8, D-13 Bagian 8 dan 9, D-09 Bagian 2.1 dan 4.1, tabel peran `perkakas/basis_data/README.md`, dan pemeriksa `make compliance` ditelusuri sebelum menulis. |
+| Keputusan | `specs/042-penjalan-uji-kepatuhan/spec.md` ditulis dan diajukan dengan peta pemeriksaan UK-01 s.d. UK-15 beserta keadaannya hari ini — sebelas dapat diperiksa, empat menunggu *gold set*, model, atau himpunan serangan — tujuh kebutuhan yang tidak bergantung pada pertanyaan, dan enam pertanyaan: **P-1** bentuk penjalan; **P-2** perubahan pada lingkungan sasaran; **P-3** uji lapisan API dan akun uji; **P-4** tempat catatan; **P-5** UK yang sudah dijaga `make check`; **P-6** UK yang bahannya belum ada. |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-2 dan P-3 menentukan apa yang terjadi di produksi. |
+| Dampak | `specs/042-penjalan-uji-kepatuhan/spec.md`. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
