@@ -4531,3 +4531,14 @@ ditegakkan uji, bukan kebiasaan.
 | Alternatif | Penerima telemetri peramban; berhenti — tidak dipilih. |
 | Dampak | D-12 0.51; D-00 3.32. Usulan `spec.md` fitur 043 menyusul. |
 | Pemutus | Pemegang Gerbang 1–4 |
+
+## KB-323 · Usulan spec fitur 043 diajukan ke Gerbang 1
+
+| | |
+|---|---|
+| Tanggal | 2026-10-15 |
+| Konteks | Baris D-12 043 (KB-322). D-13 Bagian 8, 9, dan 10, D-01 FR-B08 dan MK-12, D-13 KD-01, `src/ingest/adversarial.py`, `src/ingest/gerbang.py`, jalur kurasi `src/ingest/kurasi/`, dan spec fitur 040 dan 042 ditelusuri sebelum menulis. **Pengamatan**: pemeriksa pola hanya berjalan pada `Gerbang.terima`; butir kanal tidak melewatinya dan tidak masuk indeks RAG. FR-B08 berbunyi "yang masuk indeks", KD-01 berbunyi "dokumen dan butir" — diajukan sebagai P-5, tidak ditafsirkan sendiri. |
+| Keputusan | `specs/043-wadah-uji-adversarial/spec.md` ditulis dan diajukan dengan peta lima jenis serangan beserta yang dapat diukur hari ini, sepuluh kebutuhan yang tidak bergantung pada pertanyaan, dan tujuh pertanyaan: **P-1** bentuk dan tempat berkas; **P-2** arti "tertahan" dan tempat pengukuran; **P-3** komposisi saat pembekuan; **P-4** jenis yang menuntut model; **P-5** kasus kanal dan jalur butir (usulan TK-89); **P-6** penyusun; **P-7** UK-11 pada penjalan fitur 042, yang sudah lolos Gerbang 4. |
+| Alternatif | Menyusun plan dengan anjuran sebagai asumsi — tidak dipilih: P-5 menyangkut temuan dan P-7 mengubah fitur yang lolos Gerbang 4, keduanya bukan milik agen. |
+| Dampak | `specs/043-wadah-uji-adversarial/spec.md`. Belum ada kode. |
+| Pemutus | Agen atas pendelegasian KB-168; Gerbang 1 menunggu pemegang Gerbang 1–4 |
